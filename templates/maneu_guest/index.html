@@ -9,13 +9,13 @@
     <script type="application/javascript" src='{% static "javascript/maneu_order/index.js" %}'></script>
 {% endblock %}
 {% block content %}
-    <div class="container">
+    <div class="container" style="margin-top: 2%; margin-bottom: 4%;">
         <div class="col-12 row">
             <div class="col-4">
-                <h5>用户管理</h5>
+                <h5>客户管理</h5>
             </div>
             <div class="col-8">
-                <div class="vertical1 input-group">
+                <div class="vertical1 input-group input-group-sm">
                     <span class="input-group-text">开始时间</span>
                     <input autocomplete="off" class="form-control" id="timeS" min="2020-01-01 00:00" max="{{ timeE }}" type="datetime-local" value="{{ timeS }}">
                     <span class="input-group-text">结束时间</span>
@@ -26,7 +26,7 @@
             </div>
         </div>
         <hr style="color:white;">
-        <div class="col-12 row">
+        <div style="" class="col-12 row">
             <div class="col-2">
                 <p>录入时间</p>
             </div>
@@ -37,12 +37,12 @@
                 <p>客户电话</p>
             </div>
             <div class="col-7">
-                <p>订单备注</p>
+                <p>客户备注</p>
             </div>
             <div class="col-1">
-                <form method="get" action="{% url 'maneu_guest:insert' %}">
+                <form method="get" action="{% url 'maneu_order:insert' %}">
                     <div class='input-group input-group-sm'>
-                        <input type="submit" class="col-12 btn btn-warning" value='添加订单'>
+                        <input type="submit" class="col-12 btn btn-warning" value='添加客户'>
                     </div>
                 </form>
             </div>

@@ -1,14 +1,24 @@
-html,body {
-    height: 100%;
+html{
+    min-height: 100%;
+}
+body {
+    position: relative;
+    min-height: 100vh; /* 确保容器至少占满整个视口高度 */
+    background-color: #f9f9f9;
 }
 
-.container {
-    margin-top: 1%;
-    margin-bottom: 3%;
+footer {
+    text-align: center;
+    margin-bottom: 2%;
+    position: absolute;
+    bottom: 0;
+    width: 100%; /* 根据需要调整宽度 */
+    padding: 10px 0;
+    text-align: center;
 }
 
 footer > a {
-    margin: 2%;
+    margin: 5%;
     color: #FFC048;
 }
 

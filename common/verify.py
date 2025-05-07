@@ -8,11 +8,31 @@ from common.common import current_time
 
 
 def is_date(code):
+    """
+    判断传入的code参数是否符合日期格式
+    传入：
+        code = text
+    返回：
+        if code 符合日期格式
+            code = text
+        else code 不符合正确的日期格式
+            code = none
+    """
     pattern = r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$"
     return re.match(pattern, code) is not None
 
 
 def is_call(code):
+    """
+    判断传入的code参数是否手机号码格式
+    传入：
+        code = text
+    返回：
+        if code 是手机号码格式
+            code = text
+        else code 否手机号码格式
+            code = none
+    """
     try:
         pattern = re.compile(r'^1[3-9]\d{9}$')
         if pattern.match(code) is not None:
@@ -24,6 +44,16 @@ def is_call(code):
 
 
 def is_uuid(code):
+    """
+    判断传入的code参数是否uuid格式
+    传入：
+        code = text
+    返回：
+        if code 是uuid格式
+            code = text
+        else code 否uuid格式
+            code = none
+    """
     try:
         pattern = re.compile(r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$')
         if pattern.match(code) is not None:
@@ -35,6 +65,16 @@ def is_uuid(code):
 
 
 def is_md5(code):
+    """
+    判断传入的code参数是否md5格式
+    传入：
+        code = text
+    返回：
+        if code 是md5格式
+            code = text
+        else code 否md5格式
+            code = none
+    """
     try:
         pattern = re.compile(r'^\d{32}$')
         if pattern.match(code) is not None:
