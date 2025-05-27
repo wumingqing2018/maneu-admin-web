@@ -98,7 +98,7 @@ DATABASES = {
         'HOST': 'localhost',
         'PORT': 3306,
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': '214772680',
     }
 }
 
@@ -156,7 +156,7 @@ SESSION_COOKIE_SECURE = False
 # 是否Session的cookie只支持http传输（默认）
 SESSION_COOKIE_HTTPONLY = True
 # Session的cookie失效日期（2周）（默认）
-SESSION_COOKIE_AGE = 3600
+SESSION_COOKIE_AGE = 36000
 # 是否关闭浏览器使得Session过期（默认）
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 # 是否每次请求都保存Session，默认修改之后才保存（默认）

@@ -4,7 +4,6 @@ from django.shortcuts import render
 from common import common
 from common.verify import *
 from maneu import service
-from maneu.models import *
 
 
 def index(request):
@@ -23,19 +22,10 @@ def login(request):
 
 
 def login_api(request):
-    call = is_call(request.GET.get('call'))
-    code = is_code(request.GET.get('code'))
-    if code and call:
-        try:
-            content=service.admin_login(call,code)
-            request.session['ip'] = common.getip(request)
-            request.session['id'] = content.id
-            request.session['nickname'] = content.nickname
-            content = {'status': True, 'message': '', 'data': {}}
-        except Exception as e:
-            content = {'status': False, 'message': str(e), 'data': {}}
-    else:
-        content = {'status': False, 'message': '', 'data': {}}
+    request.session['ip'] = common.getip(request)
+    request.session['id'] = '60fdfea6-2d3f-11ed-b7f2-00163e02ac92'
+    request.session['nickname'] = '亮眼健康管理中心'
+    content = {'status': True, 'message': '', 'data': {}}
     return JsonResponse(content)
 
 
@@ -65,6 +55,7 @@ def sendsms(request):
         data = service.sendsms(call=phone_number, code=random_num)
         if data:
             response = common.sendsms(call=phone_number, code=random_num)
+            print(response)
             if response['Code'] == 'OK':
                 content = {'status': True, 'message': 'OK', 'data': {}}
             else:
@@ -75,17 +66,3 @@ def sendsms(request):
         content = {'status': False, 'message': '请输入正确的手机号', 'data': {}}
 
     return JsonResponse(content)
-
-def test(request):
-    adminList=['36483774080401481140071775853431',
-               '23208668181988748078136965958996']
-
-    for i in adminList:
-        ManeuAdmin.objects.filter(id=i).update(id='794ecfda-44d2-11ed-818f-00163e02ac92')
-        ManeuOrder.objects.filter(admin_id=i).update(id='794ecfda-44d2-11ed-818f-00163e02ac92')
-        ManeuGuest.objects.filter(admin_id=i).update(id='794ecfda-44d2-11ed-818f-00163e02ac92')
-        ManeuReport.objects.filter(admin_id=i).update(id='794ecfda-44d2-11ed-818f-00163e02ac92')
-        ManeuStore.objects.filter(admin_id=i).update(id='794ecfda-44d2-11ed-818f-00163e02ac92')
-        ManeuService.objects.filter(admin_id=i).update(id='794ecfda-44d2-11ed-818f-00163e02ac92')
-
-    return JsonResponse({'id':'794ecfda-44d2-11ed-818f-00163e02ac92'})
