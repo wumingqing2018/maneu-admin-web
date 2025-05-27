@@ -1,10 +1,42 @@
-import os
-import random
-import time
+import os, random, time, requests
 
 from aliyunsdkcore.auth.credentials import AccessKeyCredential
 from aliyunsdkcore.client import AcsClient
 from aliyunsdkdysmsapi.request.v20170525.SendSmsRequest import SendSmsRequest
+from pathlib import Path
+
+
+def get_miniprogram_token():
+    APPID = "wxf48b774de9be5613"
+    APPSECRET = "e07b22bd5cac3c5a74baf9e03ffc7ce1"
+    url = f"https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={APPID}&secret={APPSECRET}"
+    return requests.get(url).json()
+
+
+def get_wxacode(access_token, code="", width=430,):
+    path = f"static/images/maneu_order/{code}.png"
+    if not Path(path).exists():
+        url = f"https://api.weixin.qq.com/wxa/getwxacode?access_token={access_token}"
+
+        params = {
+            "path": f"pages/verify/verify?code={code}",  # 小程序页面路径（可带参数）
+            "width": width,  # 二维码宽度（单位px）
+            "auto_color": False,  # 是否自动配色
+            "line_color": {"r": 0, "g": 0, "b": 0},  # 手动指定颜色（RGB）
+            "is_hyaline": False  # 是否透明背景
+        }
+
+        response = requests.post(url, json=params)
+
+        # 保存为图片文件
+        if response.headers['Content-Type'] == 'image/jpeg':
+            with open(path, "wb") as f:
+                f.write(response.content)
+            print(f"小程序码已保存至: {path}")
+        else:
+            print("生成失败:", response.json())  # 返回错误信息（如参数错误）
+    else:
+        print(f"1+++小程序码已保存至: {path}")
 
 
 def current_time():
@@ -48,3 +80,7 @@ def time_start():
 
 def time_end():
     return time.strftime("%Y-%m-%d 23:59:59", time.localtime())
+
+
+def time_time():
+    return time.time()

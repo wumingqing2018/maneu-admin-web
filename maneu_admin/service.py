@@ -17,3 +17,7 @@ def user_insert(username='', nickname='', password='', email='', phone=''):
 
 def user_detail(admin_id=''):
     return ManeuAdmin.objects.filter(id=admin_id).first()
+
+
+def admin_update(level='', state=''):
+    return ManeuAdmin.objects.all().update(level=level, state=state)
