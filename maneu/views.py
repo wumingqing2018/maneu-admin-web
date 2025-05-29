@@ -49,9 +49,9 @@ def logout(request):
 
 def sendsms(request):
     phone_number = is_call(request.GET.get('call'))
-
     if phone_number:
         random_num = common.get_random_code()
+        print(phone_number, random_num)
         data = service.sendsms(call=phone_number, code=random_num)
         if data:
             response = common.sendsms(call=phone_number, code=random_num)
