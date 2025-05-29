@@ -59,8 +59,8 @@ def sendsms(code, call):
 
     request = SendSmsRequest()
     request.set_accept_format('json')
-    request.set_SignName("徕可")
-    request.set_TemplateCode("SMS_471990239")
+    request.set_SignName("爱视光学")
+    request.set_TemplateCode("SMS_485420526")
     request.set_PhoneNumbers(call)
     request.set_TemplateParam({'code': code})
 
