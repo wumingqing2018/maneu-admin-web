@@ -14,11 +14,7 @@ def get_miniprogram_token():
 
 
 def get_wxacode(access_token, code="", width=430,):
-    save_dir = os.path.join(settings.MEDIA_ROOT, 'images/maneu_order')
-    os.makedirs(save_dir, exist_ok=True)  # 自动创建目录
-    filename = f"{code}.png"
-    path = os.path.join(save_dir, filename)
-
+    path = f"static/images/maneu_order/{code}.png"
     if not Path(path).exists():
         url = f"https://api.weixin.qq.com/wxa/getwxacode?access_token={access_token}"
 
@@ -31,6 +27,7 @@ def get_wxacode(access_token, code="", width=430,):
         }
 
         response = requests.post(url, json=params)
+        print(response)
         # 保存为图片文件
         if response.headers['Content-Type'] == 'image/jpeg':
             with open(path, "wb+") as f:
