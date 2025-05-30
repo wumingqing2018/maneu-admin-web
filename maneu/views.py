@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 
 from common import common
-from common.verify import *
+from common import verify
 from maneu import service
 
 
@@ -22,15 +22,23 @@ def login(request):
 
 
 def login_api(request):
-    request.session['ip'] = common.getip(request)
-    request.session['id'] = '60fdfea6-2d3f-11ed-b7f2-00163e02ac92'
-    request.session['nickname'] = '亮眼健康管理中心'
-    content = {'status': True, 'message': '', 'data': {}}
+    call = request.GET.get('call')
+    code = request.GET.get('code')
+    if call and code:
+        admin = service.admin_login(call, code)
+        request.session['ip'] = common.getip(request)
+        request.session['id'] = admin.id
+        request.session['nickname'] = admin.nickname
+        request.session['code'] = common.generate_random_32hex()
+        content = {'status': True, 'message': '', 'data': {code: common.generate_random_32hex()}}
+    else:
+        content = {'status': False, 'message': '', 'data': {}}
+
     return JsonResponse(content)
 
 
 def logout(request):
-    code = is_code(request.session.get('id'))
+    code = verify.is_code(request.session.get('id'))
 
     if code:
         request.session['ip'] = None
@@ -48,7 +56,7 @@ def logout(request):
 
 
 def sendsms(request):
-    phone_number = is_call(request.GET.get('call'))
+    phone_number = verify.is_call(request.GET.get('call'))
     if phone_number:
         random_num = common.get_random_code()
         print(phone_number, random_num)

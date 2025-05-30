@@ -1,10 +1,13 @@
-import os, random, time, requests
-from django.conf import settings
+import os, random, time, requests, secrets
 from aliyunsdkcore.auth.credentials import AccessKeyCredential
 from aliyunsdkcore.client import AcsClient
 from aliyunsdkdysmsapi.request.v20170525.SendSmsRequest import SendSmsRequest
 from pathlib import Path
 
+
+def generate_random_32hex():
+    """生成32位随机十六进制字符串（安全加密级别）"""
+    return secrets.token_hex(16)  # 16字节=32位十六进制
 
 def get_miniprogram_token():
     APPID = "wxf48b774de9be5613"
@@ -80,7 +83,3 @@ def time_start():
 
 def time_end():
     return time.strftime("%Y-%m-%d 23:59:59", time.localtime())
-
-
-def time_time():
-    return time.time()
