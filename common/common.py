@@ -31,7 +31,7 @@ def get_wxacode(access_token, code="", width=430,):
         print(response)
         # 保存为图片文件
         if response.headers['Content-Type'] == 'image/jpeg':
-            with open(path, "wb") as f:
+            with open(path, "wb+") as f:
                 f.write(response.content)
                 return {'code': 200, 'messages': f"小程序码已保存至: {path}"}
         else:
