@@ -1,6 +1,5 @@
 import os, random, time, requests
-from pyexpat.errors import messages
-
+from django.conf import settings
 from aliyunsdkcore.auth.credentials import AccessKeyCredential
 from aliyunsdkcore.client import AcsClient
 from aliyunsdkdysmsapi.request.v20170525.SendSmsRequest import SendSmsRequest
@@ -15,7 +14,12 @@ def get_miniprogram_token():
 
 
 def get_wxacode(access_token, code="", width=430,):
-    path = f"static/images/maneu_order/{code}.png"
+    save_dir = os.path.join(settings.MEDIA_ROOT, 'images/maneu_order')
+    os.makedirs(save_dir, exist_ok=True)  # 自动创建目录
+    filename = f"{code}.png"
+    path = os.path.join(save_dir, filename)
+
+    # path = f"static/images/maneu_order/{code}.png"
     if not Path(path).exists():
         url = f"https://api.weixin.qq.com/wxa/getwxacode?access_token={access_token}"
 
