@@ -1,6 +1,15 @@
 from django.db.models import Q
 
 from maneu.models import ManeuOrder
+from maneu.models import ManeuAdmin
+
+
+def get_access_token(code=''):
+    return ManeuAdmin.objects.filter(id=code).first()
+
+
+def update_access_token(content):
+    return ManeuAdmin.objects.all().update(content=content)
 
 
 def order_detail(admin_id='', order_id=''):

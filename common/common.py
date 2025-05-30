@@ -1,4 +1,5 @@
 import os, random, time, requests
+from pyexpat.errors import messages
 
 from aliyunsdkcore.auth.credentials import AccessKeyCredential
 from aliyunsdkcore.client import AcsClient
@@ -27,16 +28,16 @@ def get_wxacode(access_token, code="", width=430,):
         }
 
         response = requests.post(url, json=params)
-
+        print(response)
         # 保存为图片文件
         if response.headers['Content-Type'] == 'image/jpeg':
             with open(path, "wb") as f:
                 f.write(response.content)
-            print(f"小程序码已保存至: {path}")
+                return {'code': 200, 'messages': f"小程序码已保存至: {path}"}
         else:
-            print("生成失败:", response.json())  # 返回错误信息（如参数错误）
+            return {'code': 501, 'messages': f"生成失败: {response.json()}"}# 返回错误信息（如参数错误）
     else:
-        print(f"1+++小程序码已保存至: {path}")
+        return {'code': 502, 'messages': f"1+++小程序码已保存至: {path}"}  # 返回错误信息（如参数错误）
 
 
 def current_time():
