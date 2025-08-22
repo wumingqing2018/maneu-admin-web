@@ -3,6 +3,7 @@ from aliyunsdkcore.auth.credentials import AccessKeyCredential
 from aliyunsdkcore.client import AcsClient
 from aliyunsdkdysmsapi.request.v20170525.SendSmsRequest import SendSmsRequest
 from pathlib import Path
+import base64
 
 
 def generate_random_32hex():
@@ -19,10 +20,14 @@ def get_miniprogram_token():
 def get_wxacode(access_token, code="", width=430,):
     path = f"static/images/maneu_order/{code}.png"
     if not Path(path).exists():
-        url = f"https://api.weixin.qq.com/wxa/getwxacode?access_token={access_token}"
+        print(len(code[1:32]))
+        url = f"https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token={access_token}"
 
         params = {
-            "path": f"pages/verify/verify?code={code}",  # 小程序页面路径（可带参数）
+            "scene": code[0:32],
+            "page": "pages/verify/verify",  # 小程序页面路径（可带参数）
+            "check_path": True,
+            "env_version": "trial",
             "width": width,  # 二维码宽度（单位px）
             "auto_color": False,  # 是否自动配色
             "line_color": {"r": 0, "g": 0, "b": 0},  # 手动指定颜色（RGB）
