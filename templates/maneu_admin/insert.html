@@ -1,51 +1,51 @@
 {% extends 'maneu/base.html' %}
 {% load static %}
 {% block content %}
-    <div class="container">
-        <div class="col-md-6 offset-md-3" style="margin-top: 20%; margin-bottom: 20%">
-            <form method="post" action="{% url 'maneu_admin:insert' %}">
-                {% csrf_token %}
-                <div class="input-group input-group-sm mb-2">
-                    <span class="input-group-text">邀请密码</span>
-                    <input type="text" name="gift_password" id="gift_password" class="form-control">
+<div class="container">
+    <div class="col-md-6 offset-md-3" style="margin-top: 20%; margin-bottom: 20%">
+        <form action="{% url 'maneu_admin:insert' %}" method="post">
+            {% csrf_token %}
+            <div class="input-group input-group-sm mb-2">
+                <span class="input-group-text">邀请密码</span>
+                <input class="form-control" id="gift_password" name="gift_password" type="text">
 
-                </div>
-                <div class="input-group input-group-sm mb-2">
-                    <span class="input-group-text">登录账户</span>
-                    <input type="text" name="username" id="username" class="form-control">
+            </div>
+            <div class="input-group input-group-sm mb-2">
+                <span class="input-group-text">登录账户</span>
+                <input class="form-control" id="username" name="username" type="text">
 
-                </div>
-                <div class="input-group input-group-sm mb-2">
-                    <span class="input-group-text">登录密码</span>
-                    <input type="text" name="password" id="password" class="form-control">
+            </div>
+            <div class="input-group input-group-sm mb-2">
+                <span class="input-group-text">登录密码</span>
+                <input class="form-control" id="password" name="password" type="text">
 
-                </div>
+            </div>
 
-                <div class="input-group input-group-sm mb-2">
-                    <span class="input-group-text">商家名称</span>
-                    <input type="text" name="nickname" id="nickname" class="form-control" value="{{ user.nickname }}">
+            <div class="input-group input-group-sm mb-2">
+                <span class="input-group-text">商家名称</span>
+                <input class="form-control" id="nickname" name="nickname" type="text" value="{{ user.nickname }}">
 
-                </div>
-                <div class="input-group input-group-sm mb-2">
-                    <span class="input-group-text">手机号码</span>
-                    <input type="text" name="phone" id="phone" value="{{ user.phone }}" class="form-control">
+            </div>
+            <div class="input-group input-group-sm mb-2">
+                <span class="input-group-text">手机号码</span>
+                <input class="form-control" id="phone" name="phone" type="text" value="{{ user.phone }}">
 
-                </div>
-                <div class="input-group input-group-sm mb-2">
-                    <span class="input-group-text">电子邮箱</span>
-                    <input type="text" name="email" id="email" value="{{ user.email }}" class="form-control">
+            </div>
+            <div class="input-group input-group-sm mb-2">
+                <span class="input-group-text">电子邮箱</span>
+                <input class="form-control" id="email" name="email" type="text" value="{{ user.email }}">
 
-                </div>
-                <div class="input-group input-group-sm mb-2">
-                    <span class="input-group-text">特色服务</span>
-                    <input type="text" name="remark" id="remark" value="{{ user.remark }}" class="form-control">
+            </div>
+            <div class="input-group input-group-sm mb-2">
+                <span class="input-group-text">特色服务</span>
+                <input class="form-control" id="remark" name="remark" type="text" value="{{ user.remark }}">
 
-                </div>
-                <br>
-                <p>{{ msg }}</p>
-                <input type="submit" class="col-md-12 btn btn-primary">
-            </form>
-            <a href="{% url 'maneu_admin:index' %}" type="button" class="col-md-12 btn btn-warning">返回</a>
-        </div>
+            </div>
+            <br>
+            <p>{{ msg }}</p>
+            <input class="col-md-12 btn btn-primary" type="submit">
+        </form>
+        <a class="col-md-12 btn btn-warning" href="{% url 'maneu_admin:index' %}" type="button">返回</a>
     </div>
+</div>
 {% endblock %}

@@ -4,11 +4,11 @@
 
 <head>
     <title>徕可</title>
-    <link rel="icon" href="{% static 'images/maneu/logo.svg' %}">
-    <link rel="stylesheet" href="{% static 'css/maneu/login.css' %}">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="{% static 'images/maneu/logo.svg' %}" rel="icon">
+    <link href="{% static 'css/maneu/login.css' %}" rel="stylesheet">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
     <!-- 新 Bootstrap5 核心 CSS 文件 -->
-    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/css/bootstrap.min.css">
+    <link href="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/css/bootstrap.min.css" rel="stylesheet">
     <!--  popper.min.js 用于弹窗、提示、下拉菜单 -->
     <script src="https://cdn.staticfile.org/popper.js/2.9.3/umd/popper.min.js"></script>
     <!-- 最新的 Bootstrap5 核心 JavaScript 文件 -->
@@ -20,14 +20,14 @@
     <div class="login-wrapper">
         <div class="header">徕可管理系统</div>
         <div class="form-wrapper">
-            <form method="post" action="{% url 'login' %}" class="test1">
+            <form action="{% url 'login' %}" class="test1" method="post">
                 {% csrf_token %}
                 <label for="username">账号:</label>
-                <input type="text" name="username" class="input-item" placeholder="username" autocomplete="off">
+                <input autocomplete="off" class="input-item" name="username" placeholder="username" type="text">
                 <label for="password">密码:</label>
-                <input type="password" name="password" class="input-item" placeholder="password" autocomplete="off"><br>
+                <input autocomplete="off" class="input-item" name="password" placeholder="password" type="password"><br>
                 {% if msg %}<span class="msg">{{ msg }}</span>{% endif %}
-                <input type="submit" class="btn" value="登录">
+                <input class="btn" type="submit" value="登录">
             </form>
             <a class="button" href="{% url 'index' %}">
                 <button class="btn">返回</button>

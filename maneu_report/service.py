@@ -8,7 +8,12 @@ def report_index(admin_id='', start='', end=''):
 
 
 def report_search(admin_id, timeS, timeE, value):
-    return ManeuReport.objects.filter(Q(name__icontains=value, admin_id=admin_id, time__gte=timeS, time__lte=timeE,) | Q(phone__icontains=value, admin_id=admin_id, time__gte=timeS, time__lte=timeE, )).order_by('-time').all()
+    return ManeuReport.objects.filter(
+        Q(name__icontains=value, admin_id=admin_id, time__gte=timeS, time__lte=timeE, ) | Q(phone__icontains=value,
+                                                                                            admin_id=admin_id,
+                                                                                            time__gte=timeS,
+                                                                                            time__lte=timeE, )).order_by(
+        '-time').all()
 
 
 def report_delete(admin_id='', id=''):

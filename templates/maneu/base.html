@@ -3,15 +3,23 @@
 <html lang="en">
 <head>
     <title>徕可</title>
-    <link rel="icon" href="{% static 'images/maneu/logo.svg' %}">
-    <link rel="stylesheet" href="{% static 'css/maneu/base.css' %}">
-        <!-- 新 Bootstrap5 核心 CSS 文件 -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.8/cerulean/bootstrap.min.css" integrity="sha512-3n/Isj9MCqCc1wf/QfjLigco9sx9xr9m3TqgxstJrSxmwZ05qjl4owbfkioZ0y3w8fNWcVLnJGHfVqKF/L1Qsw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <!--  popper.min.js 用于弹窗、提示、下拉菜单 -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js" integrity="sha512-TPh2Oxlg1zp+kz3nFA0C5vVC6leG/6mm1z9+mA81MI5eaUVqasPLO8Cuk4gMF4gUfP5etR73rgU/8PNMsSesoQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <!-- 最新的 Bootstrap5 核心 JavaScript 文件 -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.min.js" integrity="sha512-nKXmKvJyiGQy343jatQlzDprflyB5c+tKCzGP3Uq67v+lmzfnZUi/ZT+fc6ITZfSC5HhaBKUIvr/nTLCV+7F+Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-MXe5EK5gyK+fbhwQy/dukwz9fw71HZcsM4KsyDBDTvMyjymkiO0M5qqU0lF4vqLI4VnKf1+DIKf1GM6RFkO8PA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link href="{% static 'images/maneu/logo.svg' %}" rel="icon">
+    <link href="{% static 'css/maneu/base.css' %}" rel="stylesheet">
+    <!-- 新 Bootstrap5 核心 CSS 文件 -->
+    <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.8/cerulean/bootstrap.min.css"
+          integrity="sha512-3n/Isj9MCqCc1wf/QfjLigco9sx9xr9m3TqgxstJrSxmwZ05qjl4owbfkioZ0y3w8fNWcVLnJGHfVqKF/L1Qsw=="
+          referrerpolicy="no-referrer" rel="stylesheet"/>
+    <!--  popper.min.js 用于弹窗、提示、下拉菜单 -->
+    <script crossorigin="anonymous"
+            integrity="sha512-TPh2Oxlg1zp+kz3nFA0C5vVC6leG/6mm1z9+mA81MI5eaUVqasPLO8Cuk4gMF4gUfP5etR73rgU/8PNMsSesoQ=="
+            referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js"></script>
+    <!-- 最新的 Bootstrap5 核心 JavaScript 文件 -->
+    <script crossorigin="anonymous"
+            integrity="sha512-nKXmKvJyiGQy343jatQlzDprflyB5c+tKCzGP3Uq67v+lmzfnZUi/ZT+fc6ITZfSC5HhaBKUIvr/nTLCV+7F+Q=="
+            referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.min.js"></script>
+    <script crossorigin="anonymous"
+            integrity="sha512-MXe5EK5gyK+fbhwQy/dukwz9fw71HZcsM4KsyDBDTvMyjymkiO0M5qqU0lF4vqLI4VnKf1+DIKf1GM6RFkO8PA=="
+            referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 </head>
 
@@ -19,9 +27,9 @@
 <body class="blue">
 <nav class="navbar navbar-expand-md bg-dark navbar-dark">
     <!-- Brand -->
-    <img style="height: 30px" src="{% static 'images/maneu/logo.svg' %}">
+    <img src="{% static 'images/maneu/logo.svg' %}" style="height: 30px">
     <!-- Toggler/collapsibe Button -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+    <button class="navbar-toggler" data-bs-target="#collapsibleNavbar" data-bs-toggle="collapse" type="button">
         <span class="navbar-toggler-icon"></span>
     </button>
     <!-- Navbar links -->
@@ -40,8 +48,8 @@
                 <a class="nav-link" href="{% url 'maneu_guest:index' %}">客户管理</a>
             </li>
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="{% url 'maneu_admin:index' %}" id="navbardrop"
-                   data-bs-toggle="dropdown">个人中心</a>
+                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="{% url 'maneu_admin:index' %}"
+                   id="navbardrop">个人中心</a>
                 <div class="dropdown-menu">
                     <a class="dropdown-item" href="{% url 'maneu_admin:index' %}">修改资料</a>
                     <a class="dropdown-item" href="{% url 'logout' %}">退出登录</a>

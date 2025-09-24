@@ -3,7 +3,7 @@ import json
 from django.http import JsonResponse
 
 from common.simple import order_simple
-from common.verify import is_uuid, is_date
+from common.verify import is_uuid
 from maneu_order import service
 
 

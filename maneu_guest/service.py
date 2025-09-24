@@ -8,8 +8,12 @@ def ManeuGuest_index(admin_id='', start='', end=''):
 
 
 def guest_search(admin_id, timeS, timeE, value):
-    return ManeuGuest.objects.filter(Q(name__icontains=value, admin_id=admin_id, time__gte=timeS, time__lte=timeE,) | Q(phone__icontains=value, admin_id=admin_id, time__gte=timeS, time__lte=timeE, )).order_by('-time').all()
-
+    return ManeuGuest.objects.filter(
+        Q(name__icontains=value, admin_id=admin_id, time__gte=timeS, time__lte=timeE, ) | Q(phone__icontains=value,
+                                                                                            admin_id=admin_id,
+                                                                                            time__gte=timeS,
+                                                                                            time__lte=timeE, )).order_by(
+        '-time').all()
 
 
 def ManeuGuest_detail(admin_id='', id=''):

@@ -1,7 +1,7 @@
 from django.db.models import Q
 
-from maneu.models import ManeuOrder
 from maneu.models import ManeuAdmin
+from maneu.models import ManeuOrder
 
 
 def get_access_token(code=''):
@@ -29,7 +29,12 @@ def order_delete(admin_id='', order_id=''):
 
 
 def order_search(admin_id='', star='', end='', value=''):
-    return ManeuOrder.objects.filter(Q(name__icontains=value, admin_id=admin_id, time__gte=star, time__lte=end,) | Q(phone__icontains=value, admin_id=admin_id, time__gte=star, time__lte=end, )).order_by('-time').all()
+    return ManeuOrder.objects.filter(
+        Q(name__icontains=value, admin_id=admin_id, time__gte=star, time__lte=end, ) | Q(phone__icontains=value,
+                                                                                         admin_id=admin_id,
+                                                                                         time__gte=star,
+                                                                                         time__lte=end, )).order_by(
+        '-time').all()
 
 
 def order_insert(admin_id='', name='', time='', call='', content='', guest_id='', store_id='', report_id='', remark=''):

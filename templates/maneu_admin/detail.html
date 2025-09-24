@@ -1,88 +1,88 @@
 {% extends 'maneu/base.html' %}
 {% load static %}
 {% block content %}
-    <div class="container">
-        <table class="table" style="margin-top: 3%; margin-bottom: 5%">
-            <tr class="blue">
-                <td colspan="3">
-                    <h5>商家资料</h5>
-                </td>
-            </tr>
-            <tr class="blue">
-                <td style="width: 10%">
-                    <span>名称</span>
-                </td>
-                <td style="width: 90%" colspan='2'>
-                    <span>{{ maneu_admin.nickname }}</span>
-                </td>
-            </tr>
-            <tr class="blue">
-                <td style="width: 10%">
-                    <span>账号</span>
-                </td>
-                <td style="width: 90%" colspan='2'>
-                    <span>{{ maneu_admin.username }}</span>
-                </td>
-            </tr>
-            <tr class="blue">
-                <td style="width: 10%">
-                    <span>地址</span>
-                </td>
-                <td style="width: 90%" colspan='2'>
-                    <span>{{ maneu_admin.localtion }}</span>
-                </td>
-            </tr>
-            <tr class="blue">
-                <td style="width: 10%">
-                    <span>电话</span>
-                </td>
-                <td style="width: 90%" colspan='2'>
-                    <span>{{ maneu_admin.phone }}</span>
-                </td>
-            </tr>
-            <tr class="blue">
-                <td style="width: 10%">
-                    <span>邮件</span>
-                </td>
-                <td style="width: 90%" colspan='2'>
-                    <span>{{ maneu_admin.email }}</span>
-                </td>
-            </tr>
-            <tr class="blue">
-                <td style="width: 10%">
-                    <span>创建时间</span>
-                </td>
-                <td style="width: 90%" colspan='2'>
-                    <span>{{ maneu_admin.create_time }}</span>
-                </td>
-            </tr>
-            <tr class="blue">
-                <td style="width: 10%">
-                    <span>商家特色</span>
-                </td>
-                <td style="width: 90%" colspan='2'>
-                    <span>{{ maneu_admin.remark }}</span>
-                </td>
-            </tr>
-            <tr class="blue">
-                <td style="width: 10%">
-                    <span>账户操作</span>
-                </td>
-                <td style="width: 10%">
-                    <div class="input-group input-group-sm">
-                        <a class="btn btn-warning" style="color: black"
-                           href="{% url 'maneu_admin:updata' %}">修改资料</a>
-                    </div>
-                </td>
-                <td style="width: 80%">
-                    <div class="input-group input-group-sm">
-                        <a class="btn btn-warning" style="color: black" href="{% url 'login' %}">退出登录</a>
-                    </div>
-                </td>
-            </tr>
-        </table>
-    </div>
+<div class="container">
+    <table class="table" style="margin-top: 3%; margin-bottom: 5%">
+        <tr class="blue">
+            <td colspan="3">
+                <h5>商家资料</h5>
+            </td>
+        </tr>
+        <tr class="blue">
+            <td style="width: 10%">
+                <span>名称</span>
+            </td>
+            <td colspan='2' style="width: 90%">
+                <span>{{ maneu_admin.nickname }}</span>
+            </td>
+        </tr>
+        <tr class="blue">
+            <td style="width: 10%">
+                <span>账号</span>
+            </td>
+            <td colspan='2' style="width: 90%">
+                <span>{{ maneu_admin.username }}</span>
+            </td>
+        </tr>
+        <tr class="blue">
+            <td style="width: 10%">
+                <span>地址</span>
+            </td>
+            <td colspan='2' style="width: 90%">
+                <span>{{ maneu_admin.localtion }}</span>
+            </td>
+        </tr>
+        <tr class="blue">
+            <td style="width: 10%">
+                <span>电话</span>
+            </td>
+            <td colspan='2' style="width: 90%">
+                <span>{{ maneu_admin.phone }}</span>
+            </td>
+        </tr>
+        <tr class="blue">
+            <td style="width: 10%">
+                <span>邮件</span>
+            </td>
+            <td colspan='2' style="width: 90%">
+                <span>{{ maneu_admin.email }}</span>
+            </td>
+        </tr>
+        <tr class="blue">
+            <td style="width: 10%">
+                <span>创建时间</span>
+            </td>
+            <td colspan='2' style="width: 90%">
+                <span>{{ maneu_admin.create_time }}</span>
+            </td>
+        </tr>
+        <tr class="blue">
+            <td style="width: 10%">
+                <span>商家特色</span>
+            </td>
+            <td colspan='2' style="width: 90%">
+                <span>{{ maneu_admin.remark }}</span>
+            </td>
+        </tr>
+        <tr class="blue">
+            <td style="width: 10%">
+                <span>账户操作</span>
+            </td>
+            <td style="width: 10%">
+                <div class="input-group input-group-sm">
+                    <a class="btn btn-warning" href="{% url 'maneu_admin:updata' %}"
+                       style="color: black">修改资料</a>
+                </div>
+            </td>
+            <td style="width: 80%">
+                <div class="input-group input-group-sm">
+                    <a class="btn btn-warning" href="{% url 'login' %}" style="color: black">退出登录</a>
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>
 {% endblock %}
 {% block javascript %}
-    <script src="{% static 'javascript/maneu/windos_back.js' %}"></script>
+<script src="{% static 'javascript/maneu/windos_back.js' %}"></script>
 {% endblock %}

@@ -2,7 +2,7 @@ from django.forms import model_to_dict
 from django.http import JsonResponse
 
 from common.simple import report_simple
-from common.verify import is_uuid, is_date
+from common.verify import is_uuid
 from maneu_report import service
 
 
@@ -22,7 +22,6 @@ def search(request):
         content = {'status': False, 'message': '参数错误请确认', 'data': {}}
 
     return JsonResponse(content)
-
 
 
 def delete(request):

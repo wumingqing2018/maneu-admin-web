@@ -4,24 +4,32 @@
 
 <head>
     <title>徕可</title>
-    <link rel="icon" href="{% static 'images/maneu/logo.svg' %}">
-    <link rel="stylesheet" href="{% static 'css/maneu/login.css' %}">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-        
+    <link href="{% static 'images/maneu/logo.svg' %}" rel="icon">
+    <link href="{% static 'css/maneu/login.css' %}" rel="stylesheet">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+
     <!-- 新 Bootstrap5 核心 CSS 文件 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.8/cerulean/bootstrap.min.css" integrity="sha512-3n/Isj9MCqCc1wf/QfjLigco9sx9xr9m3TqgxstJrSxmwZ05qjl4owbfkioZ0y3w8fNWcVLnJGHfVqKF/L1Qsw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.8/cerulean/bootstrap.min.css"
+          integrity="sha512-3n/Isj9MCqCc1wf/QfjLigco9sx9xr9m3TqgxstJrSxmwZ05qjl4owbfkioZ0y3w8fNWcVLnJGHfVqKF/L1Qsw=="
+          referrerpolicy="no-referrer" rel="stylesheet"/>
     <!--  popper.min.js 用于弹窗、提示、下拉菜单 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js" integrity="sha512-TPh2Oxlg1zp+kz3nFA0C5vVC6leG/6mm1z9+mA81MI5eaUVqasPLO8Cuk4gMF4gUfP5etR73rgU/8PNMsSesoQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script crossorigin="anonymous"
+            integrity="sha512-TPh2Oxlg1zp+kz3nFA0C5vVC6leG/6mm1z9+mA81MI5eaUVqasPLO8Cuk4gMF4gUfP5etR73rgU/8PNMsSesoQ=="
+            referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js"></script>
     <!-- 最新的 Bootstrap5 核心 JavaScript 文件 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.min.js" integrity="sha512-nKXmKvJyiGQy343jatQlzDprflyB5c+tKCzGP3Uq67v+lmzfnZUi/ZT+fc6ITZfSC5HhaBKUIvr/nTLCV+7F+Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-MXe5EK5gyK+fbhwQy/dukwz9fw71HZcsM4KsyDBDTvMyjymkiO0M5qqU0lF4vqLI4VnKf1+DIKf1GM6RFkO8PA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script crossorigin="anonymous"
+            integrity="sha512-nKXmKvJyiGQy343jatQlzDprflyB5c+tKCzGP3Uq67v+lmzfnZUi/ZT+fc6ITZfSC5HhaBKUIvr/nTLCV+7F+Q=="
+            referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.min.js"></script>
+    <script crossorigin="anonymous"
+            integrity="sha512-MXe5EK5gyK+fbhwQy/dukwz9fw71HZcsM4KsyDBDTvMyjymkiO0M5qqU0lF4vqLI4VnKf1+DIKf1GM6RFkO8PA=="
+            referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
     <script>
         sendsms = "{% url 'sendsms' %}"
         login_verify = "{% url 'login_api' %}"
         maneu_order_index = "{% url 'maneu_order:index' %}"
     </script>
-    
+
     <script src="{% static 'javascript/maneu/login.js' %}"></script>
 </head>
 
@@ -30,12 +38,12 @@
     <div class="login-wrapper">
         <div class="header">徕可管理系统</div>
         <div class="form-wrapper">
-            <input type="text" class="input-item" id="call" placeholder="手机号码" autocomplete="off">
+            <input autocomplete="off" class="input-item" id="call" placeholder="手机号码" type="text">
             <span class="msg" id="msg"></span>
         </div>
 
         <div class="form-wrapper" id="password">
-            <input type="text" class="input-item" id="code" placeholder="验证码" autocomplete="off">
+            <input autocomplete="off" class="input-item" id="code" placeholder="验证码" type="text">
             <button class="btn" id="login-hold" style="background: gray; color: white;">请输入验证码后再登陆</button>
             <button class="btn" id="login-btn" style="display: none">登录</button>
 

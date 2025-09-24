@@ -1,7 +1,5 @@
 import re
 
-from common.common import current_time
-
 """
 通用校验工具
 """

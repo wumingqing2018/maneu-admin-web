@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from common import common
+
 from maneu_admin import service
 
 

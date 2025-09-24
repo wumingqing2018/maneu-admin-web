@@ -1,14 +1,22 @@
-import os, random, time, requests, secrets
+import os
+import random
+import secrets
+import time
+from pathlib import Path
+
+import requests
 from aliyunsdkcore.auth.credentials import AccessKeyCredential
 from aliyunsdkcore.client import AcsClient
 from aliyunsdkdysmsapi.request.v20170525.SendSmsRequest import SendSmsRequest
-from pathlib import Path
-import base64
+
+
+# pip install aliyun-python-sdk-core aliyun-python-sdk-dysmsapi -i https://pypi.tuna.tsinghua.edu.cn/simple/
 
 
 def generate_random_32hex():
     """生成32位随机十六进制字符串（安全加密级别）"""
     return secrets.token_hex(16)  # 16字节=32位十六进制
+
 
 def get_miniprogram_token():
     APPID = "wxf48b774de9be5613"
@@ -17,7 +25,7 @@ def get_miniprogram_token():
     return requests.get(url).json()
 
 
-def get_wxacode(access_token, code="", width=430,):
+def get_wxacode(access_token, code="", width=430, ):
     path = f"static/images/maneu_order/{code}.png"
     if not Path(path).exists():
         print(len(code[1:32]))
@@ -42,7 +50,7 @@ def get_wxacode(access_token, code="", width=430,):
                 f.write(response.content)
                 return {'code': 200, 'messages': f"小程序码已保存至: {path}"}
         else:
-            return {'code': 501, 'messages': f"生成失败: {response.json()}"}# 返回错误信息（如参数错误）
+            return {'code': 501, 'messages': f"生成失败: {response.json()}"}  # 返回错误信息（如参数错误）
     else:
         return {'code': 502, 'messages': f"1+++小程序码已保存至: {path}"}  # 返回错误信息（如参数错误）
 
@@ -63,7 +71,8 @@ def getip(request):
 
 
 def sendsms(code, call):
-    credentials = AccessKeyCredential(os.environ['ALIBABA_CLOUD_ACCESS_KEY_ID'], os.environ['ALIBABA_CLOUD_ACCESS_KEY_SECRET'])
+    credentials = AccessKeyCredential(os.environ['ALIBABA_CLOUD_ACCESS_KEY_ID'],
+                                      os.environ['ALIBABA_CLOUD_ACCESS_KEY_SECRET'])
 
     request = SendSmsRequest()
     request.set_accept_format('json')
