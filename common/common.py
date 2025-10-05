@@ -26,33 +26,32 @@ def get_miniprogram_token():
 
 
 def get_wxacode(access_token, code="", width=430, ):
-    path = f"static/images/maneu_order/{code}.png"
-    if not Path(path).exists():
-        print(len(code[1:32]))
-        url = f"https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token={access_token}"
+        path = f"static/images/maneu_order/{code}.png"
+        if not Path(path).exists():
+            url = f"https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token={access_token}"
 
-        params = {
-            "scene": code[0:32],
-            "page": "pages/verify/verify",  # 小程序页面路径（可带参数）
-            "check_path": True,
-            "env_version": "trial",
-            "width": width,  # 二维码宽度（单位px）
-            "auto_color": False,  # 是否自动配色
-            "line_color": {"r": 0, "g": 0, "b": 0},  # 手动指定颜色（RGB）
-            "is_hyaline": False  # 是否透明背景
-        }
+            params = {
+                "scene": code[0:32],
+                "page": "pages/verify/verify",  # 小程序页面路径（可带参数）
+                "check_path": True,
+                "env_version": "trial",
+                "width": width,  # 二维码宽度（单位px）
+                "auto_color": False,  # 是否自动配色
+                "line_color": {"r": 0, "g": 0, "b": 0},  # 手动指定颜色（RGB）
+                "is_hyaline": False  # 是否透明背景
+            }
 
-        response = requests.post(url, json=params)
-        print(response)
-        # 保存为图片文件
-        if response.headers['Content-Type'] == 'image/jpeg':
-            with open(path, "wb+") as f:
-                f.write(response.content)
-                return {'code': 200, 'messages': f"小程序码已保存至: {path}"}
+            response = requests.post(url, json=params)
+            print(response)
+            # 保存为图片文件
+            if response.headers['Content-Type'] == 'image/jpeg':
+                with open(path, "wb+") as f:
+                    f.write(response.content)
+                    return {'code': 200, 'messages': f"小程序码已保存至: {path}"}
+            else:
+                return {'code': 501, 'messages': f"生成失败: {response.json()}"}  # 返回错误信息（如参数错误）
         else:
-            return {'code': 501, 'messages': f"生成失败: {response.json()}"}  # 返回错误信息（如参数错误）
-    else:
-        return {'code': 502, 'messages': f"1+++小程序码已保存至: {path}"}  # 返回错误信息（如参数错误）
+            return {'code': 502, 'messages': f"1+++小程序码已保存至: {path}"}  # 返回错误信息（如参数错误）
 
 
 def current_time():
