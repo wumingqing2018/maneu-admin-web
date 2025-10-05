@@ -8,12 +8,7 @@ def report_index(admin_id='', start='', end=''):
 
 
 def report_search(admin_id, timeS, timeE, value):
-    return ManeuReport.objects.filter(
-        Q(name__icontains=value, admin_id=admin_id, time__gte=timeS, time__lte=timeE, ) | Q(phone__icontains=value,
-                                                                                            admin_id=admin_id,
-                                                                                            time__gte=timeS,
-                                                                                            time__lte=timeE, )).order_by(
-        '-time').all()
+    return ManeuReport.objects.filter(Q(name__icontains=value, admin_id=admin_id, time__gte=timeS, time__lte=timeE, ) | Q(phone__icontains=value, admin_id=admin_id, time__gte=timeS, time__lte=timeE, )).order_by('-time').all()
 
 
 def report_delete(admin_id='', id=''):
@@ -21,8 +16,7 @@ def report_delete(admin_id='', id=''):
 
 
 def report_insert(admin_id='', guest_id='', name='', time='', phone='', remark='', content=''):
-    return ManeuReport.objects.create(admin_id=admin_id, guest_id=guest_id, name=name, time=time, phone=phone,
-                                      remark=remark, content=content)
+    return ManeuReport.objects.create(admin_id=admin_id, guest_id=guest_id, name=name, time=time, phone=phone, remark=remark, content=content)
 
 
 def report_detail(admin_id='', id=''):
@@ -30,5 +24,4 @@ def report_detail(admin_id='', id=''):
 
 
 def report_update(id='', admin_id='', time='', name='', phone='', content='', remark=''):
-    return ManeuReport.objects.filter(id=id, admin_id=admin_id).update(name=name, time=time, phone=phone, remark=remark,
-                                                                       content=content)
+    return ManeuReport.objects.filter(id=id, admin_id=admin_id).update(name=name, time=time, phone=phone, remark=remark, content=content)
