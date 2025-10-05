@@ -1,73 +1,73 @@
 {% extends 'maneu/base.html' %}
 {% load static %}
 {% block content %}
-<div class="container">
-    <form action="{% url 'maneu_guest:index' %}" class="vertical2" method="get">
-        <div class="vertical1 col-1">
-            <div class="input-group input-group-sm">
-                <input class="btn btn-primary" type="submit" value="返回列表">
+    <div class="container">
+        <form action="{% url 'maneu_guest:index' %}" class="vertical2" method="get">
+            <div class="vertical1 col-1">
+                <div class="input-group input-group-sm">
+                    <input class="btn btn-primary" type="submit" value="返回列表">
+                </div>
             </div>
-        </div>
-    </form>
-    <hr>
+        </form>
+        <hr>
 
-    {# 基础数据 #}
-    <form class="vertical2">
-        {# 客户数据 #}
-        <h5>基础数据</h5>
-        <div class="vertical1 col-9">
-            <div class="input-group input-group-sm">
-                <span class="input-group-text">时间</span>
-                <input autocomplete="off" class="form-control" id="time" type="datetime-local" value="{{ time }}">
+        {# 基础数据 #}
+        <form class="vertical2">
+            {# 客户数据 #}
+            <h5>基础数据</h5>
+            <div class="vertical1 col-9">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text">时间</span>
+                    <input autocomplete="off" class="form-control" id="time" type="datetime-local" value="{{ time }}">
+                </div>
             </div>
-        </div>
-        <div class="vertical1 col-9">
-            <div class="input-group input-group-sm">
-                <span class="input-group-text">电话</span>
-                <input autocomplete="off" class="form-control" id="phone" type="text">
+            <div class="vertical1 col-9">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text">电话</span>
+                    <input autocomplete="off" class="form-control" id="phone" type="text">
+                </div>
             </div>
-        </div>
-        <div class="vertical1 col-9">
-            <div class="input-group input-group-sm">
-                <span class="input-group-text">店名</span>
-                <input autocomplete="off" class="form-control" id="nickname" type="text">
+            <div class="vertical1 col-9">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text">店名</span>
+                    <input autocomplete="off" class="form-control" id="nickname" type="text">
+                </div>
             </div>
-        </div>
-        <div class="vertical1 col-9">
-            <div class="input-group input-group-sm">
-                <span class="input-group-text">地址</span>
-                <input autocomplete="off" class="form-control" id="location" type="text">
+            <div class="vertical1 col-9">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text">地址</span>
+                    <input autocomplete="off" class="form-control" id="location" type="text">
+                </div>
             </div>
-        </div>
-        <div class="vertical1 col-9">
-            <div class="input-group input-group-sm">
-                <span class="input-group-text">简介</span>
-                <input autocomplete="off" class="form-control" id="content" type="text">
+            <div class="vertical1 col-9">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text">简介</span>
+                    <input autocomplete="off" class="form-control" id="content" type="text">
+                </div>
             </div>
-        </div>
-    </form>
-    <hr>
+        </form>
+        <hr>
 
-    {# 提交或返回按钮 #}
-    <form class="vertical2">
-        <div class="vertical1 col-1">
-            <div class="input-group input-group-sm">
-                <input class="btn btn-danger" id="update" type="button" value="提交数据">
+        {# 提交或返回按钮 #}
+        <form class="vertical2">
+            <div class="vertical1 col-1">
+                <div class="input-group input-group-sm">
+                    <input class="btn btn-danger" id="update" type="button" value="提交数据">
+                </div>
             </div>
-        </div>
-    </form>
-</div>
+        </form>
+    </div>
 
 {% endblock %}
 {% block javascript %}
-<script>
-    admin_id = "{{ id }}"
-    admin_index = "{% url 'maneu_admin:index' %}"
-    admin_detail = "{% url 'maneu_admin:api_detail' %}"
-    admin_update = "{% url 'maneu_admin:api_update' %}"
-</script>
-<script src="{% static 'javascript/maneu_admin/index.js' %}" type="application/javascript"></script>
+    <script>
+        admin_id = "{{ id }}"
+        admin_index = "{% url 'maneu_admin:index' %}"
+        admin_detail = "{% url 'maneu_admin:api_detail' %}"
+        admin_update = "{% url 'maneu_admin:api_update' %}"
+    </script>
+    <script src="{% static 'javascript/maneu_admin/index.js' %}" type="application/javascript"></script>
 {% endblock %}
 {% block css %}
-<link href="{% static 'css/maneu_guest/insert.css' %}" rel="stylesheet">
+    <link href="{% static 'css/maneu_guest/insert.css' %}" rel="stylesheet">
 {% endblock %}
