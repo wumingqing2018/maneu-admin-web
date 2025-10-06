@@ -1,5 +1,4 @@
 $(document).ready(function () {
-    alert('1')
     $("#sendsms-btn").click(function () {
         $.ajax({
             url: sendsms,
