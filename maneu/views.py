@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from django.http import JsonResponse
 from django.shortcuts import render
 
@@ -29,8 +31,24 @@ def login_api(request):
         request.session['ip'] = common.getip(request)
         request.session['id'] = admin.id
         request.session['nickname'] = admin.nickname
-        request.session['code'] = common.generate_random_32hex()
-        content = {'status': True, 'message': '', 'data': {code: common.generate_random_32hex()}}
+        request.session['code'] = uuid4()
+        content = {'status': True, 'message': '', 'data': {code: uuid4()}}
+    else:
+        content = {'status': False, 'message': '', 'data': {}}
+
+    return JsonResponse(content)
+
+
+def login_api2(request):
+    call = request.GET.get('call')
+    code = request.GET.get('code')
+    if call and code:
+        admin = service.admin_login(call, code)
+        request.session['ip'] = common.getip(request)
+        request.session['id'] = admin.id
+        request.session['nickname'] = admin.nickname
+        request.session['code'] = uuid4()
+        content = {'status': True, 'message': '', 'data': {code: uuid4()}}
     else:
         content = {'status': False, 'message': '', 'data': {}}
 
@@ -59,11 +77,9 @@ def sendsms(request):
     phone_number = verify.is_call(request.GET.get('call'))
     if phone_number:
         random_num = common.get_random_code()
-        print(phone_number, random_num)
         data = service.sendsms(call=phone_number, code=random_num)
         if data:
             response = common.sendsms(call=phone_number, code=random_num)
-            print(response)
             if response['Code'] == 'OK':
                 content = {'status': True, 'message': 'OK', 'data': {}}
             else:
