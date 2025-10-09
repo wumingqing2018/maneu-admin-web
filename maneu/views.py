@@ -27,12 +27,13 @@ def login_api(request):
     call = verify.is_call(request.GET.get('call'))
     code = verify.is_code(request.GET.get('code'))
     if call and code:
-        admin = service.admin_login(call, code)
-        if admin:
+        adminUser = service.admin_login(call, code)
+        print(adminUser)
+        if adminUser:
             code = uuid.uuid4()
             request.session['ip'] = common.getip(request)
-            request.session['id'] = admin.id
-            request.session['nickname'] = admin.nickname
+            request.session['id'] = adminUser.id
+            request.session['nickname'] = adminUser.nickname
             request.session['code'] = code
             content = {'status': True, 'message': '', 'data': {'code': code}}
         else:
@@ -47,12 +48,13 @@ def login_api2(request):
     call = verify.is_call(request.GET.get('call'))
     code = verify.is_code(request.GET.get('code'))
     if call and code:
-        admin = service.admin_login(call, code)
-        if admin:
+        adminUser = service.admin_login(call, code)
+        print(adminUser)
+        if adminUser:
             code = uuid.uuid4()
             request.session['ip'] = common.getip(request)
-            request.session['id'] = admin.id
-            request.session['nickname'] = admin.nickname
+            request.session['id'] = adminUser.id
+            request.session['nickname'] = adminUser.nickname
             request.session['code'] = code
             content = {'status': True, 'message': '', 'data': {'code': code}}
         else:
