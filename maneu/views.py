@@ -92,7 +92,7 @@ def sendsms(request):
             if response['Code'] == 'OK':
                 content = {'status': True, 'message': 'OK', 'data': {}}
             else:
-                content = {'status': False, 'message': response["Message"], 'data': {}}
+                content = {'status': False, 'message': response["Message"], 'data': {'code': code}}
         else:
             content = {'status': False, 'message': '请输入正确的手机号', 'data': {}}
     else:
