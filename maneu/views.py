@@ -1,4 +1,4 @@
-from uuid import uuid4
+import uuid
 
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -27,12 +27,13 @@ def login_api(request):
     call = request.GET.get('call')
     code = request.GET.get('code')
     if call and code:
+        code = uuid.uuid4()
         admin = service.admin_login(call, code)
         request.session['ip'] = common.getip(request)
         request.session['id'] = admin.id
         request.session['nickname'] = admin.nickname
-        request.session['code'] = uuid4()
-        content = {'status': True, 'message': '', 'data': {code: uuid4()}}
+        request.session['code'] = code
+        content = {'status': True, 'message': '', 'data': {'code': code}}
     else:
         content = {'status': False, 'message': '', 'data': {}}
 
@@ -43,12 +44,13 @@ def login_api2(request):
     call = request.GET.get('call')
     code = request.GET.get('code')
     if call and code:
+        code = uuid.uuid4()
         admin = service.admin_login(call, code)
         request.session['ip'] = common.getip(request)
         request.session['id'] = admin.id
         request.session['nickname'] = admin.nickname
-        request.session['code'] = uuid4()
-        content = {'status': True, 'message': '', 'data': {code: uuid4()}}
+        request.session['code'] = code
+        content = {'status': True, 'message': '', 'data': {'code': code}}
     else:
         content = {'status': False, 'message': '', 'data': {}}
 
