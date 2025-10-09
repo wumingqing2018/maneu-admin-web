@@ -30,7 +30,7 @@ def login_api(request):
         adminUser = service.admin_login(call, code)
         print(call, code, adminUser)
         if adminUser:
-            code = uuid.uuid4()
+            code = str(uuid.uuid4())
             request.session['ip'] = common.getip(request)
             request.session['id'] = adminUser.id
             request.session['nickname'] = adminUser.nickname
