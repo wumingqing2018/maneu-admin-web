@@ -28,7 +28,7 @@ def login_api(request):
     code = verify.is_code(request.GET.get('code'))
     if call and code:
         adminUser = service.admin_login(call, code)
-        print(adminUser)
+        print(call, code, adminUser)
         if adminUser:
             code = uuid.uuid4()
             request.session['ip'] = common.getip(request)
