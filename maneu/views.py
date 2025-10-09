@@ -24,35 +24,41 @@ def login(request):
 
 
 def login_api(request):
-    call = request.GET.get('call')
-    code = request.GET.get('code')
+    call = verify.is_call(request.GET.get('call'))
+    code = verify.is_code(request.GET.get('code'))
     if call and code:
-        code = uuid.uuid4()
         admin = service.admin_login(call, code)
-        request.session['ip'] = common.getip(request)
-        request.session['id'] = admin.id
-        request.session['nickname'] = admin.nickname
-        request.session['code'] = code
-        content = {'status': True, 'message': '', 'data': {'code': code}}
+        if admin:
+            code = uuid.uuid4()
+            request.session['ip'] = common.getip(request)
+            request.session['id'] = admin.id
+            request.session['nickname'] = admin.nickname
+            request.session['code'] = code
+            content = {'status': True, 'message': '', 'data': {'code': code}}
+        else:
+            content = {'status': False, 'message': '100002', 'data': {'code': code}}
     else:
-        content = {'status': False, 'message': '', 'data': {}}
+        content = {'status': False, 'message': '100001', 'data': {}}
 
     return JsonResponse(content)
 
 
 def login_api2(request):
-    call = request.GET.get('call')
-    code = request.GET.get('code')
+    call = verify.is_call(request.GET.get('call'))
+    code = verify.is_code(request.GET.get('code'))
     if call and code:
-        code = uuid.uuid4()
         admin = service.admin_login(call, code)
-        request.session['ip'] = common.getip(request)
-        request.session['id'] = admin.id
-        request.session['nickname'] = admin.nickname
-        request.session['code'] = code
-        content = {'status': True, 'message': '', 'data': {'code': code}}
+        if admin:
+            code = uuid.uuid4()
+            request.session['ip'] = common.getip(request)
+            request.session['id'] = admin.id
+            request.session['nickname'] = admin.nickname
+            request.session['code'] = code
+            content = {'status': True, 'message': '', 'data': {'code': code}}
+        else:
+            content = {'status': False, 'message': '100002', 'data': {'code': code}}
     else:
-        content = {'status': False, 'message': '', 'data': {}}
+        content = {'status': False, 'message': '100001', 'data': {}}
 
     return JsonResponse(content)
 
