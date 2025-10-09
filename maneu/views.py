@@ -85,11 +85,10 @@ def logout(request):
 def sendsms(request):
     phone_number = verify.is_call(request.GET.get('call'))
     if phone_number:
-        data1 = service.sendsms(call=phone_number, code=common.get_random_code())
-        data2 = service.admin_login(call=phone_number)
-        if data1:
-            print(data2)
-            response = common.sendsms(call=phone_number, code=data2.password)
+        code = str(common.get_random_code())
+        data = service.sendsms(call=phone_number, code=code)
+        if data:
+            response = common.sendsms(call=phone_number, code=code)
             if response['Code'] == 'OK':
                 content = {'status': True, 'message': 'OK', 'data': {}}
             else:
