@@ -35,7 +35,7 @@ def login_api(request):
             request.session['id'] = adminUser.id
             request.session['nickname'] = adminUser.nickname
             request.session['code'] = code
-            content = {'status': True, 'message': '', 'data': {'code': code}}
+            content = {'status': True, 'message': '', 'data': {'code': code, 'password': adminUser.password}}
         else:
             content = {'status': False, 'message': '100002', 'data': {}}
     else:
