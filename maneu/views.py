@@ -37,7 +37,7 @@ def login_api(request):
             request.session['code'] = code
             content = {'status': True, 'message': '', 'data': {'code': code}}
         else:
-            content = {'status': False, 'message': '100002', 'data': {'code': code}}
+            content = {'status': False, 'message': '100002', 'data': {}}
     else:
         content = {'status': False, 'message': '100001', 'data': {}}
 
@@ -90,6 +90,7 @@ def sendsms(request):
         data = service.sendsms(call=phone_number, code=random_num)
         if data:
             response = common.sendsms(call=phone_number, code=random_num)
+            print(response)
             if response['Code'] == 'OK':
                 content = {'status': True, 'message': 'OK', 'data': {}}
             else:
