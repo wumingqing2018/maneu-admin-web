@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from common.simple import order_simple
 from common.verify import is_uuid
 from maneu_order import service
+import uuid
 
 
 def search(request):
@@ -16,9 +17,9 @@ def search(request):
     if admin_id and timeS and timeE:
         try:
             data = service.order_search(admin_id, timeS, timeE, value).values('id', 'name', 'phone', 'time', 'remark')
-            content = {'status': True, 'message': admin_id, 'data': list(data)}
+            content = {'status': True, 'message': admin_id, 'data': list(data), 'code': uuid.uuid4()}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'data': {}}
+            content = {'status': False, 'message': str(e), 'data': {}, 'code': uuid.uuid4()}
     else:
         content = {'status': False, 'message': '参数错误请确认', 'data': {}}
 
@@ -41,9 +42,9 @@ def insert(request):
                                          call=request.GET.get('call'),
                                          content=content,
                                          remark=request.GET.get('remark'))
-            content = {'status': True, 'message': '', 'data': {'id': order.id}}
+            content = {'status': True, 'message': '', 'data': {'id': order.id}, 'code': uuid.uuid4()}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'data': {}}
+            content = {'status': False, 'message': str(e), 'data': {}, 'code': uuid.uuid4()}
     else:
         content = {'status': False, 'message': '参数错误请确认', 'data': {}}
 
@@ -64,9 +65,9 @@ def update(request):
                                          call=request.GET.get('call'),
                                          content=content,
                                          remark=request.GET.get('remark'))
-            content = {'status': True, 'message': '', 'data': order}
+            content = {'status': True, 'message': '', 'data': order, 'code': uuid.uuid4()}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'data': {}}
+            content = {'status': False, 'message': str(e), 'data': {}, 'code': uuid.uuid4()}
     else:
         content = {'status': False, 'message': '参数错误请确认', 'data': {}}
 
@@ -89,9 +90,9 @@ def detail(request):
                 'remark': order.remark,
                 'time': order.time
             }
-            content = {'status': True, 'message': '', 'data': content}
+            content = {'status': True, 'message': '', 'data': content, 'code': uuid.uuid4()}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'data': {}}
+            content = {'status': False, 'message': str(e), 'data': {}, 'code': uuid.uuid4()}
     else:
         content = {'status': False, 'message': '请输入正确的参数', 'data': {}}
 
@@ -105,9 +106,9 @@ def delete(request):
     if admin_id and order_id:
         try:
             data = service.order_delete(order_id=order_id, admin_id=admin_id)
-            content = {'status': True, 'message': '', 'data': data}
+            content = {'status': True, 'message': '', 'data': data, 'code': uuid.uuid4()}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'data': {}}
+            content = {'status': False, 'message': str(e), 'data': {}, 'code': uuid.uuid4()}
     else:
         content = {'status': False, 'message': '请输入正确的参数', 'data': {}}
 
