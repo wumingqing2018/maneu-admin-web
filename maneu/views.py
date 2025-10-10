@@ -34,11 +34,11 @@ def login_api(request):
             request.session['id'] = adminUser.id
             request.session['nickname'] = adminUser.nickname
             request.session['code'] = code
-            content = {'status': True, 'message': '100000', 'content': {'mark': code, 'password': adminUser.password}}
+            content = {'status': True, 'message': '100000', 'data': {'password': adminUser.password}, 'mark': code,}
         else:
-            content = {'status': False, 'message': '100002', 'content': {}}
+            content = {'status': False, 'message': '100002', 'data': {}}
     else:
-        content = {'status': False, 'message': '100001', 'content': {}}
+        content = {'status': False, 'message': '100001', 'data': {}}
 
     return JsonResponse(content)
 
