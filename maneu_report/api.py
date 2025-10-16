@@ -6,6 +6,7 @@ from common.verify import is_uuid
 from maneu_report import service
 import uuid
 
+
 def search(request):
     admin_id = is_uuid(request.session.get('id'))
     value = request.GET.get('value')
@@ -14,7 +15,7 @@ def search(request):
 
     if admin_id and timeS and timeE:
         try:
-            data = service.report_search(admin_id, timeS, timeE, value).values('id', 'name', 'phone', 'time', 'remark')
+            data = service.report_search(admin_id, timeS, timeE, value).values('id', 'name', 'call', 'time', 'remark')
             content = {'status': True, 'message': admin_id, 'data': list(data), 'code': uuid.uuid4()}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'data': {}, 'code': uuid.uuid4()}
@@ -52,7 +53,7 @@ def insert(request):
                                            guest_id=guest_id,
                                            time=request.GET.get('time'),
                                            name=request.GET.get('name'),
-                                           phone=request.GET.get('call'),
+                                           call=request.GET.get('call'),
                                            remark=request.GET.get('remark'),
                                            content=content)
             content = {'status': True, 'message': '', 'data': {'id': report.id}, 'code': uuid.uuid4()}
@@ -74,7 +75,7 @@ def update(request):
                                            admin_id=admin_id,
                                            name=request.GET.get('name'),
                                            time=request.GET.get('time'),
-                                           phone=request.GET.get('call'),
+                                           call=request.GET.get('call'),
                                            remark=request.GET.get('remark'),
                                            content=content)
             if report:
