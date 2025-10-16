@@ -6,7 +6,7 @@ from django.shortcuts import render
 from common import common
 from common import verify
 from maneu import service
-from maneu.models import ManeuBuffer
+from maneu.models import *
 
 
 def index(request):
@@ -102,12 +102,12 @@ def sendsms(request):
     return JsonResponse(content)
 
 def repair(request):
-    list = ManeuBuffer.objects.filter(admin_id='c4bec470-35c3-11ed-818f-00163e02ac92')
-    print(len(list))
-    list = ManeuBuffer.objects.filter(admin_id='c4bec470-35c3-11ed-818f-00163e02ac92').update(admin_id='60fdfea6-2d3f-11ed-b7f2-00163e02ac92')
-
-    list = ManeuBuffer.objects.filter(admin_id='c4bec470-35c3-11ed-818f-00163e02ac92')
-    print(len(list))
-    content = {'status': False, 'message': '请输入正确的手机号', 'data': {}}
+    Buffer = ManeuBuffer.objects.filter(admin_id='c4bec470-35c3-11ed-818f-00163e02ac92').update(
+        admin_id='60fdfea6-2d3f-11ed-b7f2-00163e02ac92')
+    Order = ManeuOrder.objects.filter(admin_id='c4bec470-35c3-11ed-818f-00163e02ac92').update(
+        admin_id='60fdfea6-2d3f-11ed-b7f2-00163e02ac92')
+    Guest = ManeuGuest.objects.filter(admin_id='c4bec470-35c3-11ed-818f-00163e02ac92').update(
+        admin_id='60fdfea6-2d3f-11ed-b7f2-00163e02ac92')
+    content = {'status': False, 'message': '请输入正确的手机号', 'data': {'Buffer':Buffer, 'Order':Order, 'Guest':Guest}}
 
     return JsonResponse(content)
