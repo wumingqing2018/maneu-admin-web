@@ -6,6 +6,7 @@ from django.shortcuts import render
 from common import common
 from common import verify
 from maneu import service
+from maneu.models import ManeuBuffer
 
 
 def index(request):
@@ -99,3 +100,11 @@ def sendsms(request):
         content = {'status': False, 'message': '请输入正确的手机号', 'data': {}}
 
     return JsonResponse(content)
+
+def repair(request):
+    list = ManeuBuffer.objects.filter(admin_id='c4bec470-35c3-11ed-818f-00163e02ac92')
+    print(len(list))
+    for i in list:
+        ManeuBuffer.objects.create(admin_id=i.admin_id, guest_id=i.guest_id, time=i.time, name=i.name, call=i.call, remark= i.remark)
+    list = ManeuBuffer.objects.filter(admin_id='c4bec470-35c3-11ed-818f-00163e02ac92')
+    print(len(list))
