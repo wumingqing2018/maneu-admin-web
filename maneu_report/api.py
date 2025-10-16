@@ -14,8 +14,10 @@ def search(request):
     timeE = request.GET.get('timeE')
 
     if admin_id and timeS and timeE:
+        print(admin_id , timeS , timeE)
         try:
             data = service.report_search(admin_id, timeS, timeE, value).values('id', 'name', 'call', 'time', 'remark')
+            print(data)
             content = {'status': True, 'message': admin_id, 'data': list(data), 'code': uuid.uuid4()}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'data': {}, 'code': uuid.uuid4()}
