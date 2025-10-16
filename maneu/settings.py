@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'maneu_guest',
     'maneu_index',
     'maneu_order',
+    'maneu_report'
 ]
 
 """
@@ -55,7 +56,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'middleware.UserMiddleware.UserMiddleware',  # 用户登录校验中间件
+    # 'middleware.UserMiddleware.UserMiddleware',  # 用户登录校验中间件
 ]
 
 """
