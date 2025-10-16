@@ -6,6 +6,7 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
+import uuid
 
 
 class AuthGroup(models.Model):
@@ -119,7 +120,7 @@ class DjangoSession(models.Model):
 
 
 class ManeuAdmin(models.Model):
-    id = models.CharField(primary_key=True, max_length=36)  # The composite primary key (id, username) found, that is not supported. The first column is selected.
+    id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4, editable=False)  # The composite primary key (id, username) found, that is not supported. The first column is selected.
     username = models.CharField(max_length=36)
     password = models.CharField(max_length=36)
     nickname = models.CharField(max_length=36)
@@ -138,7 +139,7 @@ class ManeuAdmin(models.Model):
 
 
 class ManeuBuffer(models.Model):
-    id = models.CharField(primary_key=True, max_length=36)
+    id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4, editable=False)
     admin_id = models.CharField(max_length=36, blank=True, null=True)
     guest_id = models.CharField(max_length=36, blank=True, null=True)
     name = models.CharField(max_length=36, blank=True, null=True)
@@ -153,7 +154,7 @@ class ManeuBuffer(models.Model):
 
 
 class ManeuGuess(models.Model):
-    id = models.CharField(primary_key=True, max_length=36)
+    id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4, editable=False)
     admin_id = models.CharField(max_length=36, blank=True, null=True)
     time = models.DateTimeField()
     name = models.CharField(max_length=36, blank=True, null=True)
@@ -171,7 +172,7 @@ class ManeuGuess(models.Model):
 
 
 class ManeuGuessV2(models.Model):
-    id = models.CharField(primary_key=True, max_length=36)
+    id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4, editable=False)
     time = models.DateTimeField()
     name = models.CharField(max_length=36, blank=True, null=True)
     phone = models.CharField(max_length=36, blank=True, null=True)
@@ -190,7 +191,7 @@ class ManeuGuessV2(models.Model):
 
 
 class ManeuGuest(models.Model):
-    id = models.CharField(primary_key=True, max_length=36)
+    id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4, editable=False)
     admin_id = models.CharField(max_length=36, blank=True, null=True)
     time = models.DateTimeField(blank=True, null=True)
     name = models.CharField(max_length=255, blank=True, null=True)
@@ -208,7 +209,7 @@ class ManeuGuest(models.Model):
 
 
 class ManeuOrder(models.Model):
-    id = models.CharField(primary_key=True, max_length=36)
+    id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4, editable=False)
     admin_id = models.CharField(max_length=36)
     guest_id = models.CharField(max_length=36)
     store_id = models.CharField(max_length=36)
@@ -225,7 +226,7 @@ class ManeuOrder(models.Model):
 
 
 class ManeuOrderV2(models.Model):
-    id = models.CharField(primary_key=True, max_length=36)
+    id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4, editable=False)
     time = models.DateField()
     name = models.CharField(max_length=36)
     phone = models.CharField(max_length=36)
@@ -241,7 +242,7 @@ class ManeuOrderV2(models.Model):
 
 
 class ManeuRefraction(models.Model):
-    id = models.CharField(primary_key=True, max_length=36)
+    id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4, editable=False)
     time = models.DateTimeField()
     guess_id = models.CharField(max_length=36)
     admin_id = models.CharField(max_length=36)
@@ -253,7 +254,7 @@ class ManeuRefraction(models.Model):
 
 
 class ManeuReport(models.Model):
-    id = models.CharField(primary_key=True, max_length=36)
+    id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4, editable=False)
     admin_id = models.CharField(max_length=36, blank=True, null=True)
     guest_id = models.CharField(max_length=36, blank=True, null=True)
     time = models.DateTimeField(blank=True, null=True)
@@ -268,7 +269,7 @@ class ManeuReport(models.Model):
 
 
 class ManeuService(models.Model):
-    id = models.CharField(primary_key=True, max_length=36)
+    id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4, editable=False)
     time = models.DateTimeField()
     order_id = models.CharField(max_length=36, blank=True, null=True)
     admin_id = models.CharField(max_length=36)
@@ -281,7 +282,7 @@ class ManeuService(models.Model):
 
 
 class ManeuStore(models.Model):
-    id = models.CharField(primary_key=True, max_length=36)
+    id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4, editable=False)
     time = models.DateTimeField(blank=True, null=True)
     order_id = models.CharField(max_length=36)
     admin_id = models.CharField(max_length=36)
@@ -294,7 +295,7 @@ class ManeuStore(models.Model):
 
 
 class ManeuSubjectiveRefraction(models.Model):
-    id = models.CharField(primary_key=True, max_length=36)
+    id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4, editable=False)
     time = models.DateTimeField()
     guess_id = models.CharField(max_length=36)
     admin_id = models.CharField(max_length=36)
@@ -306,7 +307,7 @@ class ManeuSubjectiveRefraction(models.Model):
 
 
 class ManeuUsers(models.Model):
-    id = models.CharField(primary_key=True, max_length=36)
+    id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4, editable=False)
     nickname = models.CharField(max_length=36)
     username = models.CharField(unique=True, max_length=36)
     password = models.CharField(max_length=36)
@@ -324,7 +325,7 @@ class ManeuUsers(models.Model):
 
 
 class ManeuVerify(models.Model):
-    id = models.CharField(primary_key=True, max_length=36)
+    id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4, editable=False)
     order_id = models.CharField(max_length=36, blank=True, null=True)
     guest_id = models.CharField(max_length=36, blank=True, null=True)
     time = models.DateTimeField(blank=True, null=True)
@@ -339,7 +340,7 @@ class ManeuVerify(models.Model):
 
 
 class ManeuVision(models.Model):
-    id = models.CharField(primary_key=True, max_length=36)
+    id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4, editable=False)
     time = models.DateTimeField()
     guess_id = models.CharField(max_length=36)
     admin_id = models.CharField(max_length=36)
@@ -351,7 +352,7 @@ class ManeuVision(models.Model):
 
 
 class ManeuVisionSolutions(models.Model):
-    id = models.CharField(primary_key=True, max_length=36)
+    id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4, editable=False)
     time = models.DateTimeField()
     guess_id = models.CharField(max_length=36)
     admin_id = models.CharField(max_length=36)
