@@ -1,6 +1,10 @@
 from maneu.models import ManeuAdmin
 
 
+def get_wx_to():
+    return ManeuAdmin.objects.filter().first()
+
+
 def find_username_password(username, password):
     return ManeuAdmin.objects.filter(username=username, password=password).first()
 

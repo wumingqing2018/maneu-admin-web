@@ -34,7 +34,7 @@ $(document).ready(function () {
                 "            <p>" + res[i]['name'] + "</p>\n" +
                 "        </div>\n" +
                 "        <div class='col-1'>\n" +
-                "            <p>" + res[i]['phone'] + "</p>\n" +
+                "            <p>" + res[i]['call'] + "</p>\n" +
                 "        </div>\n" +
                 "        <div class='col-6'>\n" +
                 "            <p>" + res[i]['remark'] + "</p>\n" +
