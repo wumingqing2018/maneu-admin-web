@@ -96,3 +96,13 @@ def time_start():
 
 def time_end():
     return time.strftime("%Y-%m-%d 23:59:59", time.localtime())
+
+
+def get_phone_number(code, data_token):
+    url = f"https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token={data_token}"
+    payload = {"code": code}
+    response = requests.post(url, json=payload).json()
+    if response['errcode'] == 0:
+        return {'status': True, 'message': response['phone_info']['phoneNumber']}
+    else:
+        return {'status': False, 'message': response['errmsg']}

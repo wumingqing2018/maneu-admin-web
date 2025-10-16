@@ -94,6 +94,14 @@ def is_code(code):
         return None
 
 
+def is_code_wx(code):
+    pattern = re.compile(r'^[0-9a-fA-F]{64}$')
+    if pattern.match(code) is not None:
+        return str(code)
+    else:
+        return None
+
+
 def is_mobile(ua):
     """
     判断访问来源是pc端还是手机端
