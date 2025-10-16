@@ -10,10 +10,10 @@ $(document).ready(function () {
             },
             success: function (res) {
                 if (res.status == true) {
-                    console.log(res.data)
-                    $("#time").text(res.data.time)
-                    $("#remark").text(res.data.remark)
-                    guest_content(res.data.guess_id)
+                    console.log(res.content)
+                    $("#time").text(res.content.time)
+                    $("#remark").text(res.content.remark)
+                    guest_content(res.content.guess_id)
                 } else {
                     alert('查看订单失败，即将返回上一页。');
                     history.back()
@@ -30,13 +30,13 @@ $(document).ready(function () {
                 id: guest_id
             },
             success: function (res) {
-                $("#name").text(res.data.name)
-                $("#call").text(res.data.phone)
-                $("#sex").text(res.data.sex)
-                $("#age").text(res.data.age)
-                $("#dfh").text(res.data.dfh)
-                $("#em").text(res.data.em)
-                $("#ot").text(res.data.ot)
+                $("#name").text(res.content.name)
+                $("#call").text(res.content.phone)
+                $("#sex").text(res.content.sex)
+                $("#age").text(res.content.age)
+                $("#dfh").text(res.content.dfh)
+                $("#em").text(res.content.em)
+                $("#ot").text(res.content.ot)
             }
         })
     }

@@ -38,7 +38,7 @@ $(document).ready(function () {
                 'id': guest_id
             },
             success: function (res) {
-                content = res.data
+                content = res.content
                 $('#name').val(content.name)
                 $('#call').val(content.phone)
                 $('#age').val(content.age)

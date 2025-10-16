@@ -12,9 +12,9 @@ def search(request):
     value = request.GET.get('value')
     timeS = request.GET.get('timeS')
     timeE = request.GET.get('timeE')
+    print(admin_id, timeS, timeE)
 
     if admin_id and timeS and timeE:
-        print(admin_id , timeS , timeE)
         try:
             data = service.report_search(admin_id, timeS, timeE, value).values('id', 'name', 'call', 'time', 'remark')
             print(data)

@@ -68,7 +68,7 @@ $(document).ready(function () {
                 timeS: $("#timeS").val(),
             },
             success: function (res) {
-                forList(res.data)
+                forList(res.content)
             }
         })
     }

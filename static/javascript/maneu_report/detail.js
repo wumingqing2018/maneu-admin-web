@@ -56,7 +56,7 @@ $(document).ready(function () {
                 'id': guest_id
             },
             success: function (res) {
-                content = res.data
+                content = res.content
                 $('#name').val(content.name)
                 $('#call').val(content.phone)
                 $('#age').val(content.age)
@@ -79,8 +79,8 @@ $(document).ready(function () {
                 'id': report_id
             },
             success: function (res) {
-                $('#time').val(res.data.time)
-                content = JSON.parse(res.data.content)
+                $('#time').val(res.content.time)
+                content = JSON.parse(res.content.content)
                 $('#PD').val(content.PD)
                 $('#PLAN').val(content.PLAN)
                 $('#OD_AD').val(content.OD.AD)
