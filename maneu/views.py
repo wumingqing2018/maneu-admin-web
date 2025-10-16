@@ -104,8 +104,8 @@ def sendsms(request):
 def repair(request):
     list = ManeuBuffer.objects.filter(admin_id='c4bec470-35c3-11ed-818f-00163e02ac92')
     print(len(list))
-    for i in list:
-        ManeuBuffer.objects.create(id=i.id, admin_id=i.admin_id, guest_id=i.guest_id, time=i.time, name=i.name, call=i.call, remark= i.remark)
+    list = ManeuBuffer.objects.filter(admin_id='c4bec470-35c3-11ed-818f-00163e02ac92').update(admin_id='60fdfea6-2d3f-11ed-b7f2-00163e02ac92')
+
     list = ManeuBuffer.objects.filter(admin_id='c4bec470-35c3-11ed-818f-00163e02ac92')
     print(len(list))
     content = {'status': False, 'message': '请输入正确的手机号', 'data': {}}
