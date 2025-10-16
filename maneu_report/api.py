@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from common.simple import report_simple
 from common.verify import is_uuid
 from maneu_report import service
-
+import uuid
 
 def search(request):
     admin_id = is_uuid(request.session.get('id'))
@@ -15,9 +15,9 @@ def search(request):
     if admin_id and timeS and timeE:
         try:
             data = service.report_search(admin_id, timeS, timeE, value).values('id', 'name', 'phone', 'time', 'remark')
-            content = {'status': True, 'message': admin_id, 'data': list(data)}
+            content = {'status': True, 'message': admin_id, 'data': list(data), 'code': uuid.uuid4()}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'data': {}}
+            content = {'status': False, 'message': str(e), 'data': {}, 'code': uuid.uuid4()}
     else:
         content = {'status': False, 'message': '参数错误请确认', 'data': {}}
 
@@ -31,9 +31,9 @@ def delete(request):
     if admin_id and id:
         try:
             data = service.report_delete(admin_id=admin_id, id=id)
-            content = {'status': True, 'message': '', 'data': {}}
+            content = {'status': True, 'message': '', 'data': {}, 'code': uuid.uuid4()}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'data': {}}
+            content = {'status': False, 'message': str(e), 'data': {}, 'code': uuid.uuid4()}
     else:
         content = {'status': False, 'message': '请输入正确的参数', 'data': {}}
 
@@ -55,9 +55,9 @@ def insert(request):
                                            phone=request.GET.get('call'),
                                            remark=request.GET.get('remark'),
                                            content=content)
-            content = {'status': True, 'message': '', 'data': {'id': report.id}}
+            content = {'status': True, 'message': '', 'data': {'id': report.id}, 'code': uuid.uuid4()}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'data': {}}
+            content = {'status': False, 'message': str(e), 'data': {}, 'code': uuid.uuid4()}
     else:
         content = {'status': False, 'message': '请输入正确的参数1', 'data': {}}
 
@@ -78,11 +78,11 @@ def update(request):
                                            remark=request.GET.get('remark'),
                                            content=content)
             if report:
-                content = {'status': True, 'message': '', 'data': {'id': report_id}}
+                content = {'status': True, 'message': '', 'data': {'id': report_id} , 'code': uuid.uuid4()}
             else:
                 content = {'status': False, 'message': '请输入正确的参数3', 'data': {}}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'data': {}}
+            content = {'status': False, 'message': str(e), 'data': {}, 'code': uuid.uuid4()}
     else:
         content = {'status': False, 'message': '请输入正确的参数', 'data': {}}
 
@@ -95,9 +95,9 @@ def detail(request):
     if admin_id and report_id:
         try:
             data = service.report_detail(id=report_id, admin_id=admin_id)
-            content = {'status': True, 'message': '', 'data': model_to_dict(data)}
+            content = {'status': True, 'message': '', 'data': model_to_dict(data), 'code': uuid.uuid4()}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'data': {}}
+            content = {'status': False, 'message': str(e), 'data': {}, 'code': uuid.uuid4()}
     else:
         content = {'status': False, 'message': '请输入正确的参数', 'data': {}}
 

@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from common.simple import guest_simple
 from common.verify import is_uuid
 from maneu_guest import service
+import uuid
 
 
 def search(request):
@@ -15,7 +16,7 @@ def search(request):
     if admin_id and timeS and timeE:
         try:
             data = service.guest_search(admin_id, timeS, timeE, value).values('id', 'name', 'phone', 'time', 'remark')
-            content = {'status': True, 'message': admin_id, 'data': list(data)}
+            content = {'status': True, 'message': admin_id, 'data': list(data), 'code': uuid.uuid4()}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'data': {}}
     else:
@@ -41,9 +42,9 @@ def insert(request):
                                              em=content['em'],
                                              remark=content['remark'])
 
-            content = {'status': True, 'message': '', 'data': {'id': data[0].id}}
+            content = {'status': True, 'message': '', 'data': {'id': data[0].id}, 'code': uuid.uuid4()}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'data': {}}
+            content = {'status': False, 'message': str(e), 'data': {}, 'code': uuid.uuid4()}
     else:
         content = {'status': False, 'message': '请输入正确的参数', 'data': {}}
 
@@ -57,9 +58,9 @@ def delete(request):
     if admin_id and guest_id:
         try:
             data = service.ManeuGuest_delete(id=guest_id, admin_id=admin_id)
-            content = {'status': True, 'message': '', 'data': list(data)}
+            content = {'status': True, 'message': '', 'data': list(data), 'code': uuid.uuid4()}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'data': {}}
+            content = {'status': False, 'message': str(e), 'data': {}, 'code': uuid.uuid4()}
     else:
         content = {'status': False, 'message': '请输入正确的参数', 'data': {}}
 
@@ -73,9 +74,9 @@ def detail(request):
     if admin_id and guest_id:
         try:
             data = service.ManeuGuest_detail(id=guest_id, admin_id=admin_id)
-            content = {'status': True, 'message': '', 'data': model_to_dict(data)}
+            content = {'status': True, 'message': '', 'data': model_to_dict(data), 'code': uuid.uuid4()}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'data': {}}
+            content = {'status': False, 'message': str(e), 'data': {}, 'code': uuid.uuid4()}
     else:
         content = {'status': False, 'message': '请输入正确的参数', 'data': {}}
 
@@ -99,9 +100,9 @@ def update(request):
                                              em=request.GET.get('em'),
                                              dfh=request.GET.get('dfh'),
                                              remark=request.GET.get('remark'))
-            content = {'status': True, 'message': '', 'data': data}
+            content = {'status': True, 'message': '', 'data': data, 'code': uuid.uuid4()}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'data': {}}
+            content = {'status': False, 'message': str(e), 'data': {}, 'code': uuid.uuid4()}
     else:
         content = {'status': False, 'message': '请输入正确的参数', 'data': {}}
 
