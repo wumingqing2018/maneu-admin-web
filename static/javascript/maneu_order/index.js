@@ -68,6 +68,7 @@ $(document).ready(function () {
                 timeS: $("#timeS").val(),
             },
             success: function (res) {
+                console.log(res)
                 forList(res.content)
             }
         })

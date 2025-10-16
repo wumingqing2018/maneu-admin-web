@@ -17,9 +17,9 @@ def search(request):
     if admin_id and timeS and timeE:
         try:
             data = service.order_search(admin_id, timeS, timeE, value).values('id', 'name', 'phone', 'time', 'remark')
-            content = {'status': True, 'message': admin_id, 'data': list(data), 'mark': uuid.uuid4()}
+            content = {'status': True, 'message': admin_id, 'content': list(data), 'mark': uuid.uuid4()}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'data': {}, 'mark': uuid.uuid4()}
+            content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid.uuid4()}
     else:
         content = {'status': False, 'message': '参数错误请确认', 'content': {}}
 
@@ -42,9 +42,9 @@ def insert(request):
                                          call=request.GET.get('call'),
                                          content=content,
                                          remark=request.GET.get('remark'))
-            content = {'status': True, 'message': '', 'data': {'id': order.id}, 'mark': uuid.uuid4()}
+            content = {'status': True, 'message': '', 'content': {'id': order.id}, 'mark': uuid.uuid4()}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'data': {}, 'mark': uuid.uuid4()}
+            content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid.uuid4()}
     else:
         content = {'status': False, 'message': '参数错误请确认', 'content': {}}
 
@@ -65,11 +65,11 @@ def update(request):
                                          call=request.GET.get('call'),
                                          content=content,
                                          remark=request.GET.get('remark'))
-            content = {'status': True, 'message': '', 'data': order, 'mark': uuid.uuid4()}
+            content = {'status': True, 'message': '', 'content': order, 'mark': uuid.uuid4()}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'data': {}, 'mark': uuid.uuid4()}
+            content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid.uuid4()}
     else:
-        content = {'status': False, 'message': '参数错误请确认', 'data': {}}
+        content = {'status': False, 'message': '参数错误请确认', 'content': {}}
 
     return JsonResponse(content)
 
@@ -90,11 +90,11 @@ def detail(request):
                 'remark': order.remark,
                 'time': order.time
             }
-            content = {'status': True, 'message': '', 'data': content, 'mark': uuid.uuid4()}
+            content = {'status': True, 'message': '', 'content': content, 'mark': uuid.uuid4()}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'data': {}, 'mark': uuid.uuid4()}
+            content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid.uuid4()}
     else:
-        content = {'status': False, 'message': '请输入正确的参数', 'data': {}}
+        content = {'status': False, 'message': '请输入正确的参数', 'content': {}}
 
     return JsonResponse(content)
 
@@ -106,10 +106,10 @@ def delete(request):
     if admin_id and order_id:
         try:
             data = service.order_delete(order_id=order_id, admin_id=admin_id)
-            content = {'status': True, 'message': '', 'data': data, 'mark': uuid.uuid4()}
+            content = {'status': True, 'message': '', 'content': data, 'mark': uuid.uuid4()}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'data': {}, 'mark': uuid.uuid4()}
+            content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid.uuid4()}
     else:
-        content = {'status': False, 'message': '请输入正确的参数', 'data': {}}
+        content = {'status': False, 'message': '请输入正确的参数', 'content': {}}
 
     return JsonResponse(content)
