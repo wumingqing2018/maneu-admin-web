@@ -2,14 +2,14 @@ from django.shortcuts import render
 
 from common import common
 from maneu_order import service
-
+from uuid import uuid4
 
 def index(request):
-    return render(request, 'maneu_order/index.html', {'timeS': common.time_start, 'timeE': common.time_end})
+    return render(request, 'maneu_order/index.html', {'timeS': common.time_start, 'timeE': common.time_end, 'mark': str(uuid4())})
 
 
 def insert(request):
-    return render(request, 'maneu_order/insert.html', {'time': common.current_time()})
+    return render(request, 'maneu_order/insert.html', {'time': common.current_time(), 'mark': str(uuid4())})
 
 
 def detail(request):
@@ -22,4 +22,4 @@ def detail(request):
     else:
         print(get_wxacode)
 
-    return render(request, 'maneu_order/detail.html', {'order_id': request.GET.get('id')})
+    return render(request, 'maneu_order/detail.html', {'order_id': request.GET.get('id'), 'mark': str(uuid4())})

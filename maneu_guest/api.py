@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from common.simple import guest_simple
 from common.verify import is_uuid
 from maneu_guest import service
-import uuid
+from uuid import uuid4
 
 
 def search(request):
@@ -16,11 +16,11 @@ def search(request):
     if admin_id and timeS and timeE:
         try:
             data = service.guest_search(admin_id, timeS, timeE, value).values('id', 'name', 'phone', 'time', 'remark')
-            content = {'status': True, 'message': admin_id, 'data': list(data), 'code': uuid.uuid4()}
+            content = {'status': True, 'message': admin_id, 'content': list(data), 'mark': str(uuid4())}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'data': {}}
+            content = {'status': False, 'message': str(e), 'content': {}, 'mark': str(uuid4())}
     else:
-        content = {'status': False, 'message': '参数错误请确认', 'data': {}}
+        content = {'status': False, 'message': '参数错误请确认', 'content': {}}
 
     return JsonResponse(content)
 
@@ -42,11 +42,11 @@ def insert(request):
                                              em=content['em'],
                                              remark=content['remark'])
 
-            content = {'status': True, 'message': '', 'data': {'id': data[0].id}, 'code': uuid.uuid4()}
+            content = {'status': True, 'message': '', 'content': {'id': data[0].id}, 'mark': str(uuid4())}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'data': {}, 'code': uuid.uuid4()}
+            content = {'status': False, 'message': str(e), 'content': {}, 'mark': str(uuid4())}
     else:
-        content = {'status': False, 'message': '请输入正确的参数', 'data': {}}
+        content = {'status': False, 'message': '请输入正确的参数', 'content': {}}
 
     return JsonResponse(content)
 
@@ -58,11 +58,11 @@ def delete(request):
     if admin_id and guest_id:
         try:
             data = service.ManeuGuest_delete(id=guest_id, admin_id=admin_id)
-            content = {'status': True, 'message': '', 'data': list(data), 'code': uuid.uuid4()}
+            content = {'status': True, 'message': '', 'content': list(data), 'mark': str(uuid4())}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'data': {}, 'code': uuid.uuid4()}
+            content = {'status': False, 'message': str(e), 'content': {}, 'mark': str(uuid4())}
     else:
-        content = {'status': False, 'message': '请输入正确的参数', 'data': {}}
+        content = {'status': False, 'message': '请输入正确的参数', 'content': {}}
 
     return JsonResponse(content)
 
@@ -74,11 +74,11 @@ def detail(request):
     if admin_id and guest_id:
         try:
             data = service.ManeuGuest_detail(id=guest_id, admin_id=admin_id)
-            content = {'status': True, 'message': '', 'data': model_to_dict(data), 'code': uuid.uuid4()}
+            content = {'status': True, 'message': '', 'content': model_to_dict(data), 'mark': str(uuid4())}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'data': {}, 'code': uuid.uuid4()}
+            content = {'status': False, 'message': str(e), 'content': {}, 'mark': str(uuid4())}
     else:
-        content = {'status': False, 'message': '请输入正确的参数', 'data': {}}
+        content = {'status': False, 'message': '请输入正确的参数', 'content': {}}
 
     return JsonResponse(content)
 
@@ -100,10 +100,10 @@ def update(request):
                                              em=request.GET.get('em'),
                                              dfh=request.GET.get('dfh'),
                                              remark=request.GET.get('remark'))
-            content = {'status': True, 'message': '', 'data': data, 'code': uuid.uuid4()}
+            content = {'status': True, 'message': '', 'content': data, 'mark': str(uuid4())}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'data': {}, 'code': uuid.uuid4()}
+            content = {'status': False, 'message': str(e), 'content': {}, 'mark': str(uuid4())}
     else:
-        content = {'status': False, 'message': '请输入正确的参数', 'data': {}}
+        content = {'status': False, 'message': '请输入正确的参数', 'content': {}}
 
     return JsonResponse(content)

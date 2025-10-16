@@ -2,7 +2,7 @@ from django.http import JsonResponse
 
 from common.verify import is_uuid
 from maneu_admin import service
-
+from uuid import uuid4
 
 def detail(request):
     admin_id = is_uuid(request.GET.get('id'))
@@ -16,11 +16,11 @@ def detail(request):
                     'phone': userContent.phone,
                     'time': userContent.time,
                     }
-            content = {'status': True, 'message': '', 'data': data}
+            content = {'status': True, 'message': '', 'content': data, 'mark': str(uuid4())}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'data': {}}
+            content = {'status': False, 'message': str(e), 'content': {}, 'mark': str(uuid4())}
     else:
-        content = {'status': False, 'message': '请输入正确的参数', 'data': {}}
+        content = {'status': False, 'message': '请输入正确的参数', 'content': {}}
 
     return JsonResponse(content)
 
@@ -33,10 +33,10 @@ def update(request):
             data = service.user_update(admin_id=admin_id, phone=request.GET.get('phone'),
                                        nickname=request.GET.get('nickname'), location=request.GET.get('location'),
                                        content=request.GET.get('content'))
-            content = {'status': True, 'message': '', 'data': data}
+            content = {'status': True, 'message': '', 'content': data, 'mark': str(uuid4())}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'data': {}}
+            content = {'status': False, 'message': str(e), 'content': {}, 'mark': str(uuid4())}
     else:
-        content = {'status': False, 'message': '请输入正确的参数', 'data': {}}
+        content = {'status': False, 'message': '请输入正确的参数', 'content': {}}
 
     return JsonResponse(content)

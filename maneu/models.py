@@ -6,7 +6,6 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
-import uuid
 
 
 class AuthGroup(models.Model):
@@ -43,7 +42,7 @@ class AuthUser(models.Model):
     last_login = models.DateTimeField(blank=True, null=True)
     is_superuser = models.IntegerField()
     username = models.CharField(unique=True, max_length=150)
-    first_name = models.CharField(max_length=150)
+    first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=150)
     email = models.CharField(max_length=254)
     is_staff = models.IntegerField()
@@ -120,7 +119,7 @@ class DjangoSession(models.Model):
 
 
 class ManeuAdmin(models.Model):
-    id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4, editable=False)  # The composite primary key (id, username) found, that is not supported. The first column is selected.
+    id = models.CharField(primary_key=True, max_length=36)  # The composite primary key (id, username) found, that is not supported. The first column is selected.
     username = models.CharField(max_length=36)
     password = models.CharField(max_length=36)
     nickname = models.CharField(max_length=36)
@@ -140,11 +139,23 @@ class ManeuAdmin(models.Model):
 
 class ManeuBuffer(models.Model):
     id = models.CharField(primary_key=True, max_length=36)
-    admin_id = models.CharField(max_length=36, blank=True, null=True)
-    guest_id = models.CharField(max_length=36, blank=True, null=True)
-    name = models.CharField(max_length=36, blank=True, null=True)
+    admin_id = models.CharField(max_length=36)
+    guest_id = models.CharField(max_length=36)
     call = models.CharField(max_length=36, blank=True, null=True)
+    name = models.CharField(max_length=36, blank=True, null=True)
     time = models.DateTimeField(blank=True, null=True)
+    plan = models.CharField(max_length=36, blank=True, null=True)
+    pd = models.CharField(max_length=36, blank=True, null=True)
+    os_va = models.CharField(max_length=36)
+    od_va = models.CharField(max_length=36)
+    os_ax = models.CharField(max_length=36)
+    od_ax = models.CharField(max_length=36)
+    os_sph = models.CharField(max_length=36)
+    od_sph = models.CharField(max_length=36)
+    os_cyl = models.CharField(max_length=36)
+    od_cyl = models.CharField(max_length=36)
+    os_add = models.CharField(max_length=36)
+    od_add = models.CharField(max_length=36)
     remark = models.TextField(blank=True, null=True)
     content = models.TextField(blank=True, null=True)
 
@@ -326,13 +337,13 @@ class ManeuUsers(models.Model):
 
 class ManeuVerify(models.Model):
     id = models.CharField(primary_key=True, max_length=36)
-    order_id = models.CharField(max_length=36, blank=True, null=True)
-    guest_id = models.CharField(max_length=36, blank=True, null=True)
+    order_id = models.CharField(max_length=36, db_collation='utf8mb3_bin', blank=True, null=True)
+    guest_id = models.CharField(max_length=36, db_collation='utf8mb3_bin', blank=True, null=True)
     time = models.DateTimeField(blank=True, null=True)
-    name = models.CharField(max_length=36, blank=True, null=True)
-    call = models.CharField(max_length=36, blank=True, null=True)
-    remark = models.TextField(blank=True, null=True)
-    content = models.TextField(blank=True, null=True)
+    name = models.CharField(max_length=36, db_collation='utf8mb3_bin', blank=True, null=True)
+    call = models.CharField(max_length=36, db_collation='utf8mb3_bin', blank=True, null=True)
+    remark = models.TextField(db_collation='utf8mb3_bin', blank=True, null=True)
+    content = models.TextField(db_collation='utf8mb3_bin', blank=True, null=True)
 
     class Meta:
         managed = False
