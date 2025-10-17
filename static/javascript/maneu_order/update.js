@@ -63,11 +63,14 @@ $(document).ready(function () {
                 'id': order_id
             },
             success: function (res) {
-                $('#remark').val(res.data.remark)
-                $('#name').val(res.data.name)
-                $('#call').val(res.data.phone)
-                $('#time').val(res.data.time)
-                for (var i = 0; i < res.data.content.length; i++) {
+                console.log(res)
+
+                $('#remark').val(res.content.remark)
+                $('#name').val(res.content.name)
+                $('#call').val(res.content.phone)
+                $('#time').val(res.content.time)
+
+                for (var i = 0; i < res.content.length; i++) {
                     store = $(".store:eq(" + i + ")")
                     store.find(".arg10").val(res.data.content[i]['arg10'])
                     store.find(".arg11").val(res.data.content[i]['arg11'])
@@ -76,8 +79,8 @@ $(document).ready(function () {
                     store.find(".arg14").val(res.data.content[i]['arg14'])
                 }
 
-                report_id = res.data.report_id;
-                guest_id = res.data.guest_id;
+                report_id = res.content.report_id;
+                guest_id = res.content.guest_id;
                 callback(true); // 第一个参数为null表示没有错误，第二个参数为请求的数据
             },
             error: function (res) {
@@ -93,8 +96,8 @@ $(document).ready(function () {
                 'id': guest_id
             },
             success: function (res) {
-                console.log(res.data)
-                content = res.data
+                console.log('guest',res.content)
+                content = res.content
                 $('#name').val(content.name)
                 $('#call').val(content.phone)
                 $('#age').val(content.age)
@@ -117,38 +120,21 @@ $(document).ready(function () {
                 'id': report_id
             },
             success: function (res) {
-                content = JSON.parse(res.data.content)
-                $('#PD').val(content.PD)
-                $('#PLAN').val(content.PLAN)
-                $('#OD_AD').val(content.OD.AD)
-                $('#OD_ADD').val(content.OD.ADD)
-                $('#OD_AK').val(content.OD.AK)
-                $('#OD_AL').val(content.OD.AL)
-                $('#OD_AX').val(content.OD.AX)
-                $('#OD_BC').val(content.OD.BC)
-                $('#OD_CCT').val(content.OD.CCT)
-                $('#OD_CYL').val(content.OD.CYL)
-                $('#OD_FR').val(content.OD.FR)
-                $('#OD_LT').val(content.OD.LT)
-                $('#OD_PR').val(content.OD.PR)
-                $('#OD_SPH').val(content.OD.SPH)
-                $('#OD_VA').val(content.OD.VA)
-                $('#OD_VT').val(content.OD.VT)
+                console.log('report',res.content.pd)
+                content = res.content
+                $('#PD').val(content.pd)
+                $('#PLAN').val(content.plan)
+                $('#OD_ADD').val(content.od_add)
+                $('#OD_AX').val(content.od_ax)
+                $('#OD_CYL').val(content.od_cyl)
+                $('#OD_SPH').val(content.od_sph)
+                $('#OD_VA').val(content.od_va)
 
-                $('#OS_AD').val(content.OS.AD)
-                $('#OS_ADD').val(content.OS.ADD)
-                $('#OS_AK').val(content.OS.AK)
-                $('#OS_AL').val(content.OS.AL)
-                $('#OS_AX').val(content.OS.AX)
-                $('#OS_BC').val(content.OS.BC)
-                $('#OS_CCT').val(content.OS.CCT)
-                $('#OS_CYL').val(content.OS.CYL)
-                $('#OS_FR').val(content.OS.FR)
-                $('#OS_LT').val(content.OS.LT)
-                $('#OS_PR').val(content.OS.PR)
-                $('#OS_SPH').val(content.OS.SPH)
-                $('#OS_VA').val(content.OS.VA)
-                $('#OS_VT').val(content.OS.VT)
+                $('#OS_ADD').val(content.os_add)
+                $('#OS_AX').val(content.os_ax)
+                $('#OS_CYL').val(content.os_cyl)
+                $('#OS_SPH').val(content.os_sph)
+                $('#OS_VA').val(content.os_va)
                 callback(true); // 第一个参数为null表示没有错误，第二个参数为请求的数据
             },
             error: function (res) {

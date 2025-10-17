@@ -1,7 +1,26 @@
-$(function () {
-    var start = moment().subtract(29, 'days');
-    var end = moment();
+function deleteBtn(obj) {
+    if (confirm("您确定要删除吗？")) {
+        $.ajax({
+            url: api_delete,
+            type: 'GET',
+            data: {
+                order_id: obj.alt,
+            },
+            success: function (res) {
+                if (res.status === true) {
+                    obj.parentElement.parentElement.parentElement.parentElement.remove()
+                } else {
+                    alert(res.message)
+                }
+            },
+        })
+    } else {
+        return false;
+    }
+}
 
+$(document).ready(function () {
+    getList()
     function forList(res) {
         $('#body').empty();
         for (i in res) {
@@ -15,16 +34,21 @@ $(function () {
                 "            <p>" + res[i]['name'] + "</p>\n" +
                 "        </div>\n" +
                 "        <div class='col-1'>\n" +
-                "            <p>" + res[i]['phone'] + "</p>\n" +
+                "            <p>" + res[i]['call'] + "</p>\n" +
                 "        </div>\n" +
-                "        <div class='col-7'>\n" +
+                "        <div class='col-6'>\n" +
                 "            <p>" + res[i]['remark'] + "</p>\n" +
                 "        </div>\n" +
                 "        <div class='col-1'>\n" +
-                "            <form method='GET' action='" + detail + "'>\n" +
+                "            <div class='input-group input-group-sm'>\n" +
+                "                <input type='button' class='col-12 btn btn-danger' onclick='deleteBtn(this)' value='删除' alt=" + res[i]['id'] + ">\n" +
+                "            </div>\n" +
+                "        </div>\n" +
+                "        <div class='col-1'>\n" +
+                "            <form method='GET' action='" + web_detail + "'>\n" +
                 "                <input type='hidden' name='id' value=" + res[i]['id'] + ">\n" +
                 "                <div class='input-group input-group-sm'>\n" +
-                "                    <input type='submit' class='col-12 btn btn-primary' value='查看订单'>\n" +
+                "                    <input type='submit' class='col-12 btn btn-primary' value='查看'>\n" +
                 "                </div>\n" +
                 "            </form>\n" +
                 "        </div>\n" +
@@ -34,43 +58,23 @@ $(function () {
             )
         }
     }
-
-    function cb(start, end) {
-        $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-        $.ajax({
-            url: api_index,
-            data: {
-                start: start.format('YYYY-MM-DD 00:00:00'),
-                end: end.format('YYYY-MM-DD 23:59:59'),
-            },
-            success: function (res) {
-                forList(res.data)
-            },
-        });
-    }
-
-    $('#search-value').keyup(function () {
+    function getList(){
         $.ajax({
             url: api_search,
+            method: 'GET',
             data: {
-                text: $('#search-value').val()
+                value: $("#value").val(),
+                timeE: $("#timeE").val(),
+                timeS: $("#timeS").val(),
             },
             success: function (res) {
-                forList(res.data)
+                console.log(res)
+                forList(res.content)
             }
         })
+    }
+
+    $('#search_button').click(function () {
+        getList()
     })
-
-    $('#reportrange').daterangepicker({
-        startDate: start, endDate: end, ranges: {
-            '今天': [moment(), moment()],
-            '昨天': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-            '七天内': [moment().subtract(6, 'days'), moment()],
-            '三十天内': [moment().subtract(29, 'days'), moment()],
-            '本月': [moment().startOf('month'), moment().endOf('month')],
-            '上月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-        }
-    }, cb);
-
-    cb(start, end);
-});
+})

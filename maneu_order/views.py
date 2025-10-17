@@ -4,6 +4,7 @@ from common import common
 from maneu_order import service
 from uuid import uuid4
 
+
 def index(request):
     return render(request, 'maneu_order/index.html', {'timeS': common.time_start, 'timeE': common.time_end, 'mark': str(uuid4())})
 
