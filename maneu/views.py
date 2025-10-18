@@ -89,8 +89,8 @@ def sendsms(request):
     print(phone_number)
     if phone_number:
         code = str(common.get_random_code())
-        print(phone_number)
         data = service.sendsms(call=phone_number, code=code)
+        print(data)
         if data:
             response = common.sendsms(call=phone_number, code=code)
             if response['Code'] == 'OK':
