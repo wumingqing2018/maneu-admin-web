@@ -80,8 +80,8 @@ $(document).ready(function () {
             },
             success: function (res) {
                 console.log(res.content)
-                $('#time').val(res.content.time)
-                content = JSON.parse(res.content.content)
+                content = res.content
+                $('#time').val(content.time)
                 $('#PD').val(content.pd)
                 $('#PLAN').val(content.plan)
                 $('#OD_AD').val(content.os_ad)
