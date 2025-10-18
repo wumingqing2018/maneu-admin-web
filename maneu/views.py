@@ -92,7 +92,8 @@ def sendsms(request):
         data = service.sendsms(call=phone_number, code=code)
         print(data)
         if data:
-            response = common.sendsms(call=phone_number, code=code)
+            admin1 = ManeuAdmin.objects.filter(username=phone_number).filter()
+            response = common.sendsms(call=admin1.phone, code=code)
             if response['Code'] == 'OK':
                 content = {'status': True, 'message': 'OK', 'data': {}}
             else:
