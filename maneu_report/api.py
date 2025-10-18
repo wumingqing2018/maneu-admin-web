@@ -48,8 +48,7 @@ def insert(request):
     guest_id = is_uuid(request.GET.get('guest_id'))
 
     if admin_id and guest_id:
-        content = report_simple(request.GET.get('content'))
-        print(content)
+        content = report_simple(request)
         try:
             report = service.report_insert(admin_id=admin_id,
                                            guest_id=guest_id,
@@ -58,6 +57,7 @@ def insert(request):
                                            call=request.GET.get('call'),
                                            remark=request.GET.get('remark'),
                                            content=content)
+            print(report)
             content = {'status': True, 'message': '', 'content': {'id': report.id}, 'mark': uuid.uuid4()}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid.uuid4()}

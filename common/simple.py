@@ -30,45 +30,56 @@ def order_simple(request_dict):
     return json.dumps(data)
 
 
-def report_simple(request_dict):
-    request = json.loads(request_dict)
-    data = {
-        'PLAN': '远用解决方案',
-        'PD': '',
-        'OD': {
-            'AL': '', 'AK': '', 'AX': '0.00', 'AD': '', 'ADD': '0.00', 'BC': '', 'CYL': '0.00', 'CCT': '', 'VA': '',
-            'SPH': '0.00', 'PR': '0.00', 'FR': '', 'LT': '', 'VT': ''
-        },
-        'OS': {
-            'AL': '', 'AK': '', 'AX': '0.00', 'AD': '', 'ADD': '0.00', 'BC': '', 'CYL': '0.00', 'CCT': '', 'VA': '',
-            'SPH': '0.00', 'PR': '0.00', 'FR': '', 'LT': '', 'VT': ''
-        }
+def report_simple(request):
+    simple = {
+        'plan': '远用解决方案',
+        'pd': '',
+        'os_al': '',
+        'os_ak': '',
+        'os_ax': '',
+        'os_ad': '',
+        'os_add': '',
+        'os_bc': '',
+        'os_cyl': '',
+        'os_cct': '',
+        'os_va': '',
+        'os_sph': '',
+        'os_pr': '',
+        'os_fr': '',
+        'os_lt': '',
+        'os_vt': '',
+        'od_al': '',
+        'od_ak': '',
+        'od_ax': '',
+        'od_ad': '',
+        'od_add': '',
+        'od_bc': '',
+        'od_cyl': '',
+        'od_cct': '',
+        'od_va': '',
+        'od_sph': '',
+        'od_pr': '',
+        'od_fr': '',
+        'od_lt': '',
+        'od_vt': '',
     }
 
-    if request['PLAN'] == '两用解决方案' or request['PLAN'] == '远用解决方案' or request['PLAN'] == '近用解决方案':
-        data['PLAN'] = request['PLAN']
-
-    try:
-        data['PD'] = format(float(request['PD']), '.1f')
-    except:
-        pass
-
-    for i in list(data['OD']):
+    for i in list(simple):
         try:
-            data['OD'][i] = format(float(request['OD'][i]), '.2f')
+            simple[i] = format(float(request.GET.get(i)), '.2f')
         except:
             pass
-    if request['OD']['FR'] == 'BU' or request['OD']['FR'] == 'BD' or request['OD']['FR'] == request['OD'][
-        'FR'] == 'BO' or request['OD']['FR'] == 'BI':
-        data['OD']['FR'] = request['OD']['FR']
 
-    for i in list(data['OS']):
-        try:
-            data['OS'][i] = format(float(request['OS'][i]), '.2f')
-        except:
-            pass
-    if request['OS']['FR'] == 'BU' or request['OS']['FR'] == 'BD' or request['OS']['FR'] == request['OS'][
-        'FR'] == 'BO' or request['OS']['FR'] == 'BI':
-        data['OS']['FR'] = request['OS']['FR']
+    od_fr = request.GET.get('od_fr')
+    if od_fr == 'BU' or od_fr == 'BD' or od_fr == od_fr == 'BO' or od_fr == 'BI':
+        simple['od_fr'] = od_fr
 
-    return json.dumps(data)
+    os_fr = request.GET.get('os_fr')
+    if os_fr == 'BU' or os_fr == 'BD' or os_fr == os_fr == 'BO' or os_fr == 'BI':
+        simple['os_fr'] = os_fr
+
+    plan = request.GET.get('plan')
+    if plan == '两用解决方案' or plan == '远用解决方案' or plan == '近用解决方案' or plan == '':
+        simple['plan'] = plan
+
+    return simple

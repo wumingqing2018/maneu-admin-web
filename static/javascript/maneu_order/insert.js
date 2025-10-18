@@ -18,7 +18,7 @@ $(document).ready(function () {
         guest_insert(function (data) {
             console.log(data)
             if (data.status === true) {
-                guest_id = data.data.id
+                guest_id = data.content.id
                 report_insert(guest_id, function (data) {
                     console.log(data)
                     if (data.status === true) {
@@ -99,42 +99,6 @@ $(document).ready(function () {
     }
 
     function report_insert(guest_id, callback) {
-        content = {
-            PLAN: $("#PLAN").val(),
-            PD: $("#PD").val(),
-            OD: {
-                'VA': $("#OD_VA").val(),
-                'SPH': $("#OD_SPH").val(),
-                'CYL': $("#OD_CYL").val(),
-                'AX': $("#OD_AX").val(),
-                'PR': $("#OD_PR").val(),
-                'FR': $("#OD_FR").val(),
-                'ADD': $("#OD_ADD").val(),
-                'AL': $("#OD_AL").val(),
-                'AK': $("#OD_AK").val(),
-                'AD': $("#OD_AD").val(),
-                'CCT': $("#OD_CCT").val(),
-                'LT': $("#OD_LT").val(),
-                'VT': $("#OD_VT").val(),
-                'BC': $("#OD_BC").val(),
-            },
-            OS: {
-                'VA': $("#OS_VA").val(),
-                'SPH': $("#OS_SPH").val(),
-                'CYL': $("#OS_CYL").val(),
-                'AX': $("#OS_AX").val(),
-                'PR': $("#OS_PR").val(),
-                'FR': $("#OS_FR").val(),
-                'ADD': $("#OS_ADD").val(),
-                'AL': $("#OS_AL").val(),
-                'AK': $("#OS_AK").val(),
-                'AD': $("#OS_AD").val(),
-                'CCT': $("#OS_CCT").val(),
-                'LT': $("#OS_LT").val(),
-                'VT': $("#OS_VT").val(),
-                'BC': $("#OS_BC").val(),
-            },
-        }
         $.ajax({
             url: report_api,
             method: "GET",
@@ -144,7 +108,36 @@ $(document).ready(function () {
                 name: $("#name").val(),
                 call: $("#call").val(),
                 remark: $("#remark").val(),
-                content: JSON.stringify(content)
+                plan: $("#PLAN").val(),
+                pd: $("#PD").val(),
+                od_va: $("#OD_VA").val(),
+                od_sph: $("#OD_SPH").val(),
+                od_cyl: $("#OD_CYL").val(),
+                od_ax: $("#OD_AX").val(),
+                od_pr: $("#OD_PR").val(),
+                od_fr: $("#OD_FR").val(),
+                od_add: $("#OD_ADD").val(),
+                od_al: $("#OD_AL").val(),
+                od_ak: $("#OD_AK").val(),
+                od_ad: $("#OD_AD").val(),
+                od_cct: $("#OD_CCT").val(),
+                od_lt: $("#OD_LT").val(),
+                od_vt: $("#OD_VT").val(),
+                od_bc: $("#OD_BC").val(),
+                os_va: $("#OS_VA").val(),
+                os_sph: $("#OS_SPH").val(),
+                os_cyl: $("#OS_CYL").val(),
+                os_ax: $("#OS_AX").val(),
+                os_pr: $("#OS_PR").val(),
+                os_fr: $("#OS_FR").val(),
+                os_add: $("#OS_ADD").val(),
+                os_al: $("#OS_AL").val(),
+                os_ak: $("#OS_AK").val(),
+                os_ad: $("#OS_AD").val(),
+                os_cct: $("#OS_CCT").val(),
+                os_lt: $("#OS_LT").val(),
+                os_vt: $("#OS_VT").val(),
+                os_bc: $("#OS_BC").val(),
             },
             success: function (res) {
                 callback(res); // 第一个参数为null表示没有错误，第二个参数为请求的数据

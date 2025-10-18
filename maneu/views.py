@@ -26,6 +26,21 @@ def login(request):
 
 
 def login_api(request):
+    adminUser = service.admin_login(request.GET.get('call'), request.GET.get('code'))
+    if adminUser:
+        mark = str(uuid.uuid4())
+        request.session['ip'] = common.getip(request)
+        request.session['id'] = adminUser.id
+        request.session['nickname'] = adminUser.nickname
+        request.session['mark'] = mark
+        content = {'status': True, 'message': '100000', 'content': {'password': adminUser.password}, 'mark': mark, }
+    else:
+        content = {'status': False, 'message': '100002', 'content': {}}
+
+    return JsonResponse(content)
+
+
+def login_api2(request):
     call = verify.is_call(request.GET.get('call'))
     code = verify.is_code(request.GET.get('code'))
     if call and code:
@@ -45,34 +60,13 @@ def login_api(request):
     return JsonResponse(content)
 
 
-def login_api2(request):
-    call = verify.is_call(request.GET.get('call'))
-    code = verify.is_code(request.GET.get('code'))
-    if call and code:
-        adminUser = service.admin_login(call, code)
-        print(adminUser)
-        if adminUser:
-            code = uuid.uuid4()
-            request.session['ip'] = common.getip(request)
-            request.session['id'] = adminUser.id
-            request.session['nickname'] = adminUser.nickname
-            request.session['code'] = code
-            content = {'status': True, 'message': '', 'data': {'code': code}}
-        else:
-            content = {'status': False, 'message': '100002', 'data': {'code': code}}
-    else:
-        content = {'status': False, 'message': '100001', 'data': {}}
-
-    return JsonResponse(content)
-
-
 def logout(request):
     code = verify.is_code(request.session.get('id'))
 
     if code:
-        request.session['ip'] = None
-        request.session['id'] = None
-        request.session['nickname'] = None
+        print(request.session.get('id'))
+        request.session.clear()
+        print(request.session.get('id'))
         data = service.admin_logout(code)
         if data:
             content = {'status': True, 'message': '', 'data': {}}
@@ -104,344 +98,231 @@ def sendsms(request):
 
 
 def repair(request):
-    Buffer = ManeuBuffer.objects.all()
+    buffer = ManeuReport.objects.all()
+    for i in list(buffer):
+        order = ManeuBuffer.objects.filter(id=i.id).update(name=i.name, call=i.phone, remark=i.remark)
+
+
+
+def repair2(request):
+    Buffer = ManeuReport.objects.all()
 
     for i in Buffer:
-        content = ManeuRefraction.objects.filter(id=i.id).first()
+        simple = {
+            'PLAN': '远用解决方案',
+            'PD': '',
+            'OD_AL': '',
+            'OD_AK': '',
+            'OD_AX': 0.00,
+            'OD_AD': '',
+            'OD_ADD': 0.00,
+            'OD_BC': '',
+            'OD_CYL': 0.00,
+            'OD_CCT': '',
+            'OD_VA': '',
+            'OD_SPH': 0.00,
+            'OD_PR': '',
+            'OD_FR': '',
+            'OD_LT': '',
+            'OD_VT': '',
+
+            'OS_AL': '',
+            'OS_AK': '',
+            'OS_AX': 0.00,
+            'OS_AD': '',
+            'OS_ADD': 0.00,
+            'OS_BC': '',
+            'OS_CYL': 0.00,
+            'OS_CCT': '',
+            'OS_VA': '',
+            'OS_SPH': 0.00,
+            'OS_PR': '',
+            'OS_FR': '',
+            'OS_LT': '',
+            'OS_VT': '',
+        }
+
+        content = i.content
+
         if content:
-            content = content.content
-            if content[0:9] == '{"OD_VA":':
-                content = json.loads(content)
-                if content['OD_SPH']:
-                    OD_SPH = content['OD_SPH']
-                else:
-                    OD_SPH = 0.00
-                if content['OS_SPH']:
-                    OS_SPH = content['OS_SPH']
-                else:
-                    OS_SPH = 0.00
-
-                if content['OD_CYL']:
-                    OD_CYL = content['OD_CYL']
-                else:
-                    OD_CYL = 0.00
-                if content['OS_CYL']:
-                    OS_CYL = content['OS_CYL']
-                else:
-                    OS_CYL = 0.00
-
-                if content['OD_VA']:
-                    OD_VA = content['OD_VA']
-                else:
-                    OD_VA = 5.00
-                if content['OS_VA']:
-                    OS_VA = content['OS_VA']
-                else:
-                    OS_VA = 5.00
-
-                if content['OD_AX']:
-                    OD_AX = content['OD_AX']
-                else:
-                    OD_AX = 23.5
-                if content['OS_AX']:
-                    OS_AX = content['OS_AX']
-                else:
-                    OS_AX = 23.5
-
-                try:
-                    if content['OD_ADD']:
-                        OD_ADD = content['OD_ADD']
-                    else:
-                        OD_ADD = 0.00
-                    if content['OS_ADD']:
-                        OS_ADD = content['OS_ADD']
-                    else:
-                        OS_ADD = 0.00
-                except Exception:
-                    OS_ADD = 0.00
-                    OD_ADD = 0.00
-                try:
-                    plan = content['function']
-                except Exception:
-                    plan = ''
-                try:
-                    pd = content['PD']
-                except Exception:
-                    pd = ''
-
-                print(ManeuBuffer.objects.filter(id=i.id).update(plan=plan, pd=pd, od_va=OD_VA, od_sph=OD_SPH, od_cyl=OD_CYL, od_add=OD_ADD, od_ax=OD_AX, os_va=OS_VA, os_sph=OS_SPH, os_cyl=OS_CYL, os_add=OS_ADD, os_ax=OS_AX,))
-            elif content[0:9] == '{"OS_VA":':
-                content = json.loads(content)
-                if content['OD_SPH']:
-                    OD_SPH = content['OD_SPH']
-                else:
-                    OD_SPH = 0.00
-                if content['OS_SPH']:
-                    OS_SPH = content['OS_SPH']
-                else:
-                    OS_SPH = 0.00
-
-                if content['OD_CYL']:
-                    OD_CYL = content['OD_CYL']
-                else:
-                    OD_CYL = 0.00
-                if content['OS_CYL']:
-                    OS_CYL = content['OS_CYL']
-                else:
-                    OS_CYL = 0.00
-
-                if content['OD_VA']:
-                    OD_VA = content['OD_VA']
-                else:
-                    OD_VA = 5.00
-                if content['OS_VA']:
-                    OS_VA = content['OS_VA']
-                else:
-                    OS_VA = 5.00
-
-                if content['OD_AX']:
-                    OD_AX = content['OD_AX']
-                else:
-                    OD_AX = 23.5
-                if content['OS_AX']:
-                    OS_AX = content['OS_AX']
-                else:
-                    OS_AX = 23.5
-
-                try:
-                    if content['OD_ADD']:
-                        OD_ADD = content['OD_ADD']
-                    else:
-                        OD_ADD = 0.00
-                    if content['OS_ADD']:
-                        OS_ADD = content['OS_ADD']
-                    else:
-                        OS_ADD = 0.00
-                except Exception:
-                    OS_ADD = 0.00
-                    OD_ADD = 0.00
-                try:
-                    plan = content['function']
-                except Exception:
-                    plan = ''
-                try:
-                    pd = content['PD']
-                except Exception:
-                    pd = ''
-
-                print(ManeuBuffer.objects.filter(id=i.id).update(plan=plan, pd=pd, od_va=OD_VA, od_sph=OD_SPH, od_cyl=OD_CYL, od_add=OD_ADD, od_ax=OD_AX, os_va=OS_VA, os_sph=OS_SPH, os_cyl=OS_CYL, os_add=OS_ADD, os_ax=OS_AX,))
-            elif content[0:9] == '{"OD_SPH"':
-                content = json.loads(content)
-                if content['OD_SPH']:
-                    OD_SPH = content['OD_SPH']
-                else:
-                    OD_SPH = 0.00
-                if content['OS_SPH']:
-                    OS_SPH = content['OS_SPH']
-                else:
-                    OS_SPH = 0.00
-
-                if content['OD_CYL']:
-                    OD_CYL = content['OD_CYL']
-                else:
-                    OD_CYL = 0.00
-                if content['OS_CYL']:
-                    OS_CYL = content['OS_CYL']
-                else:
-                    OS_CYL = 0.00
-
-                if content['OD_AX']:
-                    OD_AX = content['OD_AX']
-                else:
-                    OD_AX = 23.5
-                if content['OS_AX']:
-                    OS_AX = content['OS_AX']
-                else:
-                    OS_AX = 23.5
-
-                try:
-                    OD_ADD = content['OD_ADD']
-                    OS_ADD = content['OS_ADD']
-
-                except Exception:
-                    OD_ADD = 0.00
-                    OS_ADD = 0.00
-
-                print(ManeuBuffer.objects.filter(id=i.id).update(plan=content['function'], pd=content['PD'], od_va='', od_sph=OD_SPH, od_cyl=OD_CYL, od_add=OD_ADD, od_ax=OD_AX, os_va='', os_sph=OS_SPH, os_cyl=OS_CYL, os_add=OS_ADD, os_ax=OS_AX,))
-            elif content[0:9] == '{"PLAN": ':
-                content = json.loads(content)
-                if content['OD']['SPH']:
-                    OD_SPH = content['OD']['SPH']
-                else:
-                    OD_SPH = 0.00
-                if content['OS']['SPH']:
-                    OS_SPH = content['OS']['SPH']
-                else:
-                    OS_SPH = 0.00
-
-                if content['OD']['CYL']:
-                    OD_CYL = content['OD']['CYL']
-                else:
-                    OD_CYL = 0.00
-                if content['OS']['CYL']:
-                    OS_CYL = content['OS']['CYL']
-                else:
-                    OS_CYL = 0.00
-
+            content = json.loads(content)
+            try:
+                if content['OD']['AL']:
+                    simple['OD_AL'] = content['OD']['AL']
+                if content['OD']['AK']:
+                    simple['OD_AK'] = content['OD']['AK']
                 if content['OD']['AX']:
-                    OD_AX = content['OD']['AX']
-                else:
-                    OD_AX = 23.5
-                if content['OS']['AX']:
-                    OS_AX = content['OS']['AX']
-                else:
-                    OS_AX = 23.5
-
-                try:
-                    if content['OD']['ADD']:
-                        OD_ADD = content['OD']['ADD']
-                    else:
-                        OD_ADD = 0.00
-                    if content['OS']['ADD']:
-                        OS_ADD = content['OS']['ADD']
-                    else:
-                        OS_ADD = 0.00
-                except Exception:
-                    OD_ADD = 0.00
-                    OS_ADD = 0.00
-
-                try:
-                    plan = content['PLAN']
-                except Exception:
-                    plan = ''
-                try:
-                    pd = content['PD']
-                except Exception:
-                    pd = ''
-
-                print(ManeuBuffer.objects.filter(id=i.id).update(plan=plan, pd=pd, od_va='', od_sph=OD_SPH, od_cyl=OD_CYL, od_add=OD_ADD, od_ax=OD_AX, os_va='', os_sph=OS_SPH, os_cyl=OS_CYL, os_add=OS_ADD, os_ax=OS_AX,))
-            elif content[0:7] == '{"PD": ':
-                content = json.loads(content)
-                if content['OD']['SPH']:
-                    OD_SPH = content['OD']['SPH']
-                else:
-                    OD_SPH = 0.00
-                if content['OS']['SPH']:
-                    OS_SPH = content['OS']['SPH']
-                else:
-                    OS_SPH = 0.00
-
+                    simple['OD_AX'] = content['OD']['AX']
+                if content['OD']['AD']:
+                    simple['OD_AD'] = content['OD']['AD']
+                if content['OD']['ADD']:
+                    simple['OD_ADD'] = content['OD']['ADD']
+                if content['OD']['BC']:
+                    simple['OD_BC'] = content['OD']['BC']
                 if content['OD']['CYL']:
-                    OD_CYL = content['OD']['CYL']
-                else:
-                    OD_CYL = 0.00
-                if content['OS']['CYL']:
-                    OS_CYL = content['OS']['CYL']
-                else:
-                    OS_CYL = 0.00
-
-                if content['OD']['AX']:
-                    OD_AX = content['OD']['AX']
-                else:
-                    OD_AX = 23.5
+                    simple['OD_CYL'] = content['OD']['CYL']
+                if content['OD']['CCT']:
+                    simple['OD_CCT'] = content['OD']['CCT']
+                if content['OD']['VA']:
+                    simple['OD_VA'] = content['OD']['VA']
+                if content['OD']['SPH']:
+                    simple['OD_SPH'] = content['OD']['SPH']
+                if content['OD']['PR']:
+                    simple['OD_PR'] = content['OD']['PR']
+                if content['OD']['FR']:
+                    simple['OD_FR'] = content['OD']['FR']
+                if content['OD']['LT']:
+                    simple['OD_LT'] = content['OD']['LT']
+                if content['OD']['VT']:
+                    simple['OD_VT'] = content['OD']['VT']
+                if content['OS']['AL']:
+                    simple['OS_AL'] = content['OS']['AL']
+                if content['OS']['AK']:
+                    simple['OS_AK'] = content['OS']['AK']
                 if content['OS']['AX']:
-                    OS_AX = content['OS']['AX']
-                else:
-                    OS_AX = 23.5
-
+                    simple['OS_AX'] = content['OS']['AX']
+                if content['OS']['AD']:
+                    simple['OS_AD'] = content['OS']['AD']
+                if content['OS']['ADD']:
+                    simple['OS_ADD'] = content['OS']['ADD']
+                if content['OS']['BC']:
+                    simple['OS_BC'] = content['OS']['BC']
+                if content['OS']['CYL']:
+                    simple['OS_CYL'] = content['OS']['CYL']
+                if content['OS']['CCT']:
+                    simple['OS_CCT'] = content['OS']['CCT']
+                if content['OS']['VA']:
+                    simple['OS_VA'] = content['OS']['VA']
+                if content['OS']['SPH']:
+                    simple['OS_SPH'] = content['OS']['SPH']
+                if content['OS']['PR']:
+                    simple['OS_PR'] = content['OS']['PR']
+                if content['OS']['FR']:
+                    simple['OS_FR'] = content['OS']['FR']
+                if content['OS']['LT']:
+                    simple['OS_LT'] = content['OS']['LT']
+                if content['OS']['VT']:
+                    simple['OS_VT'] = content['OS']['VT']
                 try:
-                    if content['OD']['ADD']:
-                        OD_ADD = content['OD']['ADD']
-                    else:
-                        OD_ADD = 0.00
-                    if content['OS']['ADD']:
-                        OS_ADD = content['OS']['ADD']
-                    else:
-                        OS_ADD = 0.00
+                    simple['PLAN'] = content['PLAN']
                 except Exception:
-                    OD_ADD = 0.00
-                    OS_ADD = 0.00
-
+                    simple['PLAN'] = ''
                 try:
-                    plan = content['PLAN']
+                    simple['PD'] = content['PD']
                 except Exception:
-                    plan = ''
+                    simple['PD'] = ''
                 try:
-                    pd = content['PD']
-                except Exception:
-                    pd = ''
+                    print(ManeuBuffer.objects.create(id=i.id, admin_id=i.admin_id, guest_id=i.guest_id, remark=i.remark, time=i.time,
+                                                     plan=simple['PLAN'],
+                                                     pd=simple['PD'],
+                                                     od_al=simple['OD_AL'],
+                                                     od_ak=simple['OD_AK'],
+                                                     od_ax=simple['OD_AX'],
+                                                     od_ad=simple['OD_AD'],
+                                                     od_add=simple['OD_ADD'],
+                                                     od_bc=simple['OD_BC'],
+                                                     od_cyl=simple['OD_CYL'],
+                                                     od_cct=simple['OD_CCT'],
+                                                     od_va=simple['OD_VA'],
+                                                     od_sph=simple['OD_SPH'],
+                                                     od_pr=simple['OD_PR'],
+                                                     od_fr=simple['OD_FR'],
+                                                     od_lt=simple['OD_LT'],
+                                                     od_vt=simple['OD_VT'],
+                                                     os_al=simple['OS_AL'],
+                                                     os_ak=simple['OS_AK'],
+                                                     os_ad=simple['OS_AD'],
+                                                     os_ax=simple['OS_AX'],
+                                                     os_add=simple['OS_ADD'],
+                                                     os_bc=simple['OS_BC'],
+                                                     os_cyl=simple['OS_CYL'],
+                                                     os_cct=simple['OS_CCT'],
+                                                     os_va=simple['OS_VA'],
+                                                     os_sph=simple['OS_SPH'],
+                                                     os_pr=simple['OS_PR'],
+                                                     os_fr=simple['OS_FR'],
+                                                     os_lt=simple['OS_LT'],
+                                                     os_vt=simple['OS_VT'],))
+                except Exception as e:
+                    print(e)
 
-                print(
-                    ManeuBuffer.objects.filter(id=i.id).update(plan=plan, pd=pd, od_va='', od_sph=OD_SPH, od_cyl=OD_CYL,
-                                                               od_add=OD_ADD, od_ax=OD_AX, os_va='', os_sph=OS_SPH,
-                                                               os_cyl=OS_CYL, os_add=OS_ADD, os_ax=OS_AX, ))
-            elif content[0:9] == '{"time":"':
-                content = json.loads(content)
-                if content['OD_SPH']:
-                    OD_SPH = content['OD_SPH']
-                else:
-                    OD_SPH = 0.00
-                if content['OS_SPH']:
-                    OS_SPH = content['OS_SPH']
-                else:
-                    OS_SPH = 0.00
-
-                if content['OD_CYL']:
-                    OD_CYL = content['OD_CYL']
-                else:
-                    OD_CYL = 0.00
-                if content['OS_CYL']:
-                    OS_CYL = content['OS_CYL']
-                else:
-                    OS_CYL = 0.00
-
+            except Exception as e:
+                for a in list(simple):
+                    try:
+                        simple[a] = content[a]
+                    except:
+                        pass
                 try:
-                    if content['OD_VA']:
-                        OD_VA = content['OD_VA']
-                    else:
-                        OD_VA = 5.00
-                    if content['OS_VA']:
-                        OS_VA = content['OS_VA']
-                    else:
-                        OS_VA = 5.00
-                except:
-                    OD_VA = ''
-                    OS_VA = ''
+                    print(ManeuBuffer.objects.create(id=i.id, admin_id=i.admin_id, guest_id=i.guest_id, remark=i.remark, time=i.time,
+                                                     plan=simple['PLAN'],
+                                                     pd=simple['PD'],
+                                                     od_al=simple['OD_AL'],
+                                                     od_ak=simple['OD_AK'],
+                                                     od_ax=simple['OD_AX'],
+                                                     od_ad=simple['OD_AD'],
+                                                     od_add=simple['OD_ADD'],
+                                                     od_bc=simple['OD_BC'],
+                                                     od_cyl=simple['OD_CYL'],
+                                                     od_cct=simple['OD_CCT'],
+                                                     od_va=simple['OD_VA'],
+                                                     od_sph=simple['OD_SPH'],
+                                                     od_pr=simple['OD_PR'],
+                                                     od_fr=simple['OD_FR'],
+                                                     od_lt=simple['OD_LT'],
+                                                     od_vt=simple['OD_VT'],
+                                                     os_al=simple['OS_AL'],
+                                                     os_ak=simple['OS_AK'],
+                                                     os_ad=simple['OS_AD'],
+                                                     os_ax=simple['OS_AX'],
+                                                     os_add=simple['OS_ADD'],
+                                                     os_bc=simple['OS_BC'],
+                                                     os_cyl=simple['OS_CYL'],
+                                                     os_cct=simple['OS_CCT'],
+                                                     os_va=simple['OS_VA'],
+                                                     os_sph=simple['OS_SPH'],
+                                                     os_pr=simple['OS_PR'],
+                                                     os_fr=simple['OS_FR'],
+                                                     os_lt=simple['OS_LT'],
+                                                     os_vt=simple['OS_VT'],))
+                except Exception as e:
+                    print(e)
 
-                if content['OD_AX']:
-                    OD_AX = content['OD_AX']
-                else:
-                    OD_AX = 23.5
-                if content['OS_AX']:
-                    OS_AX = content['OS_AX']
-                else:
-                    OS_AX = 23.5
-                try:
-                    if content['OD_ADD']:
-                        OD_ADD = content['OD_ADD']
-                    else:
-                        OD_ADD = 0.00
-                    if content['OS_ADD']:
-                        OS_ADD = content['OS_ADD']
-                    else:
-                        OS_ADD = 0.00
-                except Exception:
-                    OD_ADD = 0.00
-                    OS_ADD = 0.00
-                try:
-                    plan = content['function']
-                except Exception:
-                    plan = ''
-                try:
-                    pd = content['PD']
-                except Exception:
-                    pd = ''
+        else:
+            try:
+                print(ManeuBuffer.objects.create(id=i.id, admin_id=i.admin_id, guest_id=i.guest_id, remark=i.remark, time=i.time,
+                                                 plan=simple['PLAN'],
+                                                 pd=simple['PD'],
+                                                 od_al=simple['OD_AL'],
+                                                 od_ak=simple['OD_AK'],
+                                                 od_ax=simple['OD_AX'],
+                                                 od_ad=simple['OD_AD'],
+                                                 od_add=simple['OD_ADD'],
+                                                 od_bc=simple['OD_BC'],
+                                                 od_cyl=simple['OD_CYL'],
+                                                 od_cct=simple['OD_CCT'],
+                                                 od_va=simple['OD_VA'],
+                                                 od_sph=simple['OD_SPH'],
+                                                 od_pr=simple['OD_PR'],
+                                                 od_fr=simple['OD_FR'],
+                                                 od_lt=simple['OD_LT'],
+                                                 od_vt=simple['OD_VT'],
+                                                 os_al=simple['OS_AL'],
+                                                 os_ak=simple['OS_AK'],
+                                                 os_ad=simple['OS_AD'],
+                                                 os_ax=simple['OS_AX'],
+                                                 os_add=simple['OS_ADD'],
+                                                 os_bc=simple['OS_BC'],
+                                                 os_cyl=simple['OS_CYL'],
+                                                 os_cct=simple['OS_CCT'],
+                                                 os_va=simple['OS_VA'],
+                                                 os_sph=simple['OS_SPH'],
+                                                 os_pr=simple['OS_PR'],
+                                                 os_fr=simple['OS_FR'],
+                                                 os_lt=simple['OS_LT'],
+                                                 os_vt=simple['OS_VT'], ))
+            except Exception as e:
+                print(e)
 
-                print(ManeuBuffer.objects.filter(id=i.id).update(plan=plan, pd=pd, od_va=OD_VA, od_sph=OD_SPH, od_cyl=OD_CYL, od_add=OD_ADD, od_ax=OD_AX, os_va=OS_VA, os_sph=OS_SPH, os_cyl=OS_CYL, os_add=OS_ADD, os_ax=OS_AX,))
-            else:
-                print(content[0:9])
-
-    content = {'status': False, 'message': '请输入正确的手机号',
-               'data': ''}
+    content = {'status': False, 'message': '请输入正确的手机号', 'data': ''}
 
     return JsonResponse(content)
