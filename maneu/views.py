@@ -26,16 +26,21 @@ def login(request):
 
 
 def login_api(request):
-    adminUser = service.admin_login(request.GET.get('call'), request.GET.get('code'))
-    if adminUser:
-        mark = str(uuid.uuid4())
-        request.session['ip'] = common.getip(request)
-        request.session['id'] = adminUser.id
-        request.session['nickname'] = adminUser.nickname
-        request.session['mark'] = mark
-        content = {'status': True, 'message': '100000', 'content': {'password': adminUser.password}, 'mark': mark, }
+    call = verify.is_call(request.GET.get('call'))
+    code = verify.is_code(request.GET.get('code'))
+    if call and code:
+        adminUser = service.admin_login(call, code)
+        if adminUser:
+            mark = str(uuid.uuid4())
+            request.session['ip'] = common.getip(request)
+            request.session['id'] = adminUser.id
+            request.session['nickname'] = adminUser.nickname
+            request.session['mark'] = mark
+            content = {'status': True, 'message': '100000', 'content': {'password': adminUser.password}, 'mark': mark, }
+        else:
+            content = {'status': False, 'message': '100002', 'content': {}}
     else:
-        content = {'status': False, 'message': '100002', 'content': {}}
+        content = {'status': False, 'message': '100001', 'content': {}}
 
     return JsonResponse(content)
 
@@ -61,7 +66,8 @@ def login_api2(request):
 
 
 def logout(request):
-    code = verify.is_code(request.session.get('id'))
+    code = verify.is_uuid(request.session.get('id'))
+    print(code)
 
     if code:
         print(request.session.get('id'))
@@ -98,13 +104,28 @@ def sendsms(request):
 
 
 def repair(request):
-    buffer = ManeuReport.objects.all()
-    for i in list(buffer):
-        order = ManeuBuffer.objects.filter(id=i.id).update(name=i.name, call=i.phone, remark=i.remark)
-
+    list = ManeuOrder.objects.all()
+    for i in list:
+        guest = ManeuGuest.objects.filter(id=i.guest_id).first()
+        if guest:
+            print(guest.id)
+        else:
+            guest = ManeuGuest.objects.create(name=i.name, phone=i.call, time=i.time, admin_id=i.admin_id, remark=i.remark)
+            print(ManeuOrder.objects.filter(id=i.id).update(guest_id=guest.id))
 
 
 def repair2(request):
+
+
+
+    order = ManeuBuffer.objects.all()
+    for order in order:
+        content = ManeuGuest.objects.filter(admin_id=order.admin_id, phone=order.call).all().order_by('id')
+        for i in list(content):
+            print(i.admin_id,)
+
+
+
     Buffer = ManeuReport.objects.all()
 
     for i in Buffer:
