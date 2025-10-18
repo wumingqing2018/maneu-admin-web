@@ -1,7 +1,7 @@
 $(document).ready(function () {
     detail_report(function (data) {
         console.log(data)
-        guest_id = data.data.guest_id
+        guest_id = data.content.guest_id
         if (data.status === true) {
             detail_guest(function (data) {
                 console.log(data)
