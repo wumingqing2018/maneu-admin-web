@@ -1,6 +1,5 @@
 from django.shortcuts import redirect
 from django.utils.deprecation import MiddlewareMixin
-from common.verify import is_uuid
 
 
 class UserMiddleware(MiddlewareMixin):
@@ -17,15 +16,14 @@ class UserMiddleware(MiddlewareMixin):
         用户没有登录, 跳转到登录页
         用户已经登录, 允许通过
         """
-        print(request)
         request_url = request.path  # method:string, demo:/login/,
         session_ip = request.session.get('ip')
-        session_code = is_uuid(request.GET.get('code'))
+        session_id = request.session.get('id')
         #   判断是否需要校验字段
         if request_url.startswith('/maneu'):
-            if request.session['ip'] == session_ip and request.session['code'] == session_code:
+            if session_id and session_ip:
+                #   判断用户是否登录
                 return None
             else:
-                request.session.clear()
                 return redirect('login')
         return None

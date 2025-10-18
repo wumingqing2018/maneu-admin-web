@@ -56,7 +56,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'middleware.UserMiddleware.UserMiddleware',  # 用户登录校验中间件
+    'middleware.UserMiddleware.UserMiddleware',  # 用户登录校验中间件
 ]
 
 """
