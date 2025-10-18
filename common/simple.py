@@ -78,8 +78,8 @@ def report_simple(request):
     if os_fr == 'BU' or os_fr == 'BD' or os_fr == os_fr == 'BO' or os_fr == 'BI':
         simple['os_fr'] = os_fr
 
-    plan = request.GET.get('plan')
-    if plan == '两用解决方案' or plan == '远用解决方案' or plan == '近用解决方案' or plan == '':
-        simple['plan'] = plan
+    # plan = request.GET.get('plan')
+    # if plan == '两用解决方案' or plan == '远用解决方案' or plan == '近用解决方案' or plan == '':
+    #     simple['plan'] = plan
 
     return simple
