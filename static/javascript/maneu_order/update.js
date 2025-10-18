@@ -125,6 +125,8 @@ $(document).ready(function () {
                 $('#time').val(content.time)
                 $('#PD').val(content.pd)
                 $('#PLAN').val(content.plan)
+
+                $('#OS_AX').val(content.os_ax)
                 $('#OS_AD').val(content.os_ad)
                 $('#OS_ADD').val(content.os_add)
                 $('#OS_AK').val(content.os_ak)
@@ -139,6 +141,7 @@ $(document).ready(function () {
                 $('#OS_VA').val(content.os_va)
                 $('#OS_VT').val(content.os_vt)
 
+                $('#OD_AX').val(content.od_ax)
                 $('#OD_AD').val(content.od_ad)
                 $('#OD_ADD').val(content.od_add)
                 $('#OD_AK').val(content.od_ak)
