@@ -86,8 +86,10 @@ def logout(request):
 
 def sendsms(request):
     phone_number = verify.is_call(request.GET.get('call'))
+    print(phone_number)
     if phone_number:
         code = str(common.get_random_code())
+        print(phone_number)
         data = service.sendsms(call=phone_number, code=code)
         if data:
             response = common.sendsms(call=phone_number, code=code)
