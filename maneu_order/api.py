@@ -13,7 +13,7 @@ def search(request):
     value = request.GET.get('value')
     timeS = request.GET.get('timeS')
     timeE = request.GET.get('timeE')
-    print(request.GET)
+    print(request.GET, request.session.get('id'))
     if admin_id and timeS and timeE:
         try:
             data = service.order_search(admin_id, timeS, timeE, value).values('id', 'name', 'phone', 'time', 'remark')

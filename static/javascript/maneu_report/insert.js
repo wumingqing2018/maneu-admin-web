@@ -26,7 +26,7 @@ $(document).ready(function () {
                 remark: $("#remark").val(),
                 time: $("#time").val(),
                 name: $("#name").val(),
-                call: $("#call").val(),
+                phone: $("#phone").val(),
                 age: $("#age").val(),
                 sex: $("#sex").val(),
                 DFH: $("#DFH").val(),
@@ -86,7 +86,7 @@ $(document).ready(function () {
                 guest_id: guest_id,
                 time: $("#time").val(),
                 name: $("#name").val(),
-                call: $("#call").val(),
+                phone: $("#phone").val(),
                 remark: $("#remark").val(),
                 content: JSON.stringify(content)
             },

@@ -12,11 +12,12 @@ def search(request):
     value = request.GET.get('value')
     timeS = request.GET.get('timeS')
     timeE = request.GET.get('timeE')
-    print(admin_id, timeS, timeE)
 
     if admin_id and timeS and timeE:
+        print(request.GET, admin_id)
+
         try:
-            data = service.report_search(admin_id, timeS, timeE, value).values('id', 'name', 'call', 'time', 'remark')
+            data = service.report_search(admin_id, timeS, timeE, value).values('id', 'name', 'phone', 'time', 'remark')
             print(data)
             content = {'status': True, 'message': admin_id, 'content': list(data), 'mark': uuid.uuid4()}
         except Exception as e:
@@ -54,7 +55,7 @@ def insert(request):
                                            guest_id=guest_id,
                                            time=request.GET.get('time'),
                                            name=request.GET.get('name'),
-                                           call=request.GET.get('call'),
+                                           phone=request.GET.get('phone'),
                                            remark=request.GET.get('remark'),
                                            content=content)
             print(report)
@@ -77,7 +78,7 @@ def update(request):
                                            admin_id=admin_id,
                                            name=request.GET.get('name'),
                                            time=request.GET.get('time'),
-                                           call=request.GET.get('call'),
+                                           phone=request.GET.get('phone'),
                                            remark=request.GET.get('remark'),
                                            content=content)
             if report:

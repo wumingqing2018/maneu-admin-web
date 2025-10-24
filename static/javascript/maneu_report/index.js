@@ -23,6 +23,7 @@ $(document).ready(function () {
     getList()
     function forList(res) {
         $('#body').empty();
+        console.log(res)
         for (i in res) {
             $('#body').append(
                 "<div>\n" +
@@ -34,7 +35,7 @@ $(document).ready(function () {
                 "            <p>" + res[i]['name'] + "</p>\n" +
                 "        </div>\n" +
                 "        <div class='col-1'>\n" +
-                "            <p>" + res[i]['call'] + "</p>\n" +
+                "            <p>" + res[i]['phone'] + "</p>\n" +
                 "        </div>\n" +
                 "        <div class='col-6'>\n" +
                 "            <p>" + res[i]['remark'] + "</p>\n" +
@@ -68,7 +69,6 @@ $(document).ready(function () {
                 timeS: $("#timeS").val(),
             },
             success: function (res) {
-                console.log(res)
                 forList(res.content)
             }
         })
