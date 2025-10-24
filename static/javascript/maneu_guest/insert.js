@@ -7,7 +7,7 @@ $(document).ready(function () {
                 remark: $("[name='remark']").val(),
                 time: $("[name='time']").val(),
                 name: $("[name='name']").val(),
-                call: $("[name='call']").val(),
+                phone: $("[name='phone']").val(),
                 age: $("[name='age']").val(),
                 sex: $("[name='sex']").val(),
                 DFH: $("[name='DFH']").val(),

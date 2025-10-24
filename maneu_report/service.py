@@ -8,12 +8,7 @@ def report_index(admin_id='', start='', end=''):
 
 
 def report_search(admin_id, timeS, timeE, value):
-    return ManeuBuffer.objects.filter(
-        Q(name__icontains=value, admin_id=admin_id, time__gte=timeS, time__lte=timeE, ) | Q(phone__icontains=value,
-                                                                                            admin_id=admin_id,
-                                                                                            time__gte=timeS,
-                                                                                            time__lte=timeE, )).order_by(
-        '-time').all()
+    return ManeuBuffer.objects.filter(Q(name__icontains=value, admin_id=admin_id, time__gte=timeS, time__lte=timeE, ) | Q(phone__icontains=value, admin_id=admin_id, time__gte=timeS, time__lte=timeE, )).order_by('-time').all()
 
 
 def report_delete(admin_id='', id=''):
@@ -22,36 +17,38 @@ def report_delete(admin_id='', id=''):
 
 def report_insert(admin_id='', guest_id='', name='', time='', phone='', remark='', content=''):
     return ManeuBuffer.objects.create(admin_id=admin_id, guest_id=guest_id, name=name, time=time, phone=phone,
-                                      remark=remark, plan=content['PLAN'],
-                                      pd=content['PD'],
-                                      od_al=content['OD_AL'],
-                                      od_ak=content['OD_AK'],
-                                      od_ax=content['OD_AX'],
-                                      od_ad=content['OD_AD'],
-                                      od_add=content['OD_ADD'],
-                                      od_bc=content['OD_BC'],
-                                      od_cyl=content['OD_CYL'],
-                                      od_cct=content['OD_CCT'],
-                                      od_va=content['OD_VA'],
-                                      od_sph=content['OD_SPH'],
-                                      od_pr=content['OD_PR'],
-                                      od_fr=content['OD_FR'],
-                                      od_lt=content['OD_LT'],
-                                      od_vt=content['OD_VT'],
-                                      os_al=content['OS_AL'],
-                                      os_ak=content['OS_AK'],
-                                      os_ad=content['OS_AD'],
-                                      os_ax=content['OS_AX'],
-                                      os_add=content['OS_ADD'],
-                                      os_bc=content['OS_BC'],
-                                      os_cyl=content['OS_CYL'],
-                                      os_cct=content['OS_CCT'],
-                                      os_va=content['OS_VA'],
-                                      os_sph=content['OS_SPH'],
-                                      os_pr=content['OS_PR'],
-                                      os_fr=content['OS_FR'],
-                                      os_lt=content['OS_LT'],
-                                      os_vt=content['OS_VT'], )
+                                      remark=remark, plan=content['plan'],
+                                      pd=content['pd'],
+                                      os_al=content['os_al'],
+                                      os_ak=content['os_ak'],
+                                      os_ax=content['os_ax'],
+                                      os_ad=content['os_ad'],
+                                      os_add=content['os_add'],
+                                      os_bc=content['os_bc'],
+                                      os_cyl=content['os_cyl'],
+                                      os_cct=content['os_cct'],
+                                      os_va=content['os_va'],
+                                      os_sph=content['os_sph'],
+                                      os_pr=content['os_pr'],
+                                      os_fr=content['os_pr'],
+                                      os_lt=content['os_lt'],
+                                      os_vt=content['os_vt'],
+
+                                      od_al=content['od_al'],
+                                      od_ak=content['od_ak'],
+                                      od_ax=content['od_ax'],
+                                      od_ad=content['od_ad'],
+                                      od_add=content['od_add'],
+                                      od_bc=content['od_bc'],
+                                      od_cyl=content['od_cyl'],
+                                      od_cct=content['od_cct'],
+                                      od_va=content['od_va'],
+                                      od_sph=content['od_sph'],
+                                      od_pr=content['od_pr'],
+                                      od_fr=content['od_pr'],
+                                      od_lt=content['od_lt'],
+                                      od_vt=content['od_vt'],
+                                      )
 
 
 def report_detail(admin_id='', id=''):

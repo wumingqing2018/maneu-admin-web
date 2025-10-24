@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from common.simple import report_simple
 from common.verify import is_uuid
 from maneu_report import service
+from maneu_guest.service import ManeuGuest_get
 import uuid
 
 
@@ -46,11 +47,11 @@ def delete(request):
 
 def insert(request):
     admin_id = is_uuid(request.session.get('id'))
-    guest_id = is_uuid(request.GET.get('guest_id'))
 
-    if admin_id and guest_id:
+    if admin_id:
         content = report_simple(request)
         try:
+            guest_id = ManeuGuest_get(admin_id=admin_id, phone=request.GET.get('phone')).id
             report = service.report_insert(admin_id=admin_id,
                                            guest_id=guest_id,
                                            time=request.GET.get('time'),
@@ -58,7 +59,6 @@ def insert(request):
                                            phone=request.GET.get('phone'),
                                            remark=request.GET.get('remark'),
                                            content=content)
-            print(report)
             content = {'status': True, 'message': '', 'content': {'id': report.id}, 'mark': uuid.uuid4()}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid.uuid4()}

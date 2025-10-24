@@ -4,8 +4,7 @@ from common.common import current_time
 
 
 def guest_simple(request):
-    simple = {'remark': '', 'time': current_time(), 'name': '', 'call': '', 'age': '', 'sex': '', 'dfh': '无',
-              'ot': '正', 'em': '左'}
+    simple = {'remark': '', 'time': current_time(), 'name': '', 'phone': '', 'age': '', 'sex': '', 'dfh': '无','ot': '正', 'em': '左'}
 
     for i in list(simple):
         try:

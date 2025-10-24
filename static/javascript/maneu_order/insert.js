@@ -19,10 +19,10 @@ $(document).ready(function () {
             console.log(data)
             if (data.status === true) {
                 guest_id = data.content.id
-                report_insert(guest_id, function (data) {
+                report_insert(data.content.id, function (data) {
                     console.log(data)
                     if (data.status === true) {
-                        report_id = data.data.id
+                        report_id = data.content.id
                         order_insert(guest_id, report_id, function (data) {
                             console.log(data)
                             if (confirm("提交成功是否继续填写？")) {
@@ -41,7 +41,7 @@ $(document).ready(function () {
         });
     });
 
-    function guest_insert(callback) {
+    function guest_insert(callback){
         $.ajax({
             url: guest_api,
             method: 'GET',
@@ -102,8 +102,7 @@ $(document).ready(function () {
         $.ajax({
             url: report_api,
             method: "GET",
-            data: {
-                guest_id: guest_id,
+            data: {guest_id: guest_id,
                 time: $("#time").val(),
                 name: $("#name").val(),
                 phone: $("#phone").val(),

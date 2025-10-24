@@ -29,20 +29,11 @@ def insert(request):
     admin_id = is_uuid(request.session.get('id'))
     if admin_id:
         try:
-            content = guest_simple(request)
-            print(content)
-            data = service.ManeuGuest_insert(admin_id=admin_id,
-                                             time=content['time'],
-                                             name=content['name'],
-                                             phone=content['call'],
-                                             sex=content['sex'],
-                                             age=content['age'],
-                                             dfh=content['dfh'],
-                                             ot=content['ot'],
-                                             em=content['em'],
-                                             remark=content['remark'])
-
-            content = {'status': True, 'message': '', 'content': {'id': data[0].id}, 'mark': str(uuid4())}
+            guest = service.ManeuGuest_get(admin_id=admin_id, phone=request.GET.get('phone'))
+            if guest is None:
+                content = guest_simple(request)
+                guest = service.ManeuGuest_insert(admin_id=admin_id, time=content['time'], name=content['name'], phone=content['phone'], sex=content['sex'], age=content['age'], dfh=content['dfh'], ot=content['ot'], em=content['em'], remark=content['remark'])
+            content = {'status': True, 'message': '', 'content': {'id': guest.id}, 'mark': str(uuid4())}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}, 'mark': str(uuid4())}
     else:
