@@ -26,7 +26,7 @@ def login(request):
 
 
 def login_api(request):
-    call = request.GET.get('call')
+    call = verify.is_code(request.GET.get('call'))
     code = verify.is_code(request.GET.get('code'))
     if call and code:
         adminUser = service.admin_login(call, code)
