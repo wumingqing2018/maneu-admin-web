@@ -6,10 +6,8 @@
         api_search = "{% url 'maneu_report:api_search' %}"
         api_delete = "{% url 'maneu_report:api_delete' %}"
     </script>
-    <script src='{% static "javascript/maneu_order/index/delete.js" %}'
-            type="application/javascript"></script>
-    <script src='{% static "javascript/maneu_report/index.js" %}'
-            type="application/javascript"></script>
+    <script src='{% static "javascript/maneu_order/index/delete.js" %}' type="application/javascript"></script>
+    <script src='{% static "javascript/maneu_report/index.js" %}' type="application/javascript"></script>
 {% endblock %}
 {% block content %}
     <div class="container" style="margin-top: 2%; margin-bottom: 4%;">
@@ -44,7 +42,7 @@
                 <p>报告备注</p>
             </div>
             <div class="col-1">
-                <form action="{% url 'maneu_order:insert' %}" method="get">
+                <form action="{% url 'maneu_report:insert' %}" method="get">
                     <div class='input-group input-group-sm'>
                         <input class="col-12 btn btn-warning" type="submit" value='添加'>
                     </div>
