@@ -6,14 +6,23 @@ from django.shortcuts import render
 from common import common
 from common import verify
 from maneu import service
-from maneu.models import ManeuGuest, ManeuBuffer
+from maneu.models import ManeuOrder, ManeuAdmin
 
 
 def index(request):
     """
     首页
     """
-
+    lists = ['8a572e62-44d2-11ed-818f-00163e02ac92',
+             '9afb8d12-44d2-11ed-818f-00163e02ac92',
+             'b90070b6-44d2-11ed-818f-00163e02ac92',
+             'c4bec470-35c3-11ed-818f-00163e02ac92',
+             '4c2f2b28-58f3-11ed-a8ac-00163e02ac92',
+             'da708010-9b2f-11ee-80e4-00163e10594f',
+             'f9c3b8c4-9b2f-11ee-80e4-00163e10594f']
+    for list in lists:
+        if ManeuOrder.objects.filter(id=list).all() is not None:
+            print(ManeuAdmin.objects.filter(id=list).delete())
     return render(request, 'maneu/index.html')
 
 
