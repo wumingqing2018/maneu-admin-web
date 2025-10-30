@@ -99,6 +99,7 @@ def detail(request):
     if admin_id and report_id:
         try:
             data = service.report_detail(id=report_id, admin_id=admin_id)
+            print(report_id)
             content = {'status': True, 'message': '', 'content': model_to_dict(data), 'mark': uuid.uuid4()}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid.uuid4()}

@@ -1,12 +1,9 @@
 $(document).ready(function () {
-    detail_order(function (data) {
+    detail_order(function (data, report_id, guest_id) {
         if (data === true) {
-            detail_guest(function (data) {
-                if (data === true) {
-                    detail_report(function (data) {
-                    })
-                }
-            })
+            console.log(report_id, guest_id)
+            detail_report(report_id,function (data) { })
+            detail_guest(guest_id,function (data) { })
         }
     })
     $('#delete').click(function () {
@@ -81,7 +78,7 @@ $(document).ready(function () {
 
                 report_id = res.content.report_id;
                 guest_id = res.content.guest_id;
-                callback(true); // 第一个参数为null表示没有错误，第二个参数为请求的数据
+                callback(true, report_id, guest_id); // 第一个参数为null表示没有错误，第二个参数为请求的数据
             },
             error: function (res) {
                 callback(false); // 第一个参数为null表示没有错误，第二个参数为请求的数据
@@ -89,7 +86,7 @@ $(document).ready(function () {
         })
     }
 
-    function detail_guest(callback) {
+    function detail_guest(guest_id, callback) {
         $.ajax({
             url: guest_detail,
             data: {
@@ -113,14 +110,14 @@ $(document).ready(function () {
         })
     }
 
-    function detail_report(callback) {
+    function detail_report(report_id, callback) {
         $.ajax({
             url: report_detail,
             data: {
                 'id': report_id
             },
             success: function (res) {
-                console.log(res.content)
+                console.log('report', res)
                 content = res.content
                 $('#time').val(content.time)
                 $('#PD').val(content.pd)

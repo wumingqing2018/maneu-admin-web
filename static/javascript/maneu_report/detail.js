@@ -79,7 +79,7 @@ $(document).ready(function (){
                 'id': report_id
             },
             success: function (res){
-                console.log(res.content)
+                console.log('report', res.content)
                 content = res.content
                 $('#time').val(content.time)
                 $('#PD').val(content.pd)
