@@ -15,7 +15,7 @@ def search(request):
     timeE = request.GET.get('timeE')
 
     if admin_id and timeS and timeE:
-        print(request.GET, admin_id)
+        print('report', request.GET, admin_id)
 
         try:
             data = service.report_search(admin_id, timeS, timeE, value).values('id', 'name', 'phone', 'time', 'remark')

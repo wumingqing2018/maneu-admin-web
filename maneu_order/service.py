@@ -28,13 +28,9 @@ def order_delete(admin_id='', order_id=''):
     return ManeuOrder.objects.filter(admin_id=admin_id, id=order_id).delete()
 
 
-def order_search(admin_id='', star='', end='', value=''):
-    return ManeuOrder.objects.filter(
-        Q(name__icontains=value, admin_id=admin_id, time__gte=star, time__lte=end, ) | Q(phone__icontains=value,
-                                                                                         admin_id=admin_id,
-                                                                                         time__gte=star,
-                                                                                         time__lte=end, )).order_by(
-        '-time').all()
+def order_search(admin_id='', timeS='', timeE='', value=''):
+    return ManeuOrder.objects.filter(Q(name__icontains=value, admin_id=admin_id, time__gte=timeS, time__lte=timeE, ) | Q(phone__icontains=value, admin_id=admin_id, time__gte=timeS, time__lte=timeE, )).order_by('-time').all()
+
 
 
 def order_insert(admin_id='', name='', time='', call='', content='', guest_id='', store_id='', report_id='', remark=''):
