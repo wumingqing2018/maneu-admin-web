@@ -13,14 +13,6 @@ def index(request):
     """
     首页
     """
-    print(ManeuBuffer.objects.filter(od_ax='').update(od_ax=0.00))
-    print(ManeuBuffer.objects.filter(os_ax='').update(os_ax=0.00))
-    print(ManeuBuffer.objects.filter(od_cyl='').update(od_cyl=0.00))
-    print(ManeuBuffer.objects.filter(os_cyl='').update(os_cyl=0.00))
-    print(ManeuBuffer.objects.filter(od_sph='').update(od_sph=0.00))
-    print(ManeuBuffer.objects.filter(os_sph='').update(os_sph=0.00))
-    print(ManeuBuffer.objects.filter(od_add='').update(od_add=0.00))
-    print(ManeuBuffer.objects.filter(os_add='').update(os_add=0.00))
 
     return render(request, 'maneu/index.html')
 
