@@ -1,7 +1,6 @@
 $(document).ready(function () {
     detail_order(function (data, report_id, guest_id) {
         if (data === true) {
-            console.log(report_id, guest_id)
             detail_report(report_id,function (data) { })
             detail_guest(guest_id,function (data) { })
         }
@@ -60,20 +59,20 @@ $(document).ready(function () {
                 'id': order_id
             },
             success: function (res) {
-                console.log(res)
-
                 $('#remark').val(res.content.remark)
                 $('#name').val(res.content.name)
                 $('#call').val(res.content.phone)
                 $('#time').val(res.content.time)
 
-                for (var i = 0; i < res.content.length; i++) {
+                console.log('order', res.content.content)
+
+                for (var i = 0; i < res.content.content.length; i++) {
                     store = $(".store:eq(" + i + ")")
-                    store.find(".arg10").val(res.data.content[i]['arg10'])
-                    store.find(".arg11").val(res.data.content[i]['arg11'])
-                    store.find(".arg12").val(res.data.content[i]['arg12'])
-                    store.find(".arg13").val(res.data.content[i]['arg13'])
-                    store.find(".arg14").val(res.data.content[i]['arg14'])
+                    store.find(".arg10").val(res.content.content[i]['arg10'])
+                    store.find(".arg11").val(res.content.content[i]['arg11'])
+                    store.find(".arg12").val(res.content.content[i]['arg12'])
+                    store.find(".arg13").val(res.content.content[i]['arg13'])
+                    store.find(".arg14").val(res.content.content[i]['arg14'])
                 }
 
                 report_id = res.content.report_id;
