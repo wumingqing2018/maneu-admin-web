@@ -1,5 +1,6 @@
 from django.shortcuts import redirect
 from django.utils.deprecation import MiddlewareMixin
+
 from common.verify import is_uuid
 
 

@@ -1,8 +1,8 @@
+from uuid import uuid4
+
 from django.shortcuts import render
 
 from common import common
-from maneu_order import service
-from uuid import uuid4
 
 
 def index(request):

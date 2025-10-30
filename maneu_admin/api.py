@@ -1,8 +1,10 @@
+from uuid import uuid4
+
 from django.http import JsonResponse
 
 from common.verify import is_uuid
 from maneu_admin import service
-from uuid import uuid4
+
 
 def detail(request):
     admin_id = is_uuid(request.GET.get('id'))

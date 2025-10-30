@@ -1,11 +1,12 @@
+from uuid import uuid4
+
 from django.forms import model_to_dict
 from django.http import JsonResponse
 
 from common.simple import report_simple
 from common.verify import is_uuid
-from maneu_report import service
 from maneu_guest.service import ManeuGuest_get
-import uuid
+from maneu_report import service
 
 
 def search(request):
@@ -20,9 +21,9 @@ def search(request):
         try:
             data = service.report_search(admin_id, timeS, timeE, value).values('id', 'name', 'phone', 'time', 'remark')
             print(data)
-            content = {'status': True, 'message': admin_id, 'content': list(data), 'mark': uuid.uuid4()}
+            content = {'status': True, 'message': admin_id, 'content': list(data), 'mark': uuid4()}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid.uuid4()}
+            content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid4()}
     else:
         content = {'status': False, 'message': '参数错误请确认', 'content': {}}
 
@@ -36,9 +37,9 @@ def delete(request):
     if admin_id and id:
         try:
             data = service.report_delete(admin_id=admin_id, id=id)
-            content = {'status': True, 'message': '', 'content': {}, 'mark': uuid.uuid4()}
+            content = {'status': True, 'message': '', 'content': {}, 'mark': uuid4()}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid.uuid4()}
+            content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid4()}
     else:
         content = {'status': False, 'message': '请输入正确的参数', 'content': {}}
 
@@ -59,9 +60,9 @@ def insert(request):
                                            phone=request.GET.get('phone'),
                                            remark=request.GET.get('remark'),
                                            content=content)
-            content = {'status': True, 'message': '', 'content': {'id': report.id}, 'mark': uuid.uuid4()}
+            content = {'status': True, 'message': '', 'content': {'id': report.id}, 'mark': uuid4()}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid.uuid4()}
+            content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid4()}
     else:
         content = {'status': False, 'message': '请输入正确的参数1', 'content': {}}
 
@@ -82,11 +83,11 @@ def update(request):
                                            remark=request.GET.get('remark'),
                                            content=content)
             if report:
-                content = {'status': True, 'message': '', 'content': {'id': report_id} , 'mark': uuid.uuid4()}
+                content = {'status': True, 'message': '', 'content': {'id': report_id} , 'mark': uuid4()}
             else:
                 content = {'status': False, 'message': '请输入正确的参数3', 'content': {}}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid.uuid4()}
+            content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid4()}
     else:
         content = {'status': False, 'message': '请输入正确的参数', 'content': {}}
 
@@ -100,9 +101,9 @@ def detail(request):
         try:
             data = service.report_detail(id=report_id, admin_id=admin_id)
             print(report_id)
-            content = {'status': True, 'message': '', 'content': model_to_dict(data), 'mark': uuid.uuid4()}
+            content = {'status': True, 'message': '', 'content': model_to_dict(data), 'mark': uuid4()}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid.uuid4()}
+            content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid4()}
     else:
         content = {'status': False, 'message': '请输入正确的参数', 'content': {}}
 

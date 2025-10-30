@@ -1,4 +1,4 @@
-import uuid
+from uuid import uuid4
 
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -29,7 +29,7 @@ def login_api(request):
     if call and code:
         adminUser = service.admin_login(call, code)
         if adminUser:
-            mark = str(uuid.uuid4())
+            mark = str(uuid4())
             request.session['ip'] = common.getip(request)
             request.session['id'] = adminUser.id
             request.session['nickname'] = adminUser.nickname
@@ -49,7 +49,7 @@ def login_api2(request):
     if call and code:
         adminUser = service.admin_login(call, code)
         if adminUser:
-            mark = str(uuid.uuid4())
+            mark = str(uuid4())
             request.session['ip'] = common.getip(request)
             request.session['id'] = adminUser.id
             request.session['nickname'] = adminUser.nickname

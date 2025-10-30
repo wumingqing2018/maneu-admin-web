@@ -1,10 +1,11 @@
+from uuid import uuid4
+
 from django.forms import model_to_dict
 from django.http import JsonResponse
 
 from common.simple import guest_simple
 from common.verify import is_uuid
 from maneu_guest import service
-from uuid import uuid4
 
 
 def search(request):
