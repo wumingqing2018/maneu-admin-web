@@ -89,9 +89,7 @@ def sendsms(request):
     phone_number = verify.is_call(request.GET.get('call'))
     if phone_number:
         code = str(common.get_random_code())
-        data = service.sendsms(call=phone_number, code=code)
-        print(data)
-        if data < 1:
+        if service.sendsms(call=phone_number, code=code) > 0:
             response = common.sendsms(call=phone_number, code=code)
             if response['Code'] == 'OK':
                 content = {'status': True, 'message': 'OK', 'data': {}}
