@@ -8,7 +8,9 @@ def report_index(admin_id='', start='', end=''):
 
 
 def report_search_text(admin_id='', value=''):
-    return ManeuBuffer.objects.filter(Q(name__icontains=value, admin_id=admin_id) | Q(phone__icontains=value, admin_id=admin_id)).order_by('-time').all()
+    return ManeuBuffer.objects.filter(
+        Q(name__icontains=value, admin_id=admin_id) | Q(phone__icontains=value, admin_id=admin_id)).order_by(
+        '-time').all()
 
 
 def report_search_time(admin_id='', timeS='', timeE=''):

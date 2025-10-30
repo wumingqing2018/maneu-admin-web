@@ -36,8 +36,8 @@ def order_search_time(admin_id='', timeS='', timeE=''):
     return ManeuOrder.objects.filter(admin_id=admin_id, time__gte=timeS, time__lte=timeE).order_by('-time').all()
 
 
-def order_insert(admin_id='', name='', time='', call='', content='', guest_id='', store_id='', report_id='', remark=''):
-    return ManeuOrder.objects.create(name=name, time=time, phone=call, guest_id=guest_id, admin_id=admin_id,
+def order_insert(admin_id='', name='', time='', phone='', content='', guest_id='', store_id='', report_id='', remark=''):
+    return ManeuOrder.objects.create(name=name, time=time, phone=phone, guest_id=guest_id, admin_id=admin_id,
                                      store_id=store_id, report_id=report_id, remark=remark, content=content)
 
 
