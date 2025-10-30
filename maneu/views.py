@@ -6,8 +6,6 @@ from django.shortcuts import render
 from common import common
 from common import verify
 from maneu import service
-from maneu.models import *
-import json
 
 
 def index(request):
