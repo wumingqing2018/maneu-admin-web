@@ -1,5 +1,6 @@
 import uuid
 
+from aiohttp.payload import Order
 from django.http import JsonResponse
 from django.shortcuts import render
 
@@ -85,14 +86,12 @@ def logout(request):
 
 
 def sendsms(request):
-    phone_number = request.GET.get('call')
-    print(phone_number)
+    phone_number = verify.is_call(request.GET.get('call'))
     if phone_number:
         code = str(common.get_random_code())
         data = service.sendsms(call=phone_number, code=code)
         print(data)
-        if data:
-            admin1 = ManeuAdmin.objects.filter(username=phone_number).first()
+        if data < 1:
             response = common.sendsms(call=phone_number, code=code)
             if response['Code'] == 'OK':
                 content = {'status': True, 'message': 'OK', 'data': {}}
@@ -107,19 +106,22 @@ def sendsms(request):
 
 
 def repair(request):
-    list = ManeuOrder.objects.all()
-    for i in list:
-        guest = ManeuGuest.objects.filter(id=i.guest_id).first()
-        if guest:
-            print(guest.id)
-        else:
-            guest = ManeuGuest.objects.create(name=i.name, phone=i.call, time=i.time, admin_id=i.admin_id, remark=i.remark)
-            print(ManeuOrder.objects.filter(id=i.id).update(guest_id=guest.id))
+    OrderList = ManeuOrder.objects.all()
+    for order in OrderList:
+        try:
+            if ManeuGuest.objects.filter(id=order.guest_id).update(admin_id=order.admin_id) == 0:
+                guest = ManeuGuest.objects.create(name=order.name, phone=order.phone, time=order.time, admin_id=order.admin_id)
+                print(ManeuOrder.objects.filter(id=order.id).update(guest_id=guest.id))
+
+            if ManeuReport.objects.filter(id=order.report_id).update(admin_id=order.admin_id) == 0:
+                report = ManeuReport.objects.create(name=order.name, phone=order.phone, time=order.time, admin_id=order.admin_id)
+                print(ManeuOrder.objects.filter(id=order.id).update(report_id=report.id))
+
+        except Exception as e:
+            print(e)
 
 
 def repair2(request):
-
-
 
     order = ManeuBuffer.objects.all()
     for order in order:
