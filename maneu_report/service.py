@@ -7,8 +7,12 @@ def report_index(admin_id='', start='', end=''):
     return ManeuBuffer.objects.filter(admin_id=admin_id, time__gte=start, time__lte=end).order_by('-time').all()
 
 
-def report_search(admin_id, timeS, timeE, value):
-    return ManeuBuffer.objects.filter(Q(name__icontains=value, admin_id=admin_id, time__gte=timeS, time__lte=timeE, ) | Q(phone__icontains=value, admin_id=admin_id, time__gte=timeS, time__lte=timeE, )).order_by('-time').all()
+def report_search_text(admin_id='', value=''):
+    return ManeuBuffer.objects.filter(Q(name__icontains=value, admin_id=admin_id) | Q(phone__icontains=value, admin_id=admin_id)).order_by('-time').all()
+
+
+def report_search_time(admin_id='', timeS='', timeE=''):
+    return ManeuBuffer.objects.filter(admin_id=admin_id, time__gte=timeS, time__lte=timeE).order_by('-time').all()
 
 
 def report_delete(admin_id='', id=''):

@@ -9,17 +9,29 @@ from maneu_guest.service import ManeuGuest_get
 from maneu_report import service
 
 
-def search(request):
+def search_time(request):
     admin_id = is_uuid(request.session.get('id'))
-    value = request.GET.get('value')
-    timeS = request.GET.get('timeS')
-    timeE = request.GET.get('timeE')
 
-    if admin_id and timeS and timeE:
-        print('report', request.GET, admin_id)
-
+    if admin_id:
         try:
-            data = service.report_search(admin_id, timeS, timeE, value).values('id', 'name', 'phone', 'time', 'remark')
+            data = service .report_search_time(admin_id, request.GET.get('timeS'), request.GET.get('timeE')).values('id', 'name', 'phone', 'time', 'remark')
+            print(data)
+            content = {'status': True, 'message': admin_id, 'content': list(data), 'mark': uuid4()}
+        except Exception as e:
+            content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid4()}
+    else:
+        content = {'status': False, 'message': '参数错误请确认', 'content': {}}
+
+    return JsonResponse(content)
+
+
+def search_text(request):
+    admin_id = is_uuid(request.session.get('id'))
+
+    if admin_id:
+        try:
+            data = service .report_search_text(admin_id, request.GET.get('value')).values('id', 'name', 'phone', 'time',
+                                                                                        'remark')
             print(data)
             content = {'status': True, 'message': admin_id, 'content': list(data), 'mark': uuid4()}
         except Exception as e:

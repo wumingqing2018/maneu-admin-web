@@ -20,7 +20,49 @@ function deleteBtn(obj) {
 }
 
 $(document).ready(function () {
-    getList()
+
+        $.ajax({
+            url: search_time,
+            method: 'GET',
+            data: {
+                timeE: $("#timeE").val(),
+                timeS: $("#timeS").val(),
+            },
+            success: function (res) {
+                console.log(res)
+                forList(res.content)
+            }
+        })
+
+
+    $('#search_time').click(function () {
+        $.ajax({
+            url: search_time,
+            method: 'GET',
+            data: {
+                timeE: $("#timeE").val(),
+                timeS: $("#timeS").val(),
+            },
+            success: function (res) {
+                console.log(res)
+                forList(res.content)
+            }
+        })
+    })
+
+    $('#search_text').click(function () {
+        $.ajax({
+            url: search_text,
+            method: 'GET',
+            data: {
+                value: $("#value").val(),
+            },
+            success: function (res) {
+                console.log(res)
+                forList(res.content)
+            }
+        })
+    })
     function forList(res) {
         $('#body').empty();
         for (i in res) {
@@ -58,23 +100,4 @@ $(document).ready(function () {
             )
         }
     }
-    function getList(){
-        $.ajax({
-            url: api_search,
-            method: 'GET',
-            data: {
-                value: $("#value").val(),
-                timeE: $("#timeE").val(),
-                timeS: $("#timeS").val(),
-            },
-            success: function (res) {
-                console.log(res)
-                forList(res.content)
-            }
-        })
-    }
-
-    $('#search_button').click(function () {
-        getList()
-    })
 })
