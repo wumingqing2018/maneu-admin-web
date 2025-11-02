@@ -4,8 +4,8 @@ from uuid import uuid4
 from django.http import JsonResponse
 
 from common.simple import order_simple, report_simple
-from common.verify import is_uuid, is_call
-from maneu.models import ManeuGuest, ManeuBuffer
+from common.verify import is_uuid
+from maneu.models import ManeuGuest
 from maneu_order import service
 from maneu_report.service import report_insert
 
@@ -49,9 +49,9 @@ def search_text(request):
 
 def insert(request):
     admin_id = is_uuid(request.session.get('id'))
-    phone = is_call(request.GET.get('phone'))
+    phone = request.GET.get('phone')
     time = request.GET.get('time')
-
+    print(admin_id, phone, time)
     if admin_id and phone:
         try:
             guest = ManeuGuest.objects.filter(admin_id=admin_id, phone=phone, name=request.GET.get('name')).first()
@@ -59,8 +59,10 @@ def insert(request):
                 guest_id = guest.id
             else:
                 guest_id = ManeuGuest.objects.create(admin_id=admin_id, phone=phone, name=request.GET.get('name'),time=time).id
+            print(guest_id)
             content = report_simple(request)
             report = report_insert(guest_id=guest_id, admin_id=admin_id, phone=phone, name=request.GET.get('name'), time=time, content=content)
+            print(report)
             content = order_simple(request.GET.get('content'))
             order = service.order_insert(admin_id=admin_id,
                                          guest_id=guest_id,
@@ -70,6 +72,7 @@ def insert(request):
                                          phone=phone,
                                          content=content,
                                          remark=request.GET.get('remark'))
+            print(order)
             content = {'status': True, 'message': '', 'content': {'id': order.id}, 'mark': uuid4()}
 
         except Exception as e:
