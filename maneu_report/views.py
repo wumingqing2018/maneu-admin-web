@@ -14,4 +14,4 @@ def insert(request):
 
 
 def detail(request):
-    return render(request, 'maneu_report/detail.html', {'id': request.GET.get('id'), 'mark': uuid4()})
+    return render(request, 'maneu_report/detail.html', {'report_id': request.GET.get('id'), 'guest_id': request.GET.get('guest_id'), 'mark': uuid4()})

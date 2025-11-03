@@ -2,10 +2,10 @@
 {% load static %}
 {% block javascript %}
     <script type="application/javascript">
-        web_detail = "{% url 'maneu_report:detail' %}"
-        search_text = "{% url 'maneu_order:search_text' %}"
-        search_time = "{% url 'maneu_order:search_time' %}"
         api_delete = "{% url 'maneu_report:api_delete' %}"
+        web_detail = "{% url 'maneu_report:detail' %}"
+        search_text = "{% url 'maneu_report:search_text' %}"
+        search_time = "{% url 'maneu_report:search_time' %}"
     </script>
     <script src='{% static "javascript/maneu_order/index/delete.js" %}' type="application/javascript"></script>
     <script src='{% static "javascript/maneu_report/index.js" %}' type="application/javascript"></script>

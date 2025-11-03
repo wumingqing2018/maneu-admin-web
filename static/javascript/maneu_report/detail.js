@@ -1,19 +1,13 @@
-$(document).ready(function (){
-    detail_report(function (data){
-        console.log(data)
-        guest_id = data.content.guest_id
-        if (data.status === true){
-            detail_guest(function (data){
-                console.log(data)
-            })
-        }
-    })
-    $('#delete').click(function (){
-        if (confirm("确定要删除记录吗？")){
-            delete_report(function (data){
-                if (data === true){
-                    delete_order(function (data){
-                        if (data === true){
+$(document).ready(function () {
+    console.log(report_id, guest_id)
+    detail_guest()
+    detail_report()
+    $('#delete').click(function () {
+        if (confirm("确定要删除记录吗？")) {
+            delete_report(function (data) {
+                if (data === true) {
+                    delete_order(function (data) {
+                        if (data === true) {
                             alert('删除成功')
                             window.location.href = index
                         } else {
@@ -28,13 +22,20 @@ $(document).ready(function (){
             return false;
         }
     })
-    $('#update').click(function (){
-        if (confirm("确定要修改记录吗？")){
-            update_guest(function (data){
-                if (data.status === true){
-                    update_report(function (data){
-                        if (data.status === true){
-                            alert('修改成功')
+
+    $('#update').click(function () {
+        if (confirm("确定要修改记录吗？")) {
+            update_guest(function (data) {
+                if (data.status === true) {
+                    update_report(function (data) {
+                        if (data.status === true) {
+                            update_order(function (data) {
+                                if (data.status === true) {
+                                    alert('修改成功')
+                                } else {
+                                    alert(data.message)
+                                }
+                            })
                         } else {
                             alert(data.message)
                         }
@@ -48,38 +49,37 @@ $(document).ready(function (){
         }
     })
 
-
-    function detail_guest(callback){
+    function detail_guest() {
         $.ajax({
             url: guest_detail,
             data: {
                 'id': guest_id
             },
-            success: function (res){
+            success: function (res) {
+                console.log('guest', res.content)
                 content = res.content
                 $('#name').val(content.name)
                 $('#phone').val(content.phone)
+                $('#sex').val(content.sex)
                 $('#age').val(content.age)
                 $('#DFH').val(content.dfh)
                 $('#EM').val(content.em)
                 $('#OT').val(content.ot)
-                $('#sex').val(content.sex)
-                callback(res); // 第一个参数为null表示没有错误，第二个参数为请求的数据
             },
-            error: function (res){
-                callback(false); // 第一个参数为null表示没有错误，第二个参数为请求的数据
+            error: function (res) {
+                console.log(res)
             }
         })
     }
 
-    function detail_report(callback){
+    function detail_report() {
         $.ajax({
             url: report_detail,
             data: {
                 'id': report_id
             },
-            success: function (res){
-                console.log('report', res.content)
+            success: function (res) {
+                console.log('report', res)
                 content = res.content
                 $('#time').val(content.time)
                 $('#PD').val(content.pd)
@@ -114,30 +114,78 @@ $(document).ready(function (){
                 $('#OD_SPH').val(content.od_sph)
                 $('#OD_VA').val(content.od_va)
                 $('#OD_VT').val(content.od_vt)
-                callback(res); // 第一个参数为null表示没有错误，第二个参数为请求的数据
             },
-            error: function (res){
-                callback(false); // 第一个参数为null表示没有错误，第二个参数为请求的数据
+            error: function (res) {
+                console.log(res)
             }
         })
     }
 
-    function delete_report(callback){
+
+    function delete_order(callback) {
         $.ajax({
-            url: report_delete,
+            url: order_delete,
             data: {
-                'id': report_id
+                'id': order_id
             },
-            success: function (res){
+            success: function (res) {
                 callback(res)
             },
-            error: function (){
+            error: function () {
                 callback({"status": false, 'message': 'order,网络出错'})
             }
         })
     }
 
-    function update_guest(callback){
+    function delete_report() {
+        $.ajax({
+            url: report_delete,
+            data: {
+                'id': report_id
+            },
+            success: function (res) {
+                callback(res)
+            },
+            error: function () {
+                callback({"status": false, 'message': 'order,网络出错'})
+            }
+        })
+    }
+
+
+    function update_order(callback) {
+        store = []
+        $(".store").each(function () {
+            data = {
+                arg10: $(this).find(".arg10").val(),
+                arg11: $(this).find(".arg11").val(),
+                arg12: $(this).find(".arg12").val(),
+                arg13: $(this).find(".arg13").val(),
+                arg14: $(this).find(".arg14").val(),
+            };
+            store.push(data)
+        })
+        $.ajax({
+            url: order_update,
+            method: 'GET',
+            data: {
+                content: JSON.stringify(store),
+                remark: $("#remark").val(),
+                time: $("#time").val(),
+                name: $("#name").val(),
+                phone: $("#phone").val(),
+                order_id: order_id,
+            },
+            success: function (res) {
+                callback(res)
+            },
+            error: function () {
+                callback({"status": false, 'message': 'order,网络出错'})
+            }
+        })
+    }
+
+    function update_guest(callback) {
         $.ajax({
             url: guest_update,
             method: 'GET',
@@ -153,16 +201,16 @@ $(document).ready(function (){
                 OT: $("#OT").val(),
                 EM: $("#EM").val(),
             },
-            success: function (res){
+            success: function (res) {
                 callback(res)
             },
-            error: function (){
+            error: function () {
                 callback({"status": false, 'message': 'guest,网络出错'})
             }
         })
     }
 
-    function update_report(callback){
+    function update_report(callback) {
         content = {
             PLAN: $("#PLAN").val(),
             PD: $("#PD").val(),
@@ -210,10 +258,10 @@ $(document).ready(function (){
                 remark: $("#remark").val(),
                 content: JSON.stringify(content)
             },
-            success: function (res){
+            success: function (res) {
                 callback(res); // 第一个参数为null表示没有错误，第二个参数为请求的数据
             },
-            error: function (res){
+            error: function (res) {
                 callback({"status": false, 'message': 'report,网络出错'})
             }
         })
