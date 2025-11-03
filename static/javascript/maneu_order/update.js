@@ -61,7 +61,7 @@ $(document).ready(function () {
             success: function (res) {
                 $('#remark').val(res.content.remark)
                 $('#name').val(res.content.name)
-                $('#call').val(res.content.phone)
+                $('#phone').val(res.content.phone)
                 $('#time').val(res.content.time)
 
                 console.log('order', res.content.content)
