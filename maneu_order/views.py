@@ -6,6 +6,7 @@ from common import common
 
 
 def index(request):
+    print(common.time_start, common.time_end)
     return render(request, 'maneu_order/index.html', {'timeS': common.time_start, 'timeE': common.time_end, 'mark': str(uuid4())})
 
 

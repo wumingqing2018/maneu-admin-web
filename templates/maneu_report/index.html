@@ -7,7 +7,6 @@
         search_text = "{% url 'maneu_report:search_text' %}"
         search_time = "{% url 'maneu_report:search_time' %}"
     </script>
-    <script src='{% static "javascript/maneu_order/index/delete.js" %}' type="application/javascript"></script>
     <script src='{% static "javascript/maneu_report/index.js" %}' type="application/javascript"></script>
 {% endblock %}
 {% block content %}
@@ -24,7 +23,7 @@
                 <br>
                 <div class="vertical1 input-group input-group-sm">
                     <span class="input-group-text">开始时间</span>
-                    <input autocomplete="off" class="form-control" id="timeS" max="{{ timeE }}" min="2010-01-01 00:00" type="datetime-local" value="2020-01-01 00:00">
+                    <input autocomplete="off" class="form-control" id="timeS" max="{{ timeE }}" min="2010-01-01 00:00" type="datetime-local" value="2024-01-01 00:00">
                     <span class="input-group-text">结束时间</span>
                     <input autocomplete="off" class="form-control" id="timeE" max="{{ timeE }}" min="2010-01-01 00:00" type="datetime-local" value="{{ timeE }}">
                     <input class="btn btn-primary" id="search_time" type="button" value="搜索">

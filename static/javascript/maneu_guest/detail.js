@@ -39,13 +39,14 @@ $(document).ready(function () {
             },
             success: function (res) {
                 content = res.content
+                $('#time').val(content.time)
                 $('#name').val(content.name)
-                $('#call').val(content.phone)
+                $('#phone').val(content.phone)
+                $('#sex').val(content.sex)
                 $('#age').val(content.age)
                 $('#DFH').val(content.dfh)
                 $('#EM').val(content.em)
                 $('#OT').val(content.ot)
-                $('#sex').val(content.sex)
                 callback(res); // 第一个参数为null表示没有错误，第二个参数为请求的数据
             },
             error: function (res) {
