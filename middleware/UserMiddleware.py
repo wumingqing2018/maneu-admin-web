@@ -1,5 +1,6 @@
 from django.shortcuts import redirect
 from django.utils.deprecation import MiddlewareMixin
+from requests import session
 
 from common.verify import is_uuid
 from maneu.models import ManeuAdmin
@@ -26,7 +27,9 @@ class UserMiddleware(MiddlewareMixin):
             mark = is_uuid(request.GET.get('mark'))
 
             if mark:
-                print(ManeuAdmin.objects.filter(password=mark).first())
+                admin = ManeuAdmin.objects.filter(password=mark).first()
+                if admin:
+                    request.session['id'] = admin.id
                 return None
             else:
                 return None
