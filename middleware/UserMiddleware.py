@@ -2,6 +2,7 @@ from django.shortcuts import redirect
 from django.utils.deprecation import MiddlewareMixin
 
 from common.verify import is_uuid
+from maneu.models import ManeuAdmin
 
 
 class UserMiddleware(MiddlewareMixin):
@@ -20,13 +21,14 @@ class UserMiddleware(MiddlewareMixin):
         """
         print(request)
         request_url = request.path  # method:string, demo:/login/,
-        session_ip = request.session.get('ip')
-        session_code = is_uuid(request.GET.get('code'))
         #   判断是否需要校验字段
-        if request_url.startswith('/maneu'):
-            if request.session:
+        if request_url.startswith('/maneu_'):
+            mark = is_uuid(request.GET.get('mark'))
+
+            if mark:
+                print(ManeuAdmin.objects.filter(id=mark).first().id)
                 return None
             else:
-                request.session.clear()
-                return redirect('login')
+                return None
+
         return None
