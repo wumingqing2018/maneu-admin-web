@@ -30,7 +30,7 @@ def login_api(request):
         if adminUser != 0:
             request.session['ip'] = common.getip(request)
             request.session['mark'] = mark
-            content = {'status': True, 'message': '100000', 'content': {'password': adminUser.password}, 'mark': mark, }
+            content = {'status': True, 'message': '100000', 'content': {}, 'mark': mark, }
         else:
             content = {'status': False, 'message': '100002', 'content': {}}
     else:
