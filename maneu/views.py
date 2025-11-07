@@ -26,10 +26,9 @@ def login_api(request):
     if call and code:
         mark = str(uuid4())
         adminUser = service.admin_login(call=call, code=code, mark=mark)
-        if adminUser !=0:
+        print(adminUser)
+        if adminUser != 0:
             request.session['ip'] = common.getip(request)
-            request.session['id'] = adminUser.id
-            request.session['nickname'] = adminUser.nickname
             request.session['mark'] = mark
             content = {'status': True, 'message': '100000', 'content': {'password': adminUser.password}, 'mark': mark, }
         else:
