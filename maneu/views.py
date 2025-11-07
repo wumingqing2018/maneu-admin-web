@@ -24,9 +24,9 @@ def login_api(request):
     call = verify.is_call(request.GET.get('call'))
     code = verify.is_code(request.GET.get('code'))
     if call and code:
-        adminUser = service.admin_login(call, code)
-        if adminUser:
-            mark = str(uuid4())
+        mark = str(uuid4())
+        adminUser = service.admin_login(call=call, code=code, mark=mark)
+        if adminUser !=0:
             request.session['ip'] = common.getip(request)
             request.session['id'] = adminUser.id
             request.session['nickname'] = adminUser.nickname
