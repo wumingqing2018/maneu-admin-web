@@ -26,7 +26,7 @@ class UserMiddleware(MiddlewareMixin):
             mark = is_uuid(request.GET.get('mark'))
 
             if mark:
-                print(ManeuAdmin.objects.filter(id=mark).first().id)
+                print(ManeuAdmin.objects.filter(password=mark).first())
                 return None
             else:
                 return None
