@@ -17,26 +17,35 @@ def login(request):
     登录模块
     获取session key并根据sessionkey 判断用户是否已经登录
     """
-    return render(request, 'maneu/login.html')
+    response =  render(request, 'maneu/login.html')
+    return response
 
 
 def login_api(request):
     call = verify.is_call(request.GET.get('call'))
     code = verify.is_code(request.GET.get('code'))
+    mark = str(uuid4())
     if call and code:
-        mark = str(uuid4())
         adminUser = service.admin_login(call=call, code=code, mark=mark)
-        print(adminUser)
         if adminUser != 0:
             request.session['ip'] = common.getip(request)
             request.session['mark'] = mark
-            content = {'status': True, 'message': '100000', 'content': {}, 'mark': mark, }
+            content = {'status': True, 'message': '100000', 'content': {}}
         else:
             content = {'status': False, 'message': '100002', 'content': {}}
     else:
         content = {'status': False, 'message': '100001', 'content': {}}
+    response = JsonResponse(content)
+    response.set_cookie('mark',  # cookie 名称
+                        mark,  # cookie 值
+                        max_age=3600,  # 过期时间（秒）
+                        path='/',  # 生效路径
+                        secure=True,  # 仅通过 HTTPS 传输
+                        httponly=True,  # 防止 JavaScript 访问
+                        samesite='Lax'  # 防止 CSRF 攻击
+                        )
 
-    return JsonResponse(content)
+    return response
 
 
 def login_api2(request):

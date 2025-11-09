@@ -16,7 +16,6 @@ def search_time(request):
     if admin_id:
         try:
             data = service.order_search_time(admin_id, request.GET.get('timeS'), request.GET.get('timeE')).values('id', 'report_id', 'guest_id', 'name', 'phone', 'time', 'remark')
-            print(data)
             content = {'status': True, 'message': admin_id, 'content': list(data), 'mark': uuid4()}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid4()}
@@ -32,7 +31,6 @@ def search_text(request):
     if admin_id:
         try:
             data = service.order_search_text(admin_id, request.GET.get('value')).values('id', 'report_id', 'guest_id', 'name', 'phone', 'time', 'remark')
-            print(data)
             content = {'status': True, 'message': admin_id, 'content': list(data), 'mark': uuid4()}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid4()}
@@ -46,7 +44,6 @@ def insert(request):
     admin_id = is_uuid(request.session.get('id'))
     phone = request.GET.get('phone')
     time = request.GET.get('time')
-    print(admin_id, phone, time)
     if admin_id and phone:
         try:
             guest = ManeuGuest.objects.filter(admin_id=admin_id, phone=phone, name=request.GET.get('name')).first()
@@ -54,10 +51,8 @@ def insert(request):
                 guest_id = guest.id
             else:
                 guest_id = ManeuGuest.objects.create(admin_id=admin_id, phone=phone, name=request.GET.get('name'),time=time).id
-            print(guest_id)
             content = report_simple(request)
             report = report_insert(guest_id=guest_id, admin_id=admin_id, phone=phone, name=request.GET.get('name'), time=time, content=content)
-            print(report)
             content = order_simple(request.GET.get('content'))
             order = service.order_insert(admin_id=admin_id,
                                          guest_id=guest_id,
@@ -67,7 +62,6 @@ def insert(request):
                                          phone=phone,
                                          content=content,
                                          remark=request.GET.get('remark'))
-            print(order)
             content = {'status': True, 'message': '', 'content': {'id': order.id}, 'mark': uuid4()}
 
         except Exception as e:

@@ -15,7 +15,6 @@ def search_time(request):
     if admin_id:
         try:
             data = service.report_search_time(admin_id, request.GET.get('timeS'), request.GET.get('timeE')).values('id', 'guest_id', 'name', 'phone', 'time', 'remark')
-            print(data)
             content = {'status': True, 'message': admin_id, 'content': list(data), 'mark': uuid4()}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid4()}
@@ -31,7 +30,6 @@ def search_text(request):
     if admin_id:
         try:
             data = service.report_search_text(admin_id, request.GET.get('value')).values('id', 'guest_id', 'name', 'phone', 'time','remark')
-            print(data)
             content = {'status': True, 'message': admin_id, 'content': list(data), 'mark': uuid4()}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid4()}
@@ -111,7 +109,6 @@ def detail(request):
     if admin_id and report_id:
         try:
             data = service.report_detail(id=report_id, admin_id=admin_id)
-            print(report_id)
             content = {'status': True, 'message': '', 'content': model_to_dict(data), 'mark': uuid4()}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid4()}

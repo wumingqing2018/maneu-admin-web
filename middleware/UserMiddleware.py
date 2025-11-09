@@ -1,3 +1,5 @@
+import uuid
+
 from django.shortcuts import redirect
 from django.utils.deprecation import MiddlewareMixin
 from requests import session
@@ -20,18 +22,36 @@ class UserMiddleware(MiddlewareMixin):
         用户没有登录, 跳转到登录页
         用户已经登录, 允许通过
         """
-        print(request)
         request_url = request.path  # method:string, demo:/login/,
         #   判断是否需要校验字段
         if request_url.startswith('/maneu_'):
-            mark = is_uuid(request.GET.get('mark'))
-
+            mark = is_uuid(request.COOKIES.get('mark'))
             if mark:
                 admin = ManeuAdmin.objects.filter(password=mark).first()
                 if admin:
+                    admin.password = str(uuid.uuid4())
+                    admin.save()
                     request.session['id'] = admin.id
-                return None
+                    request.session['mark'] = admin.password
+                    return None
+                else:
+                    return redirect('login')
             else:
-                return None
+                return redirect('login')
 
         return None
+
+
+    def process_response(self, request, response):
+        response.set_cookie(
+            'mark',  # cookie 名称
+            request.session.get('mark'),  # cookie 值
+            max_age=3600,  # 过期时间（秒）
+            path='/',  # 生效路径
+            secure=True,  # 仅通过 HTTPS 传输
+            httponly=True,  # 防止 JavaScript 访问
+            samesite='Lax'  # 防止 CSRF 攻击
+        )
+
+        return response
+
