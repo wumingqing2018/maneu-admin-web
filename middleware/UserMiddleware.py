@@ -1,4 +1,4 @@
-import uuid
+from uuid import uuid4
 
 from django.shortcuts import redirect
 from django.utils.deprecation import MiddlewareMixin
@@ -23,13 +23,13 @@ class UserMiddleware(MiddlewareMixin):
         """
         request_url = request.path  # method:string, demo:/login/,
         #   判断是否需要校验字段
+        print('url', request_url)
         if request_url.startswith('/maneu_'):
-            print(request_url)
             mark = is_uuid(request.COOKIES.get('mark'))
             if mark:
                 admin = ManeuAdmin.objects.filter(password=mark).first()
                 if admin:
-                    admin.password = str(uuid.uuid4())
+                    admin.password = str(uuid4())
                     admin.save()
                     request.session['id'] = admin.id
                     request.session['mark'] = admin.password
@@ -38,8 +38,8 @@ class UserMiddleware(MiddlewareMixin):
                     return redirect('login')
             else:
                 return redirect('login')
-
-        return None
+        else:
+            return None
 
 
     def process_response(self, request, response):
@@ -58,4 +58,4 @@ class UserMiddleware(MiddlewareMixin):
 
             return response
         else:
-            return None
+            return response
