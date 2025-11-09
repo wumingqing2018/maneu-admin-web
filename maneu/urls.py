@@ -2,6 +2,8 @@ from django.urls import include
 from django.urls import path
 
 from maneu.views import *
+from maneu.api import *
+
 
 urlpatterns = [
     path('', index, name='index'),
