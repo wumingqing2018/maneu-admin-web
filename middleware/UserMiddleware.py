@@ -43,15 +43,19 @@ class UserMiddleware(MiddlewareMixin):
 
 
     def process_response(self, request, response):
-        response.set_cookie(
-            'mark',  # cookie 名称
-            request.session.get('mark'),  # cookie 值
-            max_age=3600,  # 过期时间（秒）
-            path='/',  # 生效路径
-            secure=True,  # 仅通过 HTTPS 传输
-            httponly=True,  # 防止 JavaScript 访问
-            samesite='Lax'  # 防止 CSRF 攻击
-        )
+        request_url = request.path  # method:string, demo:/login/,
+        #   判断是否需要校验字段
+        if request_url.startswith('/maneu_'):
+            response.set_cookie(
+                'mark',  # cookie 名称
+                request.session.get('mark'),  # cookie 值
+                max_age=3600,  # 过期时间（秒）
+                path='/',  # 生效路径
+                secure=True,  # 仅通过 HTTPS 传输
+                httponly=True,  # 防止 JavaScript 访问
+                samesite='Lax'  # 防止 CSRF 攻击
+            )
 
-        return response
-
+            return response
+        else:
+            return None
