@@ -2,7 +2,6 @@ import uuid
 
 from django.shortcuts import redirect
 from django.utils.deprecation import MiddlewareMixin
-from requests import session
 
 from common.verify import is_uuid
 from maneu.models import ManeuAdmin
@@ -25,6 +24,7 @@ class UserMiddleware(MiddlewareMixin):
         request_url = request.path  # method:string, demo:/login/,
         #   判断是否需要校验字段
         if request_url.startswith('/maneu_'):
+            print(request_url)
             mark = is_uuid(request.COOKIES.get('mark'))
             if mark:
                 admin = ManeuAdmin.objects.filter(password=mark).first()
