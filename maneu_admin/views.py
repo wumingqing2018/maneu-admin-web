@@ -1,12 +1,10 @@
-from uuid import uuid4
-
 from django.shortcuts import render
 
 from maneu_admin import service
 
 
 def index(request):
-    return render(request, 'maneu_admin/index.html', {'id': request.session.get('id'), 'mark': str(uuid4())})
+    return render(request, 'maneu_admin/index.html', {'id': request.session.get('id')})
 
 
 def user_insert(request):
@@ -17,4 +15,4 @@ def user_insert(request):
                                          password=request.POST['password'],
                                          phone=request.POST['phone'],
                                          email=request.POST['email'])
-    return render(request, 'maneu_admin/insert.html', {'id': request.session.get('id'), 'mark': str(uuid4())})
+    return render(request, 'maneu_admin/insert.html', {'id': request.session.get('id')})

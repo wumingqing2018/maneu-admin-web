@@ -59,7 +59,6 @@ def logout(request):
 
     if code:
         print(request.session.get('id'))
-        request.session.clear()
         print(request.session.get('id'))
         data = service.admin_logout(code)
         if data:

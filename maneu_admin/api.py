@@ -14,10 +14,11 @@ def detail(request):
             userContent = service.user_detail(admin_id=admin_id)
             data = {'nickname': userContent.nickname,
                     'location': userContent.location,
-                    'content': userContent.content,
                     'phone': userContent.phone,
                     'time': userContent.time,
                     }
+            print(data)
+
             content = {'status': True, 'message': '', 'content': data, 'mark': str(uuid4())}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}, 'mark': str(uuid4())}
@@ -32,9 +33,7 @@ def update(request):
 
     if admin_id == request.session.get('id'):
         try:
-            data = service.user_update(admin_id=admin_id, phone=request.GET.get('phone'),
-                                       nickname=request.GET.get('nickname'), location=request.GET.get('location'),
-                                       content=request.GET.get('content'))
+            data = service.user_update(admin_id=admin_id, phone=request.GET.get('phone'), nickname=request.GET.get('nickname'), location=request.GET.get('location'))
             content = {'status': True, 'message': '', 'content': data, 'mark': str(uuid4())}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}, 'mark': str(uuid4())}

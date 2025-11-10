@@ -26,11 +26,11 @@ $(document).ready(function () {
             },
             success: function (res) {
                 console.log(res)
-                $('#time').val(res.data.time)
-                $('#phone').val(res.data.phone)
-                $('#nickname').val(res.data.nickname)
-                $('#location').val(res.data.location)
-                $('#content').val(res.data.content)
+                $('#time').val(res.content.time)
+                $('#phone').val(res.content.phone)
+                $('#nickname').val(res.content.nickname)
+                $('#location').val(res.content.location)
+                $('#content').val(res.content.content)
             }
         })
     }
