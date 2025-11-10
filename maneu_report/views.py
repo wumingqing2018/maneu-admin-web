@@ -1,5 +1,3 @@
-from uuid import uuid4
-
 from django.shortcuts import render
 
 from common.common import current_time, time_start, time_end

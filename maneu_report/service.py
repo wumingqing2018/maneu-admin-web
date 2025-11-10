@@ -1,6 +1,6 @@
 from django.db.models import Q
 
-from maneu.models import ManeuReport, ManeuReport
+from maneu.models import ManeuReport
 
 
 def report_index(admin_id='', start='', end=''):
