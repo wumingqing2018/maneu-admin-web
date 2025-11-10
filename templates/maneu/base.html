@@ -15,7 +15,8 @@
     <!-- 最新的 Bootstrap5 核心 JavaScript 文件 -->
     <script crossorigin="anonymous"
             integrity="sha512-nKXmKvJyiGQy343jatQlzDprflyB5c+tKCzGP3Uq67v+lmzfnZUi/ZT+fc6ITZfSC5HhaBKUIvr/nTLCV+7F+Q=="
-            referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.min.js"></script>
+            referrerpolicy="no-referrer"
+            src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 </head>
@@ -44,14 +45,20 @@
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'maneu_guest:index' %}">客户管理</a>
             </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="{% url 'maneu_admin:index' %}"
-                   id="navbardrop">个人中心</a>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" href="{% url 'maneu_admin:index' %}">修改资料</a>
-                    <a class="dropdown-item" href="{% url 'logout' %}">退出登录</a>
-                </div>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'maneu_admin:index' %}">个人中心</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'logout' %}">退出登录</a>
+            </li>
+            {#            <li class="nav-item dropdown">#}
+            {#                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="{% url 'maneu_admin:index' %}"#}
+            {#                   id="navbardrop">个人中心</a>#}
+            {#                <div class="dropdown-menu">#}
+            {#                    <a class="dropdown-item" href="{% url 'maneu_admin:index' %}">修改资料</a>#}
+            {#                    <a class="dropdown-item" href="{% url 'logout' %}">退出登录</a>#}
+            {#                </div>#}
+            {#            </li>#}
         </ul>
     </div>
 </nav>

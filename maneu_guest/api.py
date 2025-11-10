@@ -15,9 +15,9 @@ def search_time(request):
         try:
             data = service.guest_search_time(admin_id, request.GET.get('timeS'), request.GET.get('timeE')).values('id', 'name', 'phone', 'time', 'remark')
             print(data)
-            content = {'status': True, 'message': admin_id, 'content': list(data), 'mark': uuid4()}
+            content = {'status': True, 'message': admin_id, 'content': list(data)}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid4()}
+            content = {'status': False, 'message': str(e), 'content': {}}
     else:
         content = {'status': False, 'message': '参数错误请确认', 'content': {}}
 
@@ -32,9 +32,9 @@ def search_text(request):
             data = service.guest_search_text(admin_id, request.GET.get('value')).values('id', 'name', 'phone', 'time',
                                                                                         'remark')
             print(data)
-            content = {'status': True, 'message': admin_id, 'content': list(data), 'mark': uuid4()}
+            content = {'status': True, 'message': admin_id, 'content': list(data)}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid4()}
+            content = {'status': False, 'message': str(e), 'content': {}}
     else:
         content = {'status': False, 'message': '参数错误请确认', 'content': {}}
 

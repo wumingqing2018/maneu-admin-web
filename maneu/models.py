@@ -133,36 +133,3 @@ class ManeuStore(models.Model):
     class Meta:
         managed = False
         db_table = 'maneu_store'
-
-
-class ManeuUsers(models.Model):
-    id = models.CharField(primary_key=True, max_length=36, default=uuid4, editable=False)
-    nickname = models.CharField(max_length=36)
-    username = models.CharField(unique=True, max_length=36)
-    password = models.CharField(max_length=36)
-    email = models.CharField(max_length=36)
-    phone = models.CharField(max_length=36)
-    level = models.IntegerField()
-    state = models.IntegerField()
-    create_time = models.DateTimeField()
-    remark = models.CharField(max_length=255, blank=True, null=True)
-    localtion = models.CharField(max_length=128, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'maneu_users'
-
-
-class ManeuVerify(models.Model):
-    id = models.CharField(primary_key=True, max_length=36, default=uuid4, editable=False)
-    order_id = models.CharField(max_length=36, blank=True, null=True)
-    guest_id = models.CharField(max_length=36, blank=True, null=True)
-    time = models.DateTimeField(blank=True, null=True)
-    name = models.CharField(max_length=36, blank=True, null=True)
-    call = models.CharField(max_length=36, blank=True, null=True)
-    remark = models.TextField(blank=True, null=True)
-    content = models.TextField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'maneu_verify'

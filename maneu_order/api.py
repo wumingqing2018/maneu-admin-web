@@ -1,5 +1,4 @@
 import json
-from uuid import uuid4
 
 from django.http import JsonResponse
 
@@ -16,9 +15,9 @@ def search_time(request):
     if admin_id:
         try:
             data = service.order_search_time(admin_id, request.GET.get('timeS'), request.GET.get('timeE')).values('id', 'report_id', 'guest_id', 'name', 'phone', 'time', 'remark')
-            content = {'status': True, 'message': admin_id, 'content': list(data), 'mark': uuid4()}
+            content = {'status': True, 'message': admin_id, 'content': list(data)}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid4()}
+            content = {'status': False, 'message': str(e), 'content': {}}
     else:
         content = {'status': False, 'message': '参数错误请确认', 'content': {}}
 
@@ -31,9 +30,9 @@ def search_text(request):
     if admin_id:
         try:
             data = service.order_search_text(admin_id, request.GET.get('value')).values('id', 'report_id', 'guest_id', 'name', 'phone', 'time', 'remark')
-            content = {'status': True, 'message': admin_id, 'content': list(data), 'mark': uuid4()}
+            content = {'status': True, 'message': admin_id, 'content': list(data)}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid4()}
+            content = {'status': False, 'message': str(e), 'content': {}}
     else:
         content = {'status': False, 'message': '参数错误请确认', 'content': {}}
 
@@ -62,10 +61,10 @@ def insert(request):
                                          phone=phone,
                                          content=content,
                                          remark=request.GET.get('remark'))
-            content = {'status': True, 'message': '', 'content': {'id': order.id}, 'mark': uuid4()}
+            content = {'status': True, 'message': '', 'content': {'id': order.id}}
 
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid4()}
+            content = {'status': False, 'message': str(e), 'content': {}}
     else:
         content = {'status': False, 'message': '参数错误请确认', 'content': {}}
 
@@ -86,9 +85,9 @@ def update(request):
                                          call=request.GET.get('call'),
                                          content=content,
                                          remark=request.GET.get('remark'))
-            content = {'status': True, 'message': '', 'content': order, 'mark': uuid4()}
+            content = {'status': True, 'message': '', 'content': order}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid4()}
+            content = {'status': False, 'message': str(e), 'content': {}}
     else:
         content = {'status': False, 'message': '参数错误请确认', 'content': {}}
 
@@ -111,9 +110,9 @@ def detail(request):
                 'remark': order.remark,
                 'time': order.time
             }
-            content = {'status': True, 'message': '', 'content': content, 'mark': uuid4()}
+            content = {'status': True, 'message': '', 'content': content}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid4()}
+            content = {'status': False, 'message': str(e), 'content': {}}
     else:
         content = {'status': False, 'message': '请输入正确的参数', 'content': {}}
 
@@ -127,9 +126,9 @@ def delete(request):
     if admin_id and order_id:
         try:
             data = service.order_delete(order_id=order_id, admin_id=admin_id)
-            content = {'status': True, 'message': '', 'content': data, 'mark': uuid4()}
+            content = {'status': True, 'message': '', 'content': data}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'content': {}, 'mark': uuid4()}
+            content = {'status': False, 'message': str(e), 'content': {}}
     else:
         content = {'status': False, 'message': '请输入正确的参数', 'content': {}}
 
