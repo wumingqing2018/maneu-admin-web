@@ -2,17 +2,18 @@ from uuid import uuid4
 
 from django.http import JsonResponse
 
-from common.common import get_random_code, sendsms, getip
-from common.verify import is_call, is_code
-from maneu.service import sendsms, admin_login
+from common import common
+from common.verify import is_call, is_code, is_uuid
+from maneu import service
+from maneu.views import login
 
 
 def sendsms(request):
     phone_number = is_call(request.GET.get('call'))
     if phone_number:
-        code = str(get_random_code())
-        if sendsms(call=phone_number, code=code) != 0:
-            response = sendsms(call=phone_number, code=code)
+        code = str(common.get_random_code())
+        if service.sendsms(call=phone_number, code=code) != 0:
+            response = common.sendsms(call=phone_number, code=code)
             if response['Code'] == 'OK':
                 content = {'status': True, 'message': 'OK', 'data': {}}
             else:
@@ -30,9 +31,9 @@ def login_api(request):
     code = is_code(request.GET.get('code'))
     mark = str(uuid4())
     if call and code:
-        adminUser = admin_login(call=call, code=code, mark=mark)
+        adminUser = service.admin_login(call=call, code=code, mark=mark)
         if adminUser != 0:
-            request.session['ip'] = getip(request)
+            request.session['ip'] = common.getip(request)
             request.session['mark'] = mark
             content = {'status': True, 'message': '100000', 'content': {}}
         else:
@@ -52,21 +53,20 @@ def login_api(request):
     return response
 
 
-def login_api2(request):
-    call = is_call(request.GET.get('call'))
-    code = is_code(request.GET.get('code'))
-    if call and code:
-        adminUser = admin_login(call, code)
-        if adminUser:
-            mark = str(uuid4())
-            request.session['ip'] = getip(request)
-            request.session['id'] = adminUser.id
-            request.session['nickname'] = adminUser.nickname
-            request.session['mark'] = mark
-            content = {'status': True, 'message': '100000', 'content': {'password': adminUser.password}, 'mark': mark, }
-        else:
-            content = {'status': False, 'message': '100002', 'content': {}}
-    else:
-        content = {'status': False, 'message': '100001', 'content': {}}
+def logout(request):
+    code = is_uuid(request.session.get('id'))
+    print(code)
 
-    return JsonResponse(content)
+    if code:
+        print(request.session.get('id'))
+        request.session.clear()
+        print(request.session.get('id'))
+        data = service.admin_logout(code)
+        if data:
+            content = {'status': True, 'message': '', 'data': {}}
+        else:
+            content = {'status': False, 'message': '123', 'data': {}}
+    else:
+        content = {'status': False, 'message': '456', 'data': {}}
+
+    return login(request)
