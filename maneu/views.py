@@ -6,8 +6,4 @@ def index(request):
 
 
 def login(request):
-    """
-    登录模块
-    获取session key并根据sessionkey 判断用户是否已经登录
-    """
     return render(request, 'maneu/login.html')

@@ -10,6 +10,7 @@ from maneu.views import login
 
 def sendsms(request):
     phone_number = is_call(request.GET.get('call'))
+
     if phone_number:
         code = str(common.get_random_code())
         if service.sendsms(call=phone_number, code=code) != 0:
@@ -55,11 +56,9 @@ def login_api(request):
 
 def logout(request):
     code = is_uuid(request.session.get('id'))
-    print(code)
 
     if code:
-        print(request.session.get('id'))
-        print(request.session.get('id'))
+
         data = service.admin_logout(code)
         if data:
             content = {'status': True, 'message': '', 'data': {}}
