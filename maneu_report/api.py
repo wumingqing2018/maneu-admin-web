@@ -38,8 +38,9 @@ def search_text(request):
 
 
 def delete(request):
-    id = is_uuid(request.GET.get('id'))
+    id = is_uuid(request.GET.get('order_id'))
     admin_id = is_uuid(request.session.get('id'))
+    print(admin_id, id)
 
     if admin_id and id:
         try:

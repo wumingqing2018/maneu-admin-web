@@ -59,7 +59,7 @@ def insert(request):
 
 def delete(request):
     admin_id = is_uuid(request.session.get('id'))
-    guest_id = is_uuid(request.GET.get('id'))
+    guest_id = is_uuid(request.GET.get('order_id'))
 
     if admin_id and guest_id:
         try:

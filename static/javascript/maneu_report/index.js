@@ -7,6 +7,7 @@ function deleteBtn(obj) {
                 order_id: obj.alt,
             },
             success: function (res) {
+                console.log(res)
                 if (res.status === true) {
                     obj.parentElement.parentElement.parentElement.parentElement.remove()
                 } else {
