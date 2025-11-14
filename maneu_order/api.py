@@ -14,7 +14,13 @@ def search_time(request):
 
     if admin_id:
         try:
-            data = service.order_search_time(admin_id, request.GET.get('timeS'), request.GET.get('timeE')).values('id', 'report_id', 'guest_id', 'name', 'phone', 'time', 'remark')
+            data = service.order_search_time(admin_id, request.GET.get('timeS'), request.GET.get('timeE')).values('id',
+                                                                                                                  'report_id',
+                                                                                                                  'guest_id',
+                                                                                                                  'name',
+                                                                                                                  'phone',
+                                                                                                                  'time',
+                                                                                                                  'remark')
             content = {'status': True, 'message': admin_id, 'content': list(data)}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
@@ -29,7 +35,9 @@ def search_text(request):
 
     if admin_id:
         try:
-            data = service.order_search_text(admin_id, request.GET.get('value')).values('id', 'report_id', 'guest_id', 'name', 'phone', 'time', 'remark')
+            data = service.order_search_text(admin_id, request.GET.get('value')).values('id', 'report_id', 'guest_id',
+                                                                                        'name', 'phone', 'time',
+                                                                                        'remark')
             content = {'status': True, 'message': admin_id, 'content': list(data)}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
@@ -49,9 +57,13 @@ def insert(request):
             if guest:
                 guest_id = guest.id
             else:
-                guest_id = ManeuGuest.objects.create(admin_id=admin_id, phone=phone, name=request.GET.get('name'),time=time).id
+                guest_id = ManeuGuest.objects.create(admin_id=admin_id, phone=phone, name=request.GET.get('name'),
+                                                     time=time, sex=request.GET.get('sex'), age=request.GET.get('age'),
+                                                     dfh=request.GET.get('DFH'), em=request.GET.get('EM'),
+                                                     ot=request.GET.get('OT'), remark=request.GET.get('remark')).id
             content = report_simple(request)
-            report = report_insert(guest_id=guest_id, admin_id=admin_id, phone=phone, name=request.GET.get('name'), time=time, content=content)
+            report = report_insert(guest_id=guest_id, admin_id=admin_id, phone=phone, name=request.GET.get('name'),
+                                   time=time, content=content)
             content = order_simple(request.GET.get('content'))
             order = service.order_insert(admin_id=admin_id,
                                          guest_id=guest_id,

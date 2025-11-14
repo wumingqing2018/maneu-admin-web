@@ -40,7 +40,6 @@ def search_text(request):
 def delete(request):
     id = is_uuid(request.GET.get('order_id'))
     admin_id = is_uuid(request.session.get('id'))
-    print(admin_id, id)
 
     if admin_id and id:
         try:
@@ -61,10 +60,12 @@ def insert(request):
     if admin_id and phone:
         try:
             guest = ManeuGuest.objects.filter(admin_id=admin_id, phone=phone, name=request.GET.get('name')).first()
+
             if guest:
                 guest_id = guest.id
             else:
-                guest_id = ManeuGuest.objects.create(admin_id=admin_id, phone=phone, name=request.GET.get('name'),time=time).id
+                guest_id = ManeuGuest.objects.create(admin_id=admin_id, phone=phone, name=request.GET.get('name'), time=time, sex=request.GET.get('sex'), age=request.GET.get('age'), dfh=request.GET.get('DFH'), em=request.GET.get('EM'), ot=request.GET.get('OT'), remark=request.GET.get('remark')).id
+
             content = report_simple(request)
             report = service.report_insert(guest_id=guest_id, admin_id=admin_id, phone=phone, name=request.GET.get('name'), time=time, content=content)
 
