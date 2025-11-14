@@ -1,57 +1,22 @@
 $(document).ready(function () {
     $('#insert').click(function () {
-        guest_insert(function (data) {
-            console.log(data)
-            if (data.status === true) {
-                report_insert( function (data) {
-                    console.log(data)
-                    if (data.status === true) {
-                        alert('提交成功')
-                    } else {
-                        alert('提交失败，错误信息：' + data.message)
-                    }
-                })
-            } else {
-                alert('提交失败，错误信息：' + data.message)
-            }
-        });
-    });
-
-    function guest_insert(callback){
         $.ajax({
-            url: guest_api,
+            url: report_api,
             method: 'GET',
             data: {
                 remark: $("#remark").val(),
                 time: $("#time").val(),
                 name: $("#name").val(),
                 phone: $("#phone").val(),
+
+
                 age: $("#age").val(),
                 sex: $("#sex").val(),
                 DFH: $("#DFH").val(),
                 OT: $("#OT").val(),
                 EM: $("#EM").val(),
-            },
-            success: function (res) {
-                callback(res); // 第一个参数为null表示没有错误，第二个参数为请求的数据
-            },
-            error: function (res) {
-                callback({'status': false, 'message': '请求出错请刷新页面'}); // 第一个参数为null表示没有错误，第二个参数为请求的数据
-            }
-        })
-    }
 
 
-    function report_insert(callback){
-        $.ajax({
-            url: report_api,
-            method: "GET",
-            data: {
-                guest_id: guest_id,
-                time: $("#time").val(),
-                name: $("#name").val(),
-                phone: $("#phone").val(),
-                remark: $("#remark").val(),
                 plan: $("#PLAN").val(),
                 pd: $("#PD").val(),
                 od_va: $("#OD_VA").val(),
@@ -84,11 +49,15 @@ $(document).ready(function () {
                 os_bc: $("#OS_BC").val(),
             },
             success: function (res) {
-                callback(res); // 第一个参数为null表示没有错误，第二个参数为请求的数据
+                if (res.status === true) {
+                    alert('提交成功')
+                } else {
+                    alert('提交失败，错误信息：' + res.message)
+                }
             },
             error: function (res) {
                 callback({'status': false, 'message': '请求出错请刷新页面'}); // 第一个参数为null表示没有错误，第二个参数为请求的数据
             }
         })
-    }
+    });
 });

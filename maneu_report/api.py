@@ -3,8 +3,8 @@ from django.http import JsonResponse
 
 from common.simple import report_simple
 from common.verify import is_uuid
-from maneu_guest.service import ManeuGuest_get
 from maneu_report import service
+from maneu.models import ManeuGuest, ManeuReport
 
 
 def search_time(request):
@@ -55,23 +55,24 @@ def delete(request):
 
 def insert(request):
     admin_id = is_uuid(request.session.get('id'))
-
-    if admin_id:
-        content = report_simple(request)
+    phone = request.GET.get('phone')
+    time = request.GET.get('time')
+    if admin_id and phone:
         try:
-            guest_id = ManeuGuest_get(admin_id=admin_id, phone=request.GET.get('phone')).id
-            report = service.report_insert(admin_id=admin_id,
-                                           guest_id=guest_id,
-                                           time=request.GET.get('time'),
-                                           name=request.GET.get('name'),
-                                           phone=request.GET.get('phone'),
-                                           remark=request.GET.get('remark'),
-                                           content=content)
+            guest = ManeuGuest.objects.filter(admin_id=admin_id, phone=phone, name=request.GET.get('name')).first()
+            if guest:
+                guest_id = guest.id
+            else:
+                guest_id = ManeuGuest.objects.create(admin_id=admin_id, phone=phone, name=request.GET.get('name'),time=time).id
+            content = report_simple(request)
+            report = service.report_insert(guest_id=guest_id, admin_id=admin_id, phone=phone, name=request.GET.get('name'), time=time, content=content)
+
             content = {'status': True, 'message': '', 'content': {'id': report.id}}
+
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
     else:
-        content = {'status': False, 'message': '请输入正确的参数1', 'content': {}}
+        content = {'status': False, 'message': '参数错误请确认', 'content': {}}
 
     return JsonResponse(content)
 
