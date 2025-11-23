@@ -20,6 +20,7 @@ function deleteBtn(obj) {
     }
 }
 
+
 $(document).ready(function () {
     $.ajax({
         url: search_time,
@@ -29,22 +30,11 @@ $(document).ready(function () {
             timeS: $("#timeS").val(),
         },
         success: function (res) {
+            console.log(res)
             forList(res.content)
         }
     })
 
-    $('#search_text').click(function () {
-        $.ajax({
-            url: search_text,
-            method: 'GET',
-            data: {
-                value: $("#value").val(),
-            },
-            success: function (res) {
-                forList(res.content)
-            }
-        })
-    })
 
     $('#search_time').click(function () {
         $.ajax({
@@ -55,14 +45,27 @@ $(document).ready(function () {
                 timeS: $("#timeS").val(),
             },
             success: function (res) {
+                console.log(res)
                 forList(res.content)
             }
         })
     })
 
+    $('#search_text').click(function () {
+        $.ajax({
+            url: search_text,
+            method: 'GET',
+            data: {
+                value: $("#value").val(),
+            },
+            success: function (res) {
+                console.log(res)
+                forList(res.content)
+            }
+        })
+    })
     function forList(res) {
         $('#body').empty();
-        console.log(res)
         for (i in res) {
             $('#body').append(
                 "<div>\n" +
@@ -86,8 +89,9 @@ $(document).ready(function () {
                 "        </div>\n" +
                 "        <div class='col-1'>\n" +
                 "            <form method='GET' action='" + web_detail + "'>\n" +
+                "                <input type='hidden' name='order_id' value=" + res[i]['id'] + ">\n" +
+                "                <input type='hidden' name='report_id' value=" + res[i]['report_id'] + ">\n" +
                 "                <input type='hidden' name='guest_id' value=" + res[i]['guest_id'] + ">\n" +
-                "                <input type='hidden' name='id' value=" + res[i]['id'] + ">\n" +
                 "                <div class='input-group input-group-sm'>\n" +
                 "                    <input type='submit' class='col-12 btn btn-primary' value='查看'>\n" +
                 "                </div>\n" +

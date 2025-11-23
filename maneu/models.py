@@ -33,14 +33,15 @@ class ManeuGuest(models.Model):
     id = models.CharField(primary_key=True, max_length=36, default=uuid4, editable=False)
     admin_id = models.CharField(max_length=36, blank=True, null=True)
     time = models.DateTimeField(blank=True, null=True)
-    name = models.CharField(max_length=255, blank=True, null=True)
-    phone = models.CharField(max_length=255, blank=True, null=True)
-    remark = models.TextField(blank=True, null=True)
+    name = models.CharField(max_length=36, blank=True, null=True)
+    phone = models.CharField(max_length=36, blank=True, null=True)
+    status = models.CharField(max_length=36, blank=True, null=True)
     sex = models.CharField(max_length=36, blank=True, null=True)
     age = models.CharField(max_length=36, blank=True, null=True)
     dfh = models.CharField(max_length=36, blank=True, null=True)
     ot = models.CharField(max_length=36, blank=True, null=True)
     em = models.CharField(max_length=36, blank=True, null=True)
+    remark = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -53,9 +54,10 @@ class ManeuOrder(models.Model):
     guest_id = models.CharField(max_length=36)
     store_id = models.CharField(max_length=36)
     report_id = models.CharField(max_length=36)
-    time = models.DateTimeField()
-    name = models.CharField(max_length=36)
-    phone = models.CharField(max_length=36)
+    time = models.DateTimeField(blank=True, null=True)
+    name = models.CharField(max_length=36, blank=True, null=True)
+    phone = models.CharField(max_length=36, blank=True, null=True)
+    status = models.CharField(max_length=36, blank=True, null=True)
     remark = models.CharField(max_length=512)
     content = models.TextField(blank=True, null=True)
 
@@ -68,9 +70,10 @@ class ManeuReport(models.Model):
     id = models.CharField(primary_key=True, max_length=36, default=uuid4, editable=False)
     admin_id = models.CharField(max_length=36, blank=True, null=True)
     guest_id = models.CharField(max_length=36, blank=True, null=True)
-    phone = models.CharField(max_length=36, blank=True, null=True)
-    name = models.CharField(max_length=36, blank=True, null=True)
     time = models.DateTimeField(blank=True, null=True)
+    name = models.CharField(max_length=36, blank=True, null=True)
+    phone = models.CharField(max_length=36, blank=True, null=True)
+    status = models.CharField(max_length=36, blank=True, null=True)
     plan = models.CharField(db_column='PLAN', max_length=36, blank=True, null=True)  # Field name made lowercase.
     pd = models.CharField(db_column='PD', max_length=36, blank=True, null=True)  # Field name made lowercase.
     od_al = models.CharField(db_column='OD_AL', max_length=36, blank=True, null=True)  # Field name made lowercase.
@@ -102,7 +105,6 @@ class ManeuReport(models.Model):
     os_lt = models.CharField(db_column='OS_LT', max_length=36, blank=True, null=True)  # Field name made lowercase.
     os_vt = models.CharField(db_column='OS_VT', max_length=36, blank=True, null=True)  # Field name made lowercase.
     remark = models.TextField(blank=True, null=True)
-    content = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False

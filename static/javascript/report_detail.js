@@ -1,10 +1,11 @@
 $(document).ready(function () {
-    detail_order(function (data, report_id, guest_id) {
+    detail_report(function (data) {
         if (data === true) {
-            detail_report(report_id,function (data) { })
-            detail_guest(guest_id,function (data) { })
+            detail_guest(function (data) {
+            })
         }
     })
+
     $('#delete').click(function () {
         if (confirm("确定要删除记录吗？")) {
             delete_report(function (data) {
@@ -52,47 +53,14 @@ $(document).ready(function () {
     })
 
 
-    function detail_order(callback) {
-        $.ajax({
-            url: order_detail,
-            data: {
-                'id': order_id
-            },
-            success: function (res) {
-                $('#remark').val(res.content.remark)
-                $('#name').val(res.content.name)
-                $('#phone').val(res.content.phone)
-                $('#time').val(res.content.time)
-
-                console.log('order', res.content.content)
-
-                for (var i = 0; i < res.content.content.length; i++) {
-                    store = $(".store:eq(" + i + ")")
-                    store.find(".arg10").val(res.content.content[i]['arg10'])
-                    store.find(".arg11").val(res.content.content[i]['arg11'])
-                    store.find(".arg12").val(res.content.content[i]['arg12'])
-                    store.find(".arg13").val(res.content.content[i]['arg13'])
-                    store.find(".arg14").val(res.content.content[i]['arg14'])
-                }
-
-                report_id = res.content.report_id;
-                guest_id = res.content.guest_id;
-                callback(true, report_id, guest_id); // 第一个参数为null表示没有错误，第二个参数为请求的数据
-            },
-            error: function (res) {
-                callback(false); // 第一个参数为null表示没有错误，第二个参数为请求的数据
-            }
-        })
-    }
-
-    function detail_guest(guest_id, callback) {
+    function detail_guest(callback) {
         $.ajax({
             url: guest_detail,
             data: {
                 'id': guest_id
             },
             success: function (res) {
-                console.log('guest',res.content)
+                console.log('guest', res.content)
                 content = res.content
                 $('#name').val(content.name)
                 $('#call').val(content.phone)
@@ -109,7 +77,7 @@ $(document).ready(function () {
         })
     }
 
-    function detail_report(report_id, callback) {
+    function detail_report(callback) {
         $.ajax({
             url: report_detail,
             data: {
@@ -160,21 +128,6 @@ $(document).ready(function () {
     }
 
 
-    function delete_order(callback) {
-        $.ajax({
-            url: order_delete,
-            data: {
-                'id': order_id
-            },
-            success: function (res) {
-                callback(res)
-            },
-            error: function () {
-                callback({"status": false, 'message': 'order,网络出错'})
-            }
-        })
-    }
-
     function delete_report(callback) {
         $.ajax({
             url: report_delete,
@@ -190,38 +143,6 @@ $(document).ready(function () {
         })
     }
 
-
-    function update_order(callback) {
-        store = []
-        $(".store").each(function () {
-            data = {
-                arg10: $(this).find(".arg10").val(),
-                arg11: $(this).find(".arg11").val(),
-                arg12: $(this).find(".arg12").val(),
-                arg13: $(this).find(".arg13").val(),
-                arg14: $(this).find(".arg14").val(),
-            };
-            store.push(data)
-        })
-        $.ajax({
-            url: order_update,
-            method: 'GET',
-            data: {
-                content: JSON.stringify(store),
-                remark: $("#remark").val(),
-                time: $("#time").val(),
-                name: $("#name").val(),
-                phone: $("#phone").val(),
-                order_id: order_id,
-            },
-            success: function (res) {
-                callback(res)
-            },
-            error: function () {
-                callback({"status": false, 'message': 'order,网络出错'})
-            }
-        })
-    }
 
     function update_guest(callback) {
         $.ajax({

@@ -2,7 +2,7 @@ import json
 
 from django.http import JsonResponse
 
-from common.simple import order_simple, report_simple
+from common.simple import order_simple, report_simple, guest_simple
 from common.verify import is_uuid
 from maneu.models import ManeuGuest
 from maneu_order import service
@@ -49,30 +49,28 @@ def search_text(request):
 
 def insert(request):
     admin_id = is_uuid(request.session.get('id'))
-    phone = request.GET.get('phone')
-    time = request.GET.get('time')
-    if admin_id and phone:
+    if admin_id:
         try:
-            guest = ManeuGuest.objects.filter(admin_id=admin_id, phone=phone, name=request.GET.get('name')).first()
-            if guest:
-                guest_id = guest.id
-            else:
-                guest_id = ManeuGuest.objects.create(admin_id=admin_id, phone=phone, name=request.GET.get('name'),
-                                                     time=time, sex=request.GET.get('sex'), age=request.GET.get('age'),
-                                                     dfh=request.GET.get('DFH'), em=request.GET.get('EM'),
-                                                     ot=request.GET.get('OT'), remark=request.GET.get('remark')).id
+            time = request.GET.get('time')
+            name = request.GET.get('name')
+            phone = request.GET.get('phone')
+
+            guest_id = ManeuGuest.objects.create(admin_id=admin_id, time=time, name=name, phone=phone, status=3, sex=request.GET.get('sex'), age=request.GET.get('age'), dfh=request.GET.get('DFH'), em=request.GET.get('EM'), ot=request.GET.get('OT'), remark=request.GET.get('remark')).id
+
             content = report_simple(request)
-            report = report_insert(guest_id=guest_id, admin_id=admin_id, phone=phone, name=request.GET.get('name'),
-                                   time=time, content=content)
+            report = report_insert(guest_id=guest_id, admin_id=admin_id, time=time, name=name, phone=phone, status=3, content=content)
+
             content = order_simple(request.GET.get('content'))
             order = service.order_insert(admin_id=admin_id,
                                          guest_id=guest_id,
                                          report_id=report.id,
                                          time=time,
-                                         name=request.GET.get('name'),
+                                         name=name,
                                          phone=phone,
+                                         status=3,
                                          content=content,
                                          remark=request.GET.get('remark'))
+
             content = {'status': True, 'message': '', 'content': {'id': order.id}}
 
         except Exception as e:

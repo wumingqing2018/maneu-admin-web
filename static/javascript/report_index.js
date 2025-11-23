@@ -21,34 +21,16 @@ function deleteBtn(obj) {
 }
 
 $(document).ready(function () {
-
-        $.ajax({
-            url: search_time,
-            method: 'GET',
-            data: {
-                timeE: $("#timeE").val(),
-                timeS: $("#timeS").val(),
-            },
-            success: function (res) {
-                console.log(res)
-                forList(res.content)
-            }
-        })
-
-
-    $('#search_time').click(function () {
-        $.ajax({
-            url: search_time,
-            method: 'GET',
-            data: {
-                timeE: $("#timeE").val(),
-                timeS: $("#timeS").val(),
-            },
-            success: function (res) {
-                console.log(res)
-                forList(res.content)
-            }
-        })
+    $.ajax({
+        url: search_time,
+        method: 'GET',
+        data: {
+            timeE: $("#timeE").val(),
+            timeS: $("#timeS").val(),
+        },
+        success: function (res) {
+            forList(res.content)
+        }
     })
 
     $('#search_text').click(function () {
@@ -59,13 +41,28 @@ $(document).ready(function () {
                 value: $("#value").val(),
             },
             success: function (res) {
-                console.log(res)
                 forList(res.content)
             }
         })
     })
+
+    $('#search_time').click(function () {
+        $.ajax({
+            url: search_time,
+            method: 'GET',
+            data: {
+                timeE: $("#timeE").val(),
+                timeS: $("#timeS").val(),
+            },
+            success: function (res) {
+                forList(res.content)
+            }
+        })
+    })
+
     function forList(res) {
         $('#body').empty();
+        console.log(res)
         for (i in res) {
             $('#body').append(
                 "<div>\n" +
@@ -89,7 +86,8 @@ $(document).ready(function () {
                 "        </div>\n" +
                 "        <div class='col-1'>\n" +
                 "            <form method='GET' action='" + web_detail + "'>\n" +
-                "                <input type='hidden' name='id' value=" + res[i]['id'] + ">\n" +
+                "                <input type='hidden' name='guest_id' value=" + res[i]['guest_id'] + ">\n" +
+                "                <input type='hidden' name='report_id' value=" + res[i]['id'] + ">\n" +
                 "                <div class='input-group input-group-sm'>\n" +
                 "                    <input type='submit' class='col-12 btn btn-primary' value='查看'>\n" +
                 "                </div>\n" +

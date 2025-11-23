@@ -1,11 +1,9 @@
-from uuid import uuid4
-
 from django.forms import model_to_dict
 from django.http import JsonResponse
 
-from common.simple import guest_simple
 from common.verify import is_uuid
 from maneu_guest import service
+from maneu.models import *
 
 
 def search_time(request):
@@ -44,11 +42,13 @@ def insert(request):
     admin_id = is_uuid(request.session.get('id'))
     if admin_id:
         try:
-            guest = service.ManeuGuest_get(admin_id=admin_id, phone=request.GET.get('phone'))
-            if guest is None:
-                content = guest_simple(request)
-                guest = service.ManeuGuest_insert(admin_id=admin_id, time=content['time'], name=content['name'], phone=content['phone'], sex=content['sex'], age=content['age'], dfh=content['dfh'], ot=content['ot'], em=content['em'], remark=content['remark'])
-            content = {'status': True, 'message': '', 'content': {'id': guest.id}, 'mark': str(uuid4())}
+            name = request.GET.get('name')
+            time = request.GET.get('time')
+            phone = request.GET.get('phone')
+            status = 1
+
+            guest_id = ManeuGuest.objects.create(admin_id=admin_id, time=time, name=name, phone=phone, status=status, sex=request.GET.get('sex'), age=request.GET.get('age'), dfh=request.GET.get('DFH'), em=request.GET.get('EM'), ot=request.GET.get('OT'), remark=request.GET.get('remark')).id
+            content = {'status': True, 'message': '', 'content': {'id': guest_id}, 'mark': str(uuid4())}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}, 'mark': str(uuid4())}
     else:

@@ -540,8 +540,8 @@
     <script>
         index = "{% url 'maneu_order:index' %}"
         order_id = "{{ order_id }}"
-        guest_id = ""
-        report_id = ""
+        guest_id = "{{ guest_id }}"
+        report_id = "{{ report_id }}"
         order_update = "{% url 'maneu_order:api_update' %}"
         order_detail = "{% url 'maneu_order:api_detail' %}"
         order_delete = "{% url 'maneu_order:api_delete' %}"
@@ -552,7 +552,7 @@
         report_detail = "{% url 'maneu_report:api_detail' %}"
         report_delete = "{% url 'maneu_report:api_delete' %}"
     </script>
-    <script src="{% static 'javascript/maneu_order/update.js' %}" type="application/javascript"></script>
+    <script src="{% static 'javascript/order_detail.js' %}" type="application/javascript"></script>
 {% endblock %}
 {% block css %}
     <link href="{% static 'css/maneu_order/insert.css' %}" rel="stylesheet">

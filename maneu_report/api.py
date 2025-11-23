@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from common.simple import report_simple
 from common.verify import is_uuid
 from maneu_report import service
-from maneu.models import ManeuGuest, ManeuReport
+from maneu.models import ManeuGuest
 
 
 def search_time(request):
@@ -12,7 +12,7 @@ def search_time(request):
 
     if admin_id:
         try:
-            data = service.report_search_time(admin_id, request.GET.get('timeS'), request.GET.get('timeE')).values('id', 'guest_id', 'name', 'phone', 'time', 'remark')
+            data = service.report_search_time(admin_id, request.GET.get('timeS'), request.GET.get('timeE')).values('id', 'report_id', 'guest_id', 'name', 'phone', 'time', 'remark')
             content = {'status': True, 'message': admin_id, 'content': list(data)}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
@@ -27,7 +27,7 @@ def search_text(request):
 
     if admin_id:
         try:
-            data = service.report_search_text(admin_id, request.GET.get('value')).values('id', 'guest_id', 'name', 'phone', 'time','remark')
+            data = service.report_search_text(admin_id, request.GET.get('value')).values('id', 'report_id', 'guest_id', 'name', 'phone', 'time','remark')
             content = {'status': True, 'message': admin_id, 'content': list(data)}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
@@ -55,22 +55,19 @@ def delete(request):
 
 def insert(request):
     admin_id = is_uuid(request.session.get('id'))
-    phone = request.GET.get('phone')
-    time = request.GET.get('time')
-    if admin_id and phone:
-        try:
-            guest = ManeuGuest.objects.filter(admin_id=admin_id, phone=phone, name=request.GET.get('name')).first()
 
-            if guest:
-                guest_id = guest.id
-            else:
-                guest_id = ManeuGuest.objects.create(admin_id=admin_id, phone=phone, name=request.GET.get('name'), time=time, sex=request.GET.get('sex'), age=request.GET.get('age'), dfh=request.GET.get('DFH'), em=request.GET.get('EM'), ot=request.GET.get('OT'), remark=request.GET.get('remark')).id
+    if admin_id:
+        name = request.GET.get('name')
+        time = request.GET.get('time')
+        phone = request.GET.get('phone')
+        status = 2
+        try:
+            guest_id = ManeuGuest.objects.create(admin_id=admin_id, time=time, name=name, phone=phone, status=status, sex=request.GET.get('sex'), age=request.GET.get('age'), dfh=request.GET.get('DFH'), em=request.GET.get('EM'), ot=request.GET.get('OT'), remark=request.GET.get('remark')).id
 
             content = report_simple(request)
-            report = service.report_insert(guest_id=guest_id, admin_id=admin_id, phone=phone, name=request.GET.get('name'), time=time, content=content)
+            report = service.report_insert(guest_id=guest_id, admin_id=admin_id, time=time, name=name, phone=phone, status=status, content=content)
 
             content = {'status': True, 'message': '', 'content': {'id': report.id}}
-
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
     else:
@@ -107,6 +104,7 @@ def update(request):
 def detail(request):
     report_id = is_uuid(request.GET.get('id'))
     admin_id = is_uuid(request.session.get('id'))
+    print(report_id)
     if admin_id and report_id:
         try:
             data = service.report_detail(id=report_id, admin_id=admin_id)

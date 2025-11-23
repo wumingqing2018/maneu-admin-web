@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    alert('1')
     detail_admin()
     $('#update').click(function () {
         $.ajax({
