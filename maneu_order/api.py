@@ -2,7 +2,7 @@ import json
 
 from django.http import JsonResponse
 
-from common.simple import order_simple, report_simple, guest_simple
+from common.simple import order_simple, report_simple
 from common.verify import is_uuid
 from maneu.models import ManeuGuest
 from maneu_order import service

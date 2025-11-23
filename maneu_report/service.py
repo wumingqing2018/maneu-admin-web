@@ -3,10 +3,6 @@ from django.db.models import Q
 from maneu.models import ManeuReport
 
 
-def report_index(admin_id='', start='', end=''):
-    return ManeuReport.objects.filter(admin_id=admin_id, time__gte=start, time__lte=end).order_by('-time').all()
-
-
 def report_search_text(admin_id='', value=''):
     return ManeuReport.objects.filter(Q(name__icontains=value, admin_id=admin_id, status=2) | Q(phone__icontains=value, admin_id=admin_id, status=2)).order_by('-time').all()
 
