@@ -1,4 +1,3 @@
-
 $(document).ready(function () {
     $("#sendsms-btn").click(function () {
         $.ajax({

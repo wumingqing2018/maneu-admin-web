@@ -4,11 +4,14 @@ from maneu.models import ManeuReport
 
 
 def report_search_text(admin_id='', value=''):
-    return ManeuReport.objects.filter(Q(name__icontains=value, admin_id=admin_id, status=2) | Q(phone__icontains=value, admin_id=admin_id, status=2)).order_by('-time').all()
+    return ManeuReport.objects.filter(
+        Q(name__icontains=value, admin_id=admin_id, status=2) | Q(phone__icontains=value, admin_id=admin_id,
+                                                                  status=2)).order_by('-time').all()
 
 
 def report_search_time(admin_id='', timeS='', timeE=''):
-    return ManeuReport.objects.filter(admin_id=admin_id, time__gte=timeS, time__lte=timeE, status=2).order_by('-time').all()
+    return ManeuReport.objects.filter(admin_id=admin_id, time__gte=timeS, time__lte=timeE, status=2).order_by(
+        '-time').all()
 
 
 def report_delete(admin_id='', id=''):
@@ -16,9 +19,13 @@ def report_delete(admin_id='', id=''):
 
 
 def report_insert(admin_id='', guest_id='', name='', time='', phone='', status='', remark='', content=''):
-    return ManeuReport.objects.create(admin_id=admin_id, guest_id=guest_id, name=name, time=time, phone=phone, status=status,
-                                      remark=remark, plan=content['plan'],
+    return ManeuReport.objects.create(admin_id=admin_id, guest_id=guest_id, name=name, time=time, phone=phone,
+                                      status=status,
+                                      remark=remark,
+
+                                      plan=content['plan'],
                                       pd=content['pd'],
+
                                       os_al=content['os_al'],
                                       os_ak=content['os_ak'],
                                       os_ax=content['os_ax'],

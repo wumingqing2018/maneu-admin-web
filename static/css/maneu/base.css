@@ -1,6 +1,7 @@
-html{
+html {
     min-height: 100%;
 }
+
 body {
     position: relative;
     min-height: 100vh; /* 确保容器至少占满整个视口高度 */

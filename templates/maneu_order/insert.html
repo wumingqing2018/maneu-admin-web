@@ -527,14 +527,11 @@
 {% endblock %}
 {% block javascript %}
     <script>
-        web_index = "{% url 'maneu_order:index' %}"
-        web_insert = "{% url 'maneu_order:insert' %}"
-        order_api = "{% url 'maneu_order:api_insert' %}"
-        guest_api = "{% url 'maneu_guest:api_insert' %}"
-        report_api = "{% url 'maneu_report:api_insert' %}"
+        order_index_web = "{% url 'maneu_order:index' %}"
+        order_insert_web = "{% url 'maneu_order:insert' %}"
+        order_insert_api = "{% url 'maneu_order:api_insert' %}"
     </script>
-    <script src="{% static 'javascript/maneu/serialize_moudels.js' %}" type="application/javascript"></script>
-    <script src="{% static 'javascript/maneu_order/insert.js' %}" type="application/javascript"></script>
+    <script src="{% static 'javascript/order_insert.js' %}" type="application/javascript"></script>
 {% endblock %}
 {% block css %}
     <link href="{% static 'css/maneu_order/insert.css' %}" rel="stylesheet">

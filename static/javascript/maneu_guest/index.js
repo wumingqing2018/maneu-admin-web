@@ -21,18 +21,18 @@ function deleteBtn(obj) {
 
 $(document).ready(function () {
 
-        $.ajax({
-            url: search_time,
-            method: 'GET',
-            data: {
-                timeE: $("#timeE").val(),
-                timeS: $("#timeS").val(),
-            },
-            success: function (res) {
-                console.log(res)
-                forList(res.content)
-            }
-        })
+    $.ajax({
+        url: search_time,
+        method: 'GET',
+        data: {
+            timeE: $("#timeE").val(),
+            timeS: $("#timeS").val(),
+        },
+        success: function (res) {
+            console.log(res)
+            forList(res.content)
+        }
+    })
 
 
     $('#search_time').click(function () {
@@ -63,6 +63,7 @@ $(document).ready(function () {
             }
         })
     })
+
     function forList(res) {
         $('#body').empty();
         for (i in res) {

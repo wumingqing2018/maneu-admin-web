@@ -23,7 +23,6 @@ class UserMiddleware(MiddlewareMixin):
         """
         request_url = request.path  # method:string, demo:/login/,
         #   判断是否需要校验字段
-        print('url', request_url)
         if request_url.startswith('/maneu_'):
             mark = is_uuid(request.COOKIES.get('mark'))
             if mark:
@@ -40,7 +39,6 @@ class UserMiddleware(MiddlewareMixin):
                 return redirect('login')
         else:
             return None
-
 
     def process_response(self, request, response):
         request_url = request.path  # method:string, demo:/login/,

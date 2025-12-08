@@ -1,108 +1,108 @@
 {% extends 'maneu/base.html' %}
 {% load static %}
 {% block content %}
-<div class="container" style="margin-top: 2%; margin-bottom: 4%;">
-    <form action="{% url 'maneu_guest:index' %}" class="vertical2 col-12 row" method="get">
-        <div class="vertical1 col-11">
-            <div class="input-group">
-                <input class="btn btn-primary" type="submit" value="返回列表">
-            </div>
-        </div>
-        <div class="vertical1 col-1">
-            <div class="col-1 input-group">
-                <input class="btn btn-danger" id="delete" type="button" value="删除订单">
-            </div>
-        </div>
-    </form>
-    <hr>
-    <form class="vertical2">
-        <div class="vertical1 col-3">
-            <div class="input-group">
-                <span class="input-group-text">时间</span>
-                <input autocomplete="off" class="form-control" id="time" type="datetime-local" value="{{ time }}">
-            </div>
-        </div>
-    </form>
-    <hr>
-
-    {# 客户基础数据 #}
-    <form class="vertical2">
-        <button class="vertical1 btn btn-primary" id="guest_show" type="button">客户数据</button>
-
-        <div class="vertical1 col-6">
-            <div class="input-group">
-                <span class="input-group-text">姓名</span>
-                <input autocomplete="off" class="form-control" id="name" type="text">
-                <span class="input-group-text">电话</span>
-                <input autocomplete="off" class="form-control" id="phone" type="text">
-            </div>
-        </div>
-        <div id="guest_content">
-            <div class="vertical1 col-9">
+    <div class="container" style="margin-top: 2%; margin-bottom: 4%;">
+        <form action="{% url 'maneu_guest:index' %}" class="vertical2 col-12 row" method="get">
+            <div class="vertical1 col-11">
                 <div class="input-group">
-                    <span class="input-group-text col-1">性别</span>
-                    <input autocomplete="off" class="form-control" id="sex" list="sex" type="text">
-                    <span class="input-group-text col-1">年龄</span>
-                    <input autocomplete="off" class="form-control" id="age" list="age" type="text">
-                    <span class="input-group-text col-1">眼位</span>
-                    <input autocomplete="off" class="form-control" id="OT" list="OT" type="text">
-                    <span class="input-group-text col-1">主视眼</span>
-                    <input autocomplete="off" class="form-control" id="EM" list="EM" type="text">
-                    <span class="input-group-text col-1">病族史</span>
-                    <input autocomplete="off" class="form-control" id="DFH" list="DFH" type="text">
+                    <input class="btn btn-primary" type="submit" value="返回列表">
                 </div>
             </div>
-            <div class="vertical1 col-9">
-                <div class="input-group">
-                    <span class="input-group-text col-1">备注</span>
-                    <input autocomplete="off" class="form-control" id="remark" type="text">
+            <div class="vertical1 col-1">
+                <div class="col-1 input-group">
+                    <input class="btn btn-danger" id="delete" type="button" value="删除订单">
                 </div>
             </div>
-        </div>
-    </form>
-    <hr>
-
-
-    {# 提交或返回按钮 #}
-    <form class="vertical2">
-        <div class="vertical1 col-12 row">
-            <div class="col-1 input-group">
-                <input class="btn btn-danger" id="update" type="button" value="修改订单">
+        </form>
+        <hr>
+        <form class="vertical2">
+            <div class="vertical1 col-3">
+                <div class="input-group">
+                    <span class="input-group-text">时间</span>
+                    <input autocomplete="off" class="form-control" id="time" type="datetime-local" value="{{ time }}">
+                </div>
             </div>
-        </div>
-    </form>
-</div>
+        </form>
+        <hr>
 
-<div>
-    <datalist id="DFH">
-        <option>有</option>
-        <option>无</option>
-    </datalist>
-    <datalist id="EM">
-        <option>右</option>
-        <option>左</option>
-    </datalist>
-    <datalist id="OT">
-        <option>正位眼</option>
-        <option>斜视</option>
-    </datalist>
-    <datalist id="sex">
-        <option>男</option>
-        <option>女</option>
-    </datalist>
-</div>
+        {# 客户基础数据 #}
+        <form class="vertical2">
+            <button class="vertical1 btn btn-primary" id="guest_show" type="button">客户数据</button>
+
+            <div class="vertical1 col-6">
+                <div class="input-group">
+                    <span class="input-group-text">姓名</span>
+                    <input autocomplete="off" class="form-control" id="name" type="text">
+                    <span class="input-group-text">电话</span>
+                    <input autocomplete="off" class="form-control" id="phone" type="text">
+                </div>
+            </div>
+            <div id="guest_content">
+                <div class="vertical1 col-9">
+                    <div class="input-group">
+                        <span class="input-group-text col-1">性别</span>
+                        <input autocomplete="off" class="form-control" id="sex" list="sex" type="text">
+                        <span class="input-group-text col-1">年龄</span>
+                        <input autocomplete="off" class="form-control" id="age" list="age" type="text">
+                        <span class="input-group-text col-1">眼位</span>
+                        <input autocomplete="off" class="form-control" id="OT" list="OT" type="text">
+                        <span class="input-group-text col-1">主视眼</span>
+                        <input autocomplete="off" class="form-control" id="EM" list="EM" type="text">
+                        <span class="input-group-text col-1">病族史</span>
+                        <input autocomplete="off" class="form-control" id="DFH" list="DFH" type="text">
+                    </div>
+                </div>
+                <div class="vertical1 col-9">
+                    <div class="input-group">
+                        <span class="input-group-text col-1">备注</span>
+                        <input autocomplete="off" class="form-control" id="remark" type="text">
+                    </div>
+                </div>
+            </div>
+        </form>
+        <hr>
+
+
+        {# 提交或返回按钮 #}
+        <form class="vertical2">
+            <div class="vertical1 col-12 row">
+                <div class="col-1 input-group">
+                    <input class="btn btn-danger" id="update" type="button" value="修改订单">
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div>
+        <datalist id="DFH">
+            <option>有</option>
+            <option>无</option>
+        </datalist>
+        <datalist id="EM">
+            <option>右</option>
+            <option>左</option>
+        </datalist>
+        <datalist id="OT">
+            <option>正位眼</option>
+            <option>斜视</option>
+        </datalist>
+        <datalist id="sex">
+            <option>男</option>
+            <option>女</option>
+        </datalist>
+    </div>
 
 {% endblock %}
 {% block javascript %}
-<script>
-    guest_id = "{{ id }}"
-    guest_index = "{% url 'maneu_guest:index' %}"
-    guest_update = "{% url 'maneu_guest:api_update' %}"
-    guest_detail = "{% url 'maneu_guest:api_detail' %}"
-    guest_delete = "{% url 'maneu_guest:api_delete' %}"
-</script>
-<script src="{% static 'javascript/guest_detail.js' %}" type="application/javascript"></script>
+    <script>
+        guest_id = "{{ id }}"
+        guest_index = "{% url 'maneu_guest:index' %}"
+        guest_update = "{% url 'maneu_guest:api_update' %}"
+        guest_detail = "{% url 'maneu_guest:api_detail' %}"
+        guest_delete = "{% url 'maneu_guest:api_delete' %}"
+    </script>
+    <script src="{% static 'javascript/guest_detail.js' %}" type="application/javascript"></script>
 {% endblock %}
 {% block css %}
-<link href="{% static 'css/maneu_order/insert.css' %}" rel="stylesheet">
+    <link href="{% static 'css/maneu_order/insert.css' %}" rel="stylesheet">
 {% endblock %}

@@ -4,7 +4,6 @@ from maneu.models import *
 
 
 def index(request):
-
     orderList = ManeuOrder.objects.all()
     for order in orderList:
         print(ManeuReport.objects.filter(id=order.report_id).update(status=3))

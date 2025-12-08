@@ -64,6 +64,7 @@ $(document).ready(function () {
             }
         })
     })
+
     function forList(res) {
         $('#body').empty();
         for (i in res) {

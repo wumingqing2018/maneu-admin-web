@@ -31,7 +31,8 @@ def update(request):
 
     if admin_id == request.session.get('id'):
         try:
-            data = service.user_update(admin_id=admin_id, phone=request.GET.get('phone'), nickname=request.GET.get('nickname'), location=request.GET.get('location'))
+            data = service.user_update(admin_id=admin_id, phone=request.GET.get('phone'),
+                                       nickname=request.GET.get('nickname'), location=request.GET.get('location'))
             content = {'status': True, 'message': '', 'content': data}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}

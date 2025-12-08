@@ -2,10 +2,10 @@ import json
 
 from django.http import JsonResponse
 
-from common.simple import order_simple, report_simple
+from common.simple import order_simple, report_simple, guest_simple
 from common.verify import is_uuid
-from maneu.models import ManeuGuest
-from maneu_order import service
+from maneu_guest.service import guest_insert
+from maneu_order.service import *
 from maneu_report.service import report_insert
 
 
@@ -14,13 +14,13 @@ def search_time(request):
 
     if admin_id:
         try:
-            data = service.order_search_time(admin_id, request.GET.get('timeS'), request.GET.get('timeE')).values('id',
-                                                                                                                  'report_id',
-                                                                                                                  'guest_id',
-                                                                                                                  'name',
-                                                                                                                  'phone',
-                                                                                                                  'time',
-                                                                                                                  'remark')
+            data = order_search_time(admin_id, request.GET.get('timeS'), request.GET.get('timeE')).values('id',
+                                                                                                          'report_id',
+                                                                                                          'guest_id',
+                                                                                                          'name',
+                                                                                                          'phone',
+                                                                                                          'time',
+                                                                                                          'remark')
             content = {'status': True, 'message': admin_id, 'content': list(data)}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
@@ -35,9 +35,9 @@ def search_text(request):
 
     if admin_id:
         try:
-            data = service.order_search_text(admin_id, request.GET.get('value')).values('id', 'report_id', 'guest_id',
-                                                                                        'name', 'phone', 'time',
-                                                                                        'remark')
+            data = order_search_text(admin_id, request.GET.get('value')).values('id', 'report_id', 'guest_id',
+                                                                                'name', 'phone', 'time',
+                                                                                'remark')
             content = {'status': True, 'message': admin_id, 'content': list(data)}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
@@ -55,24 +55,28 @@ def insert(request):
             name = request.GET.get('name')
             phone = request.GET.get('phone')
 
-            guest_id = ManeuGuest.objects.create(admin_id=admin_id, time=time, name=name, phone=phone, status=3, sex=request.GET.get('sex'), age=request.GET.get('age'), dfh=request.GET.get('DFH'), em=request.GET.get('EM'), ot=request.GET.get('OT'), remark=request.GET.get('remark')).id
+            content = guest_simple(request)
+            guest_id = guest_insert(admin_id=admin_id, time=time, name=name, phone=phone, status=3,
+                                    sex=request.GET.get('sex'), age=request.GET.get('age'), dfh=request.GET.get('DFH'),
+                                    em=request.GET.get('EM'), ot=request.GET.get('OT'),
+                                    remark=request.GET.get('remark')).id
 
             content = report_simple(request)
-            report = report_insert(guest_id=guest_id, admin_id=admin_id, time=time, name=name, phone=phone, status=3, content=content)
+            report_id = report_insert(guest_id=guest_id, admin_id=admin_id, time=time, name=name, phone=phone, status=3,
+                                      content=content).id
 
             content = order_simple(request.GET.get('content'))
-            order = service.order_insert(admin_id=admin_id,
-                                         guest_id=guest_id,
-                                         report_id=report.id,
-                                         time=time,
-                                         name=name,
-                                         phone=phone,
-                                         status=3,
-                                         content=content,
-                                         remark=request.GET.get('remark'))
+            order = order_insert(admin_id=admin_id,
+                                 guest_id=guest_id,
+                                 report_id=report_id,
+                                 time=time,
+                                 name=name,
+                                 phone=phone,
+                                 status=3,
+                                 content=content,
+                                 remark=request.GET.get('remark'))
 
             content = {'status': True, 'message': '', 'content': {'id': order.id}}
-
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
     else:
@@ -88,13 +92,13 @@ def update(request):
     if admin_id and order_id:
         try:
             content = order_simple(request.GET.get('content'))
-            order = service.order_update(admin_id=admin_id,
-                                         order_id=order_id,
-                                         time=request.GET.get('time'),
-                                         name=request.GET.get('name'),
-                                         call=request.GET.get('call'),
-                                         content=content,
-                                         remark=request.GET.get('remark'))
+            order = order_update(admin_id=admin_id,
+                                 order_id=order_id,
+                                 time=request.GET.get('time'),
+                                 name=request.GET.get('name'),
+                                 call=request.GET.get('call'),
+                                 content=content,
+                                 remark=request.GET.get('remark'))
             content = {'status': True, 'message': '', 'content': order}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
@@ -110,7 +114,7 @@ def detail(request):
 
     if admin_id and order_id:
         try:
-            order = service.order_detail(order_id=order_id, admin_id=admin_id)
+            order = order_detail(order_id=order_id, admin_id=admin_id)
             content = {
                 'content': json.loads(order.content),
                 'guest_id': order.guest_id,
@@ -135,7 +139,7 @@ def delete(request):
 
     if admin_id and order_id:
         try:
-            data = service.order_delete(order_id=order_id, admin_id=admin_id)
+            data = order_delete(order_id=order_id, admin_id=admin_id)
             content = {'status': True, 'message': '', 'content': data}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}

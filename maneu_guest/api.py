@@ -11,7 +11,11 @@ def search_time(request):
 
     if admin_id:
         try:
-            data = service.guest_search_time(admin_id, request.GET.get('timeS'), request.GET.get('timeE')).values('id', 'name', 'phone', 'time', 'remark')
+            data = service.guest_search_time(admin_id, request.GET.get('timeS'), request.GET.get('timeE')).values('id',
+                                                                                                                  'name',
+                                                                                                                  'phone',
+                                                                                                                  'time',
+                                                                                                                  'remark')
             print(data)
             content = {'status': True, 'message': admin_id, 'content': list(data)}
         except Exception as e:
@@ -38,6 +42,7 @@ def search_text(request):
 
     return JsonResponse(content)
 
+
 def insert(request):
     admin_id = is_uuid(request.session.get('id'))
     if admin_id:
@@ -47,7 +52,10 @@ def insert(request):
             phone = request.GET.get('phone')
             status = 1
 
-            guest_id = ManeuGuest.objects.create(admin_id=admin_id, time=time, name=name, phone=phone, status=status, sex=request.GET.get('sex'), age=request.GET.get('age'), dfh=request.GET.get('DFH'), em=request.GET.get('EM'), ot=request.GET.get('OT'), remark=request.GET.get('remark')).id
+            guest_id = ManeuGuest.objects.create(admin_id=admin_id, time=time, name=name, phone=phone, status=status,
+                                                 sex=request.GET.get('sex'), age=request.GET.get('age'),
+                                                 dfh=request.GET.get('DFH'), em=request.GET.get('EM'),
+                                                 ot=request.GET.get('OT'), remark=request.GET.get('remark')).id
             content = {'status': True, 'message': '', 'content': {'id': guest_id}, 'mark': str(uuid4())}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}, 'mark': str(uuid4())}

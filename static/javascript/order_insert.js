@@ -14,6 +14,68 @@ $(document).ready(function () {
         report_show()
     })
 
+    function report_hide() {
+        $("#report_hide").hide()
+        $("#report_show").show()
+        $("#OD_VA").hide()
+        $("#OD_PR").hide()
+        $("#OD_FR").hide()
+        $("#OD_AL").hide()
+        $("#OD_AK").hide()
+        $("#OD_AD").hide()
+        $("#OD_CCT").hide()
+        $("#OD_LT").hide()
+        $("#OD_VT").hide()
+        $("#OD_BC").hide()
+        $("#OS_VA").hide()
+        $("#OS_PR").hide()
+        $("#OS_FR").hide()
+        $("#OS_AL").hide()
+        $("#OS_AK").hide()
+        $("#OS_AD").hide()
+        $("#OS_CCT").hide()
+        $("#OS_LT").hide()
+        $("#OS_VT").hide()
+        $("#OS_BC").hide()
+    }
+
+    function report_show() {
+        $("#report_hide").show()
+        $("#report_show").hide()
+        $("#OD_VA").show()
+        $("#OD_PR").show()
+        $("#OD_FR").show()
+        $("#OD_AL").show()
+        $("#OD_AK").show()
+        $("#OD_AD").show()
+        $("#OD_CCT").show()
+        $("#OD_LT").show()
+        $("#OD_VT").show()
+        $("#OD_BC").show()
+        $("#OS_VA").show()
+        $("#OS_PR").show()
+        $("#OS_FR").show()
+        $("#OS_AL").show()
+        $("#OS_AK").show()
+        $("#OS_AD").show()
+        $("#OS_CCT").show()
+        $("#OS_LT").show()
+        $("#OS_VT").show()
+        $("#OS_BC").show()
+    }
+
+    function guest_hide() {
+        $("#guest_hide").hide()
+        $("#guest_show").show()
+        $("#guest_content").hide()
+    }
+
+    function guest_show() {
+        $("#guest_hide").show()
+        $("#guest_show").hide()
+        $("#guest_content").show()
+    }
+
     $('#insert').click(function () {
         store = []
         $(".store").each(function () {
@@ -27,7 +89,7 @@ $(document).ready(function () {
             store.push(data)
         });
         $.ajax({
-            url: order_api,
+            url: order_insert_api,
             method: 'GET',
             data: {
                 content: JSON.stringify(store),
@@ -90,66 +152,4 @@ $(document).ready(function () {
         })
     });
 
-
-    function report_hide() {
-        $("#report_hide").hide()
-        $("#report_show").show()
-        $("#OD_VA").hide()
-        $("#OD_PR").hide()
-        $("#OD_FR").hide()
-        $("#OD_AL").hide()
-        $("#OD_AK").hide()
-        $("#OD_AD").hide()
-        $("#OD_CCT").hide()
-        $("#OD_LT").hide()
-        $("#OD_VT").hide()
-        $("#OD_BC").hide()
-        $("#OS_VA").hide()
-        $("#OS_PR").hide()
-        $("#OS_FR").hide()
-        $("#OS_AL").hide()
-        $("#OS_AK").hide()
-        $("#OS_AD").hide()
-        $("#OS_CCT").hide()
-        $("#OS_LT").hide()
-        $("#OS_VT").hide()
-        $("#OS_BC").hide()
-    }
-
-    function report_show() {
-        $("#report_hide").show()
-        $("#report_show").hide()
-        $("#OD_VA").show()
-        $("#OD_PR").show()
-        $("#OD_FR").show()
-        $("#OD_AL").show()
-        $("#OD_AK").show()
-        $("#OD_AD").show()
-        $("#OD_CCT").show()
-        $("#OD_LT").show()
-        $("#OD_VT").show()
-        $("#OD_BC").show()
-        $("#OS_VA").show()
-        $("#OS_PR").show()
-        $("#OS_FR").show()
-        $("#OS_AL").show()
-        $("#OS_AK").show()
-        $("#OS_AD").show()
-        $("#OS_CCT").show()
-        $("#OS_LT").show()
-        $("#OS_VT").show()
-        $("#OS_BC").show()
-    }
-
-    function guest_hide() {
-        $("#guest_hide").hide()
-        $("#guest_show").show()
-        $("#guest_content").hide()
-    }
-
-    function guest_show() {
-        $("#guest_hide").show()
-        $("#guest_show").hide()
-        $("#guest_content").show()
-    }
 });
