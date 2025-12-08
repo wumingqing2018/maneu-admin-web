@@ -2,8 +2,8 @@ from django.forms import model_to_dict
 from django.http import JsonResponse
 
 from common.verify import is_uuid
-from maneu_guest import service
 from maneu.models import *
+from maneu_guest import service
 
 
 def search_time(request):

@@ -3,8 +3,8 @@ from django.http import JsonResponse
 
 from common.simple import report_simple
 from common.verify import is_uuid
-from maneu_report import service
 from maneu.models import ManeuGuest
+from maneu_report import service
 
 
 def search_time(request):
