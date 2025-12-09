@@ -42,7 +42,7 @@ def login_api(request):
     else:
         content = {'status': False, 'message': '100001', 'content': {}}
     response = JsonResponse(content)
-    response.set_cookie(name = 'mark',  # cookie 名称
+    response.set_cookie(key = 'mark',  # cookie 名称
                         value = mark,  # cookie 值
                         max_age = 3600,  # 过期时间（秒）
                         path = '/',  # 生效路径

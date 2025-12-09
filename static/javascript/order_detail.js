@@ -1,35 +1,24 @@
 $(document).ready(function () {
     detail_order(function (data) {
-        if (data === true) {
-            detail_report(function (data) {
-                if (data === true) {
-                    detail_guest(function (data) {
-                    })
-                }
+        detail_report(function (data) {
+            detail_guest(function (data) {
             })
-        }
+        })
     })
 
     $('#delete').click(function () {
         if (confirm("确定要删除记录吗？")) {
-            delete_report(function (data) {
-                if (data === true) {
-                    delete_order(function (data) {
-                        if (data === true) {
-                            alert('删除成功')
-                            window.location.href = index
-                        } else {
-                            alert(data.message)
-                        }
+            detail_order(function (data) {
+                detail_report(function (data) {
+                    detail_guest(function (data) {
                     })
-                } else {
-                    alert(data.message)
-                }
+                })
             })
         } else {
             return false;
         }
     })
+
     $('#update').click(function () {
         if (confirm("确定要修改记录吗？")) {
             update_guest(function (data) {
@@ -83,6 +72,7 @@ $(document).ready(function () {
                 callback(true); // 第一个参数为null表示没有错误，第二个参数为请求的数据
             },
             error: function (res) {
+                alert(res)
                 callback(false); // 第一个参数为null表示没有错误，第二个参数为请求的数据
             }
         })
@@ -107,6 +97,7 @@ $(document).ready(function () {
                 callback(true); // 第一个参数为null表示没有错误，第二个参数为请求的数据
             },
             error: function (res) {
+                alert(res)
                 callback(false); // 第一个参数为null表示没有错误，第二个参数为请求的数据
             }
         })
@@ -157,11 +148,11 @@ $(document).ready(function () {
                 callback(true); // 第一个参数为null表示没有错误，第二个参数为请求的数据
             },
             error: function (res) {
+                alert(res)
                 callback(false); // 第一个参数为null表示没有错误，第二个参数为请求的数据
             }
         })
     }
-
 
     function delete_order(callback) {
         $.ajax({
