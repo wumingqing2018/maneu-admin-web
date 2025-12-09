@@ -6,7 +6,7 @@ def sendsms(call='', code=''):
 
 
 def admin_login(call='', code='', mark=''):
-    return ManeuAdmin.objects.filter(username=call).update(password=mark)
+    return ManeuAdmin.objects.filter(username=call, code=code).update(password=mark)
 
 
 def admin_logout(id=''):
