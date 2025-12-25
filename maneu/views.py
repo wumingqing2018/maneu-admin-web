@@ -10,11 +10,16 @@ def index(request):
         guest = ManeuGuest.objects.create(admin_id=guest.admin_id, time=guest.time, name=guest.name, phone=guest.phone, status=3, sex=guest.sex, age=guest.age, dfh=guest.dfh, ot=guest.ot, em=guest.em, remark=guest.remark)
         print(ManeuReport.objects.filter(id=order.report_id).update(status=3, guest_id=guest.id))
 
-    reportList = ManeuReport.objects.filter(status__exact=3)
+    reportList = ManeuReport.objects.exclude(status=3).all()
     for report in reportList:
-        guest = ManeuGuest.objects.filter(id=report.guest_id).first()
-        guest = ManeuGuest.objects.create(admin_id=guest.admin_id, time=guest.time, name=guest.name, phone=guest.phone, status=3, sex=guest.sex, age=guest.age, dfh=guest.dfh, ot=guest.ot, em=guest.em, remark=guest.remark)
-        print(ManeuReport.objects.filter(id=report.id).update(status=2, guest_id=guest.id))
+        try:
+            guest = ManeuGuest.objects.filter(id=report.guest_id).first()
+            guest = ManeuGuest.objects.create(admin_id=guest.admin_id, time=guest.time, name=guest.name,
+                                              phone=guest.phone, status=3, sex=guest.sex, age=guest.age, dfh=guest.dfh,
+                                              ot=guest.ot, em=guest.em, remark=guest.remark)
+            ManeuReport.objects.filter(id=report.id).update(status=2, guest_id=guest.id)
+        except:
+            print(report.id)
 
 
 
