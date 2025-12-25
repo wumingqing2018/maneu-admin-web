@@ -6,8 +6,17 @@ from maneu.models import *
 def index(request):
     orderList = ManeuOrder.objects.all()
     for order in orderList:
-        print(ManeuReport.objects.filter(id=order.report_id).update(status=3))
-    print(ManeuReport.objects.filter(status__isnull=True).update(status=2))
+        guest = ManeuGuest.objects.filter(id=order.guest_id).first()
+        guest = ManeuGuest.objects.create(admin_id=guest.admin_id, time=guest.time, name=guest.name, phone=guest.phone, status=3, sex=guest.sex, age=guest.age, dfh=guest.dfh, ot=guest.ot, em=guest.em, remark=guest.remark)
+        print(ManeuReport.objects.filter(id=order.report_id).update(status=3, guest_id=guest.id))
+
+    reportList = ManeuReport.objects.filter(status__exact=3)
+    for report in reportList:
+        guest = ManeuGuest.objects.filter(id=report.guest_id).first()
+        guest = ManeuGuest.objects.create(admin_id=guest.admin_id, time=guest.time, name=guest.name, phone=guest.phone, status=3, sex=guest.sex, age=guest.age, dfh=guest.dfh, ot=guest.ot, em=guest.em, remark=guest.remark)
+        print(ManeuReport.objects.filter(id=report.id).update(status=2, guest_id=guest.id))
+
+
 
     return render(request, 'maneu/index.html')
 
