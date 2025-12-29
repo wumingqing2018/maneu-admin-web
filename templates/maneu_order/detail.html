@@ -542,15 +542,8 @@
         order_id = "{{ order_id }}"
         guest_id = "{{ guest_id }}"
         report_id = "{{ report_id }}"
-        order_update = "{% url 'maneu_order:api_update' %}"
         order_detail = "{% url 'maneu_order:api_detail' %}"
         order_delete = "{% url 'maneu_order:api_delete' %}"
-        guest_update = "{% url 'maneu_guest:api_update' %}"
-        guest_detail = "{% url 'maneu_guest:api_detail' %}"
-        guest_delete = "{% url 'maneu_guest:api_delete' %}"
-        report_update = "{% url 'maneu_report:api_update' %}"
-        report_detail = "{% url 'maneu_report:api_detail' %}"
-        report_delete = "{% url 'maneu_report:api_delete' %}"
     </script>
     <script src="{% static 'javascript/orderDetail20251229.js' %}" type="application/javascript"></script>
 {% endblock %}

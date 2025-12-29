@@ -11,7 +11,11 @@ $(document).ready(function () {
                     'report_id': report_id,
                 },
                 success: function (res) {
-
+                    if (res.status === true) {
+                        location.assign(index)
+                    }else {
+                        alert()
+                    }
                 }
             })
         } else {
@@ -122,6 +126,7 @@ $(document).ready(function () {
                             store.find(".arg14").val(order.content.content[i]['arg14'])
                         }
                     }
+
                 }
             }
         })

@@ -21,19 +21,19 @@ def report_detail(admin_id='', report_id=''):
 
 
 def order_detail(admin_id='', order_id=''):
-    """
-    查找指定订单
-    根据时间排序
-    """
     return ManeuOrder.objects.filter(id=order_id, admin_id=admin_id).first()
 
 
+def guest_delete(admin_id='', guest_id=''):
+    return ManeuGuest.objects.filter(admin_id=admin_id, id=guest_id).delete()
+
+
 def order_delete(admin_id='', order_id=''):
-    """
-    查找指定订单a
-    根据时间排序
-    """
     return ManeuOrder.objects.filter(admin_id=admin_id, id=order_id).delete()
+
+
+def report_delete(admin_id='', report_id=''):
+    return ManeuReport.objects.filter(admin_id=admin_id, id=report_id).delete()
 
 
 def order_search_text(admin_id='', value=''):

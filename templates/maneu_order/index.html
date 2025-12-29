@@ -3,11 +3,11 @@
 {% block javascript %}
     <script type="application/javascript">
         api_delete = "{% url 'maneu_order:api_delete' %}"
-        web_detail = "{% url 'maneu_order:detail' %}"
+        api_detail = "{% url 'maneu_order:detail' %}"
         search_text = "{% url 'maneu_order:search_text' %}"
         search_time = "{% url 'maneu_order:search_time' %}"
     </script>
-    <script src='{% static "javascript/order_index.js" %}' type="application/javascript"></script>
+    <script src='{% static "javascript/orderIndex20251229.js" %}' type="application/javascript"></script>
 {% endblock %}
 {% block content %}
     <div class="container" style="margin-top: 2%; margin-bottom: 4%;">
