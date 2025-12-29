@@ -1,6 +1,7 @@
 import json
 
 from django.http import JsonResponse
+from django.forms import model_to_dict
 
 from common.simple import order_simple, report_simple, guest_simple
 from common.verify import is_uuid
@@ -14,13 +15,7 @@ def search_time(request):
 
     if admin_id:
         try:
-            data = order_search_time(admin_id, request.GET.get('timeS'), request.GET.get('timeE')).values('id',
-                                                                                                          'report_id',
-                                                                                                          'guest_id',
-                                                                                                          'name',
-                                                                                                          'phone',
-                                                                                                          'time',
-                                                                                                          'remark')
+            data = order_search_time(admin_id=admin_id, timeS=request.GET.get('timeS'), timeE=request.GET.get('timeE')).values('id', 'report_id', 'guest_id', 'name', 'phone', 'time', 'remark')
             content = {'status': True, 'message': admin_id, 'content': list(data)}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
@@ -35,9 +30,7 @@ def search_text(request):
 
     if admin_id:
         try:
-            data = order_search_text(admin_id, request.GET.get('value')).values('id', 'report_id', 'guest_id',
-                                                                                'name', 'phone', 'time',
-                                                                                'remark')
+            data = order_search_text(admin_id, request.GET.get('value')).values('id', 'report_id', 'guest_id', 'name', 'phone', 'time', 'remark')
             content = {'status': True, 'message': admin_id, 'content': list(data)}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
@@ -109,26 +102,46 @@ def update(request):
 
 
 def detail(request):
-    order_id = is_uuid(request.GET.get('id'))
     admin_id = is_uuid(request.session.get('id'))
 
-    if admin_id and order_id:
-        try:
-            order = order_detail(order_id=order_id, admin_id=admin_id)
-            content = {
-                'content': json.loads(order.content),
-                'guest_id': order.guest_id,
-                'report_id': order.report_id,
-                'name': order.name,
-                'phone': order.phone,
-                'remark': order.remark,
-                'time': order.time
-            }
-            content = {'status': True, 'message': '', 'content': content}
-        except Exception as e:
-            content = {'status': False, 'message': str(e), 'content': {}}
-    else:
-        content = {'status': False, 'message': '请输入正确的参数', 'content': {}}
+    if admin_id :
+        order_id = is_uuid(request.GET.get('order_id'))
+        if order_id:
+            try:
+                order = order_detail(order_id=order_id, admin_id=admin_id)
+                content = {
+                    'time': order.time,
+                    'name': order.name,
+                    'phone': order.phone,
+                    'remark': order.remark,
+                    'content': json.loads(order.content),
+                }
+                order_id = {'status': True, 'message': '', 'content': content}
+            except Exception as e:
+                order_id = {'status': False, 'message': str(e), 'content': {}}
+        else:
+            order_id = {'status': False, 'message': '请输入正确的参数', 'content': {}}
+
+        guest_id = is_uuid(request.GET.get('guest_id'))
+        if guest_id:
+            try:
+                data = guest_detail(guest_id=guest_id, admin_id=admin_id)
+                guest_id = {'status': True, 'message': '', 'content': model_to_dict(data)}
+            except Exception as e:
+                guest_id = {'status': False, 'message': str(e), 'content': {}}
+        else:
+            guest_id = {'status': False, 'message': '请输入正确的参数', 'content': {}}
+
+        report_id = is_uuid(request.GET.get('report_id'))
+        if report_id:
+            try:
+                data = report_detail(report_id=report_id, admin_id=admin_id)
+                report_id = {'status': True, 'message': '', 'content': model_to_dict(data)}
+            except Exception as e:
+                report_id = {'status': False, 'message': str(e), 'content': {}}
+        else:
+            report_id = {'status': False, 'message': '请输入正确的参数', 'content': {}}
+    content = {'status': True, 'message': '', 'report_id': report_id, 'guest_id': guest_id, 'order_id': order_id}
 
     return JsonResponse(content)
 
