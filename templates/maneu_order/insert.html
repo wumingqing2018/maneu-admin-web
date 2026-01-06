@@ -14,7 +14,7 @@
             <div class="vertical1 col-6">
                 <div class="input-group">
                     <span class="input-group-text">时间</span>
-                    <input autocomplete="off" class="form-control" id="time" type="datetime-local" value="{{ time }}">
+                    <input autocomplete="off" type="datetime-local" class="form-control" id="time" value="{{ time }}">
                 </div>
             </div>
         </form>
@@ -28,31 +28,31 @@
             <div class="vertical1 col-6">
                 <div class="input-group">
                     <span class="input-group-text">姓名</span>
-                    <input autocomplete="off" class="form-control" id="name" type="text">
+                    <input autocomplete="off" type="text" class="form-control" id="name">
                     <span class="input-group-text">电话</span>
-                    <input autocomplete="off" class="form-control" id="phone" type="text">
+                    <input autocomplete="off" type="text" class="form-control" id="phone">
                 </div>
             </div>
             <div id="guest_content">
                 <div class="vertical1 col-9">
                     <div class="input-group">
                         <span class="input-group-text col-1">性别</span>
-                        <input autocomplete="off" class="form-control" id="sex" list="sexList" type="text">
+                        <input autocomplete="off" type="text" class="form-control" id="sex" list="sexList">
                         <span class="input-group-text col-1">年龄</span>
-                        <input autocomplete="off" class="form-control" id="age" list="age" type="text">
+                        <input autocomplete="off" type="text" class="form-control" id="age" list="age">
                         <span class="input-group-text col-1">眼位</span>
-                        <input autocomplete="off" class="form-control" id="OT" list="OTList" type="text">
+                        <input autocomplete="off" type="text" class="form-control" id="OT" list="OTList">
                         <span class="input-group-text col-1">主视眼</span>
-                        <input autocomplete="off" class="form-control" id="EM" list="EMList" type="text">
+                        <input autocomplete="off" type="text" class="form-control" id="EM" list="EMList">
                         <span class="input-group-text col-1">病族史</span>
-                        <input autocomplete="off" class="form-control" id="DFH" list="DFHList" type="text">
+                        <input autocomplete="off" type="text" class="form-control" id="DFH" list="DFHList">
                     </div>
                 </div>
-                <div class="vertical1 col-9">
-                    <div class="input-group">
-                        <span class="input-group-text col-1">备注</span>
-                        <input autocomplete="off" class="form-control" id="remark" type="text">
-                    </div>
+            </div>
+            <div class="vertical1 col-6">
+                <div class="input-group">
+                    <span class="input-group-text">备注</span>
+                    <input autocomplete="off" type="text" class="form-control" id="guestRemark">
                 </div>
             </div>
         </form>
@@ -63,56 +63,59 @@
             <button class="vertical1 btn btn-primary" id="report_show" type="button">验光报告 > 展开参数</button>
             <button class="vertical1 btn btn-primary" id="report_hide" type="button">验光报告 < 收起参数</button>
 
-            <div class="vertical1 input-group">
-                <span class="input-group-text">右眼</span>
-                <input autocomplete="off" class="form-control" id="OD_VA" list="VA" placeholder="裸眼视力" type="text">
-                <input autocomplete="off" class="form-control" id="OD_SPH" list="CYL&SPH" placeholder="球镜"
-                       type="text">
-                <input autocomplete="off" class="form-control" id="OD_CYL" list="CYL&SPH" placeholder="柱镜"
-                       type="text">
-                <input autocomplete="off" class="form-control" id="OD_AX" list="AX" placeholder="轴位" type="text">
-                <input autocomplete="off" class="form-control" id="OD_PR" list="PR" placeholder="棱镜" type="text">
-                <input autocomplete="off" class="form-control" id="OD_FR" list="FR" placeholder="基地取向" type="text">
-                <input autocomplete="off" class="form-control" id="OD_ADD" list="ADD" placeholder="下加光" type="text">
-                <input autocomplete="off" class="form-control" id="OD_AL" list="AL" placeholder="眼轴长度" type="text">
-                <input autocomplete="off" class="form-control" id="OD_AK" list="AK" placeholder="角膜曲度" type="text">
-                <input autocomplete="off" class="form-control" id="OD_AD" list="AD" placeholder="前房深度" type="text">
-                <input autocomplete="off" class="form-control" id="OD_CCT" list="CCT" placeholder="角膜厚度"
-                       type="text">
-                <input autocomplete="off" class="form-control" id="OD_LT" list="LT" placeholder="晶体厚度" type="text">
-                <input autocomplete="off" class="form-control" id="OD_VT" list="VT" placeholder="玻璃体厚度"
-                       type="text">
-                <input autocomplete="off" class="form-control" id="OD_BC" list="VA" placeholder="矫正视力" type="text">
+            <div class="vertical1 col-6">
+                <div class="input-group">
+                    <span class="input-group-text">方案</span>
+                    <input autocomplete="off" type="text" class="form-control" id="PLAN" list="PLAN1">
+                    <span class="input-group-text">瞳距</span>
+                    <input autocomplete="off" type="text" class="form-control" id="PD" list="PD1">
+                </div>
             </div>
 
-            <div class="vertical1 input-group">
-                <span class="input-group-text">左眼</span>
-                <input autocomplete="off" class="form-control" id="OS_VA" list="VA" placeholder="裸眼视力" type="text">
-                <input autocomplete="off" class="form-control" id="OS_SPH" list="CYL&SPH" placeholder="球镜"
-                       type="text">
-                <input autocomplete="off" class="form-control" id="OS_CYL" list="CYL&SPH" placeholder="柱镜"
-                       type="text">
-                <input autocomplete="off" class="form-control" id="OS_AX" list="AX" placeholder="轴位" type="text">
-                <input autocomplete="off" class="form-control" id="OS_PR" list="PR" placeholder="棱镜" type="text">
-                <input autocomplete="off" class="form-control" id="OS_FR" list="FR" placeholder="基地取向" type="text">
-                <input autocomplete="off" class="form-control" id="OS_ADD" list="ADD" placeholder="下加光" type="text">
-                <input autocomplete="off" class="form-control" id="OS_AL" list="AL" placeholder="眼轴长度" type="text">
-                <input autocomplete="off" class="form-control" id="OS_AK" list="AK" placeholder="角膜曲度" type="text">
-                <input autocomplete="off" class="form-control" id="OS_AD" list="AD" placeholder="前房深度" type="text">
-                <input autocomplete="off" class="form-control" id="OS_CCT" list="CCT" placeholder="角膜厚度"
-                       type="text">
-                <input autocomplete="off" class="form-control" id="OS_LT" list="LT" placeholder="晶体厚度" type="text">
-                <input autocomplete="off" class="form-control" id="OS_VT" list="VT" placeholder="玻璃体厚度"
-                       type="text">
-                <input autocomplete="off" class="form-control" id="OS_BC" list="VA" placeholder="矫正视力" type="text">
+            <div class="vertical1 col-12">
+                <div class="input-group">
+                    <span class="input-group-text">右眼</span>
+                    <input autocomplete="off" type="text" class="form-control" id="OD_VA" list="VA" placeholder="裸眼视力">
+                    <input autocomplete="off" type="text" class="form-control" id="OD_SPH" list="CYL&SPH" placeholder="球镜">
+                    <input autocomplete="off" type="text" class="form-control" id="OD_CYL" list="CYL&SPH" placeholder="柱镜">
+                    <input autocomplete="off" type="text" class="form-control" id="OD_AX" list="AX" placeholder="轴位">
+                    <input autocomplete="off" type="text" class="form-control" id="OD_PR" list="PR" placeholder="棱镜">
+                    <input autocomplete="off" type="text" class="form-control" id="OD_FR" list="FR" placeholder="基地取向">
+                    <input autocomplete="off" type="text" class="form-control" id="OD_AL" list="AL" placeholder="眼轴长度">
+                    <input autocomplete="off" type="text" class="form-control" id="OD_AK" list="AK" placeholder="角膜曲度">
+                    <input autocomplete="off" type="text" class="form-control" id="OD_AD" list="AD" placeholder="前房深度">
+                    <input autocomplete="off" type="text" class="form-control" id="OD_CCT" list="CCT" placeholder="角膜厚度">
+                    <input autocomplete="off" type="text" class="form-control" id="OD_LT" list="LT" placeholder="晶体厚度">
+                    <input autocomplete="off" type="text" class="form-control" id="OD_VT" list="VT" placeholder="玻璃体厚度">
+                    <input autocomplete="off" type="text" class="form-control" id="OD_BC" list="VA" placeholder="矫正视力">
+                    <input autocomplete="off" type="text" class="form-control" id="OD_ADD" list="ADD" placeholder="下加光">
+                </div>
+            </div>
+
+            <div class="vertical1 col-12">
+                <div class="input-group">
+                    <span class="input-group-text">左眼</span>
+                    <input autocomplete="off" type="text" class="form-control" id="OS_VA" list="VA" placeholder="裸眼视力">
+                    <input autocomplete="off" type="text" class="form-control" id="OS_SPH" list="CYL&SPH" placeholder="球镜">
+                    <input autocomplete="off" type="text" class="form-control" id="OS_CYL" list="CYL&SPH" placeholder="柱镜">
+                    <input autocomplete="off" type="text" class="form-control" id="OS_AX" list="AX" placeholder="轴位">
+                    <input autocomplete="off" type="text" class="form-control" id="OS_PR" list="PR" placeholder="棱镜">
+                    <input autocomplete="off" type="text" class="form-control" id="OS_FR" list="FR" placeholder="基地取向">
+                    <input autocomplete="off" type="text" class="form-control" id="OS_AL" list="AL" placeholder="眼轴长度">
+                    <input autocomplete="off" type="text" class="form-control" id="OS_AK" list="AK" placeholder="角膜曲度">
+                    <input autocomplete="off" type="text" class="form-control" id="OS_AD" list="AD" placeholder="前房深度">
+                    <input autocomplete="off" type="text" class="form-control" id="OS_CCT" list="CCT" placeholder="角膜厚度">
+                    <input autocomplete="off" type="text" class="form-control" id="OS_LT" list="LT" placeholder="晶体厚度">
+                    <input autocomplete="off" type="text" class="form-control" id="OS_VT" list="VT" placeholder="玻璃体厚度">
+                    <input autocomplete="off" type="text" class="form-control" id="OS_BC" list="VA" placeholder="矫正视力">
+                    <input autocomplete="off" type="text" class="form-control" id="OS_ADD" list="ADD" placeholder="下加光">
+                </div>
             </div>
 
             <div class="vertical1 col-6">
                 <div class="input-group">
-                    <span class="input-group-text">方案</span>
-                    <input autocomplete="off" class="form-control" id="PLAN" list="PLAN1" type="text">
-                    <span class="input-group-text">瞳距</span>
-                    <input autocomplete="off" class="form-control" id="PD" list="PD1" type="text">
+                    <span class="input-group-text">备注</span>
+                    <input autocomplete="off" type="text" class="form-control" id="reportRemark">
                 </div>
             </div>
         </form>
@@ -124,19 +127,20 @@
             {% for i in "111111" %}
                 <div class="vertical1 col-12">
                     <div class='input-group store'>
-                        <input autocomplete='off' class='form-control product1 arg10' name='arg10' placeholder='类别'
-                               type='text'>
-                        <input autocomplete='off' class='form-control product1 arg11' name='arg11' placeholder='品牌'
-                               type='text'>
-                        <input autocomplete='off' class='form-control product1 arg12' name='arg12' placeholder='型号'
-                               type='text'>
-                        <input autocomplete='off' class='form-control product2 arg13' name='arg13' placeholder='参数'
-                               type='text'>
-                        <input autocomplete='off' class='form-control product3 arg14' name='arg14' placeholder='价格'
-                               type='text'>
+                        <input autocomplete='off' type='text' class='form-control product1 arg10' name='arg10' placeholder='类别'>
+                        <input autocomplete='off' type='text' class='form-control product1 arg11' name='arg11' placeholder='品牌'>
+                        <input autocomplete='off' type='text' class='form-control product1 arg12' name='arg12' placeholder='型号'>
+                        <input autocomplete='off' type='text' class='form-control product2 arg13' name='arg13' placeholder='参数'>
+                        <input autocomplete='off' type='text' class='form-control product3 arg14' name='arg14' placeholder='价格'>
                     </div>
                 </div>
             {% endfor %}
+            <div class="vertical1 col-6">
+                <div class="input-group">
+                    <span class="input-group-text">备注</span>
+                    <input autocomplete="off" type="text" class="form-control" id="orderRemark">
+                </div>
+            </div>
         </form>
         <hr>
 
@@ -531,7 +535,7 @@
         order_insert_web = "{% url 'maneu_order:insert' %}"
         order_insert_api = "{% url 'maneu_order:api_insert' %}"
     </script>
-    <script src="{% static 'javascript/order_insert.js' %}" type="application/javascript"></script>
+    <script src="{% static 'javascript/orderInsert20251229.js' %}" type="application/javascript"></script>
 {% endblock %}
 {% block css %}
     <link href="{% static 'css/maneu_order/insert.css' %}" rel="stylesheet">

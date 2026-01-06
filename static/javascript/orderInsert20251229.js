@@ -93,9 +93,9 @@ $(document).ready(function () {
             method: 'GET',
             data: {
                 content: JSON.stringify(store),
+                orderRemark: $("#orderRemark").val(),
 
 
-                remark: $("#remark").val(),
                 time: $("#time").val(),
                 name: $("#name").val(),
                 phone: $("#phone").val(),
@@ -106,6 +106,8 @@ $(document).ready(function () {
                 DFH: $("#DFH").val(),
                 OT: $("#OT").val(),
                 EM: $("#EM").val(),
+                guestRemark: $("#guestRemark").val(),
+
 
 
                 plan: $("#PLAN").val(),
@@ -138,6 +140,7 @@ $(document).ready(function () {
                 os_lt: $("#OS_LT").val(),
                 os_vt: $("#OS_VT").val(),
                 os_bc: $("#OS_BC").val(),
+                reportRemark: $("#reportRemark").val(),
             },
             success: function (res) {
                 if (res.status === true) {

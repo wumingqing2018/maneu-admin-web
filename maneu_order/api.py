@@ -25,17 +25,99 @@ def search_time(request):
     return JsonResponse(content)
 
 
-def search_text(request):
+def search_data(request):
     admin_id = is_uuid(request.session.get('id'))
-
     if admin_id:
+
         try:
             data = order_search_text(admin_id=admin_id, value=request.GET.get('value')).values('id', 'report_id', 'guest_id', 'name', 'phone', 'time', 'remark')
             content = {'status': True, 'message': admin_id, 'content': list(data)}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
+
     else:
         content = {'status': False, 'message': '参数错误请确认', 'content': {}}
+    return JsonResponse(content)
+
+
+def update_time(request):
+    admin_id = is_uuid(request.session.get('id'))
+    if admin_id:
+
+        order_id = is_uuid(request.GET.get('order_id'))
+        if order_id:
+            try:
+                data = order_update(admin_id=admin_id, order_id=order_id, time=request.GET.get('time'))
+                order_id = {'status': True, 'message': '', 'content': data}
+            except Exception as e:
+                order_id = {'status': False, 'message': str(e), 'content': {}}
+        else:
+            order_id = {'status': False, 'message': 'order_id 更新有误', 'content': {}}
+
+        report_id = is_uuid(request.GET.get('report_id'))
+        if report_id:
+            try:
+                data = order_update(admin_id=admin_id, report_id=report_id, time=request.GET.get('time'))
+                report_id = {'status': True, 'message': '', 'content': data}
+            except Exception as e:
+                report_id = {'status': False, 'message': str(e), 'content': {}}
+        else:
+            report_id = {'status': False, 'message': 'order_id 更新有误', 'content': {}}
+
+        guest_id = is_uuid(request.GET.get('guest_id'))
+        if guest_id:
+            try:
+                data = order_update(admin_id=admin_id, guest_id=guest_id, time=request.GET.get('time'))
+                guest_id = {'status': True, 'message': '', 'content': data}
+            except Exception as e:
+                guest_id = {'status': False, 'message': str(e), 'content': {}}
+        else:
+            guest_id = {'status': False, 'message': 'order_id 更新有误', 'content': {}}
+
+        content = {'status': True, 'message': '', 'guest_id': guest_id, 'order_id': order_id, 'report_id': report_id}
+    else:
+        content = {'status': False, 'message': '参数错误请确认', 'guest_id': {}, 'order_id': {}, 'report_id': {}}
+
+    return JsonResponse(content)
+
+
+def update_data(request):
+    admin_id = is_uuid(request.session.get('id'))
+    if admin_id:
+
+        order_id = is_uuid(request.GET.get('order_id'))
+        if order_id:
+            try:
+                data = order_update(admin_id=admin_id, order_id=order_id, time=request.GET.get('time'))
+                order_id = {'status': True, 'message': '', 'content': data}
+            except Exception as e:
+                order_id = {'status': False, 'message': str(e), 'content': {}}
+        else:
+            order_id = {'status': False, 'message': 'order_id 更新有误', 'content': {}}
+
+        report_id = is_uuid(request.GET.get('report_id'))
+        if report_id:
+            try:
+                data = order_update(admin_id=admin_id, report_id=report_id, time=request.GET.get('time'))
+                report_id = {'status': True, 'message': '', 'content': data}
+            except Exception as e:
+                report_id = {'status': False, 'message': str(e), 'content': {}}
+        else:
+            report_id = {'status': False, 'message': 'order_id 更新有误', 'content': {}}
+
+        guest_id = is_uuid(request.GET.get('guest_id'))
+        if guest_id:
+            try:
+                data = order_update(admin_id=admin_id, guest_id=guest_id, time=request.GET.get('time'))
+                guest_id = {'status': True, 'message': '', 'content': data}
+            except Exception as e:
+                guest_id = {'status': False, 'message': str(e), 'content': {}}
+        else:
+            guest_id = {'status': False, 'message': 'order_id 更新有误', 'content': {}}
+
+        content = {'status': True, 'message': '', 'guest_id': guest_id, 'order_id': order_id, 'report_id': report_id}
+    else:
+        content = {'status': False, 'message': '参数错误请确认', 'guest_id': {}, 'order_id': {}, 'report_id': {}}
 
     return JsonResponse(content)
 
@@ -78,32 +160,9 @@ def insert(request):
     return JsonResponse(content)
 
 
-def update(request):
-    admin_id = is_uuid(request.session.get('id'))
-    order_id = is_uuid(request.GET.get('order_id'))
-
-    if admin_id and order_id:
-        try:
-            content = order_simple(request.GET.get('content'))
-            order = order_update(admin_id=admin_id,
-                                 order_id=order_id,
-                                 time=request.GET.get('time'),
-                                 name=request.GET.get('name'),
-                                 call=request.GET.get('call'),
-                                 content=content,
-                                 remark=request.GET.get('remark'))
-            content = {'status': True, 'message': '', 'content': order}
-        except Exception as e:
-            content = {'status': False, 'message': str(e), 'content': {}}
-    else:
-        content = {'status': False, 'message': '参数错误请确认', 'content': {}}
-
-    return JsonResponse(content)
-
-
 def detail(request):
     admin_id = is_uuid(request.session.get('id'))
-    if admin_id :
+    if admin_id:
 
         order_id = is_uuid(request.GET.get('order_id'))
         if order_id:

@@ -53,9 +53,9 @@ $(document).ready(function () {
         })
     })
 
-    $('#search_text').click(function () {
+    $('#search_data').click(function () {
         $.ajax({
-            url: search_text,
+            url: search_data,
             method: 'GET',
             data: {
                 value: $("#value").val(),

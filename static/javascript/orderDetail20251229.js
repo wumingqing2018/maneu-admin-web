@@ -1,54 +1,69 @@
 $(document).ready(function () {
     detail_order()
+    report_hide()
+    guest_hide()
 
-    $('#delete').click(function () {
-        if (confirm("确定要删除记录吗？")) {
-            $.ajax({
-                url: order_delete,
-                data: {
-                    'order_id': order_id,
-                    'guest_id': guest_id,
-                    'report_id': report_id,
-                },
-                success: function (res) {
-                    if (res.status === true) {
-                        location.assign(index)
-                    }else {
-                        alert()
-                    }
-                }
-            })
-        } else {
-            return false;
-        }
-    })
+    function report_hide() {
+        $("#report_hide").hide()
+        $("#report_show").show()
+        $("#OD_VA").hide()
+        $("#OD_PR").hide()
+        $("#OD_FR").hide()
+        $("#OD_AL").hide()
+        $("#OD_AK").hide()
+        $("#OD_AD").hide()
+        $("#OD_CCT").hide()
+        $("#OD_LT").hide()
+        $("#OD_VT").hide()
+        $("#OD_BC").hide()
+        $("#OS_VA").hide()
+        $("#OS_PR").hide()
+        $("#OS_FR").hide()
+        $("#OS_AL").hide()
+        $("#OS_AK").hide()
+        $("#OS_AD").hide()
+        $("#OS_CCT").hide()
+        $("#OS_LT").hide()
+        $("#OS_VT").hide()
+        $("#OS_BC").hide()
+    }
 
-    $('#update').click(function () {
-        if (confirm("确定要修改记录吗？")) {
-            update_guest(function (data) {
-                if (data.status === true) {
-                    update_report(function (data) {
-                        if (data.status === true) {
-                            update_order(function (data) {
-                                if (data.status === true) {
-                                    alert('修改成功')
-                                } else {
-                                    alert(data.message)
-                                }
-                            })
-                        } else {
-                            alert(data.message)
-                        }
-                    })
-                } else {
-                    alert(data.message)
-                }
-            })
-        } else {
-            return false;
-        }
-    })
+    function report_show() {
+        $("#report_hide").show()
+        $("#report_show").hide()
+        $("#OD_VA").show()
+        $("#OD_PR").show()
+        $("#OD_FR").show()
+        $("#OD_AL").show()
+        $("#OD_AK").show()
+        $("#OD_AD").show()
+        $("#OD_CCT").show()
+        $("#OD_LT").show()
+        $("#OD_VT").show()
+        $("#OD_BC").show()
+        $("#OS_VA").show()
+        $("#OS_PR").show()
+        $("#OS_FR").show()
+        $("#OS_AL").show()
+        $("#OS_AK").show()
+        $("#OS_AD").show()
+        $("#OS_CCT").show()
+        $("#OS_LT").show()
+        $("#OS_VT").show()
+        $("#OS_BC").show()
+    }
 
+    function guest_hide() {
+        $("#guest_hide").hide()
+        $("#guest_show").show()
+        $("#guest_content").hide()
+    }
+
+    function guest_show() {
+        $("#guest_hide").show()
+        $("#guest_show").hide()
+        $("#guest_content").show()
+    }
 
     function detail_order() {
         $.ajax({
@@ -132,8 +147,109 @@ $(document).ready(function () {
         })
     }
 
+    $('#guest_hide').click(function () {
+        guest_hide()
+    })
 
-    function update_order(callback) {
+    $('#guest_show').click(function () {
+        guest_show()
+    })
+
+    $('#report_hide').click(function () {
+        report_hide()
+    })
+
+    $('#report_show').click(function () {
+        report_show()
+    })
+
+    $('#delete').click(function () {
+        if (confirm("确定要删除记录吗？")) {
+            $.ajax({
+                url: order_delete,
+                data: {
+                    'order_id': order_id,
+                    'guest_id': guest_id,
+                    'report_id': report_id,
+                },
+                success: function (res) {
+                    if (res.status === true) {
+                        location.assign(index)
+                    }else {
+                        alert()
+                    }
+                }
+            })
+        } else {
+            return false;
+        }
+    })
+
+    $('#timeUpdate').click(function update_guest() {
+        $.ajax({
+            url: time_update,
+            method: 'GET',
+            data: {
+                report_id: report_id,
+                guest_id: guest_id,
+                order_id: order_id,
+                time: $("#time").val(),
+            },
+            success: function () {
+                alert('更新成功')
+            },
+            error: function () {
+                alert('更新失败')
+            }
+        })
+    })
+
+    $('#reportUpdate').click(function update_report() {
+        $.ajax({
+            url: report_update,
+            method: "GET",
+            data: {
+                report_id: report_id,
+                reportRemark: $("#reportRemark").val(),
+                plan: $("#PLAN").val(),
+                pd: $("#PD").val(),
+                od_va: $("#OD_VA").val(),
+                os_va: $("#OS_VA").val(),
+                od_sph: $("#OD_SPH").val(),
+                os_sph: $("#OS_SPH").val(),
+                od_cyl: $("#OD_CYL").val(),
+                os_cyl: $("#OS_CYL").val(),
+                od_ax: $("#OD_AX").val(),
+                os_ax: $("#OS_AX").val(),
+                od_pr: $("#OD_PR").val(),
+                os_pr: $("#OS_PR").val(),
+                od_fr: $("#OD_FR").val(),
+                os_fr: $("#OS_FR").val(),
+                od_add: $("#OD_ADD").val(),
+                os_add: $("#OS_ADD").val(),
+                od_al: $("#OD_AL").val(),
+                os_al: $("#OS_AL").val(),
+                od_ak: $("#OD_AK").val(),
+                os_ak: $("#OS_AK").val(),
+                od_ad: $("#OD_AD").val(),
+                os_ad: $("#OS_AD").val(),
+                od_cct: $("#OD_CCT").val(),
+                os_cct: $("#OS_CCT").val(),
+                od_lt: $("#OD_LT").val(),
+                os_lt: $("#OS_LT").val(),
+                od_vt: $("#OD_VT").val(),
+                os_vt: $("#OS_VT").val(),
+                od_bc: $("#OD_BC").val(),
+                os_bc: $("#OS_BC").val(),
+            },
+            success: function (res) {
+            },
+            error: function (res) {
+            }
+        })
+    })
+
+    $('#orderUpdate').click(function update_order() {
         store = []
         $(".store").each(function () {
             data = {
@@ -150,100 +266,38 @@ $(document).ready(function () {
             method: 'GET',
             data: {
                 content: JSON.stringify(store),
-                remark: $("#remark").val(),
-                time: $("#time").val(),
-                name: $("#name").val(),
-                phone: $("#phone").val(),
+                orderRemark: $("#orderRemark").val(),
                 order_id: order_id,
             },
             success: function (res) {
-                callback(res)
             },
             error: function () {
-                callback({"status": false, 'message': 'order,网络出错'})
             }
         })
-    }
+    })
 
-    function update_guest(callback) {
+    $('#guestUpdate').click(function update_guest() {
         $.ajax({
             url: guest_update,
             method: 'GET',
             data: {
+                report_id: report_id,
                 guest_id: guest_id,
-                remark: $("#remark").val(),
-                time: $("#time").val(),
-                name: $("#name").val(),
+                order_id: order_id,
+                guestRemark: $("#guestRemark").val(),
                 phone: $("#phone").val(),
+                name: $("#name").val(),
                 age: $("#age").val(),
                 sex: $("#sex").val(),
                 DFH: $("#DFH").val(),
                 OT: $("#OT").val(),
                 EM: $("#EM").val(),
             },
-            success: function (res) {
-                callback(res)
+            success: function () {
             },
             error: function () {
-                callback({"status": false, 'message': 'guest,网络出错'})
             }
         })
-    }
+    })
 
-    function update_report(callback) {
-        content = {
-            PLAN: $("#PLAN").val(),
-            PD: $("#PD").val(),
-            OD: {
-                'VA': $("#OD_VA").val(),
-                'SPH': $("#OD_SPH").val(),
-                'CYL': $("#OD_CYL").val(),
-                'AX': $("#OD_AX").val(),
-                'PR': $("#OD_PR").val(),
-                'FR': $("#OD_FR").val(),
-                'ADD': $("#OD_ADD").val(),
-                'AL': $("#OD_AL").val(),
-                'AK': $("#OD_AK").val(),
-                'AD': $("#OD_AD").val(),
-                'CCT': $("#OD_CCT").val(),
-                'LT': $("#OD_LT").val(),
-                'VT': $("#OD_VT").val(),
-                'BC': $("#OD_BC").val(),
-            },
-            OS: {
-                'VA': $("#OS_VA").val(),
-                'SPH': $("#OS_SPH").val(),
-                'CYL': $("#OS_CYL").val(),
-                'AX': $("#OS_AX").val(),
-                'PR': $("#OS_PR").val(),
-                'FR': $("#OS_FR").val(),
-                'ADD': $("#OS_ADD").val(),
-                'AL': $("#OS_AL").val(),
-                'AK': $("#OS_AK").val(),
-                'AD': $("#OS_AD").val(),
-                'CCT': $("#OS_CCT").val(),
-                'LT': $("#OS_LT").val(),
-                'VT': $("#OS_VT").val(),
-                'BC': $("#OS_BC").val(),
-            },
-        }
-        $.ajax({
-            url: report_update,
-            method: "GET",
-            data: {
-                report_id: report_id,
-                time: $("#time").val(),
-                name: $("#name").val(),
-                phone: $("#phone").val(),
-                remark: $("#remark").val(),
-                content: JSON.stringify(content)
-            },
-            success: function (res) {
-                callback(res); // 第一个参数为null表示没有错误，第二个参数为请求的数据
-            },
-            error: function (res) {
-                callback({"status": false, 'message': 'report,网络出错'})
-            }
-        })
-    }
 });
