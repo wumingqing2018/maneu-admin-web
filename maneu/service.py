@@ -1,5 +1,12 @@
 from maneu.models import ManeuAdmin
 
+def get_access_token(code=''):
+    return ManeuAdmin.objects.filter(id=code).first()
+
+
+def update_access_token(content):
+    return ManeuAdmin.objects.all().update(content=content)
+
 
 def sendsms(call='', code=''):
     return ManeuAdmin.objects.filter(username=call).update(password=code)
