@@ -90,16 +90,17 @@ def update_data(request):
 
     if admin_id and guest_id:
         try:
+            print(request.GET)
             data = guest_update_data(guest_id=guest_id,
                                      admin_id=admin_id,
-                                     phone=request.GET.get('call'),
+                                     phone=request.GET.get('phone'),
                                      name=request.GET.get('name'),
                                      sex=request.GET.get('sex'),
                                      age=request.GET.get('age'),
-                                     ot=request.GET.get('ot'),
-                                     em=request.GET.get('em'),
-                                     dfh=request.GET.get('dfh'),
-                                     remark=request.GET.get('remark'))
+                                     ot=request.GET.get('OT'),
+                                     em=request.GET.get('EM'),
+                                     dfh=request.GET.get('DFH'),
+                                     remark=request.GET.get('guestRemark'),)
             content = {'status': True, 'message': '', 'content': data}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}

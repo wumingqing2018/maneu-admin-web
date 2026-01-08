@@ -170,12 +170,12 @@ def update_data(request):
     admin_id = is_uuid(request.session.get('id'))
     if admin_id and report_id:
         try:
-            content = report_simple(request.GET.get('content'))
+            content = report_simple(request)
             report = report_update_data(report_id=report_id,
                                         admin_id=admin_id,
                                         name=request.GET.get('name'),
                                         phone=request.GET.get('phone'),
-                                        remark=request.GET.get('remark'),
+                                        remark=request.GET.get('reportRemark'),
                                         content=content)
             if report:
                 content = {'status': True, 'message': '', 'content': {'report_id': report_id}}

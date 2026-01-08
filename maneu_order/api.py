@@ -11,6 +11,7 @@ from maneu_report.service import *
 
 
 def insert(request):
+    print(request.GET)
     admin_id = is_uuid(request.session.get('id'))
     if admin_id:
         try:
@@ -57,6 +58,7 @@ def insert(request):
             content = {'status': False, 'message': str(e), 'content': {}}
     else:
         content = {'status': False, 'message': '参数错误请确认', 'content': {}}
+    print(content)
     return JsonResponse(content)
 
 
@@ -218,15 +220,15 @@ def update_data(request):
     admin_id = is_uuid(request.session.get('id'))
     order_id = is_uuid(request.GET.get('order_id'))
     if admin_id and order_id:
+        print(request.GET)
         try:
-            name = request.GET.get('name')
-            phone = request.GET.get('phone')
             remark = request.GET.get('orderRemark')
             content = order_simple(request.GET.get('content'))
-            data = order_update_data(admin_id=admin_id, order_id=order_id, name=name, call=phone, content=content, remark=remark)
+            data = order_update_data(admin_id=admin_id, order_id=order_id, content=content, remark=remark)
             content = {'status': True, 'message': '', 'content': data}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
+        print(content)
     else:
         content = {'status': False, 'message': '', 'content': {}}
     return JsonResponse(content)

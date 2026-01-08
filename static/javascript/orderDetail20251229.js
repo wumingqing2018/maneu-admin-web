@@ -74,11 +74,12 @@ $(document).ready(function () {
                 'report_id': report_id,
             },
             success: function (res) {
+                console.log(res)
                 if (res.status === true) {
 
-                    guest = res.guest_id
+                    guest = res.content.guest_id
                     if (guest.status === true) {
-                        $('#time').val(guest.content.time)
+                        $('#guestRemark').val(guest.content.remark)
                         $('#name').val(guest.content.name)
                         $('#phone').val(guest.content.phone)
                         $('#sex').val(guest.content.sex)
@@ -88,10 +89,10 @@ $(document).ready(function () {
                         $('#OT').val(guest.content.ot)
                     }
 
-                    report = res.report_id
+                    report = res.content.report_id
                     if (report.status === true) {
                         console.log('report', report.content)
-                        $('#time').val(report.content.time)
+                        $('#reportRemark').val(report.content.remark)
                         $('#PD').val(report.content.pd)
                         $('#PLAN').val(report.content.plan)
 
@@ -126,11 +127,11 @@ $(document).ready(function () {
                         $('#OD_VT').val(report.content.od_vt)
                     }
 
-                    order = res.order_id
+                    order = res.content.order_id
                     if (order.status === true) {
                         console.log('order', order.content)
-
-                        $('#remark').val(order.content.remark)
+                        $('#time').val(order.content.time)
+                        $('#orderRemark').val(order.content.remark)
 
                         for (var i = 0; i < order.content.content.length; i++) {
                             store = $(".store:eq(" + i + ")")
@@ -174,9 +175,9 @@ $(document).ready(function () {
                 },
                 success: function (res) {
                     if (res.status === true) {
-                        location.assign(index)
+                        location.assign(order_index)
                     }else {
-                        alert()
+                        alert('删除失败')
                     }
                 }
             })
@@ -187,7 +188,7 @@ $(document).ready(function () {
 
     $('#timeUpdate').click(function update_guest() {
         $.ajax({
-            url: time_update,
+            url: order_update,
             method: 'GET',
             data: {
                 report_id: report_id,
@@ -206,7 +207,7 @@ $(document).ready(function () {
 
     $('#reportUpdate').click(function update_report() {
         $.ajax({
-            url: report_update,
+            url: report_update_data,
             method: "GET",
             data: {
                 report_id: report_id,
@@ -262,7 +263,7 @@ $(document).ready(function () {
             store.push(data)
         })
         $.ajax({
-            url: order_update,
+            url: order_update_data,
             method: 'GET',
             data: {
                 content: JSON.stringify(store),
@@ -270,6 +271,7 @@ $(document).ready(function () {
                 order_id: order_id,
             },
             success: function (res) {
+                alert('更新成功')
             },
             error: function () {
             }
@@ -278,12 +280,10 @@ $(document).ready(function () {
 
     $('#guestUpdate').click(function update_guest() {
         $.ajax({
-            url: guest_update,
+            url:  guest_update_data,
             method: 'GET',
             data: {
-                report_id: report_id,
                 guest_id: guest_id,
-                order_id: order_id,
                 guestRemark: $("#guestRemark").val(),
                 phone: $("#phone").val(),
                 name: $("#name").val(),

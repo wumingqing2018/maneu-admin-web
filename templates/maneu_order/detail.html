@@ -16,6 +16,7 @@
                 <div class="input-group">
                     <span class="input-group-text">时间</span>
                     <input autocomplete="off" type="datetime-local" class="form-control" id="time" value="{{ time }}">
+                    <input type="button" class="btn btn-warning" id="timeUpdate" value="更新数据">
                 </div>
             </div>
         </form>
@@ -56,6 +57,7 @@
                     <input autocomplete="off" type="text" class="form-control" id="guestRemark">
                 </div>
             </div>
+            <button class="vertical1 btn btn-warning" id="guestUpdate" type="button">更新数据</button>
         </form>
         <hr>
 
@@ -119,6 +121,7 @@
                     <input autocomplete="off" type="text" class="form-control" id="reportRemark">
                 </div>
             </div>
+            <button class="vertical1 btn btn-warning" id="reportUpdate" type="button">更新数据</button>
         </form>
         <hr>
 
@@ -142,6 +145,7 @@
                     <input autocomplete="off" type="text" class="form-control" id="orderRemark">
                 </div>
             </div>
+            <button class="vertical1 btn btn-warning" id="orderUpdate" type="button">更新数据</button>
         </form>
         <hr>
 
@@ -149,7 +153,7 @@
         <form class="vertical2">
             <div class="vertical1 col-1">
                 <div class="input-group">
-                    <input class="btn btn-danger" id="insert" type="button" value="提交订单">
+                    <input class="btn btn-danger" id="delete" type="button" value="删除订单">
                 </div>
             </div>
         </form>
@@ -530,17 +534,21 @@
     </div>
 
 {% endblock %}
+{% block css %}
+    <link href="{% static 'css/maneu_order/insert.css' %}" rel="stylesheet">
+{% endblock %}
 {% block javascript %}
     <script>
         order_id = "{{ order_id }}"
         guest_id = "{{ guest_id }}"
         report_id = "{{ report_id }}"
+        order_index = "{% url 'maneu_order:index' %}"
         order_detail = "{% url 'maneu_order:api_detail' %}"
         order_delete = "{% url 'maneu_order:api_delete' %}"
-        time_update = "{% url 'maneu_order:time_update' %}"
+        order_update = "{% url 'maneu_order:update_time' %}"
+        order_update_data = "{% url 'maneu_order:update_data' %}"
+        guest_update_data = "{% url 'maneu_guest:update_data' %}"
+        report_update_data = "{% url 'maneu_report:update_data' %}"
     </script>
     <script src="{% static 'javascript/orderDetail20251229.js' %}" type="application/javascript"></script>
-{% endblock %}
-{% block css %}
-    <link href="{% static 'css/maneu_order/insert.css' %}" rel="stylesheet">
 {% endblock %}
