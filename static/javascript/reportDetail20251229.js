@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    detail_order()
+    detail_report()
     report_hide()
     guest_hide()
 
@@ -65,7 +65,7 @@ $(document).ready(function () {
         $("#guest_content").show()
     }
 
-    function detail_order() {
+    function detail_report() {
         $.ajax({
             url: report_detail,
             data: {
@@ -90,7 +90,7 @@ $(document).ready(function () {
 
                     report = res.content.report_id
                     if (report.status === true) {
-                        console.log('report', report.content)
+                        $('#time').val(report.content.time)
                         $('#reportRemark').val(report.content.remark)
                         $('#PD').val(report.content.pd)
                         $('#PLAN').val(report.content.plan)
@@ -151,15 +151,14 @@ $(document).ready(function () {
     $('#delete').click(function () {
         if (confirm("确定要删除记录吗？")) {
             $.ajax({
-                url: order_delete,
+                url: report_delete,
                 data: {
-                    'order_id': order_id,
                     'guest_id': guest_id,
                     'report_id': report_id,
                 },
                 success: function (res) {
                     if (res.status === true) {
-                        location.assign(order_index)
+                        location.assign(report_index)
                     }else {
                         alert('删除失败')
                     }
@@ -225,7 +224,6 @@ $(document).ready(function () {
             data: {
                 report_id: report_id,
                 guest_id: guest_id,
-                order_id: order_id,
                 guestRemark: $("#guestRemark").val(),
                 phone: $("#phone").val(),
                 time: $("#time").val(),
