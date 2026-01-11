@@ -11,7 +11,6 @@ from maneu_report.service import *
 
 
 def insert(request):
-    print(request.GET)
     admin_id = is_uuid(request.session.get('id'))
     if admin_id:
         try:
@@ -27,9 +26,9 @@ def insert(request):
                                     status=3,
                                     sex=request.GET.get('sex'),
                                     age=request.GET.get('age'),
-                                    dfh=request.GET.get('DFH'),
-                                    em=request.GET.get('EM'),
-                                    ot=request.GET.get('OT'),
+                                    dfh=request.GET.get('dfh'),
+                                    em=request.GET.get('em'),
+                                    ot=request.GET.get('ot'),
                                     remark=request.GET.get('guestRemark')).id
 
             content = report_simple(request)
@@ -179,6 +178,16 @@ def update_time(request):
     admin_id = is_uuid(request.session.get('id'))
     if admin_id:
 
+        guest_id = is_uuid(request.GET.get('guest_id'))
+        if guest_id:
+            try:
+                data = guest_update_time(admin_id=admin_id, guest_id=guest_id, time=request.GET.get('time'))
+                guest_id = {'status': True, 'message': '', 'content': data}
+            except Exception as e:
+                guest_id = {'status': False, 'message': str(e), 'content': {}}
+        else:
+            guest_id = {'status': False, 'message': 'order_id 更新有误', 'content': {}}
+
         order_id = is_uuid(request.GET.get('order_id'))
         if order_id:
             try:
@@ -189,15 +198,6 @@ def update_time(request):
         else:
             order_id = {'status': False, 'message': 'order_id 更新有误', 'content': {}}
 
-        guest_id = is_uuid(request.GET.get('guest_id'))
-        if guest_id:
-            try:
-                data = guest_update_time(admin_id=admin_id, guest_id=guest_id, time=request.GET.get('time'))
-                guest_id = {'status': True, 'message': '', 'content': data}
-            except Exception as e:
-                guest_id = {'status': False, 'message': str(e), 'content': {}}
-        else:
-            guest_id = {'status': False, 'message': 'order_id 更新有误', 'content': {}}
 
         report_id = is_uuid(request.GET.get('report_id'))
         if report_id:
@@ -216,11 +216,10 @@ def update_time(request):
     return JsonResponse(content)
 
 
-def update_data(request):
+def update(request):
     admin_id = is_uuid(request.session.get('id'))
     order_id = is_uuid(request.GET.get('order_id'))
     if admin_id and order_id:
-        print(request.GET)
         try:
             remark = request.GET.get('orderRemark')
             content = order_simple(request.GET.get('content'))
@@ -228,7 +227,6 @@ def update_data(request):
             content = {'status': True, 'message': '', 'content': data}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
-        print(content)
     else:
         content = {'status': False, 'message': '', 'content': {}}
     return JsonResponse(content)

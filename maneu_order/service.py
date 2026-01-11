@@ -23,9 +23,9 @@ def order_search_data(admin_id='', value=''):
     return ManeuOrder.objects.filter(Q(name__icontains=value, admin_id=admin_id) | Q(phone__icontains=value, admin_id=admin_id)).order_by('-time').all()
 
 
-def order_update_time(admin_id='', order_id='', time=""):
-    return ManeuOrder.objects.filter(id=order_id, admin_id=admin_id).update(time=time)
+def order_update_time(admin_id='', order_id='', time="", name="", phone=""):
+    return ManeuOrder.objects.filter(id=order_id, admin_id=admin_id).update(time=time, name=name, phone=phone)
 
 
-def order_update_data(admin_id='', order_id='', name='', call='', remark="", content=''):
-    return ManeuOrder.objects.filter(id=order_id, admin_id=admin_id).update(name=name, phone=call, remark=remark, content=content)
+def order_update_data(admin_id='', order_id='', name='', phone='', remark="", content=''):
+    return ManeuOrder.objects.filter(id=order_id, admin_id=admin_id).update(name=name, phone=phone, remark=remark, content=content)

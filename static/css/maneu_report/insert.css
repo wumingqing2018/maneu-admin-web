@@ -1,0 +1,24 @@
+hr {
+    border: 1px solid #ffffff;
+}
+
+.vertical1 {
+    margin-bottom: 10px
+}
+
+.vertical2 {
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.product1 {
+    width: 11%
+}
+
+.product2 {
+    width: 51%
+}
+
+.product3 {
+    width: 11%
+}

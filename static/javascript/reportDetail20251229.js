@@ -67,9 +67,8 @@ $(document).ready(function () {
 
     function detail_order() {
         $.ajax({
-            url: order_detail,
+            url: report_detail,
             data: {
-                'order_id': order_id,
                 'guest_id': guest_id,
                 'report_id': report_id,
             },
@@ -127,21 +126,6 @@ $(document).ready(function () {
                         $('#OD_VT').val(report.content.od_vt)
                     }
 
-                    order = res.content.order_id
-                    if (order.status === true) {
-                        console.log('order', order.content)
-                        $('#time').val(order.content.time)
-                        $('#orderRemark').val(order.content.remark)
-
-                        for (var i = 0; i < order.content.content.length; i++) {
-                            store = $(".store:eq(" + i + ")")
-                            store.find(".arg10").val(order.content.content[i]['arg10'])
-                            store.find(".arg11").val(order.content.content[i]['arg11'])
-                            store.find(".arg12").val(order.content.content[i]['arg12'])
-                            store.find(".arg13").val(order.content.content[i]['arg13'])
-                            store.find(".arg14").val(order.content.content[i]['arg14'])
-                        }
-                    }
 
                 }
             }
@@ -186,24 +170,6 @@ $(document).ready(function () {
         }
     })
 
-    $('#timeUpdate').click(function update_guest() {
-        $.ajax({
-            url: order_update,
-            method: 'GET',
-            data: {
-                report_id: report_id,
-                guest_id: guest_id,
-                order_id: order_id,
-                time: $("#time").val(),
-            },
-            success: function () {
-                alert('更新成功')
-            },
-            error: function () {
-                alert('更新失败')
-            }
-        })
-    })
 
     $('#reportUpdate').click(function update_report() {
         $.ajax({
@@ -251,33 +217,6 @@ $(document).ready(function () {
         })
     })
 
-    $('#orderUpdate').click(function update_order() {
-        store = []
-        $(".store").each(function () {
-            data = {
-                arg10: $(this).find(".arg10").val(),
-                arg11: $(this).find(".arg11").val(),
-                arg12: $(this).find(".arg12").val(),
-                arg13: $(this).find(".arg13").val(),
-                arg14: $(this).find(".arg14").val(),
-            };
-            store.push(data)
-        })
-        $.ajax({
-            url: order_update,
-            method: 'GET',
-            data: {
-                content: JSON.stringify(store),
-                orderRemark: $("#orderRemark").val(),
-                order_id: order_id,
-            },
-            success: function (res) {
-                alert('更新成功')
-            },
-            error: function () {
-            }
-        })
-    })
 
     $('#guestUpdate').click(function update_guest() {
         $.ajax({

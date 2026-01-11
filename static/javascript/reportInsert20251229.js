@@ -77,25 +77,10 @@ $(document).ready(function () {
     }
 
     $('#insert').click(function () {
-        store = []
-        $(".store").each(function () {
-            data = {
-                arg10: $(this).find(".arg10").val(),
-                arg11: $(this).find(".arg11").val(),
-                arg12: $(this).find(".arg12").val(),
-                arg13: $(this).find(".arg13").val(),
-                arg14: $(this).find(".arg14").val(),
-            };
-            store.push(data)
-        });
         $.ajax({
-            url: order_insert_api,
+            url: api_insert,
             method: 'GET',
             data: {
-                content: JSON.stringify(store),
-                orderRemark: $("#orderRemark").val(),
-
-
                 time: $("#time").val(),
                 name: $("#name").val(),
                 phone: $("#phone").val(),
@@ -150,9 +135,7 @@ $(document).ready(function () {
                 }
             },
             error: function (res) {
-                callback({'status': false, 'message': '请求出错请刷新页面'}); // 第一个参数为null表示没有错误，第二个参数为请求的数据
             }
         })
     });
-
 });

@@ -26,5 +26,5 @@ def guest_update_time(admin_id='', guest_id='', time=""):
     return ManeuGuest.objects.filter(id=guest_id, admin_id=admin_id).update(time=time)
 
 
-def guest_update_data(admin_id='', guest_id='', name='', phone='', sex='', age='', ot='', em='', dfh='', remark=''):
-    return ManeuGuest.objects.filter(id=guest_id, admin_id=admin_id).update(name=name, phone=phone, sex=sex, age=age, ot=ot, em=em, dfh=dfh, remark=remark)
+def guest_update_data(admin_id='', guest_id='', time='', name='', phone='', sex='', age='', ot='', em='', dfh='', remark=''):
+    return ManeuGuest.objects.filter(id=guest_id, admin_id=admin_id).update(name=name, time=time, phone=phone, sex=sex, age=age, ot=ot, em=em, dfh=dfh, remark=remark)

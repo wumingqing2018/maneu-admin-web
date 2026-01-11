@@ -3,6 +3,8 @@ from django.http import JsonResponse
 
 from common.verify import is_uuid
 from maneu_guest.service import *
+from maneu_order.service import *
+from maneu_report.service import *
 
 
 def insert(request):
@@ -68,45 +70,53 @@ def delete(request):
     return JsonResponse(content)
 
 
-def update_time(request):
-    guest_id = is_uuid(request.GET.get('guest_id'))
+def update(request):
     admin_id = is_uuid(request.session.get('id'))
+    if admin_id:
 
-    if admin_id and guest_id:
-        try:
-            data = guest_update_time(guest_id=guest_id, admin_id=admin_id, time=request.GET.get('time'))
-            content = {'status': True, 'message': '', 'content': data}
-        except Exception as e:
-            content = {'status': False, 'message': str(e), 'content': {}}
+        guest_id = is_uuid(request.GET.get('guest_id'))
+        if guest_id:
+            try:
+                data = guest_update_data(guest_id=guest_id,
+                                         admin_id=admin_id,
+                                         phone=request.GET.get('phone'),
+                                         name=request.GET.get('name'),
+                                         time=request.GET.get('time'),
+                                         sex=request.GET.get('sex'),
+                                         age=request.GET.get('age'),
+                                         ot=request.GET.get('ot'),
+                                         em=request.GET.get('em'),
+                                         dfh=request.GET.get('dfh'),
+                                         remark=request.GET.get('guestRemark'),)
+                guest_id = {'status': True, 'message': '', 'content': data}
+            except Exception as e:
+                guest_id = {'status': False, 'message': str(e), 'content': {}}
+        else:
+            guest_id = {'status': False, 'message': '参数错误请确认', 'content': {}}
+
+        order_id = is_uuid(request.GET.get('order_id'))
+        if order_id:
+            try:
+                data = order_update_time(admin_id=admin_id, order_id=order_id, time=request.GET.get('time'), name=request.GET.get('name'), phone=request.GET.get('phone'))
+                order_id = {'status': True, 'message': '', 'content': data}
+            except Exception as e:
+                order_id = {'status': False, 'message': str(e), 'content': {}}
+        else:
+            order_id = {'status': False, 'message': 'order_id 更新有误', 'content': {}}
+
+        report_id = is_uuid(request.GET.get('report_id'))
+        if report_id:
+            try:
+                data = report_update_time(admin_id=admin_id, report_id=report_id, time=request.GET.get('time'), name=request.GET.get('name'), phone=request.GET.get('phone'))
+                report_id = {'status': True, 'message': '', 'content': data}
+            except Exception as e:
+                report_id = {'status': False, 'message': str(e), 'content': {}}
+        else:
+            report_id = {'status': False, 'message': 'order_id 更新有误', 'content': {}}
+
+        content = {'status': True, 'message': '', 'content': {'order_id': order_id, 'guest_id': guest_id, 'report_id': report_id}}
     else:
-        content = {'status': False, 'message': '请输入正确的参数', 'content': {}}
-
-    return JsonResponse(content)
-
-
-def update_data(request):
-    guest_id = is_uuid(request.GET.get('guest_id'))
-    admin_id = is_uuid(request.session.get('id'))
-
-    if admin_id and guest_id:
-        try:
-            print(request.GET)
-            data = guest_update_data(guest_id=guest_id,
-                                     admin_id=admin_id,
-                                     phone=request.GET.get('phone'),
-                                     name=request.GET.get('name'),
-                                     sex=request.GET.get('sex'),
-                                     age=request.GET.get('age'),
-                                     ot=request.GET.get('OT'),
-                                     em=request.GET.get('EM'),
-                                     dfh=request.GET.get('DFH'),
-                                     remark=request.GET.get('guestRemark'),)
-            content = {'status': True, 'message': '', 'content': data}
-        except Exception as e:
-            content = {'status': False, 'message': str(e), 'content': {}}
-    else:
-        content = {'status': False, 'message': '请输入正确的参数', 'content': {}}
-
+        content = {'status': True, 'message': '', 'content': {'order_id': {}, 'guest_id': {}, 'report_id': {}}}
     return JsonResponse(content)
 
 

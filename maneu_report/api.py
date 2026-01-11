@@ -9,12 +9,12 @@ from maneu_report.service import *
 
 def insert(request):
     admin_id = is_uuid(request.session.get('id'))
-
     if admin_id:
         name = request.GET.get('name')
         time = request.GET.get('time')
         phone = request.GET.get('phone')
         status = 2
+
         try:
             guest_id = guest_insert(admin_id=admin_id,
                                     time=time,
@@ -49,7 +49,6 @@ def insert(request):
 def detail(request):
     admin_id = is_uuid(request.session.get('id'))
     if admin_id:
-
         guest_id = is_uuid(request.GET.get('guest_id'))
         if guest_id:
             try:
@@ -134,38 +133,7 @@ def search_data(request):
     return JsonResponse(content)
 
 
-def update_time(request):
-    admin_id = is_uuid(request.session.get('id'))
-    if admin_id:
-
-        guest_id = is_uuid(request.GET.get('guest_id'))
-        if guest_id:
-            try:
-                data = guest_update_time(admin_id=admin_id, guest_id=guest_id, time=request.GET.get('time'))
-                guest_id = {'status': True, 'message': '', 'content': data}
-            except Exception as e:
-                guest_id = {'status': False, 'message': str(e), 'content': {}}
-        else:
-            guest_id = {'status': False, 'message': 'order_id 更新有误', 'content': {}}
-
-        report_id = is_uuid(request.GET.get('report_id'))
-        if report_id:
-            try:
-                data = report_update_time(admin_id=admin_id, report_id=report_id, time=request.GET.get('time'))
-                report_id = {'status': True, 'message': '', 'content': data}
-            except Exception as e:
-                report_id = {'status': False, 'message': str(e), 'content': {}}
-        else:
-            report_id = {'status': False, 'message': 'order_id 更新有误', 'content': {}}
-
-        content = {'status': True, 'message': '', 'content': {'guest_id': guest_id, 'report_id': report_id}}
-    else:
-        content = {'status': False, 'message': '参数错误请确认', 'content': {'guest_id': {}, 'order_id': {}, 'report_id': {}}}
-
-    return JsonResponse(content)
-
-
-def update_data(request):
+def update(request):
     report_id = is_uuid(request.GET.get('report_id'))
     admin_id = is_uuid(request.session.get('id'))
     if admin_id and report_id:
@@ -173,8 +141,6 @@ def update_data(request):
             content = report_simple(request)
             report = report_update_data(report_id=report_id,
                                         admin_id=admin_id,
-                                        name=request.GET.get('name'),
-                                        phone=request.GET.get('phone'),
                                         remark=request.GET.get('reportRemark'),
                                         content=content)
             if report:

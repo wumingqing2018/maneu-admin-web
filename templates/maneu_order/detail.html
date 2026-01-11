@@ -11,21 +11,18 @@
             </div>
         </form>
         <hr>
-        <form class="vertical2">
-            <div class="vertical1 col-6">
-                <div class="input-group">
-                    <span class="input-group-text">时间</span>
-                    <input autocomplete="off" type="datetime-local" class="form-control" id="time" value="{{ time }}">
-                    <input type="button" class="btn btn-warning" id="timeUpdate" value="更新数据">
-                </div>
-            </div>
-        </form>
-        <hr>
 
         {# 客户基础数据 #}
         <form class="vertical2">
             <button class="vertical1 btn btn-primary" id="guest_show" type="button">客户数据 > 展开参数</button>
             <button class="vertical1 btn btn-primary" id="guest_hide" type="button">客户数据 < 收起参数</button>
+
+            <div class="vertical1 col-6">
+                <div class="input-group">
+                    <span class="input-group-text">时间</span>
+                    <input autocomplete="off" type="datetime-local" class="form-control" id="time" value="{{ time }}">
+                </div>
+            </div>
 
             <div class="vertical1 col-6">
                 <div class="input-group">
@@ -545,10 +542,9 @@
         order_index = "{% url 'maneu_order:index' %}"
         order_detail = "{% url 'maneu_order:api_detail' %}"
         order_delete = "{% url 'maneu_order:api_delete' %}"
-        order_update = "{% url 'maneu_order:update_time' %}"
-        order_update_data = "{% url 'maneu_order:update_data' %}"
-        guest_update_data = "{% url 'maneu_guest:update_data' %}"
-        report_update_data = "{% url 'maneu_report:update_data' %}"
+        guest_update = "{% url 'maneu_guest:api_update' %}"
+        order_update = "{% url 'maneu_order:api_update' %}"
+        report_update = "{% url 'maneu_report:api_update' %}"
     </script>
     <script src="{% static 'javascript/orderDetail20251229.js' %}" type="application/javascript"></script>
 {% endblock %}
