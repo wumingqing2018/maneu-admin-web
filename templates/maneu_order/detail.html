@@ -531,9 +531,6 @@
     </div>
 
 {% endblock %}
-{% block css %}
-    <link href="{% static 'css/maneu_order/insert.css' %}" rel="stylesheet">
-{% endblock %}
 {% block javascript %}
     <script>
         order_id = "{{ order_id }}"
@@ -547,4 +544,5 @@
         report_update = "{% url 'maneu_report:api_update' %}"
     </script>
     <script src="{% static 'javascript/orderDetail20251229.js' %}" type="application/javascript"></script>
+    <link href="{% static 'css/orderDetail20251229.css' %}" rel="stylesheet">
 {% endblock %}
