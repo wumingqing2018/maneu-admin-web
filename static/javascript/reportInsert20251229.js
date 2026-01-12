@@ -94,7 +94,6 @@ $(document).ready(function () {
                 guestRemark: $("#guestRemark").val(),
 
 
-
                 plan: $("#PLAN").val(),
                 pd: $("#PD").val(),
                 od_va: $("#OD_VA").val(),

@@ -84,9 +84,9 @@ $(document).ready(function () {
                         $('#phone').val(guest.content.phone)
                         $('#sex').val(guest.content.sex)
                         $('#age').val(guest.content.age)
-                        $('#DFH').val(guest.content.dfh)
-                        $('#EM').val(guest.content.em)
-                        $('#OT').val(guest.content.ot)
+                        $('#dfh').val(guest.content.dfh)
+                        $('#em').val(guest.content.em)
+                        $('#ot').val(guest.content.ot)
                     }
 
                     report = res.content.report_id
@@ -293,9 +293,9 @@ $(document).ready(function () {
                 name: $("#name").val(),
                 age: $("#age").val(),
                 sex: $("#sex").val(),
-                DFH: $("#DFH").val(),
-                OT: $("#OT").val(),
-                EM: $("#EM").val(),
+                dfh: $("#dfh").val(),
+                ot: $("#ot").val(),
+                em: $("#em").val(),
             },
             success: function () {
             },

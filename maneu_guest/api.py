@@ -18,9 +18,9 @@ def insert(request):
                                     status=1,
                                     sex=request.GET.get('sex'),
                                     age=request.GET.get('age'),
-                                    dfh=request.GET.get('DFH'),
-                                    em=request.GET.get('EM'),
-                                    ot=request.GET.get('OT'),
+                                    dfh=request.GET.get('dfh'),
+                                    em=request.GET.get('em'),
+                                    ot=request.GET.get('ot'),
                                     remark=request.GET.get('remark')).id
             content = {'status': True, 'message': '', 'content': {'id': guest_id}}
         except Exception as e:

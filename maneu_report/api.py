@@ -23,9 +23,9 @@ def insert(request):
                                     status=status,
                                     sex=request.GET.get('sex'),
                                     age=request.GET.get('age'),
-                                    dfh=request.GET.get('DFH'),
-                                    em=request.GET.get('EM'),
-                                    ot=request.GET.get('OT'),
+                                    dfh=request.GET.get('dfh'),
+                                    em=request.GET.get('em'),
+                                    ot=request.GET.get('ot'),
                                     remark=request.GET.get('guestRemark')).id
 
             content = report_simple(request)
