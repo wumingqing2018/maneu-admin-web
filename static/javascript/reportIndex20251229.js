@@ -4,7 +4,7 @@ function deleteBtn(obj) {
             url: api_delete,
             type: 'GET',
             data: {
-                order_id: obj.alt,
+                index_id: obj.alt,
             },
             success: function (res) {
                 console.log(res)
@@ -86,8 +86,7 @@ $(document).ready(function () {
                 "        </div>\n" +
                 "        <div class='col-1'>\n" +
                 "            <form method='GET' action='" + web_detail + "'>\n" +
-                "                <input type='hidden' name='guest_id' value=" + res[i]['guest_id'] + ">\n" +
-                "                <input type='hidden' name='report_id' value=" + res[i]['id'] + ">\n" +
+                "                <input type='hidden' name='index_id' value=" + res[i]['id'] + ">\n" +
                 "                <div class='input-group input-group-sm'>\n" +
                 "                    <input type='submit' class='col-12 btn btn-primary' value='查看'>\n" +
                 "                </div>\n" +

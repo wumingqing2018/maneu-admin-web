@@ -11,8 +11,8 @@ def guest_delete(admin_id='', index_id=''):
     return ManeuGuest.objects.filter(admin_id=admin_id, id=index_id).first().delete()
 
 
-def guest_detail(admin_id='', id=''):
-    return ManeuGuest.objects.filter(admin_id=admin_id, id=id).first()
+def guest_detail(admin_id='', index_id=''):
+    return ManeuGuest.objects.filter(admin_id=admin_id, id=index_id).first()
 
 
 def guest_search_time(admin_id='', timeS='', timeE=''):

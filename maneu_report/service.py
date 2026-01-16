@@ -47,8 +47,8 @@ def report_insert(admin_id='', index_id='', guest_id='', name='', time='', phone
                                       pd=content['pd'])
 
 
-def report_detail(admin_id='', id=''):
-    return ManeuReport.objects.filter(admin_id=admin_id, id=id).first()
+def report_detail(admin_id='', index_id=''):
+    return ManeuReport.objects.filter(admin_id=admin_id, id=index_id).first()
 
 
 def report_delete(admin_id='', index_id=''):
