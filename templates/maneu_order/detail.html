@@ -533,9 +533,7 @@
 {% endblock %}
 {% block javascript %}
     <script>
-        order_id = "{{ order_id }}"
-        guest_id = "{{ guest_id }}"
-        report_id = "{{ report_id }}"
+        index_id = "{{ index_id }}"
         order_index = "{% url 'maneu_order:index' %}"
         order_detail = "{% url 'maneu_order:api_detail' %}"
         order_delete = "{% url 'maneu_order:api_delete' %}"

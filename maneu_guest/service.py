@@ -3,16 +3,16 @@ from django.db.models import Q
 from maneu.models import *
 
 
-def guest_insert(admin_id='', time='', name='', phone='', status='', sex='', age='', ot='', em='', dfh='', remark=''):
-    return ManeuGuest.objects.create(admin_id=admin_id, name=name, phone=phone, time=time, sex=sex, age=age, ot=ot, em=em, dfh=dfh, remark=remark, status=status)
+def guest_insert(admin_id='', index_id='', time='', name='', phone='', status='', sex='', age='', ot='', em='', dfh='', remark=''):
+    return ManeuGuest.objects.create(admin_id=admin_id, id=index_id, name=name, phone=phone, time=time, sex=sex, age=age, ot=ot, em=em, dfh=dfh, remark=remark, status=status)
 
 
-def guest_delete(admin_id='', guest_id=''):
-    return ManeuGuest.objects.filter(admin_id=admin_id, id=guest_id).first().delete()
+def guest_delete(admin_id='', index_id=''):
+    return ManeuGuest.objects.filter(admin_id=admin_id, id=index_id).first().delete()
 
 
-def guest_detail(admin_id='', guest_id=''):
-    return ManeuGuest.objects.filter(id=guest_id, admin_id=admin_id).first()
+def guest_detail(admin_id='', id=''):
+    return ManeuGuest.objects.filter(admin_id=admin_id, id=id).first()
 
 
 def guest_search_time(admin_id='', timeS='', timeE=''):

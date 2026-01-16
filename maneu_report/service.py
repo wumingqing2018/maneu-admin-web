@@ -3,8 +3,9 @@ from django.db.models import Q
 from maneu.models import ManeuReport
 
 
-def report_insert(admin_id='', guest_id='', name='', time='', phone='', status='', remark='', content=''):
+def report_insert(admin_id='', index_id='', guest_id='', name='', time='', phone='', status='', remark='', content=''):
     return ManeuReport.objects.create(admin_id=admin_id,
+                                      id=index_id,
                                       guest_id=guest_id,
                                       name=name,
                                       time=time,
@@ -46,12 +47,12 @@ def report_insert(admin_id='', guest_id='', name='', time='', phone='', status='
                                       pd=content['pd'])
 
 
-def report_detail(admin_id='', report_id=''):
-    return ManeuReport.objects.filter(admin_id=admin_id, id=report_id).first()
+def report_detail(admin_id='', id=''):
+    return ManeuReport.objects.filter(admin_id=admin_id, id=id).first()
 
 
-def report_delete(admin_id='', report_id=''):
-    return ManeuReport.objects.filter(admin_id=admin_id, id=report_id).first().delete()
+def report_delete(admin_id='', index_id=''):
+    return ManeuReport.objects.filter(admin_id=admin_id, id=index_id).first().delete()
 
 
 def report_search_time(admin_id='', timeS='', timeE=''):

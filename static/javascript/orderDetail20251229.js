@@ -69,9 +69,7 @@ $(document).ready(function () {
         $.ajax({
             url: order_detail,
             data: {
-                'order_id': order_id,
-                'guest_id': guest_id,
-                'report_id': report_id,
+                'index_id': index_id,
             },
             success: function (res) {
                 console.log(res)
@@ -169,9 +167,7 @@ $(document).ready(function () {
             $.ajax({
                 url: order_delete,
                 data: {
-                    'order_id': order_id,
-                    'guest_id': guest_id,
-                    'report_id': report_id,
+                    'index_id': index_id,
                 },
                 success: function (res) {
                     if (res.status === true) {
@@ -191,9 +187,7 @@ $(document).ready(function () {
             url: order_update,
             method: 'GET',
             data: {
-                report_id: report_id,
-                guest_id: guest_id,
-                order_id: order_id,
+                index_id: index_id,
                 time: $("#time").val(),
             },
             success: function () {
@@ -210,7 +204,7 @@ $(document).ready(function () {
             url: report_update,
             method: "GET",
             data: {
-                report_id: report_id,
+                index_id: index_id,
                 reportRemark: $("#reportRemark").val(),
                 plan: $("#PLAN").val(),
                 pd: $("#PD").val(),
@@ -269,7 +263,7 @@ $(document).ready(function () {
             data: {
                 content: JSON.stringify(store),
                 orderRemark: $("#orderRemark").val(),
-                order_id: order_id,
+                index_id: index_id,
             },
             success: function (res) {
                 alert('更新成功')
@@ -284,9 +278,7 @@ $(document).ready(function () {
             url:  guest_update,
             method: 'GET',
             data: {
-                report_id: report_id,
-                guest_id: guest_id,
-                order_id: order_id,
+                index_id: index_id,
                 guestRemark: $("#guestRemark").val(),
                 phone: $("#phone").val(),
                 time: $("#time").val(),

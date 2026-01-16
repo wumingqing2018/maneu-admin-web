@@ -4,9 +4,7 @@ function deleteBtn(obj) {
             url: api_delete,
             type: 'GET',
             data: {
-                guest_id: obj.dataset.guest_id,
-                order_id: obj.dataset.order_id,
-                report_id: obj.dataset.report_id,
+                id: obj.dataset.id,
             },
             success: function (res) {
                 console.log(res)
@@ -87,14 +85,12 @@ $(document).ready(function () {
                 "        </div>\n" +
                 "        <div class='col-1'>\n" +
                 "            <div class='input-group input-group-sm'>\n" +
-                "                <input type='button' class='col-12 btn btn-danger' onclick='deleteBtn(this)' value='删除' data-guest_id=" + res[i]['guest_id'] + " data-report_id=" + res[i]['report_id'] + " data-order_id=" + res[i]['id'] + " >\n" +
+                "                <input type='button' class='col-12 btn btn-danger' onclick='deleteBtn(this)' value='删除' data-index_id=" + res[i]['id'] + ">\n" +
                 "            </div>\n" +
                 "        </div>\n" +
                 "        <div class='col-1'>\n" +
                 "            <form method='GET' action='" + api_detail + "'>\n" +
-                "                <input type='hidden' name='order_id' value=" + res[i]['id'] + ">\n" +
-                "                <input type='hidden' name='guest_id' value=" + res[i]['guest_id'] + ">\n" +
-                "                <input type='hidden' name='report_id' value=" + res[i]['report_id'] + ">\n" +
+                "                <input type='hidden' name='index_id' value=" + res[i]['id'] + ">\n" +
                 "                <div class='input-group input-group-sm'>\n" +
                 "                    <input type='submit' class='col-12 btn btn-primary' value='查看'>\n" +
                 "                </div>\n" +

@@ -1,4 +1,5 @@
 import json
+import uuid
 
 from django.forms import model_to_dict
 from django.http import JsonResponse
@@ -17,9 +18,11 @@ def insert(request):
             time = request.GET.get('time')
             name = request.GET.get('name')
             phone = request.GET.get('phone')
+            index_id = uuid.uuid4()
 
             content = guest_simple(request)
-            guest_id = guest_insert(admin_id=admin_id,
+            guest_id = guest_insert(index_id=index_id,
+                                    admin_id=admin_id,
                                     time=time,
                                     name=name,
                                     phone=phone,
@@ -32,7 +35,8 @@ def insert(request):
                                     remark=request.GET.get('guestRemark')).id
 
             content = report_simple(request)
-            report_id = report_insert(guest_id=guest_id,
+            report_id = report_insert(index_id=index_id,
+                                      guest_id=guest_id,
                                       admin_id=admin_id,
                                       time=time,
                                       name=name,
@@ -42,9 +46,8 @@ def insert(request):
                                       remark=request.GET.get('reportRemark')).id
 
             content = order_simple(request.GET.get('content'))
-            order_id = order_insert(admin_id=admin_id,
-                                    guest_id=guest_id,
-                                    report_id=report_id,
+            order_id = order_insert(index_id=index_id,
+                                    admin_id=admin_id,
                                     time=time,
                                     name=name,
                                     phone=phone,
@@ -63,80 +66,57 @@ def insert(request):
 
 def detail(request):
     admin_id = is_uuid(request.session.get('id'))
-    if admin_id:
+    index_id = is_uuid(request.GET.get('index_id'))
+    if admin_id and index_id:
+        try:
+            data = report_detail(admin_id=admin_id, id=index_id)
+            report_id = {'status': True, 'message': '', 'content': model_to_dict(data)}
+        except Exception as e:
+            report_id = {'status': False, 'message': str(e), 'content': {}}
 
-        order_id = is_uuid(request.GET.get('order_id'))
-        if order_id:
-            try:
-                order = order_detail(admin_id=admin_id, order_id=order_id)
-                content = {
-                    'time': order.time,
-                    'name': order.name,
-                    'phone': order.phone,
-                    'remark': order.remark,
-                    'content': json.loads(order.content),
-                }
-                order_id = {'status': True, 'message': '', 'content': content}
-            except Exception as e:
-                order_id = {'status': False, 'message': str(e), 'content': {}}
-        else:
-            order_id = {'status': False, 'message': '请输入正确的参数', 'content': {}}
+        try:
+            order = order_detail(admin_id=admin_id, id=index_id)
+            content = {
+                'time': order.time,
+                'name': order.name,
+                'phone': order.phone,
+                'remark': order.remark,
+                'content': json.loads(order.content),
+            }
+            order_id = {'status': True, 'message': '', 'content': content}
+        except Exception as e:
+            order_id = {'status': False, 'message': str(e), 'content': {}}
 
-        guest_id = is_uuid(request.GET.get('guest_id'))
-        if guest_id:
-            try:
-                data = guest_detail(admin_id=admin_id, guest_id=guest_id)
-                guest_id = {'status': True, 'message': '', 'content': model_to_dict(data)}
-            except Exception as e:
-                guest_id = {'status': False, 'message': str(e), 'content': {}}
-        else:
-            guest_id = {'status': False, 'message': '请输入正确的参数', 'content': {}}
-
-        report_id = is_uuid(request.GET.get('report_id'))
-        if report_id:
-            try:
-                data = report_detail(admin_id=admin_id, report_id=report_id)
-                report_id = {'status': True, 'message': '', 'content': model_to_dict(data)}
-            except Exception as e:
-                report_id = {'status': False, 'message': str(e), 'content': {}}
-        else:
-            report_id = {'status': False, 'message': '请输入正确的参数', 'content': {}}
+        try:
+            data = guest_detail(admin_id=admin_id, id=index_id)
+            guest_id = {'status': True, 'message': '', 'content': model_to_dict(data)}
+        except Exception as e:
+            guest_id = {'status': False, 'message': str(e), 'content': {}}
 
         content = {'status': True, 'message': '', 'content':{'report_id': report_id, 'guest_id': guest_id, 'order_id': order_id}}
     else:
-        content = {'status': False, 'message': '账号异常', 'content':{'report_id': {}, 'guest_id': {}, 'order_id': {}}}
+        content = {'status': False, 'message': "admin_id"+ admin_id + "index_id"+ index_id, 'content':{'report_id': {}, 'guest_id': {}, 'order_id': {}}}
     return JsonResponse(content)
 
 
 def delete(request):
     admin_id = is_uuid(request.session.get('id'))
-    if admin_id:
+    index_id = is_uuid(request.GET.get('index_id'))
+    if admin_id and index_id:
 
-        guest_id = is_uuid(request.GET.get('guest_id'))
-        if guest_id:
-            try:
-                guest_id = guest_delete(admin_id=admin_id, guest_id=guest_id)[0]
-            except Exception as e:
-                guest_id = 0
-        else:
+        try:
+            guest_id = guest_delete(admin_id=admin_id, index_id=index_id)[0]
+        except Exception as e:
             guest_id = 0
 
-        order_id = is_uuid(request.GET.get('order_id'))
-        if order_id:
-            try:
-                order_id = order_delete(admin_id=admin_id, order_id=order_id)[0]
-            except Exception as e:
-                order_id = 0
-        else:
+        try:
+            order_id = order_delete(admin_id=admin_id, index_id=index_id)[0]
+        except Exception as e:
             order_id = 0
 
-        report_id = is_uuid(request.GET.get('report_id'))
-        if report_id:
-            try:
-                report_id = report_delete(admin_id=admin_id, report_id=report_id)[0]
-            except Exception as e:
-                report_id = 0
-        else:
+        try:
+            report_id = report_delete(admin_id=admin_id, index_id=index_id)[0]
+        except Exception as e:
             report_id = 0
 
         content = {'status': True, 'message': '', 'content': {'guest_id': guest_id, 'order_id': order_id, 'report_id': report_id}}
@@ -151,7 +131,7 @@ def search_time(request):
     if admin_id:
         try:
             data = order_search_time(admin_id=admin_id, timeS=request.GET.get('timeS'), timeE=request.GET.get('timeE'))
-            content = {'status': True, 'message': '', 'content': list(data.values('id', 'guest_id', 'report_id', 'name', 'phone', 'time', 'remark'))}
+            content = {'status': True, 'message': '', 'content': list(data.values('id', 'name', 'phone', 'time', 'remark'))}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
     else:
@@ -162,13 +142,14 @@ def search_time(request):
 
 def search_data(request):
     admin_id = is_uuid(request.session.get('id'))
-
     if admin_id:
+
         try:
             data = order_search_data(admin_id=admin_id, value=request.GET.get('value'))
-            content = {'status': True, 'message': '', 'content': list(data.values('id', 'guest_id', 'report_id', 'name', 'phone', 'time', 'remark'))}
+            content = {'status': True, 'message': '', 'content': list(data.values('id', 'name', 'phone', 'time', 'remark'))}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
+
     else:
         content = {'status': False, 'message': '参数错误请确认', 'content': {}}
     return JsonResponse(content)
