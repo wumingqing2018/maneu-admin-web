@@ -1,9 +1,7 @@
 {% extends 'maneu/base.html' %}
 {% load static %}
 {% block content %}
-
-    <div class="container" style="margin-top: 2%; margin-bottom: 4%;">
-        <form action="{% url 'maneu_report:index' %}" class="vertical2" method="get">
+        <form action="{% url 'maneu_order:index' %}" class="vertical2" method="get">
             <div class="vertical1 col-1">
                 <div class="input-group">
                     <input class="btn btn-primary" type="submit" value="返回列表">
@@ -66,9 +64,9 @@
             <div class="vertical1 col-6">
                 <div class="input-group">
                     <span class="input-group-text">方案</span>
-                    <input autocomplete="off" type="text" class="form-control" id="PLAN" list="planList">
+                    <input autocomplete="off" type="text" class="form-control" id="PLAN" list="PLAN1">
                     <span class="input-group-text">瞳距</span>
-                    <input autocomplete="off" type="text" class="form-control" id="PD" list="pdList">
+                    <input autocomplete="off" type="text" class="form-control" id="PD" list="PD1">
                 </div>
             </div>
 
@@ -121,7 +119,6 @@
             <button class="vertical1 btn btn-warning" id="reportUpdate" type="button">更新数据</button>
         </form>
         <hr>
-
 
         {# 提交或返回按钮 #}
         <form class="vertical2">
@@ -416,12 +413,12 @@
             <option>+4.75</option>
             <option>+5.00</option>
         </datalist>
-        <datalist id="planList">
+        <datalist id="PLAN1">
             <option>两用解决方案</option>
             <option>近用解决方案</option>
             <option>远用解决方案</option>
         </datalist>
-        <datalist id="pdList">
+        <datalist id="PD1">
             <option>42.0</option>
             <option>42.5</option>
             <option>43.0</option>
@@ -506,7 +503,6 @@
             <option>82.5</option>
         </datalist>
     </div>
-
 {% endblock %}
 
 {% block javascript %}
