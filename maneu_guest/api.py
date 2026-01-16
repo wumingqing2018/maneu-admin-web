@@ -72,47 +72,38 @@ def delete(request):
 
 def update(request):
     admin_id = is_uuid(request.session.get('id'))
-    if admin_id:
+    index_id = is_uuid(request.GET.get('index_id'))
+    if admin_id and index_id:
 
-        guest_id = is_uuid(request.GET.get('guest_id'))
-        if guest_id:
-            try:
-                data = guest_update_data(guest_id=guest_id,
-                                         admin_id=admin_id,
-                                         phone=request.GET.get('phone'),
-                                         name=request.GET.get('name'),
-                                         time=request.GET.get('time'),
-                                         sex=request.GET.get('sex'),
-                                         age=request.GET.get('age'),
-                                         ot=request.GET.get('ot'),
-                                         em=request.GET.get('em'),
-                                         dfh=request.GET.get('dfh'),
-                                         remark=request.GET.get('guestRemark'),)
-                guest_id = {'status': True, 'message': '', 'content': data}
-            except Exception as e:
-                guest_id = {'status': False, 'message': str(e), 'content': {}}
-        else:
-            guest_id = {'status': False, 'message': '参数错误请确认', 'content': {}}
+        try:
+            data = guest_update_data(guest_id=index_id,
+                                     admin_id=admin_id,
+                                     phone=request.GET.get('phone'),
+                                     name=request.GET.get('name'),
+                                     time=request.GET.get('time'),
+                                     sex=request.GET.get('sex'),
+                                     age=request.GET.get('age'),
+                                     ot=request.GET.get('ot'),
+                                     em=request.GET.get('em'),
+                                     dfh=request.GET.get('dfh'),
+                                     remark=request.GET.get('guestRemark'),)
+            guest_id = {'status': True, 'message': '', 'content': data}
+        except Exception as e:
+            guest_id = {'status': False, 'message': str(e), 'content': {}}
 
-        order_id = is_uuid(request.GET.get('order_id'))
-        if order_id:
-            try:
-                data = order_update_time(admin_id=admin_id, order_id=order_id, time=request.GET.get('time'), name=request.GET.get('name'), phone=request.GET.get('phone'))
-                order_id = {'status': True, 'message': '', 'content': data}
-            except Exception as e:
-                order_id = {'status': False, 'message': str(e), 'content': {}}
-        else:
-            order_id = {'status': False, 'message': 'order_id 更新有误', 'content': {}}
 
-        report_id = is_uuid(request.GET.get('report_id'))
-        if report_id:
-            try:
-                data = report_update_time(admin_id=admin_id, report_id=report_id, time=request.GET.get('time'), name=request.GET.get('name'), phone=request.GET.get('phone'))
-                report_id = {'status': True, 'message': '', 'content': data}
-            except Exception as e:
-                report_id = {'status': False, 'message': str(e), 'content': {}}
-        else:
-            report_id = {'status': False, 'message': 'order_id 更新有误', 'content': {}}
+        try:
+            data = order_update_time(admin_id=admin_id, index_id=index_id, time=request.GET.get('time'), name=request.GET.get('name'), phone=request.GET.get('phone'))
+            order_id = {'status': True, 'message': '', 'content': data}
+        except Exception as e:
+            order_id = {'status': False, 'message': str(e), 'content': {}}
+
+
+        try:
+            data = report_update_time(admin_id=admin_id, index_id=index_id, time=request.GET.get('time'), name=request.GET.get('name'), phone=request.GET.get('phone'))
+            report_id = {'status': True, 'message': '', 'content': data}
+        except Exception as e:
+            report_id = {'status': False, 'message': str(e), 'content': {}}
 
         content = {'status': True, 'message': '', 'content': {'order_id': order_id, 'guest_id': guest_id, 'report_id': report_id}}
     else:

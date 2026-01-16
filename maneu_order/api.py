@@ -199,12 +199,12 @@ def update_time(request):
 
 def update(request):
     admin_id = is_uuid(request.session.get('id'))
-    order_id = is_uuid(request.GET.get('order_id'))
-    if admin_id and order_id:
+    index_id = is_uuid(request.GET.get('index_id'))
+    if admin_id and index_id:
         try:
             remark = request.GET.get('orderRemark')
             content = order_simple(request.GET.get('content'))
-            data = order_update_data(admin_id=admin_id, order_id=order_id, content=content, remark=remark)
+            data = order_update_data(admin_id=admin_id, index_id=index_id, content=content, remark=remark)
             content = {'status': True, 'message': '', 'content': data}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}

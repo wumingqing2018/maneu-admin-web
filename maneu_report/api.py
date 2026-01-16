@@ -134,17 +134,17 @@ def search_data(request):
 
 
 def update(request):
-    report_id = is_uuid(request.GET.get('report_id'))
+    index_id = is_uuid(request.GET.get('index_id'))
     admin_id = is_uuid(request.session.get('id'))
-    if admin_id and report_id:
+    if admin_id and index_id:
         try:
             content = report_simple(request)
-            report = report_update_data(report_id=report_id,
+            report = report_update_data(index_id=index_id,
                                         admin_id=admin_id,
                                         remark=request.GET.get('reportRemark'),
                                         content=content)
             if report:
-                content = {'status': True, 'message': '', 'content': {'report_id': report_id}}
+                content = {'status': True, 'message': '', 'content': {'index_id': index_id}}
             else:
                 content = {'status': False, 'message': '请输入正确的参数3', 'content': {}}
         except Exception as e:

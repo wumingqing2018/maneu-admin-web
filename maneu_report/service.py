@@ -63,12 +63,12 @@ def report_search_data(admin_id='', value=''):
     return ManeuReport.objects.filter(Q(admin_id=admin_id, name__icontains=value,status=2) | Q(admin_id=admin_id, phone__icontains=value,status=2)).order_by('-time').all()
 
 
-def report_update_time(admin_id='', report_id='', time='', name='', phone=''):
-    return ManeuReport.objects.filter(admin_id=admin_id, id=report_id).update(time=time, name=name, phone=phone)
+def report_update_time(admin_id='', index_id='', time='', name='', phone=''):
+    return ManeuReport.objects.filter(admin_id=admin_id, id=index_id).update(time=time, name=name, phone=phone)
 
 
-def report_update_data(admin_id='', report_id='', remark='', content=''):
-    return ManeuReport.objects.filter(admin_id=admin_id, id=report_id).update(remark=remark,
+def report_update_data(admin_id='', index_id='', remark='', content=''):
+    return ManeuReport.objects.filter(admin_id=admin_id, id=index_id).update(remark=remark,
 
                                                                               os_al=content['os_al'],
                                                                               os_ak=content['os_ak'],
