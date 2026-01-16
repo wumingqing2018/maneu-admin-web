@@ -6,6 +6,7 @@ from maneu.models import *
 def index(request):
     ManeuGuest.objects.filter().all().update(status='')
 
+
     orderList = ManeuOrder.objects.all()
     for order in orderList:
         guest = ManeuGuest.objects.filter(id=order.guest_id).first()
@@ -17,7 +18,7 @@ def index(request):
 
         report = ManeuReport.objects.filter(id=order.report_id).first()
         if report is None:
-            report = ManeuReport.objects.create(id=order.id, admin_id=order.admin_id, time=order.time, name=order.name, phone=order.phone, status=3, remark=order.remark, od_va=0.0, os_va=0.0, os_sph=0.0, od_sph=0.0, od_cyl=0.0, os_cyl=0.0, od_add=0.0, os_add=0.0)
+            report = ManeuReport.objects.create(id=order.id, admin_id=order.admin_id, time=order.time, name=order.name, phone=order.phone, status=3, remark=order.remark, od_va=0.00, os_va=0.00, os_sph=0.00, od_sph=0.00, od_cyl=0.00, os_cyl=0.00, od_add=0.00, os_add=0.00)
         else:
             report.id = order.id
             report.save()
@@ -35,6 +36,7 @@ def index(request):
 
 
     ManeuGuest.objects.filter(status='').all().delete()
+
     return render(request, 'maneu/index.html')
 
 
