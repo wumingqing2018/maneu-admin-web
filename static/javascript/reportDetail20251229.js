@@ -69,8 +69,7 @@ $(document).ready(function () {
         $.ajax({
             url: report_detail,
             data: {
-                'guest_id': guest_id,
-                'report_id': report_id,
+                index_id: index_id,
             },
             success: function (res) {
                 console.log(res)
@@ -151,8 +150,7 @@ $(document).ready(function () {
             $.ajax({
                 url: report_delete,
                 data: {
-                    'guest_id': guest_id,
-                    'report_id': report_id,
+                    index_id: index_id,
                 },
                 success: function (res) {
                     if (res.status === true) {
@@ -173,7 +171,7 @@ $(document).ready(function () {
             url: report_update,
             method: "GET",
             data: {
-                report_id: report_id,
+                index_id: index_id,
                 reportRemark: $("#reportRemark").val(),
                 plan: $("#PLAN").val(),
                 pd: $("#PD").val(),
@@ -220,8 +218,7 @@ $(document).ready(function () {
             url:  guest_update,
             method: 'GET',
             data: {
-                report_id: report_id,
-                guest_id: guest_id,
+                index_id: index_id,
                 guestRemark: $("#guestRemark").val(),
                 phone: $("#phone").val(),
                 time: $("#time").val(),

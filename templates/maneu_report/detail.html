@@ -511,8 +511,7 @@
 
 {% block javascript %}
     <script>
-        guest_id = "{{ guest_id }}"
-        report_id = "{{ report_id }}"
+        index_id = "{{ index_id }}"
         report_index = "{% url 'maneu_report:index' %}"
         guest_update = "{% url 'maneu_guest:api_update' %}"
         report_detail = "{% url 'maneu_report:api_detail' %}"
