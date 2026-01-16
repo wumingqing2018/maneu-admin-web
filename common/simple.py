@@ -4,8 +4,7 @@ from common.common import current_time
 
 
 def guest_simple(request):
-    simple = {'remark': '', 'time': current_time(), 'name': '', 'phone': '', 'age': '', 'sex': '', 'dfh': '无',
-              'ot': '正', 'em': '交替'}
+    simple = {'age': '', 'sex': '', 'dfh': '无', 'ot': '正', 'em': '交替'}
 
     for i in list(simple):
         try:
@@ -38,12 +37,12 @@ def report_simple(request):
         'os_ak': None,
         'os_ax': None,
         'os_ad': None,
-        'os_add': None,
+        'os_add': 0.0,
         'os_bc': None,
-        'os_cyl': None,
+        'os_cyl': 0.0,
         'os_cct': None,
-        'os_va': None,
-        'os_sph': None,
+        'os_va': 0.0,
+        'os_sph': 0.0,
         'os_pr': None,
         'os_fr': None,
         'os_lt': None,
@@ -52,12 +51,12 @@ def report_simple(request):
         'od_ak': None,
         'od_ax': None,
         'od_ad': None,
-        'od_add': None,
+        'od_add': 0.0,
         'od_bc': None,
-        'od_cyl': None,
+        'od_cyl': 0.0,
         'od_cct': None,
-        'od_va': None,
-        'od_sph': None,
+        'od_va': 0.0,
+        'od_sph': 0.0,
         'od_pr': None,
         'od_fr': None,
         'od_lt': None,

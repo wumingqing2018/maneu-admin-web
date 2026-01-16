@@ -9,25 +9,32 @@ def index(request):
     orderList = ManeuOrder.objects.all()
     for order in orderList:
         guest = ManeuGuest.objects.filter(id=order.guest_id).first()
-        guest2 = ManeuGuest.objects.create(admin_id=order.admin_id, time=order.time, name=order.name, phone=order.phone, status=3, sex=guest.sex, age=guest.age, dfh=guest.dfh, ot=guest.ot, em=guest.em, remark=guest.remark)
-        print(ManeuReport.objects.filter(id=order.report_id).update(status=3, guest_id=guest2.id))
-        order.guest_id = guest2.id
-        order.save()
+        if guest is None:
+            guest = ManeuGuest.objects.create(id=order.id, admin_id=order.admin_id, time=order.time, name=order.name, phone=order.phone, status=3, remark=order.remark)
+        else:
+            guest.id = order.id
+            guest.save()
+
+        report = ManeuReport.objects.filter(id=order.report_id).first()
+        if report is None:
+            report = ManeuReport.objects.create(id=order.id, admin_id=order.admin_id, time=order.time, name=order.name, phone=order.phone, status=3, remark=order.remark, od_va=0.0, os_va=0.0, os_sph=0.0, od_sph=0.0, od_cyl=0.0, os_cyl=0.0, od_add=0.0, os_add=0.0)
+        else:
+            report.id = order.id
+            report.save()
+        print(report.id)
+
 
     reportList = ManeuReport.objects.exclude(status=3).all()
     for report in reportList:
         guest = ManeuGuest.objects.filter(id=report.guest_id).first()
-        try:
-            guest2 = ManeuGuest.objects.create(admin_id=report.admin_id, time=report.time, name=report.name,
-                                              phone=report.phone, status=2, sex=guest.sex, age=guest.age, dfh=guest.dfh,
-                                              ot=guest.ot, em=guest.em, remark=guest.remark)
-        except:
-            guest2 = ManeuGuest.objects.create(admin_id=report.admin_id, time=report.time, name=report.name, phone=report.phone, status=2, remark=report.remark)
-            print(guest2)
-        ManeuReport.objects.filter(id=report.id).update(status=2, guest_id=guest2.id)
+        if guest is None:
+            guest = ManeuGuest.objects.create(id=report.id, admin_id=report.admin_id, time=report.time, name=report.name, phone=report.phone, status=2, remark=report.remark)
+        else:
+            guest.id = report.id
+            guest.save()
+
 
     ManeuGuest.objects.filter(status='').all().delete()
-
     return render(request, 'maneu/index.html')
 
 
