@@ -12,11 +12,13 @@ from maneu_report.service import *
 def insert(request):
     admin_id = is_uuid(request.session.get('id'))
     if admin_id:
+
         name = request.GET.get('name')
         time = request.GET.get('time')
         phone = request.GET.get('phone')
         status = 2
         index_id = uuid.uuid4()
+
         try:
             guest_id = guest_insert(admin_id=admin_id,
                                     index_id=index_id,
@@ -128,6 +130,7 @@ def update(request):
     admin_id = is_uuid(request.session.get('id'))
     index_id = is_uuid(request.GET.get('index_id'))
     if admin_id and index_id:
+
         try:
             content = report_simple(request)
             report = report_update_data(index_id=index_id,
@@ -140,6 +143,7 @@ def update(request):
                 content = {'status': False, 'message': '请输入正确的参数3', 'content': {}}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
+
     else:
         content = {'status': False, 'message': '请输入正确的参数', 'content': {}}
     return JsonResponse(content)

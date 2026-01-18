@@ -4,7 +4,7 @@ function deleteBtn(obj) {
             url: api_delete,
             type: 'GET',
             data: {
-                id: obj.dataset.id,
+                index_id: obj.dataset.index_id,
             },
             success: function (res) {
                 console.log(res)

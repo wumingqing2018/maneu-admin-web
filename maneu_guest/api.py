@@ -76,8 +76,8 @@ def update(request):
     if admin_id and index_id:
 
         try:
-            data = guest_update_data(guest_id=index_id,
-                                     admin_id=admin_id,
+            data = guest_update_data(admin_id=admin_id,
+                                     index_id=index_id,
                                      phone=request.GET.get('phone'),
                                      name=request.GET.get('name'),
                                      time=request.GET.get('time'),
@@ -93,14 +93,22 @@ def update(request):
 
 
         try:
-            data = order_update_time(admin_id=admin_id, index_id=index_id, time=request.GET.get('time'), name=request.GET.get('name'), phone=request.GET.get('phone'))
+            data = order_update_time(admin_id=admin_id,
+                                     index_id=index_id,
+                                     time=request.GET.get('time'),
+                                     name=request.GET.get('name'),
+                                     phone=request.GET.get('phone'))
             order_id = {'status': True, 'message': '', 'content': data}
         except Exception as e:
             order_id = {'status': False, 'message': str(e), 'content': {}}
 
 
         try:
-            data = report_update_time(admin_id=admin_id, index_id=index_id, time=request.GET.get('time'), name=request.GET.get('name'), phone=request.GET.get('phone'))
+            data = report_update_time(admin_id=admin_id,
+                                      index_id=index_id,
+                                      time=request.GET.get('time'),
+                                      name=request.GET.get('name'),
+                                      phone=request.GET.get('phone'))
             report_id = {'status': True, 'message': '', 'content': data}
         except Exception as e:
             report_id = {'status': False, 'message': str(e), 'content': {}}

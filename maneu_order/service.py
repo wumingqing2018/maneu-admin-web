@@ -11,8 +11,8 @@ def order_delete(admin_id='', index_id=''):
     return ManeuOrder.objects.filter(admin_id=admin_id, id=index_id).delete()
 
 
-def order_detail(admin_id='', id=''):
-    return ManeuOrder.objects.filter(id=id, admin_id=admin_id).first()
+def order_detail(admin_id='', index_id=''):
+    return ManeuOrder.objects.filter(admin_id=admin_id, id=index_id).first()
 
 
 def order_search_time(admin_id='', timeS='', timeE=''):
@@ -24,8 +24,8 @@ def order_search_data(admin_id='', value=''):
 
 
 def order_update_time(admin_id='', index_id='', time="", name="", phone=""):
-    return ManeuOrder.objects.filter(id=index_id, admin_id=admin_id).update(time=time, name=name, phone=phone)
+    return ManeuOrder.objects.filter(admin_id=admin_id, id=index_id).update(time=time, name=name, phone=phone)
 
 
 def order_update_data(admin_id='', index_id='', name='', phone='', remark="", content=''):
-    return ManeuOrder.objects.filter(id=index_id, admin_id=admin_id).update(name=name, phone=phone, remark=remark, content=content)
+    return ManeuOrder.objects.filter(admin_id=admin_id, id=index_id).update(name=name, phone=phone, remark=remark, content=content)

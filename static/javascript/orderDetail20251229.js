@@ -289,7 +289,8 @@ $(document).ready(function () {
                 ot: $("#ot").val(),
                 em: $("#em").val(),
             },
-            success: function () {
+            success: function (res) {
+                alert('更新成功')
             },
             error: function () {
             }
