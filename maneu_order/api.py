@@ -27,16 +27,11 @@ def insert(request):
                                     name=name,
                                     phone=phone,
                                     status=3,
-                                    sex=request.GET.get('sex'),
-                                    age=request.GET.get('age'),
-                                    dfh=request.GET.get('dfh'),
-                                    em=request.GET.get('em'),
-                                    ot=request.GET.get('ot'),
+                                    content=content,
                                     remark=request.GET.get('guestRemark')).id
 
             content = report_simple(request)
             report_id = report_insert(index_id=index_id,
-                                      guest_id=guest_id,
                                       admin_id=admin_id,
                                       time=time,
                                       name=name,

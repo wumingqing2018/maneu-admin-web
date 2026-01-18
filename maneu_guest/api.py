@@ -5,22 +5,20 @@ from common.verify import is_uuid
 from maneu_guest.service import *
 from maneu_order.service import *
 from maneu_report.service import *
+from common.simple import guest_simple
 
 
 def insert(request):
     admin_id = is_uuid(request.session.get('id'))
     if admin_id:
         try:
+            content = guest_simple(request)
             guest_id = guest_insert(admin_id=admin_id,
                                     time=request.GET.get('time'),
                                     name=request.GET.get('name'),
                                     phone=request.GET.get('phone'),
                                     status=1,
-                                    sex=request.GET.get('sex'),
-                                    age=request.GET.get('age'),
-                                    dfh=request.GET.get('dfh'),
-                                    em=request.GET.get('em'),
-                                    ot=request.GET.get('ot'),
+                                    content=content,
                                     remark=request.GET.get('remark')).id
             content = {'status': True, 'message': '', 'content': {'id': guest_id}}
         except Exception as e:

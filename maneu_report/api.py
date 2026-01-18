@@ -3,7 +3,7 @@ import uuid
 from django.forms import model_to_dict
 from django.http import JsonResponse
 
-from common.simple import report_simple
+from common.simple import report_simple, guest_simple
 from common.verify import is_uuid
 from maneu_guest.service import *
 from maneu_report.service import *
@@ -20,17 +20,14 @@ def insert(request):
         index_id = uuid.uuid4()
 
         try:
+            content = guest_simple(request)
             guest_id = guest_insert(admin_id=admin_id,
                                     index_id=index_id,
                                     time=time,
                                     name=name,
                                     phone=phone,
                                     status=status,
-                                    sex=request.GET.get('sex'),
-                                    age=request.GET.get('age'),
-                                    dfh=request.GET.get('dfh'),
-                                    em=request.GET.get('em'),
-                                    ot=request.GET.get('ot'),
+                                    content=content,
                                     remark=request.GET.get('guestRemark')).id
 
             content = report_simple(request)

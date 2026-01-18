@@ -3,8 +3,8 @@ from django.db.models import Q
 from maneu.models import *
 
 
-def guest_insert(admin_id='', index_id='', time='', name='', phone='', status='', sex='', age='', ot='', em='', dfh='', remark=''):
-    return ManeuGuest.objects.create(admin_id=admin_id, id=index_id, name=name, phone=phone, time=time, sex=sex, age=age, ot=ot, em=em, dfh=dfh, remark=remark, status=status)
+def guest_insert(admin_id='', index_id='', time='', name='', phone='', status='', content='', remark=''):
+    return ManeuGuest.objects.create(admin_id=admin_id, id=index_id, name=name, phone=phone, time=time, sex=content['sex'], age=content['age'], ot=content['ot'], em=content['em'], dfh=content['dfh'], remark=remark, status=status)
 
 
 def guest_delete(admin_id='', index_id=''):
