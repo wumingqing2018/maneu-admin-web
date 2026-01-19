@@ -98,7 +98,7 @@ def search_time(request):
     if admin_id:
 
         try:
-            data = report_search_time(admin_id, request.GET.get('timeS'), request.GET.get('timeE'))
+            data = report_search_time(admin_id=admin_id, timeS=request.GET.get('timeS'), timeE=request.GET.get('timeE'))
             content = {'status': True, 'message': '', 'content': list(data.values('id','name','phone','time', 'remark'))}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
@@ -113,7 +113,7 @@ def search_data(request):
     if admin_id:
 
         try:
-            data = report_search_data(admin_id, request.GET.get('value'))
+            data = report_search_data(admin_id=admin_id, value=request.GET.get('value'))
             content = {'status': True, 'message': '', 'content': list(data.values('id','name','phone','time', 'remark'))}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
@@ -130,10 +130,7 @@ def update(request):
 
         try:
             content = report_simple(request)
-            report = report_update_data(index_id=index_id,
-                                        admin_id=admin_id,
-                                        remark=request.GET.get('reportRemark'),
-                                        content=content)
+            report = report_update_data(admin_id=admin_id, index_id=index_id, remark=request.GET.get('reportRemark'), content=content)
             if report:
                 content = {'status': True, 'message': '', 'content': {'index_id': index_id}}
             else:

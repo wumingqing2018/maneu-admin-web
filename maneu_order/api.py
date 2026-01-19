@@ -21,8 +21,8 @@ def insert(request):
             index_id = uuid.uuid4()
 
             content = guest_simple(request)
-            guest_id = guest_insert(index_id=index_id,
-                                    admin_id=admin_id,
+            guest_id = guest_insert(admin_id=admin_id,
+                                    index_id=index_id,
                                     time=time,
                                     name=name,
                                     phone=phone,
@@ -31,8 +31,8 @@ def insert(request):
                                     remark=request.GET.get('guestRemark')).id
 
             content = report_simple(request)
-            report_id = report_insert(index_id=index_id,
-                                      admin_id=admin_id,
+            report_id = report_insert(admin_id=admin_id,
+                                      index_id=index_id,
                                       time=time,
                                       name=name,
                                       phone=phone,
@@ -41,8 +41,8 @@ def insert(request):
                                       remark=request.GET.get('reportRemark')).id
 
             content = order_simple(request.GET.get('content'))
-            order_id = order_insert(index_id=index_id,
-                                    admin_id=admin_id,
+            order_id = order_insert(admin_id=admin_id,
+                                    index_id=index_id,
                                     time=time,
                                     name=name,
                                     phone=phone,
