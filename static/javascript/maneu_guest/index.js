@@ -4,7 +4,7 @@ function deleteBtn(obj) {
             url: api_delete,
             type: 'GET',
             data: {
-                order_id: obj.alt,
+                index_id: obj.dataset.index_id,
             },
             success: function (res) {
                 if (res.status === true) {
@@ -84,12 +84,12 @@ $(document).ready(function () {
                 "        </div>\n" +
                 "        <div class='col-1'>\n" +
                 "            <div class='input-group input-group-sm'>\n" +
-                "                <input type='button' class='col-12 btn btn-danger' onclick='deleteBtn(this)' value='删除' alt=" + res[i]['id'] + ">\n" +
+                "                <input type='button' class='col-12 btn btn-danger' onclick='deleteBtn(this)' value='删除' data-index_id=" + res[i]['id'] + ">\n" +
                 "            </div>\n" +
                 "        </div>\n" +
                 "        <div class='col-1'>\n" +
                 "            <form method='GET' action='" + web_detail + "'>\n" +
-                "                <input type='hidden' name='id' value=" + res[i]['id'] + ">\n" +
+                "                <input type='hidden' name='index_id' value=" + res[i]['id'] + ">\n" +
                 "                <div class='input-group input-group-sm'>\n" +
                 "                    <input type='submit' class='col-12 btn btn-primary' value='查看'>\n" +
                 "                </div>\n" +

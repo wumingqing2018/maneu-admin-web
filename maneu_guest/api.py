@@ -1,70 +1,65 @@
 from django.forms import model_to_dict
 from django.http import JsonResponse
 
+from common.simple import guest_simple
 from common.verify import is_uuid
 from maneu_guest.service import *
 from maneu_order.service import *
 from maneu_report.service import *
-from common.simple import guest_simple
-
+import uuid
 
 def insert(request):
     admin_id = is_uuid(request.session.get('id'))
     if admin_id:
+        time = request.GET.get('time')
+        name = request.GET.get('name')
+        phone = request.GET.get('phone')
+        index_id = uuid.uuid4()
+
         try:
             content = guest_simple(request)
-            guest_id = guest_insert(admin_id=admin_id,
-                                    time=request.GET.get('time'),
-                                    name=request.GET.get('name'),
-                                    phone=request.GET.get('phone'),
-                                    status=1,
-                                    content=content,
-                                    remark=request.GET.get('remark')).id
-            content = {'status': True, 'message': '', 'content': {'id': guest_id}}
+            guest_id = guest_insert(admin_id=admin_id, index_id=index_id, time=time, name=name, phone=phone, status=3, content=content, remark=request.GET.get('guestRemark')).id
+            guest = {'status': True, 'message': guest_id, 'content': {}}
         except Exception as e:
-            content = {'status': False, 'message': str(e), 'content': {}}
-    else:
-        content = {'status': False, 'message': '请输入正确的参数', 'content': {}}
+            guest = {'status': False, 'message': str(e), 'content': {}}
 
+        content = {'status': True, 'message': '', 'content': {'index_id': index_id, 'guest_id': guest}}
+    else:
+        content = {'status': False, 'message': '参数错误请确认', 'content': {'index_id': "", 'guest_id': ""}}
     return JsonResponse(content)
 
 
 def detail(request):
     admin_id = is_uuid(request.session.get('id'))
-    if admin_id:
+    index_id = is_uuid(request.GET.get('index_id'))
+    if admin_id and index_id:
 
-        guest_id = is_uuid(request.GET.get('guest_id'))
-        if guest_id:
-            try:
-                data = guest_detail(admin_id=admin_id, guest_id=guest_id)
-                guest_id = {'status': True, 'message': '', 'content': model_to_dict(data)}
-            except Exception as e:
-                guest_id = {'status': False, 'message': str(e), 'content': {}}
-        else:
-            guest_id = {'status': False, 'message': '请输入正确的参数', 'content': {}}
+        try:
+            data = guest_detail(admin_id=admin_id, index_id=index_id)
+            guest_id = {'status': True, 'message': '', 'content': model_to_dict(data)}
+        except Exception as e:
+            guest_id = {'status': False, 'message': str(e), 'content': {}}
 
         content = {'status': True, 'message': '', 'content':{'guest_id': guest_id}}
     else:
-        content = {'status': False, 'message': '账号异常', 'content':{'report_id': {}, 'guest_id': {}, 'order_id': {}}}
+        content = {'status': False, 'message': index_id, 'content':{'guest_id': {}}}
     return JsonResponse(content)
 
 
 def delete(request):
     admin_id = is_uuid(request.session.get('id'))
-    if admin_id:
+    index_id = is_uuid(request.GET.get('index_id'))
+    if admin_id and index_id:
 
-        guest_id = is_uuid(request.GET.get('guest_id'))
-        if guest_id:
-            try:
-                guest_id = guest_delete(admin_id=admin_id, guest_id=guest_id)[0]
-            except Exception as e:
-                guest_id = 0
-        else:
-            guest_id = 0
+        try:
+            guest_delete(admin_id=admin_id, index_id=index_id)
+            guest_id = {'status': True, 'message': "", 'content': {}}
+        except Exception as e:
+            guest_id = {'status': False, 'message': str(e), 'content': {}}
 
         content = {'status': True, 'message': '', 'content': {'guest_id': guest_id}}
     else:
-        content = {'status': False, 'message': '请输入正确的参数', 'content': {'guest_id': {}}}
+        content = {'status': False, 'message': index_id, 'content':{'guest_id': {}}}
     return JsonResponse(content)
 
 

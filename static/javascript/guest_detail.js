@@ -2,14 +2,24 @@ $(document).ready(function () {
     detail_guest(function (data) {
         console.log(data)
     })
+
+
     $('#delete').click(function () {
         if (confirm("确定要删除记录吗？")) {
-            delete_guest(function (data) {
-                if (data === true) {
-                    alert('删除成功')
-                    window.location.href = guest_index
-                } else {
-                    alert(data.message)
+            $.ajax({
+                url: guest_delete,
+                data: {
+                    'index_id': index_id
+                },
+                success: function (res) {
+                    if (data === true) {
+                        alert('删除成功')
+                        window.location.href = guest_index
+                    } else {
+                        alert(data.message)
+                    }            },
+                error: function () {
+                    alert('order,网络出错')
                 }
             })
         } else {
@@ -35,7 +45,7 @@ $(document).ready(function () {
         $.ajax({
             url: guest_detail,
             data: {
-                'id': guest_id
+                'index_id': index_id
             },
             success: function (res) {
                 content = res.content
@@ -59,7 +69,7 @@ $(document).ready(function () {
         $.ajax({
             url: guest_delete,
             data: {
-                'id': guest_id
+                'index_id': index_id
             },
             success: function (res) {
                 callback(res)
@@ -75,16 +85,16 @@ $(document).ready(function () {
             url: guest_update,
             method: 'GET',
             data: {
-                guest_id: guest_id,
-                remark: $("#remark").val(),
-                time: $("#time").val(),
-                name: $("#name").val(),
-                call: $("#call").val(),
-                age: $("#age").val(),
-                sex: $("#sex").val(),
-                DFH: $("#DFH").val(),
-                OT: $("#OT").val(),
-                EM: $("#EM").val(),
+                'index_id': index_id,
+                'remark': $("#remark").val(),
+                'time': $("#time").val(),
+                'name': $("#name").val(),
+                'call': $("#call").val(),
+                'age': $("#age").val(),
+                'sex': $("#sex").val(),
+                'DFH': $("#DFH").val(),
+                'OT': $("#OT").val(),
+                'EM': $("#EM").val(),
             },
             success: function (res) {
                 callback(res)
