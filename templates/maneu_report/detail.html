@@ -1,7 +1,20 @@
 {% extends 'maneu/base.html' %}
 {% load static %}
-{% block content %}
 
+{% block javascript %}
+    <script>
+        index_id = "{{ index_id }}"
+        report_index = "{% url 'maneu_report:index' %}"
+        guest_update = "{% url 'maneu_guest:api_update' %}"
+        report_detail = "{% url 'maneu_report:api_detail' %}"
+        report_delete = "{% url 'maneu_report:api_delete' %}"
+        report_update = "{% url 'maneu_report:api_update' %}"
+    </script>
+    <script src="{% static 'javascript/reportDetail20251229.js' %}" type="application/javascript"></script>
+    <link href="{% static 'css/reportDetail20251229.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
     <div class="container" style="margin-top: 2%; margin-bottom: 4%;">
         <form action="{% url 'maneu_order:index' %}" class="vertical2" method="get">
             <div class="vertical1 col-1">
@@ -509,17 +522,4 @@
         </datalist>
     </div>
 
-{% endblock %}
-
-{% block javascript %}
-    <script>
-        index_id = "{{ index_id }}"
-        report_index = "{% url 'maneu_report:index' %}"
-        guest_update = "{% url 'maneu_guest:api_update' %}"
-        report_detail = "{% url 'maneu_report:api_detail' %}"
-        report_delete = "{% url 'maneu_report:api_delete' %}"
-        report_update = "{% url 'maneu_report:api_update' %}"
-    </script>
-    <script src="{% static 'javascript/reportDetail20251229.js' %}" type="application/javascript"></script>
-    <link href="{% static 'css/reportDetail20251229.css' %}" rel="stylesheet">
 {% endblock %}
