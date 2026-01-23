@@ -1,34 +1,62 @@
 {% extends 'maneu/base.html' %}
 {% load static %}
-{% block css %}
-    <link href="{% static '/css/maneu_index/index.css' %}" rel="stylesheet" type="text/css"/>
-    <link href="https://cdn.staticfile.org/bootstrap-daterangepicker/3.0.5/daterangepicker.css" rel="stylesheet"
-          type="text/css"/>
-{% endblock %}
 {% block javascript %}
-    <script src="https://cdn.staticfile.org/moment.js/2.29.4/moment.min.js" type="application/javascript"></script>
-    <script src="https://cdn.staticfile.org/moment.js/2.29.4/locale/zh-cn.js" type="application/javascript"></script>
-    <script src="https://cdn.staticfile.org/bootstrap-daterangepicker/3.0.5/daterangepicker.js"
-            type="application/javascript"></script>
-    {#https://www.datetimepicker.cn/daterangepicker/#}
-
-
-    <script src="https://cdn.staticfile.org/echarts/4.3.0/echarts.min.js" type="text/javascript"></script>
-    <script src="{% static 'javascript/maneu_index/echarts.js' %}" type="text/javascript"></script>
-
-
-    <script type="text/javascript">
-        api_index = "{% url 'maneu_index:api_index' %}"
+    <script type="application/javascript">
+        api_delete = "{% url 'maneu_order:api_delete' %}"
+        api_detail = "{% url 'maneu_order:detail' %}"
+        search_data = "{% url 'maneu_order:search_data' %}"
+        search_time = "{% url 'maneu_order:search_time' %}"
     </script>
-    <script src="{% static 'javascript/maneu_index/index.js' %}" type="text/javascript"></script>
+    <script src='{% static "javascript/indexIndex20251229.js" %}' type="application/javascript"></script>
+    <link href="{% static 'css/indexIndex20251229.css' %}" rel="stylesheet">
 {% endblock %}
 {% block content %}
-    <div class="container">
-        <div class="col-2 offset-10">
-            <div class="input-group input-group-sm">
-                <input class="form-control" id="reportrange" type="text">
+    <div class="container" style="margin-top: 2%; margin-bottom: 4%;">
+        <div class="col-12 row">
+            <div class="col-6">
+                <h1 style="color: #FFC048">订单管理</h1>
+            </div>
+            <div class="col-6">
+                <div class="vertical1 input-group input-group-sm">
+                    <input class="col-12 form-control" id="value" placeholder="使用手机或姓名查询" type="text">
+                    <input class="btn btn-primary" id="search_data" type="button" value="搜索">
+                </div>
+                <br>
+                <div class="vertical1 input-group input-group-sm">
+                    <span class="input-group-text">开始时间</span>
+                    <input autocomplete="off" class="form-control" id="timeS" max="{{ timeE }}" min="2010-01-01 00:00"
+                           type="datetime-local" value="2024-01-01 00:00">
+                    <span class="input-group-text">结束时间</span>
+                    <input autocomplete="off" class="form-control" id="timeE" max="{{ timeE }}" min="2010-01-01 00:00"
+                           type="datetime-local" value="{{ timeE }}">
+                    <input class="btn btn-primary" id="search_time" type="button" value="搜索">
+                </div>
+                <br>
             </div>
         </div>
-        <div class="main" id="main1"></div>
+        <hr style="color:white;">
+        <div class="col-12 row" style="">
+            <div class="col-2">
+                <p>录入时间</p>
+            </div>
+            <div class="col-1">
+                <p>客户姓名</p>
+            </div>
+            <div class="col-1">
+                <p>客户电话</p>
+            </div>
+            <div class="col-7">
+                <p>订单备注</p>
+            </div>
+            <div class="col-1">
+                <form action="{% url 'maneu_order:insert' %}" method="get">
+                    <div class='input-group input-group-sm'>
+                        <input class="col-12 btn btn-warning" type="submit" value='添加'>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <hr style="color:white;">
+        <div id="body"></div>
     </div>
 {% endblock %}

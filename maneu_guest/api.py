@@ -1,3 +1,5 @@
+import uuid
+
 from django.forms import model_to_dict
 from django.http import JsonResponse
 
@@ -6,7 +8,7 @@ from common.verify import is_uuid
 from maneu_guest.service import *
 from maneu_order.service import *
 from maneu_report.service import *
-import uuid
+
 
 def insert(request):
     admin_id = is_uuid(request.session.get('id'))

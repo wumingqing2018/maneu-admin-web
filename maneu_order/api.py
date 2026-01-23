@@ -120,21 +120,6 @@ def search_time(request):
     return JsonResponse(content)
 
 
-def search_data(request):
-    admin_id = is_uuid(request.session.get('id'))
-    if admin_id:
-
-        try:
-            data = order_search_data(admin_id=admin_id, value=request.GET.get('value'))
-            content = {'status': True, 'message': '', 'content': list(data.values('id', 'name', 'phone', 'time', 'remark'))}
-        except Exception as e:
-            content = {'status': False, 'message': str(e), 'content': {}}
-
-    else:
-        content = {'status': False, 'message': '参数错误请确认', 'content': {}}
-    return JsonResponse(content)
-
-
 def update(request):
     admin_id = is_uuid(request.session.get('id'))
     index_id = is_uuid(request.GET.get('index_id'))
@@ -150,4 +135,19 @@ def update(request):
 
     else:
         content = {'status': False, 'message': '', 'content': {}}
+    return JsonResponse(content)
+
+
+def search_data(request):
+    admin_id = is_uuid(request.session.get('id'))
+    if admin_id:
+
+        try:
+            data = order_search_data(admin_id=admin_id, value=request.GET.get('value'))
+            content = {'status': True, 'message': '', 'content': list(data.values('id', 'name', 'phone', 'time', 'remark'))}
+        except Exception as e:
+            content = {'status': False, 'message': str(e), 'content': {}}
+
+    else:
+        content = {'status': False, 'message': '参数错误请确认', 'content': {}}
     return JsonResponse(content)

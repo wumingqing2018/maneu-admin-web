@@ -1,7 +1,5 @@
 import json
 
-from common.common import current_time
-
 
 def guest_simple(request):
     simple = {'age': '', 'sex': '', 'dfh': '无', 'ot': '正', 'em': '交替'}
