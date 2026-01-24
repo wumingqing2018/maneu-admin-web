@@ -127,13 +127,16 @@ $(document).ready(function () {
                 reportRemark: $("#reportRemark").val(),
             },
             success: function (res) {
-                if (res.status === true) {
-                    alert('提交成功')
-                } else {
-                    alert('提交失败，错误信息：' + res.message)
+                console.log(res)
+                if (res.status === true){
+                    alert('更新成功')
+                }else {
+                    alert('更新失败')
                 }
             },
             error: function (res) {
+                console.log(res)
+                alert('网络错误')
             }
         })
     });

@@ -21,14 +21,14 @@ def insert(request):
 
         try:
             content = guest_simple(request)
-            guest = guest_insert(admin_id=admin_id, index_id=index_id, time=time, name=name, phone=phone, status=3, content=content, remark=request.GET.get('guestRemark')).id
+            guest = guest_insert(admin_id=admin_id, index_id=index_id, time=time, name=name, phone=phone, status=2, content=content, remark=request.GET.get('guestRemark')).id
             guest_id = {'status': True, 'message': guest, 'content': {}}
         except Exception as e:
             guest_id = {'status': False, 'message': str(e), 'content': {}}
 
         try:
             content = report_simple(request)
-            report = report_insert(admin_id=admin_id, index_id=index_id, time=time, name=name, phone=phone, status=3, content=content, remark=request.GET.get('reportRemark')).id
+            report = report_insert(admin_id=admin_id, index_id=index_id, time=time, name=name, phone=phone, status=2, content=content, remark=request.GET.get('reportRemark')).id
             report_id = {'status': True, 'message': report, 'content': {}}
         except Exception as e:
             report_id = {'status': False, 'message': str(e), 'content': {}}

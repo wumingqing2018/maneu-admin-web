@@ -3,6 +3,7 @@ $(document).ready(function () {
     report_hide()
     guest_hide()
 
+
     function report_hide() {
         $("#report_hide").hide()
         $("#report_show").show()
@@ -27,6 +28,7 @@ $(document).ready(function () {
         $("#OS_VT").hide()
         $("#OS_BC").hide()
     }
+
 
     function report_show() {
         $("#report_hide").show()
@@ -53,17 +55,20 @@ $(document).ready(function () {
         $("#OS_BC").show()
     }
 
+
     function guest_hide() {
         $("#guest_hide").hide()
         $("#guest_show").show()
         $("#guest_content").hide()
     }
 
+
     function guest_show() {
         $("#guest_hide").show()
         $("#guest_show").hide()
         $("#guest_content").show()
     }
+
 
     function detail_order() {
         $.ajax({
@@ -139,6 +144,8 @@ $(document).ready(function () {
                             store.find(".arg13").val(order.content.content[i]['arg13'])
                             store.find(".arg14").val(order.content.content[i]['arg14'])
                         }
+                    }else {
+                        console.log(order.content)
                     }
 
                 }
@@ -146,21 +153,26 @@ $(document).ready(function () {
         })
     }
 
+
     $('#guest_hide').click(function () {
         guest_hide()
     })
+
 
     $('#guest_show').click(function () {
         guest_show()
     })
 
+
     $('#report_hide').click(function () {
         report_hide()
     })
 
+
     $('#report_show').click(function () {
         report_show()
     })
+
 
     $('#delete').click(function () {
         if (confirm("确定要删除记录吗？")) {
@@ -170,11 +182,16 @@ $(document).ready(function () {
                     'index_id': index_id,
                 },
                 success: function (res) {
-                    if (res.status === true) {
-                        location.assign(order_index)
+                    console.log(res)
+                    if (res.status === true){
+                        alert('删除成功')
                     }else {
                         alert('删除失败')
                     }
+                },
+                error: function (res) {
+                    console.log(res)
+                    alert('网络错误')
                 }
             })
         } else {
@@ -190,11 +207,17 @@ $(document).ready(function () {
                 index_id: index_id,
                 time: $("#time").val(),
             },
-            success: function () {
-                alert('更新成功')
+            success: function (res) {
+                console.log(res)
+                if (res.status === true){
+                    alert('更新成功')
+                }else {
+                    alert('更新失败')
+                }
             },
-            error: function () {
-                alert('更新失败')
+            error: function (res) {
+                console.log(res)
+                alert('网络错误')
             }
         })
     })
@@ -238,12 +261,52 @@ $(document).ready(function () {
                 os_bc: $("#OS_BC").val(),
             },
             success: function (res) {
-                alert('更新成功')
+                console.log(res)
+                if (res.status === true){
+                    alert('更新成功')
+                }else {
+                    alert('更新失败')
+                }
             },
             error: function (res) {
+                console.log(res)
+                alert('网络错误')
             }
         })
     })
+
+
+    $('#guestUpdate').click(function update_guest() {
+        $.ajax({
+            url:  guest_update,
+            method: 'GET',
+            data: {
+                index_id: index_id,
+                guestRemark: $("#guestRemark").val(),
+                phone: $("#phone").val(),
+                time: $("#time").val(),
+                name: $("#name").val(),
+                age: $("#age").val(),
+                sex: $("#sex").val(),
+                dfh: $("#dfh").val(),
+                ot: $("#ot").val(),
+                em: $("#em").val(),
+            },
+            success: function (res) {
+                console.log(res)
+                if (res.status === true){
+                    alert('更新成功')
+                }else {
+                    alert('更新失败')
+                }
+            },
+            error: function (res) {
+                console.log(res)
+                alert('网络错误')
+            }
+        })
+    })
+
 
     $('#orderUpdate').click(function update_order() {
         store = []
@@ -266,35 +329,19 @@ $(document).ready(function () {
                 index_id: index_id,
             },
             success: function (res) {
-                alert('更新成功')
+                console.log(res)
+                if (res.status === true){
+                    alert('更新成功')
+                }else {
+                    alert('更新失败')
+                }
             },
-            error: function () {
+            error: function (res) {
+                console.log(res)
+                alert('网络错误')
             }
         })
     })
 
-    $('#guestUpdate').click(function update_guest() {
-        $.ajax({
-            url:  guest_update,
-            method: 'GET',
-            data: {
-                index_id: index_id,
-                guestRemark: $("#guestRemark").val(),
-                phone: $("#phone").val(),
-                time: $("#time").val(),
-                name: $("#name").val(),
-                age: $("#age").val(),
-                sex: $("#sex").val(),
-                dfh: $("#dfh").val(),
-                ot: $("#ot").val(),
-                em: $("#em").val(),
-            },
-            success: function (res) {
-                alert('更新成功')
-            },
-            error: function () {
-            }
-        })
-    })
 
 });

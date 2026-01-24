@@ -153,11 +153,16 @@ $(document).ready(function () {
                     index_id: index_id,
                 },
                 success: function (res) {
-                    if (res.status === true) {
-                        location.assign(report_index)
+                    console.log(res)
+                    if (res.status === true){
+                        alert('删除成功')
                     }else {
                         alert('删除失败')
                     }
+                },
+                error: function (res) {
+                    console.log(res)
+                    alert('网络错误')
                 }
             })
         } else {
@@ -205,9 +210,16 @@ $(document).ready(function () {
                 os_bc: $("#OS_BC").val(),
             },
             success: function (res) {
-                alert('更新成功')
+                console.log(res)
+                if (res.status === true){
+                    alert('更新成功')
+                }else {
+                    alert('更新失败')
+                }
             },
             error: function (res) {
+                console.log(res)
+                alert('网络错误')
             }
         })
     })
@@ -229,11 +241,18 @@ $(document).ready(function () {
                 ot: $("#ot").val(),
                 em: $("#em").val(),
             },
-            success: function () {
+            success: function (res) {
+                console.log(res)
+                if (res.status === true){
+                    alert('更新成功')
+                }else {
+                    alert('更新失败')
+                }
             },
-            error: function () {
+            error: function (res) {
+                console.log(res)
+                alert('网络错误')
             }
         })
     })
-
 });

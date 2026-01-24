@@ -143,14 +143,16 @@ $(document).ready(function () {
                 reportRemark: $("#reportRemark").val(),
             },
             success: function (res) {
-                if (res.status === true) {
-                    alert('提交成功')
-                } else {
-                    alert('提交失败，错误信息：' + res.message)
+                console.log(res)
+                if (res.status === true){
+                    alert('更新成功')
+                }else {
+                    alert('更新失败')
                 }
             },
             error: function (res) {
-                callback({'status': false, 'message': '请求出错请刷新页面'}); // 第一个参数为null表示没有错误，第二个参数为请求的数据
+                console.log(res)
+                alert('网络错误')
             }
         })
     });
