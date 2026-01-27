@@ -1,7 +1,5 @@
 from django.shortcuts import render
 
-from maneu.models import *
-
 
 def index(request):
     # ManeuGuest.objects.filter().all().update(status='')

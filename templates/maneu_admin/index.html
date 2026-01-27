@@ -1,5 +1,18 @@
 {% extends 'maneu/base.html' %}
 {% load static %}
+{% block css %}
+    <link href="{% static 'css/maneu_index/index20251229.css' %}" rel="stylesheet">
+{% endblock %}
+{% block javascript %}
+    <script>
+        admin_id = "{{ id }}"
+        admin_index = "{% url 'maneu_admin:index' %}"
+        admin_detail = "{% url 'maneu_admin:api_detail' %}"
+        admin_update = "{% url 'maneu_admin:api_update' %}"
+    </script>
+    <script src="{% static 'javascript/maneu_index/index20251229.js' %}" type="application/javascript"></script>
+{% endblock %}
+
 {% block content %}
     <div class="container">
         <form action="{% url 'maneu_guest:index' %}" class="vertical2" method="get">
@@ -58,16 +71,4 @@
         </form>
     </div>
 
-{% endblock %}
-{% block javascript %}
-    <script>
-        admin_id = "{{ id }}"
-        admin_index = "{% url 'maneu_admin:index' %}"
-        admin_detail = "{% url 'maneu_admin:api_detail' %}"
-        admin_update = "{% url 'maneu_admin:api_update' %}"
-    </script>
-    <script src="{% static 'javascript/admin_index.js' %}" type="application/javascript"></script>
-{% endblock %}
-{% block css %}
-    <link href="{% static 'css/maneu_guest/insert.css' %}" rel="stylesheet">
 {% endblock %}
