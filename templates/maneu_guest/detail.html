@@ -1,18 +1,5 @@
 {% extends 'maneu/base.html' %}
 {% load static %}
-{% block javascript %}
-    <script>
-        index_id = "{{ index_id }}"
-        guest_index = "{% url 'maneu_guest:index' %}"
-        guest_update = "{% url 'maneu_guest:api_update' %}"
-        guest_detail = "{% url 'maneu_guest:api_detail' %}"
-        guest_delete = "{% url 'maneu_guest:api_delete' %}"
-    </script>
-    <script src="{% static 'javascript/maneu_guest/detail20251229.js' %}" type="application/javascript"></script>
-{% endblock %}
-{% block css %}
-    <link href="{% static 'css/maneu_guest/detail20251229.css' %}" rel="stylesheet">
-{% endblock %}
 {% block content %}
     <div class="container" style="margin-top: 2%; margin-bottom: 4%;">
         <form action="{% url 'maneu_guest:index' %}" class="vertical2 col-12 row" method="get">
@@ -104,5 +91,17 @@
             <option>女</option>
         </datalist>
     </div>
-
+{% endblock %}
+{% block javascript %}
+    <script>
+        index_id = "{{ index_id }}"
+        guest_index = "{% url 'maneu_guest:index' %}"
+        guest_update = "{% url 'maneu_guest:api_update' %}"
+        guest_detail = "{% url 'maneu_guest:api_detail' %}"
+        guest_delete = "{% url 'maneu_guest:api_delete' %}"
+    </script>
+    <script src="{% static 'js/maneu_guest/detail20251229.js' %}" type="application/javascript"></script>
+{% endblock %}
+{% block css %}
+    <link href="{% static 'css/maneu_guest/detail20251229.css' %}" rel="stylesheet">
 {% endblock %}

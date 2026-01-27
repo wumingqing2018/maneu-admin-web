@@ -1,15 +1,5 @@
 {% extends 'maneu/base.html' %}
 {% load static %}
-{% block javascript %}
-    <script type="application/javascript">
-        api_delete = "{% url 'maneu_order:api_delete' %}"
-        api_detail = "{% url 'maneu_order:detail' %}"
-        search_data = "{% url 'maneu_order:search_data' %}"
-        search_time = "{% url 'maneu_order:search_time' %}"
-    </script>
-    <script src='{% static "javascript/maneu_index/index20251229.js" %}' type="application/javascript"></script>
-    <link href="{% static 'css/indexIndex20251229.css' %}" rel="stylesheet">
-{% endblock %}
 {% block content %}
     <div class="container" style="margin-top: 2%; margin-bottom: 4%;">
         <div class="col-12 row">
@@ -59,4 +49,14 @@
         <hr style="color:white;">
         <div id="body"></div>
     </div>
+{% endblock %}
+{% block javascript %}
+    <script type="application/javascript">
+        api_delete = "{% url 'maneu_order:api_delete' %}"
+        api_detail = "{% url 'maneu_order:detail' %}"
+        search_data = "{% url 'maneu_order:search_data' %}"
+        search_time = "{% url 'maneu_order:search_time' %}"
+    </script>
+    <script src='{% static "js/maneu_index/index20251229.js" %}' type="application/javascript"></script>
+    <link href="{% static 'css/maneu_index/index20251229.css' %}" rel="stylesheet">
 {% endblock %}
