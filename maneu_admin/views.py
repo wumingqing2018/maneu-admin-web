@@ -1,18 +1,19 @@
 from django.shortcuts import render
 
-from maneu_admin import service
+from common.common import time_start, time_end
 
 
 def index(request):
+    return render(request, 'maneu_index/index.html', {'timeS': time_start, 'timeE': time_end})
+
+
+def detail(request):
     return render(request, 'maneu_admin/index.html', {'id': request.session.get('id')})
 
 
-def user_insert(request):
-    if request.method == 'POST':
-        if request.POST['gift_password'] == '214772680':
-            updata = service.user_insert(username=request.POST['username'],
-                                         nickname=request.POST['nickname'],
-                                         password=request.POST['password'],
-                                         phone=request.POST['phone'],
-                                         email=request.POST['email'])
+def insert(request):
+    return render(request, 'maneu_admin/insert.html', {'id': request.session.get('id')})
+
+
+def update(request):
     return render(request, 'maneu_admin/insert.html', {'id': request.session.get('id')})

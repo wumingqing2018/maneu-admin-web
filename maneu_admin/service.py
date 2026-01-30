@@ -1,8 +1,7 @@
+from django.db.models import Q
+
 from maneu.models import ManeuAdmin
-
-
-def get_wx_to():
-    return ManeuAdmin.objects.filter().first()
+from maneu.models import ManeuReport
 
 
 def find_username_password(username, password):
@@ -10,18 +9,20 @@ def find_username_password(username, password):
 
 
 def user_update(admin_id='', phone='', nickname='', location='', content=''):
-    return ManeuAdmin.objects.filter(id=admin_id).update(nickname=nickname, phone=phone, location=location,
-                                                         content=content)
+    return ManeuAdmin.objects.filter(id=admin_id).update(nickname=nickname, phone=phone, location=location, content=content)
 
 
 def user_insert(username='', nickname='', password='', email='', phone=''):
-    return ManeuAdmin.objects.create(username=username, password=password, nickname=nickname, email=email,
-                                     phone=phone, level=0, state=0)
+    return ManeuAdmin.objects.create(username=username, password=password, nickname=nickname, email=email, phone=phone, level=0, state=0)
 
 
 def user_detail(admin_id=''):
     return ManeuAdmin.objects.filter(id=admin_id).first()
 
 
-def admin_update(level='', state=''):
-    return ManeuAdmin.objects.all().update(level=level, state=state)
+def report_search_time(admin_id='', timeS='', timeE=''):
+    return ManeuReport.objects.filter(admin_id=admin_id, time__gte=timeS, time__lte=timeE, status=2).order_by('-time').all()
+
+
+def report_search_data(admin_id='', value=''):
+    return ManeuReport.objects.filter(Q(admin_id=admin_id, name__icontains=value, status=2) | Q(admin_id=admin_id, phone__icontains=value, status=2)).order_by('-time').all()
