@@ -3,6 +3,7 @@ from django.urls import path
 from maneu_report import api, views
 
 app_name = 'maneu_report'
+
 urlpatterns = [
     path('', views.index, name='index'),
     path('detail/', views.detail, name='detail'),

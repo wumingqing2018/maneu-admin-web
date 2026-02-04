@@ -27,5 +27,5 @@ def order_update_time(admin_id='', index_id='', time="", name="", phone=""):
     return ManeuOrder.objects.filter(admin_id=admin_id, id=index_id).update(time=time, name=name, phone=phone)
 
 
-def order_update_data(admin_id='', index_id='', name='', phone='', remark="", content=''):
-    return ManeuOrder.objects.filter(admin_id=admin_id, id=index_id).update(name=name, phone=phone, remark=remark, content=content)
+def order_update_data(admin_id='', index_id='', remark="", content=''):
+    return ManeuOrder.objects.filter(admin_id=admin_id, id=index_id).update(remark=remark, content=content)

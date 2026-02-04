@@ -63,20 +63,8 @@ def report_simple(request):
 
     for i in list(simple):
         try:
-            simple[i] = format(float(request.GET.get(i)), '.2f')
+            if request.GET.get(i): simple[i] = request.GET.get(i)
         except:
             pass
-
-    od_fr = request.GET.get('od_fr')
-    if od_fr == 'BU' or od_fr == 'BD' or od_fr == od_fr == 'BO' or od_fr == 'BI':
-        simple['od_fr'] = od_fr
-
-    os_fr = request.GET.get('os_fr')
-    if os_fr == 'BU' or os_fr == 'BD' or os_fr == os_fr == 'BO' or os_fr == 'BI':
-        simple['os_fr'] = os_fr
-
-    plan = request.GET.get('plan')
-    if plan == '两用解决方案' or plan == '远用解决方案' or plan == '近用解决方案' or plan == '':
-        simple['plan'] = plan
 
     return simple
