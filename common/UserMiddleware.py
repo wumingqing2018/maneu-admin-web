@@ -8,7 +8,6 @@ from maneu.models import ManeuAdmin
 
 
 class UserMiddleware(MiddlewareMixin):
-
     def __init__(self, get_response):
         self.get_response = get_response
         print("--用户登录校验中间件启动--")
