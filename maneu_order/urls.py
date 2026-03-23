@@ -14,4 +14,5 @@ urlpatterns = [
     path('api_update/', api.update, name='api_update'),
     path('search_time/', api.search_time, name='search_time'),
     path('search_data/', api.search_data, name='search_data'),
+    path('api_QRcode/', api.generate_qr_code, name='api_QRcode'),
 ]

@@ -41,6 +41,7 @@ def login_api(request):
             content = {'status': False, 'message': '100002', 'content': {}}
     else:
         content = {'status': False, 'message': '100001', 'content': {}}
+    print(content)
     response = JsonResponse(content)
     response.set_cookie(key = 'mark',  # cookie 名称
                         value = mark,  # cookie 值

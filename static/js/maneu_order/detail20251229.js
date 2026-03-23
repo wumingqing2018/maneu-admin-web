@@ -343,5 +343,34 @@ $(document).ready(function () {
         })
     })
 
+    $('#generate_qr_code').click(function () {
+        $.ajax({
+            url: order_QRcode,
+            data: {
+                'index_id': index_id,
+            },
+            method: 'GET',
+            xhrFields: {
+                responseType: 'blob'  // 关键：告诉 jQuery 将响应解析为 Blob
+            },
+            success: function(blob) {
+                // 创建对象 URL
+                const blobUrl = URL.createObjectURL(blob);
 
+                // 创建临时 <a> 标签并触发下载
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.download = 'qrcode'+index_id;
+                document.body.appendChild(link);
+                link.click();
+
+                // 清理
+                document.body.removeChild(link);
+                URL.revokeObjectURL(blobUrl);
+            },
+            error: function(xhr, status, error) {
+                console.error('下载失败:', error);
+            }
+        });
+    })
 });

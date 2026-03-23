@@ -1,7 +1,10 @@
 import json
 import uuid
+from io import BytesIO
 
+import qrcode
 from django.forms import model_to_dict
+from django.http import HttpResponse
 from django.http import JsonResponse
 
 from common.simple import order_simple, report_simple, guest_simple
@@ -125,8 +128,8 @@ def update(request):
 
 def search_time(request):
     admin_id = is_uuid(request.session.get('id'))
+    print(1, admin_id)
     if admin_id:
-
         try:
             data = order_search_time(admin_id=admin_id, timeS=request.GET.get('timeS'), timeE=request.GET.get('timeE'))
             content = {'status': True, 'message': '', 'content': list(data.values('id', 'name', 'phone', 'time', 'remark'))}
@@ -151,3 +154,28 @@ def search_data(request):
     else:
         content = {'status': False, 'message': '参数错误请确认', 'content': {}}
     return JsonResponse(content)
+
+
+def generate_qr_code(request):
+    link='https://maneu.online/get_verify/?order_id='+request.GET.get('index_id')
+    print(link)
+
+    # 创建二维码对象
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(link)
+    qr.make(fit=True)
+
+    img = qr.make_image(fill_color="black", back_color="white")
+
+    # 将图片存入内存
+    buffer = BytesIO()
+    img.save(buffer, format="PNG")
+    buffer.seek(0)
+
+    # 返回图片响应
+    return HttpResponse(buffer, content_type="image/png")

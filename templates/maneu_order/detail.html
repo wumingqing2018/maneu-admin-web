@@ -150,10 +150,16 @@
 
 
         {# 提交或返回按钮 #}
-        <form class="vertical2">
+        <form class="vertical2 row">
             <div class="vertical1 col-1">
                 <div class="input-group">
                     <input class="btn btn-danger" id="delete" type="button" value="删除订单">
+                </div>
+            </div>
+
+            <div class="vertical1 col-1">
+                <div class="input-group">
+                    <input class="btn btn-danger" id="generate_qr_code" type="button" value="生成二维码">
                 </div>
             </div>
         </form>
@@ -537,6 +543,7 @@
     <script>
         index_id = "{{ index_id }}"
         order_index = "{% url 'maneu_order:index' %}"
+        order_QRcode = "{% url 'maneu_order:api_QRcode' %}"
         order_detail = "{% url 'maneu_order:api_detail' %}"
         order_delete = "{% url 'maneu_order:api_delete' %}"
         guest_update = "{% url 'maneu_guest:api_update' %}"
