@@ -128,7 +128,6 @@ def update(request):
 
 def search_time(request):
     admin_id = is_uuid(request.session.get('id'))
-    print(1, admin_id)
     if admin_id:
         try:
             data = order_search_time(admin_id=admin_id, timeS=request.GET.get('timeS'), timeE=request.GET.get('timeE'))

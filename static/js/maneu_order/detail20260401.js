@@ -360,7 +360,7 @@ $(document).ready(function () {
                 // 创建临时 <a> 标签并触发下载
                 const link = document.createElement('a');
                 link.href = blobUrl;
-                link.download = 'qrcode'+index_id;
+                link.download = index_id;
                 document.body.appendChild(link);
                 link.click();
 
