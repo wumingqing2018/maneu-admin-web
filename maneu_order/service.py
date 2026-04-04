@@ -29,3 +29,4 @@ def order_update_time(admin_id='', index_id='', time="", name="", phone=""):
 
 def order_update_data(admin_id='', index_id='', remark="", content=''):
     return ManeuOrder.objects.filter(admin_id=admin_id, id=index_id).update(remark=remark, content=content)
+

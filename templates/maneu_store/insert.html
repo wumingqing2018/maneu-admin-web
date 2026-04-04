@@ -1,0 +1,193 @@
+{% extends 'maneu/base.html' %}
+{% load static %}
+{% block content %}
+    <div class="container" style="margin-top: 2%; margin-bottom: 4%;">
+
+
+        <form action="{% url 'maneu_store:index' %}" class="vertical2" method="get">
+            <div class="vertical1 col-1">
+                <div class="input-group">
+                    <input class="btn btn-primary" type="submit" value="返回列表">
+                </div>
+            </div>
+        </form>
+        <hr>
+        <form class="vertical2">
+            <div class="vertical1 col-6">
+                <div class="input-group">
+                    <span class="input-group-text">时间</span>
+                    <input autocomplete="off" type="datetime-local" class="form-control" id="time" value="{{ time }}">
+                </div>
+            </div>
+        </form>
+        <hr>
+
+
+        {# 客户基础数据 #}
+        <form class="vertical2">
+            <button class="vertical1 btn btn-primary" id="guest_show" type="button">客户数据 > 展开参数</button>
+            <button class="vertical1 btn btn-primary" id="guest_hide" type="button">客户数据 < 收起参数</button>
+
+            <div class="vertical1 col-6">
+                <div class="input-group">
+                    <span class="input-group-text">姓名</span>
+                    <input autocomplete="off" type="text" class="form-control" id="name">
+                    <span class="input-group-text">电话</span>
+                    <input autocomplete="off" type="text" class="form-control" id="phone">
+                </div>
+            </div>
+            <div id="guest_content">
+                <div class="vertical1 col-9">
+                    <div class="input-group">
+                        <span class="input-group-text col-1">性别</span>
+                        <input autocomplete="off" type="text" class="form-control" id="sex" list="sexList">
+                        <span class="input-group-text col-1">年龄</span>
+                        <input autocomplete="off" type="text" class="form-control" id="age" list="age">
+                        <span class="input-group-text col-1">眼位</span>
+                        <input autocomplete="off" type="text" class="form-control" id="ot" list="otList">
+                        <span class="input-group-text col-1">主视眼</span>
+                        <input autocomplete="off" type="text" class="form-control" id="em" list="emList">
+                        <span class="input-group-text col-1">病族史</span>
+                        <input autocomplete="off" type="text" class="form-control" id="dfh" list="dfhList">
+                    </div>
+                </div>
+            </div>
+            <div class="vertical1 col-6">
+                <div class="input-group">
+                    <span class="input-group-text">备注</span>
+                    <input autocomplete="off" type="text" class="form-control" id="guestRemark">
+                </div>
+            </div>
+        </form>
+        <hr>
+
+
+        {# 产品信息 #}
+        <form class="vertical2">
+            <button class="vertical1 btn btn-primary" type="button">产品订单</button>
+            <div id="guest_content">
+                <div class="vertical1 col-6">
+                    <div class="input-group">
+                        <span class="col-6 input-group-text">类别</span>
+                        <input class="form-control" autocomplete="off" type="text" id="class">
+                    </div>
+                </div>
+                <div class="vertical1 col-6">
+                    <div class="input-group">
+                        <span class="col-6 input-group-text">品牌</span>
+                        <input class="form-control" autocomplete="off" type="text" id="brand">
+                    </div>
+                </div>
+                <div class="vertical1 col-6">
+                    <div class="input-group">
+                        <span class="col-6 input-group-text">型号</span>
+                        <input class="form-control" autocomplete="off" type="text" id="model">
+                    </div>
+                </div>
+                <div class="vertical1 col-6">
+                    <div class="input-group">
+                        <span class="col-6 input-group-text">参数</span>
+                        <input class="form-control" autocomplete="off" type="text" id="parameters">
+                    </div>
+                </div>
+                <div class="vertical1 col-6">
+                    <div class="input-group">
+                        <span class="col-6 input-group-text">价格</span>
+                        <input class="form-control" autocomplete="off" type="text" id="price">
+                    </div>
+                </div>
+                <div class="vertical1 col-6">
+                    <div class="input-group">
+                        <input class="form-control" autocomplete="off" type="text" placeholder="自定义参数" id="arg00">
+                        <input class="form-control" autocomplete="off" type="text" placeholder="自定义参数" id="arg01">
+                    </div>
+                </div>
+                <div class="vertical1 col-6">
+                    <div class="input-group">
+                        <input class="form-control" autocomplete="off" type="text" placeholder="自定义参数" id="arg10">
+                        <input class="form-control" autocomplete="off" type="text" placeholder="自定义参数" id="arg11">
+                    </div>
+                </div>
+                <div class="vertical1 col-6">
+                    <div class="input-group">
+                        <input class="form-control" autocomplete="off" type="text" placeholder="自定义参数" id="arg20">
+                        <input class="form-control" autocomplete="off" type="text" placeholder="自定义参数" id="arg21">
+                    </div>
+                </div>
+                <div class="vertical1 col-6">
+                    <div class="input-group">
+                        <input class="form-control" autocomplete="off" type="text" placeholder="自定义参数" id="arg30">
+                        <input class="form-control" autocomplete="off" type="text" placeholder="自定义参数" id="arg31">
+                    </div>
+                </div>
+                <div class="vertical1 col-6">
+                    <div class="input-group">
+                        <input class="form-control" autocomplete="off" type="text" placeholder="自定义参数" id="arg40">
+                        <input class="form-control" autocomplete="off" type="text" placeholder="自定义参数" id="arg41">
+                    </div>
+                </div>
+                <div class="vertical1 col-6">
+                    <div class="input-group">
+                        <input class="form-control" autocomplete="off" type="text" placeholder="自定义参数" id="arg50">
+                        <input class="form-control" autocomplete="off" type="text" placeholder="自定义参数" id="arg51">
+                    </div>
+                </div>
+                <div class="vertical1 col-6">
+                    <div class="input-group">
+                        <input class="form-control" autocomplete="off" type="text" placeholder="自定义参数" id="arg60">
+                        <input class="form-control" autocomplete="off" type="text" placeholder="自定义参数" id="arg61">
+                    </div>
+                </div>
+                <div class="vertical1 col-6">
+                    <div class="input-group">
+                        <input class="form-control" autocomplete="off" type="text" placeholder="自定义参数" id="arg70">
+                        <input class="form-control" autocomplete="off" type="text" placeholder="自定义参数" id="arg71">
+                    </div>
+                </div>
+                <div class="vertical1 col-6">
+                    <div class="input-group">
+                        <input class="form-control" autocomplete="off" type="text" placeholder="自定义参数" id="arg80">
+                        <input class="form-control" autocomplete="off" type="text" placeholder="自定义参数" id="arg81">
+                    </div>
+                </div>
+                <div class="vertical1 col-6">
+                    <div class="input-group">
+                        <input class="form-control" autocomplete="off" type="text" placeholder="自定义参数" id="arg90">
+                        <input class="form-control" autocomplete="off" type="text" placeholder="自定义参数" id="arg91">
+                    </div>
+                </div>
+
+                <div class="vertical1 col-6">
+                    <div class="input-group">
+                        <span class="col-3 input-group-text">备注</span>
+                        <input autocomplete="off" type="text" class="form-control" id="orderRemark">
+                    </div>
+                </div>
+
+            </div>
+        </form>
+        <hr>
+
+
+        {# 提交或返回按钮 #}
+        <form class="vertical2">
+            <div class="vertical1 col-1">
+                <div class="input-group">
+                    <input class="btn btn-danger" id="insert" type="button" value="提交订单">
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+
+{% endblock %}
+{% block javascript %}
+    <script>
+        store_index_web = "{% url 'maneu_store:index' %}"
+        store_insert_web = "{% url 'maneu_store:insert' %}"
+        store_insert_api = "{% url 'maneu_store:api_insert' %}"
+    </script>
+    <script src="{% static 'js/maneu_store/insert20260401.js' %}" type="application/javascript"></script>
+    <link href="{% static 'css/maneu_order/insert20251229.css' %}" rel="stylesheet">
+{% endblock %}
