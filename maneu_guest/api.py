@@ -6,8 +6,6 @@ from django.http import JsonResponse
 from common.simple import guest_simple
 from common.verify import is_uuid
 from maneu_guest.service import *
-from maneu_order.service import *
-from maneu_report.service import *
 
 
 def insert(request):
@@ -36,11 +34,13 @@ def detail(request):
     index_id = is_uuid(request.GET.get('index_id'))
     if admin_id and index_id:
 
+
         try:
             data = guest_detail(admin_id=admin_id, index_id=index_id)
             guest_id = {'status': True, 'message': '', 'content': model_to_dict(data)}
         except Exception as e:
             guest_id = {'status': False, 'message': str(e), 'content': {}}
+
 
         content = {'status': True, 'message': '', 'content':{'guest_id': guest_id}}
     else:
@@ -53,11 +53,13 @@ def delete(request):
     index_id = is_uuid(request.GET.get('index_id'))
     if admin_id and index_id:
 
+
         try:
             guest_delete(admin_id=admin_id, index_id=index_id)
             guest_id = {'status': True, 'message': "", 'content': {}}
         except Exception as e:
             guest_id = {'status': False, 'message': str(e), 'content': {}}
+
 
         content = {'status': True, 'message': '', 'content': {'guest_id': guest_id}}
     else:
@@ -71,46 +73,64 @@ def update(request):
     if admin_id and index_id:
 
         try:
-            data = guest_update_data(admin_id=admin_id,
-                                     index_id=index_id,
-                                     phone=request.GET.get('phone'),
-                                     name=request.GET.get('name'),
-                                     time=request.GET.get('time'),
-                                     sex=request.GET.get('sex'),
-                                     age=request.GET.get('age'),
-                                     ot=request.GET.get('ot'),
-                                     em=request.GET.get('em'),
-                                     dfh=request.GET.get('dfh'),
-                                     remark=request.GET.get('guestRemark'),)
-            guest_id = {'status': True, 'message': '', 'content': data}
+            data = guest_update(admin_id=admin_id,
+                                index_id=index_id,
+                                phone=request.GET.get('phone'),
+                                name=request.GET.get('name'),
+                                time=request.GET.get('time'),
+                                sex=request.GET.get('sex'),
+                                age=request.GET.get('age'),
+                                ot=request.GET.get('ot'),
+                                em=request.GET.get('em'),
+                                dfh=request.GET.get('dfh'),
+                                remark=request.GET.get('guestRemark'))
+            guest = {'status': True, 'message': '', 'content': data}
         except Exception as e:
-            guest_id = {'status': False, 'message': str(e), 'content': {}}
+            guest = {'status': False, 'message': str(e), 'content': {}}
 
 
         try:
-            data = order_update_time(admin_id=admin_id,
-                                     index_id=index_id,
-                                     time=request.GET.get('time'),
-                                     name=request.GET.get('name'),
-                                     phone=request.GET.get('phone'))
-            order_id = {'status': True, 'message': '', 'content': data}
+            data = order_update(admin_id=admin_id,
+                                index_id=index_id,
+                                time=request.GET.get('time'),
+                                name=request.GET.get('name'),
+                                phone=request.GET.get('phone'),
+                                remark=request.GET.get('guestRemark'))
+
+            order = {'status': True, 'message': '', 'content': data}
         except Exception as e:
-            order_id = {'status': False, 'message': str(e), 'content': {}}
+            order = {'status': False, 'message': str(e), 'content': {}}
 
 
         try:
-            data = report_update_time(admin_id=admin_id,
-                                      index_id=index_id,
-                                      time=request.GET.get('time'),
-                                      name=request.GET.get('name'),
-                                      phone=request.GET.get('phone'))
-            report_id = {'status': True, 'message': '', 'content': data}
-        except Exception as e:
-            report_id = {'status': False, 'message': str(e), 'content': {}}
+            data = store_update(admin_id=admin_id,
+                                index_id=index_id,
+                                time=request.GET.get('time'),
+                                name=request.GET.get('name'),
+                                phone=request.GET.get('phone'),
+                                remark=request.GET.get('guestRemark'))
 
-        content = {'status': True, 'message': '', 'content': {'order_id': order_id, 'guest_id': guest_id, 'report_id': report_id}}
+            store = {'status': True, 'message': '', 'content': data}
+        except Exception as e:
+            store = {'status': False, 'message': str(e), 'content': {}}
+
+
+        try:
+            data = report_update(admin_id=admin_id,
+                                 index_id=index_id,
+                                 time=request.GET.get('time'),
+                                 name=request.GET.get('name'),
+                                 phone=request.GET.get('phone'),
+                                 remark=request.GET.get('guestRemark'))
+
+            report = {'status': True, 'message': '', 'content': data}
+        except Exception as e:
+            report = {'status': False, 'message': str(e), 'content': {}}
+
+
+        content = {'status': True, 'message': '', 'content': {'order': order, 'guest': guest, 'store': store, 'report': report}}
     else:
-        content = {'status': True, 'message': '', 'content': {'order_id': {}, 'guest_id': {}, 'report_id': {}}}
+        content = {'status': True, 'message': '', 'content': {'order': {}, 'guest': {}, 'store': {}, 'report': {}}}
     return JsonResponse(content)
 
 

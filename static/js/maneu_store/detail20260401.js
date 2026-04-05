@@ -113,7 +113,7 @@ $(document).ready(function () {
 
     $('#guestUpdate').click(function update_guest() {
         $.ajax({
-            url: store_update_time,
+            url: guest_update,
             method: 'GET',
             data: {
                 index_id: index_id,
@@ -174,7 +174,7 @@ $(document).ready(function () {
         }];
 
         $.ajax({
-            url: store_update_data,
+            url: store_update,
             method: 'GET',
             data: {
                 index_id: index_id,

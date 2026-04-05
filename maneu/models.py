@@ -132,6 +132,7 @@ class ManeuStore(models.Model):
     time = models.DateTimeField(blank=True, null=True)
     name = models.CharField(max_length=36, blank=True, null=True)
     phone = models.CharField(max_length=36, blank=True, null=True)
+    status = models.CharField(max_length=36, blank=True, null=True)
     content = models.TextField()
     remark = models.TextField()
 

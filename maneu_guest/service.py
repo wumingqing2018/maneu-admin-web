@@ -23,9 +23,17 @@ def guest_search_data(admin_id='', value=''):
     return ManeuGuest.objects.filter(Q(name__icontains=value, admin_id=admin_id) | Q(phone__icontains=value, admin_id=admin_id)).order_by('-time').all()
 
 
-def guest_update_time(admin_id='', index_id='', time=""):
-    return ManeuGuest.objects.filter(admin_id=admin_id, id=index_id).update(time=time)
+def guest_update(admin_id='', index_id='', time='', name='', phone='', remark='', sex='', age="", ot='', em='', dfh=''):
+    return ManeuGuest.objects.filter(admin_id=admin_id, id=index_id).update(name=name, phone=phone, time=time, sex=sex, age=age, ot=ot, em=em, dfh=dfh, remark=remark)
 
 
-def guest_update_data(admin_id='', index_id='', time='', name='', phone='', sex='', age='', ot='', em='', dfh='', remark=''):
-    return ManeuGuest.objects.filter(admin_id=admin_id, id=index_id).update(name=name, time=time, phone=phone, sex=sex, age=age, ot=ot, em=em, dfh=dfh, remark=remark)
+def order_update(admin_id='', index_id='', time="", name="", phone="", remark=''):
+    return ManeuOrder.objects.filter(admin_id=admin_id, id=index_id).update(time=time, name=name, phone=phone, remark=remark)
+
+
+def store_update(admin_id='', index_id='', time="", name="", phone="", remark=''):
+    return ManeuStore.objects.filter(admin_id=admin_id, id=index_id).update(time=time, name=name, phone=phone, remark=remark)
+
+
+def report_update(admin_id='', index_id='', time="", name="", phone="", remark=''):
+    return ManeuReport.objects.filter(admin_id=admin_id, id=index_id).update(time=time, name=name, phone=phone, remark=remark)

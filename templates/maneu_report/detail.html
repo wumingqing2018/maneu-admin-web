@@ -511,12 +511,12 @@
 {% block javascript %}
     <script>
         index_id = "{{ index_id }}"
-        report_index = "{% url 'maneu_report:index' %}"
         guest_update = "{% url 'maneu_guest:api_update' %}"
+        report_index = "{% url 'maneu_report:index' %}"
         report_detail = "{% url 'maneu_report:api_detail' %}"
         report_delete = "{% url 'maneu_report:api_delete' %}"
         report_update = "{% url 'maneu_report:api_update' %}"
     </script>
-    <script src="{% static 'js/maneu_report/detail20251229.js' %}" type="application/javascript"></script>
+    <script src="{% static 'js/maneu_report/detail20260401.js' %}" type="application/javascript"></script>
     <link href="{% static 'css/maneu_report/detail20251229.css' %}" rel="stylesheet">
 {% endblock %}

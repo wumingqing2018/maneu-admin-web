@@ -20,6 +20,7 @@
         </form>
         <hr>
 
+
         {# 客户基础数据 #}
         <form class="vertical2">
             <button class="vertical1 btn btn-primary" id="guest_show" type="button">客户数据 > 展开参数</button>
@@ -52,11 +53,12 @@
             <div class="vertical1 col-6">
                 <div class="input-group">
                     <span class="input-group-text">备注</span>
-                    <input autocomplete="off" type="text" class="form-control" id="guestRemark">
+                    <input autocomplete="off" type="text" class="form-control" id="remark">
                 </div>
             </div>
         </form>
         <hr>
+
 
         {# 视力解决方案 #}
         <form class="vertical2">
@@ -92,6 +94,7 @@
                 </div>
             </div>
 
+
             <div class="vertical1 col-12">
                 <div class="input-group">
                     <span class="input-group-text">左眼</span>
@@ -111,15 +114,9 @@
                     <input autocomplete="off" type="text" class="form-control" id="OS_ADD" list="ADD" placeholder="下加光">
                 </div>
             </div>
-
-            <div class="vertical1 col-6">
-                <div class="input-group">
-                    <span class="input-group-text">备注</span>
-                    <input autocomplete="off" type="text" class="form-control" id="reportRemark">
-                </div>
-            </div>
         </form>
         <hr>
+
 
         {# 产品信息 #}
         <form class="vertical2">
@@ -135,14 +132,9 @@
                     </div>
                 </div>
             {% endfor %}
-            <div class="vertical1 col-6">
-                <div class="input-group">
-                    <span class="input-group-text">备注</span>
-                    <input autocomplete="off" type="text" class="form-control" id="orderRemark">
-                </div>
-            </div>
         </form>
         <hr>
+
 
         {# 提交或返回按钮 #}
         <form class="vertical2">
@@ -531,10 +523,8 @@
 {% endblock %}
 {% block javascript %}
     <script>
-        order_index_web = "{% url 'maneu_order:index' %}"
-        order_insert_web = "{% url 'maneu_order:insert' %}"
         order_insert_api = "{% url 'maneu_order:api_insert' %}"
     </script>
-    <script src="{% static 'js/maneu_order/insert20251229.js' %}" type="application/javascript"></script>
+    <script src="{% static 'js/maneu_order/insert20260401.js' %}" type="application/javascript"></script>
     <link href="{% static 'css/maneu_order/insert20251229.css' %}" rel="stylesheet">
 {% endblock %}

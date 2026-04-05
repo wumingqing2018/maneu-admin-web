@@ -7,11 +7,12 @@ from django.forms import model_to_dict
 from django.http import HttpResponse
 from django.http import JsonResponse
 
-from common.simple import order_simple, report_simple, guest_simple
+from common.simple import store_simple, report_simple, guest_simple
 from common.verify import is_uuid
 from maneu_guest.service import *
 from maneu_order.service import *
 from maneu_report.service import *
+from maneu_store.service import store_insert
 
 
 def insert(request):
@@ -20,32 +21,44 @@ def insert(request):
         time = request.GET.get('time')
         name = request.GET.get('name')
         phone = request.GET.get('phone')
+        remark = request.GET.get('remark')
         index_id = uuid.uuid4()
 
-        try:
-            content = order_simple(request.GET.get('content'))
-            order = order_insert(admin_id=admin_id, index_id=index_id, time=time, name=name, phone=phone, status=3, content=content, remark=request.GET.get('orderRemark')).id
-            order_id = {'status': True, 'message': order, 'content': {}}
-        except Exception as e:
-            order_id = {'status': False, 'message': str(e), 'content': {}}
 
         try:
-            content = guest_simple(request)
-            guest = guest_insert(admin_id=admin_id, index_id=index_id, time=time, name=name, phone=phone, status=3, content=content, remark=request.GET.get('guestRemark')).id
-            guest_id = {'status': True, 'message': guest, 'content': {}}
+            data = order_insert(admin_id=admin_id, index_id=index_id, status=3, time=time, name=name, phone=phone, remark=remark, content=content).id
+            order = {'status': True, 'message': '', 'content': data}
         except Exception as e:
-            guest_id = {'status': False, 'message': str(e), 'content': {}}
+            order = {'status': False, 'message': str(e), 'content': {}}
+
 
         try:
             content = report_simple(request)
-            report = report_insert(admin_id=admin_id, index_id=index_id, time=time, name=name, phone=phone, status=3, content=content, remark=request.GET.get('reportRemark')).id
-            report_id = {'status': True, 'message': report, 'content': {}}
+            data = report_insert(admin_id=admin_id, index_id=index_id, status=3, time=time, name=name, phone=phone, remark=remark, content=content).id
+            report = {'status': True, 'message': '', 'content': data}
         except Exception as e:
-            report_id = {'status': False, 'message': str(e), 'content': {}}
+            report = {'status': False, 'message': str(e), 'content': {}}
 
-        content = {'status': True, 'message': '', 'content':{'index_id': index_id, 'order_id': order_id, 'guest_id': guest_id, 'report_id': report_id}}
+
+        try:
+            content = guest_simple(request)
+            data = guest_insert(admin_id=admin_id, index_id=index_id, status=3, time=time, name=name, phone=phone, remark=remark, content=content).id
+            guest = {'status': True, 'message': '', 'content': data}
+        except Exception as e:
+            guest = {'status': False, 'message': str(e), 'content': {}}
+
+
+        try:
+            content = store_simple(request.GET.get('content'))
+            data = store_insert(admin_id=admin_id, index_id=index_id, status=3, time=time, name=name, phone=phone, remark=remark, content=content).id
+            order = {'status': True, 'message': '', 'content': data}
+        except Exception as e:
+            order = {'status': False, 'message': str(e), 'content': {}}
+
+
+        content = {'status': True, 'message': '', 'content':{'index_id': index_id, 'order': order, 'report': report, 'guest': guest}}
     else:
-        content = {'status': False, 'message': '请输入正确的参数', 'content': {'index_id': '', 'order_id': {}, 'guest_id': {}, 'report_id': {}}}
+        content = {'status': False, 'message': '请输入正确的参数', 'content': {'index_id': '', 'order': {}, 'report': {}, 'guest': {}}}
     return JsonResponse(content)
 
 
@@ -115,7 +128,7 @@ def update(request):
 
         try:
             remark = request.GET.get('orderRemark')
-            content = order_simple(request.GET.get('content'))
+            content = store_simple(request.GET.get('content'))
             data = order_update_data(admin_id=admin_id, index_id=index_id, content=content, remark=remark)
             content = {'status': True, 'message': '', 'content': data}
         except Exception as e:

@@ -13,7 +13,7 @@ def guest_simple(request):
     return simple
 
 
-def order_simple(request_dict):
+def store_simple(request_dict):
     simple = {'arg10': '', 'arg11': '', 'arg12': '', 'arg13': '', 'arg14': ''}
     data = []
 

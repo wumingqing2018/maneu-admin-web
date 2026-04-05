@@ -199,28 +199,6 @@ $(document).ready(function () {
         }
     })
 
-    $('#timeUpdate').click(function update_guest() {
-        $.ajax({
-            url: order_update,
-            method: 'GET',
-            data: {
-                index_id: index_id,
-                time: $("#time").val(),
-            },
-            success: function (res) {
-                console.log(res)
-                if (res.status === true){
-                    alert('更新成功')
-                }else {
-                    alert('更新失败')
-                }
-            },
-            error: function (res) {
-                console.log(res)
-                alert('网络错误')
-            }
-        })
-    })
 
     $('#reportUpdate').click(function update_report() {
         $.ajax({

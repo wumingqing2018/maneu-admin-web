@@ -93,12 +93,12 @@ $(document).ready(function () {
             method: 'GET',
             data: {
                 content: JSON.stringify(store),
-                orderRemark: $("#orderRemark").val(),
 
 
                 time: $("#time").val(),
                 name: $("#name").val(),
                 phone: $("#phone").val(),
+                remark: $("#remark").val(),
 
 
                 age: $("#age").val(),
@@ -106,8 +106,6 @@ $(document).ready(function () {
                 dfh: $("#dfh").val(),
                 ot: $("#ot").val(),
                 em: $("#em").val(),
-                guestRemark: $("#guestRemark").val(),
-
 
 
                 plan: $("#PLAN").val(),
@@ -140,7 +138,6 @@ $(document).ready(function () {
                 os_lt: $("#OS_LT").val(),
                 os_vt: $("#OS_VT").val(),
                 os_bc: $("#OS_BC").val(),
-                reportRemark: $("#reportRemark").val(),
             },
             success: function (res) {
                 console.log(res)

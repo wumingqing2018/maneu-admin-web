@@ -3,6 +3,7 @@ $(document).ready(function () {
     report_hide()
     guest_hide()
 
+
     function report_hide() {
         $("#report_hide").hide()
         $("#report_show").show()
@@ -53,6 +54,7 @@ $(document).ready(function () {
         $("#OS_BC").show()
     }
 
+
     function guest_hide() {
         $("#guest_hide").hide()
         $("#guest_show").show()
@@ -64,6 +66,7 @@ $(document).ready(function () {
         $("#guest_show").hide()
         $("#guest_content").show()
     }
+
 
     function detail_report() {
         $.ajax({
@@ -129,6 +132,7 @@ $(document).ready(function () {
         })
     }
 
+
     $('#guest_hide').click(function () {
         guest_hide()
     })
@@ -137,6 +141,7 @@ $(document).ready(function () {
         guest_show()
     })
 
+
     $('#report_hide').click(function () {
         report_hide()
     })
@@ -144,6 +149,7 @@ $(document).ready(function () {
     $('#report_show').click(function () {
         report_show()
     })
+
 
     $('#delete').click(function () {
         if (confirm("确定要删除记录吗？")) {
@@ -177,7 +183,6 @@ $(document).ready(function () {
             method: "GET",
             data: {
                 index_id: index_id,
-                reportRemark: $("#reportRemark").val(),
                 plan: $("#PLAN").val(),
                 pd: $("#PD").val(),
                 od_va: $("#OD_VA").val(),
