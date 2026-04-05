@@ -169,7 +169,7 @@ def search_data(request):
 
 
 def generate_qr_code(request):
-    link='https://maneu.online/get_verify/?order_id='+request.GET.get('index_id')
+    link='https://maneu.online/verify_order/?order_id='+request.GET.get('index_id')
     print(link)
 
     # 创建二维码对象

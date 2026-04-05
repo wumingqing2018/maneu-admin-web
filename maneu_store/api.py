@@ -14,7 +14,7 @@ from maneu_store.service import *
 
 
 def qrcode(request):
-    link = 'https://maneu.online/get_verify/?store_id=' + request.GET.get('index_id')
+    link = 'https://maneu.online/verify_store/?store_id=' + request.GET.get('index_id')
     print(link)
 
     # 创建二维码对象
