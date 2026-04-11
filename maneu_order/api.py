@@ -12,20 +12,21 @@ from common.verify import is_uuid
 from maneu_guest.service import *
 from maneu_order.service import *
 from maneu_report.service import *
-from maneu_store.service import store_insert
+from maneu_store.service import store_insert, store_delete
 
 
 def insert(request):
+    time = request.GET.get('time')
+    name = request.GET.get('name')
+    phone = request.GET.get('phone')
+    remark = request.GET.get('remark')
+    index_id = uuid.uuid4()
     admin_id = is_uuid(request.session.get('id'))
+
+
     if admin_id:
-        time = request.GET.get('time')
-        name = request.GET.get('name')
-        phone = request.GET.get('phone')
-        remark = request.GET.get('remark')
-        index_id = uuid.uuid4()
-
-
         try:
+            content = store_simple(request.GET.get('content'))
             data = order_insert(admin_id=admin_id, index_id=index_id, status=3, time=time, name=name, phone=phone, remark=remark, content=content).id
             order = {'status': True, 'message': '', 'content': data}
         except Exception as e:
@@ -51,14 +52,14 @@ def insert(request):
         try:
             content = store_simple(request.GET.get('content'))
             data = store_insert(admin_id=admin_id, index_id=index_id, status=3, time=time, name=name, phone=phone, remark=remark, content=content).id
-            order = {'status': True, 'message': '', 'content': data}
+            store = {'status': True, 'message': '', 'content': data}
         except Exception as e:
-            order = {'status': False, 'message': str(e), 'content': {}}
+            store = {'status': False, 'message': str(e), 'content': {}}
 
 
-        content = {'status': True, 'message': '', 'content':{'index_id': index_id, 'order': order, 'report': report, 'guest': guest}}
+        content = {'status': True, 'message': '', 'content':{'index_id': index_id, 'order': order, 'report': report, 'guest': guest, 'store': store}}
     else:
-        content = {'status': False, 'message': '请输入正确的参数', 'content': {'index_id': '', 'order': {}, 'report': {}, 'guest': {}}}
+        content = {'status': False, 'message': '请输入正确的参数', 'content': {'index_id': '', 'order': {}, 'report': {}, 'guest': {}, 'store': {}}}
     return JsonResponse(content)
 
 
@@ -66,29 +67,41 @@ def detail(request):
     admin_id = is_uuid(request.session.get('id'))
     index_id = is_uuid(request.GET.get('index_id'))
     if admin_id and index_id:
-
-        try:
-            data = report_detail(admin_id=admin_id, index_id=index_id)
-            report_id = {'status': True, 'message': '', 'content': model_to_dict(data)}
-        except Exception as e:
-            report_id = {'status': False, 'message': str(e), 'content': {}}
-
         try:
             order = order_detail(admin_id=admin_id, index_id=index_id)
-            content = {'time': order.time, 'name': order.name, 'phone': order.phone, 'remark': order.remark, 'content': json.loads(order.content),}
-            order_id = {'status': True, 'message': '', 'content': content}
+            content = json.loads(order.content)
+            order = {'status': True, 'message': '', 'content': content}
         except Exception as e:
-            order_id = {'status': False, 'message': str(e), 'content': {}}
+            order = {'status': False, 'message': str(e), 'content': {}}
+
 
         try:
-            data = guest_detail(admin_id=admin_id, index_id=index_id)
-            guest_id = {'status': True, 'message': '', 'content': model_to_dict(data)}
+            guest = guest_detail(admin_id=admin_id, index_id=index_id)
+            content = model_to_dict(guest)
+            guest = {'status': True, 'message': '', 'content': content}
         except Exception as e:
-            guest_id = {'status': False, 'message': str(e), 'content': {}}
+            guest = {'status': False, 'message': str(e), 'content': {}}
 
-        content = {'status': True, 'message': '', 'content':{'order_id': order_id, 'guest_id': guest_id, 'report_id': report_id}}
+
+        try:
+            store = guest_detail(admin_id=admin_id, index_id=index_id)
+            content = json.loads(store.content)
+            store = {'status': True, 'message': '', 'content': content}
+        except Exception as e:
+            store = {'status': False, 'message': str(e), 'content': {}}
+
+
+        try:
+                report = report_detail(admin_id=admin_id, index_id=index_id)
+                content = model_to_dict(report)
+                report = {'status': True, 'message': '', 'content': content}
+        except Exception as e:
+                report = {'status': False, 'message': str(e), 'content': {}}
+
+
+        content = {'status': True, 'message': '', 'content':{'order': order, 'guest': guest, 'report': report, 'store': store}}
     else:
-        content = {'status': False, 'message': '请输入正确的参数', 'content': {'order_id': {}, 'guest_id': {}, 'report_id': {}}}
+        content = {'status': False, 'message': '请输入正确的参数', 'content':{'order': {}, 'guest': {}, 'report': {}, 'store': {}}}
     return JsonResponse(content)
 
 
@@ -96,28 +109,37 @@ def delete(request):
     admin_id = is_uuid(request.session.get('id'))
     index_id = is_uuid(request.GET.get('index_id'))
     if admin_id and index_id:
+        try:
+            content = order_delete(admin_id=admin_id, index_id=index_id)
+            order = {'status': True, 'message': "", 'content': content}
+        except Exception as e:
+            order = {'status': False, 'message': str(e), 'content': {}}
+
 
         try:
-            guest_delete(admin_id=admin_id, index_id=index_id)
-            guest_id = {'status': True, 'message': "", 'content': {}}
+            content = guest_delete(admin_id=admin_id, index_id=index_id)
+            guest = {'status': True, 'message': "", 'content': content}
         except Exception as e:
-            guest_id = {'status': False, 'message': str(e), 'content': {}}
+            guest = {'status': False, 'message': str(e), 'content': {}}
+
 
         try:
-            order_delete(admin_id=admin_id, index_id=index_id)
-            order_id = {'status': True, 'message': "", 'content': {}}
+            content = store_delete(admin_id=admin_id, index_id=index_id)
+            store = {'status': True, 'message': "", 'content': content}
         except Exception as e:
-            order_id = {'status': False, 'message': str(e), 'content': {}}
+            store = {'status': False, 'message': str(e), 'content': {}}
+
 
         try:
-            report_delete(admin_id=admin_id, index_id=index_id)
-            report_id = {'status': True, 'message': "", 'content': {}}
+            content = report_delete(admin_id=admin_id, index_id=index_id)
+            report = {'status': True, 'message': "", 'content': content}
         except Exception as e:
-            report_id = {'status': False, 'message': str(e), 'content': {}}
+            report = {'status': False, 'message': str(e), 'content': {}}
 
-        content = {'status': True, 'message': '', 'content':{'order_id': order_id, 'guest_id': guest_id, 'report_id': report_id}}
+
+        content = {'status': True, 'message': '', 'content': {'order': order, 'guest': guest, 'report': report, 'store': store}}
     else:
-        content = {'status': False, 'message': '请输入正确的参数', 'content': {'order_id': {}, 'guest_id': {}, 'report_id': {}}}
+        content = {'status': False, 'message': '请输入正确的参数', 'content': {'order': {}, 'guest': {}, 'report': {}, 'store': {}}}
     return JsonResponse(content)
 
 
@@ -125,6 +147,7 @@ def update(request):
     admin_id = is_uuid(request.session.get('id'))
     index_id = is_uuid(request.GET.get('index_id'))
     if admin_id and index_id:
+
 
         try:
             remark = request.GET.get('orderRemark')
@@ -134,6 +157,7 @@ def update(request):
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
 
+
     else:
         content = {'status': False, 'message': '参数错误请确认', 'content': {}}
     return JsonResponse(content)
@@ -142,11 +166,14 @@ def update(request):
 def search_time(request):
     admin_id = is_uuid(request.session.get('id'))
     if admin_id:
+
+
         try:
             data = order_search_time(admin_id=admin_id, timeS=request.GET.get('timeS'), timeE=request.GET.get('timeE'))
             content = {'status': True, 'message': '', 'content': list(data.values('id', 'name', 'phone', 'time', 'remark'))}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
+
 
     else:
         content = {'status': False, 'message': '参数错误请确认', 'content': {}}
@@ -157,11 +184,13 @@ def search_data(request):
     admin_id = is_uuid(request.session.get('id'))
     if admin_id:
 
+
         try:
             data = order_search_data(admin_id=admin_id, value=request.GET.get('value'))
             content = {'status': True, 'message': '', 'content': list(data.values('id', 'name', 'phone', 'time', 'remark'))}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
+
 
     else:
         content = {'status': False, 'message': '参数错误请确认', 'content': {}}
@@ -169,8 +198,8 @@ def search_data(request):
 
 
 def generate_qr_code(request):
-    link='https://maneu.online/verify_order/?order_id='+request.GET.get('index_id')
-    print(link)
+    link='https://maneu.online/verify_order/?index_id='+request.GET.get('index_id')
+
 
     # 创建二维码对象
     qr = qrcode.QRCode(
@@ -182,12 +211,15 @@ def generate_qr_code(request):
     qr.add_data(link)
     qr.make(fit=True)
 
+
     img = qr.make_image(fill_color="black", back_color="white")
+
 
     # 将图片存入内存
     buffer = BytesIO()
     img.save(buffer, format="PNG")
     buffer.seek(0)
+
 
     # 返回图片响应
     return HttpResponse(buffer, content_type="image/png")

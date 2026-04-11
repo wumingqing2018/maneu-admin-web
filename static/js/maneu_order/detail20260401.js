@@ -80,7 +80,7 @@ $(document).ready(function () {
                 console.log(res)
                 if (res.status === true) {
 
-                    guest = res.content.guest_id
+                    guest = res.content.guest
                     if (guest.status === true) {
                         $('#guestRemark').val(guest.content.remark)
                         $('#name').val(guest.content.name)
@@ -92,7 +92,7 @@ $(document).ready(function () {
                         $('#ot').val(guest.content.ot)
                     }
 
-                    report = res.content.report_id
+                    report = res.content.report
                     if (report.status === true) {
                         console.log('report', report.content)
                         $('#reportRemark').val(report.content.remark)
@@ -130,7 +130,7 @@ $(document).ready(function () {
                         $('#OD_VT').val(report.content.od_vt)
                     }
 
-                    order = res.content.order_id
+                    order = res.content.order
                     if (order.status === true) {
                         console.log('order', order.content)
                         $('#time').val(order.content.time)
