@@ -13,29 +13,28 @@ from maneu_guest.service import *
 from maneu_store.service import *
 
 
-def qrcode(request):
-    link = 'https://maneu.online/verify_store/?store_id=' + request.GET.get('index_id')
-    print(link)
+def generate_qr_code(request):
+        link = 'https://maneu.online/verify_order/?index_id=' + request.GET.get('index_id')
 
-    # 创建二维码对象
-    qr = qrcode.QRCode(
-        version=1,
-        error_correction=qrcode.constants.ERROR_CORRECT_L,
-        box_size=10,
-        border=4,
-    )
-    qr.add_data(link)
-    qr.make(fit=True)
+        # 创建二维码对象
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_L,
+            box_size=10,
+            border=4,
+        )
+        qr.add_data(link)
+        qr.make(fit=True)
 
-    img = qr.make_image(fill_color="black", back_color="white")
+        img = qr.make_image(fill_color="black", back_color="white")
 
-    # 将图片存入内存
-    buffer = BytesIO()
-    img.save(buffer, format="PNG")
-    buffer.seek(0)
+        # 将图片存入内存
+        buffer = BytesIO()
+        img.save(buffer, format="PNG")
+        buffer.seek(0)
 
-    # 返回图片响应
-    return HttpResponse(buffer, content_type="image/png")
+        # 返回图片响应
+        return HttpResponse(buffer, content_type="image/png")
 
 
 def insert(request):
