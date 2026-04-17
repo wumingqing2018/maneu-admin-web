@@ -146,39 +146,25 @@ $(document).ready(function () {
     $('#storeUpdate').click(function update_order() {
 
         data = [{
-                        'parameters': $("#parameters").val(),
-            'class': $("#class").val(),
-            'brand': $("#brand").val(),
-            'model': $("#model").val(),
-            'price': $("#price").val(),
-            'arg00': $("#arg00").val(),
-            'arg01': $("#arg01").val(),
-            'arg10': $("#arg10").val(),
-            'arg11': $("#arg11").val(),
-            'arg20': $("#arg20").val(),
-            'arg21': $("#arg21").val(),
-            'arg30': $("#arg30").val(),
-            'arg31': $("#arg31").val(),
-            'arg40': $("#arg40").val(),
-            'arg41': $("#arg41").val(),
-            'arg50': $("#arg50").val(),
-            'arg51': $("#arg51").val(),
-            'arg60': $("#arg60").val(),
-            'arg61': $("#arg61").val(),
-            'arg70': $("#arg70").val(),
-            'arg71': $("#arg71").val(),
-            'arg80': $("#arg80").val(),
-            'arg81': $("#arg81").val(),
-            'arg90': $("#arg90").val(),
-            'arg91': $("#arg91").val(),
+            [$("#key10").val()] : $("#val10").val(),
+            [$("#key20").val()] : $("#val20").val(),
+            [$("#key30").val()] : $("#val30").val(),
+            [$("#key40").val()] : $("#val40").val(),
+            [$("#key50").val()] : $("#val50").val(),
+            [$("#key60").val()] : $("#val60").val(),
+            [$("#key70").val()] : $("#val70").val(),
+            [$("#key80").val()] : $("#val80").val(),
+            [$("#key90").val()] : $("#val90").val(),
+            [$("#key00").val()] : $("#val00").val(),
         }];
+        console.log(data)
 
         $.ajax({
             url: store_update,
             method: 'GET',
             data: {
                 index_id: index_id,
-                content: JSON.stringify(data),
+                storeContent: JSON.stringify(data),
             },
 
             success: function (res) {

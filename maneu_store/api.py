@@ -43,7 +43,7 @@ def insert(request):
         time = request.GET.get('time')
         name = request.GET.get('name')
         phone = request.GET.get('phone')
-        remark = request.GET.get('guestRemark')
+        remark = request.GET.get('remark')
         index_id = uuid.uuid4()
 
 
@@ -126,7 +126,7 @@ def update(request):
 
 
         try:
-            data = store_update(admin_id=admin_id, index_id=index_id, content=request.GET.get('content'))
+            data = store_update(admin_id=admin_id, index_id=index_id, content=request.GET.get('storeContent'))
             content = {'status': True, 'message': '', 'content': data}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
