@@ -25,6 +25,7 @@ $(document).ready(function () {
             },
             success: function (res) {
                 if (res.status === true) {
+                    console.log(res)
 
                     guest = res.content.guest
                     if (guest.status === true) {
@@ -42,33 +43,13 @@ $(document).ready(function () {
 
                     store = res.content.store
                     if (store.status === true) {
-                                                $('#parameters').val(store.content[0].parameters)
-                        $('#class').val(store.content[0].class)
-                        $('#brand').val(store.content[0].brand)
-                        $('#model').val(store.content[0].model)
-                        $('#price').val(store.content[0].price)
-                        $('#arg00').val(store.content[0].arg00)
-                        $('#arg01').val(store.content[0].arg01)
-                        $('#arg10').val(store.content[0].arg10)
-                        $('#arg11').val(store.content[0].arg11)
-                        $('#arg20').val(store.content[0].arg20)
-                        $('#arg21').val(store.content[0].arg21)
-                        $('#arg30').val(store.content[0].arg30)
-                        $('#arg31').val(store.content[0].arg31)
-                        $('#arg40').val(store.content[0].arg40)
-                        $('#arg41').val(store.content[0].arg41)
-                        $('#arg50').val(store.content[0].arg50)
-                        $('#arg51').val(store.content[0].arg51)
-                        $('#arg60').val(store.content[0].arg60)
-                        $('#arg61').val(store.content[0].arg61)
-                        $('#arg70').val(store.content[0].arg70)
-                        $('#arg71').val(store.content[0].arg71)
-                        $('#arg80').val(store.content[0].arg80)
-                        $('#arg81').val(store.content[0].arg81)
-                        $('#arg90').val(store.content[0].arg90)
-                        $('#arg91').val(store.content[0].arg91)
+                        let loopIndex = 0;
+                        $.each(store.content[0], function(key, val) {
+                            $('.store-key').eq(loopIndex).val(key)
+                            $('.store-val').eq(loopIndex).val(val)
+                            const loopNumber = ++loopIndex;  // 手动计数
+                        })
                     }
-
                 }
             }
         })
