@@ -453,6 +453,7 @@
             data: params,
             success: function(res) {
                 renderList(res.content || []);
+                console.log(res)
             },
             error: function() {
                 $body.html(`<div class="empty-state"><i class="bi bi-exclamation-triangle"></i><p>加载失败，请稍后重试</p></div>`);
