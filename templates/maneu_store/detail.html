@@ -1,65 +1,48 @@
 {% extends 'maneu/base.html' %}
 {% load static %}
 
-{% block css %}
-    <link href="{% static 'css/maneu_store/detail20260428.css' %}" rel="stylesheet">
-{% endblock %}
 
 {% block content %}
     <div class="page-wrapper">
-        <!-- 顶部操作栏 -->
         <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
             <h1 class="page-title mb-0">
-                <i class="bi bi-pencil-square"></i> 定制记录详情
-                <span class="status-badge status-empty ms-2" id="loadStatus">加载中...</span>
+                <i class="bi bi-gear-wide-connected"></i> 定制化产品详情
             </h1>
             <div class="d-flex gap-2 flex-wrap">
-                <button class="btn btn-outline-secondary btn-qrcode btn-action-primary" id="generate_qr_code"
-                        type="button"
-                        title="下载二维码">
+                <button class="btn btn-outline-secondary btn-qrcode btn-action-primary" id="generate_qr_code" type="button" title="下载二维码">
                     <i class="bi bi-qr-code"></i> 二维码
                 </button>
-                <a href="{% url 'maneu_store:index' %}" class="btn btn-outline-primary btn-back-page">
+                <a href="{% url 'maneu_order:index' %}" class="btn btn-outline-primary btn-back-page">
                     <i class="bi bi-arrow-left"></i> 返回列表
                 </a>
             </div>
         </div>
 
-        <!-- 时间卡片 -->
-        <div class="section-card">
-            <div class="section-title">
-                <i class="bi bi-calendar-event"></i> 记录时间
-            </div>
-            <div class="single-field">
-                <label for="time" class="form-label mb-0">日期与时间</label>
-                <input autocomplete="off" type="datetime-local" class="form-control" id="time"
-                       value="{{ time }}" style="max-width: 320px;">
-            </div>
-        </div>
-
-        <!-- 客户基础信息卡片 -->
+        <!-- 客户信息卡片 -->
         <div class="section-card" id="guestSection">
             <div class="section-title d-flex justify-content-between align-items-center flex-wrap gap-2">
-                <span><i class="bi bi-person-vcard"></i> 客户信息</span>
+                <span><i class="bi bi-person-vcard"></i> 客户信息<span class="status-badge status-empty ms-2" id="guestLoadStatus">加载中...</span></span>
                 <div class="d-flex gap-2">
-                    <button class="btn-collapse-custom" id="guest_show" type="button" style="display:none;">
-                        <i class="bi bi-chevron-down"></i> 展开详细参数
-                    </button>
-                    <button class="btn-collapse-custom" id="guest_hide" type="button">
-                        <i class="bi bi-chevron-up"></i> 收起详细参数
+                    <button class="btn-toggle" id="toggleGuest" type="button">
+                        <i class="bi bi-chevron-down"></i> 详细参数
                     </button>
                 </div>
             </div>
 
-            <!-- 核心字段 -->
             <div class="row g-3 mb-2">
-                <div class="col-md-6">
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+                        <input autocomplete="off" type="datetime-local" class="form-control" id="time">
+                    </div>
+                </div>
+                <div class="col-md-4">
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-person"></i></span>
                         <input autocomplete="off" type="text" class="form-control" id="name" placeholder="客户姓名">
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-telephone"></i></span>
                         <input autocomplete="off" type="text" class="form-control" id="phone" placeholder="联系电话">
@@ -67,13 +50,11 @@
                 </div>
             </div>
 
-            <!-- 详细参数区域（可折叠） -->
-            <div id="guest_content">
+            <div id="guestExtra" style="display: none;">
                 <div class="row g-3 mb-3">
                     <div class="col-md-4">
                         <label class="form-label small fw-bold text-muted">性别</label>
-                        <input autocomplete="off" type="text" class="form-control" id="sex" list="sexList"
-                               placeholder="例如：男">
+                        <input autocomplete="off" type="text" class="form-control" id="sex" list="sexList" placeholder="例如：男">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-bold text-muted">年龄</label>
@@ -81,154 +62,486 @@
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-bold text-muted">眼位</label>
-                        <input autocomplete="off" type="text" class="form-control" id="ot" list="otList"
-                               placeholder="例如：正视">
+                        <input autocomplete="off" type="text" class="form-control" id="ot" list="otList" placeholder="例如：正视">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-bold text-muted">主视眼</label>
-                        <input autocomplete="off" type="text" class="form-control" id="em" list="emList"
-                               placeholder="左眼 / 右眼">
+                        <input autocomplete="off" type="text" class="form-control" id="em" list="emList" placeholder="左眼 / 右眼">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small fw-bold text-muted">病族史</label>
-                        <input autocomplete="off" type="text" class="form-control" id="dfh" list="dfhList"
-                               placeholder="无 / 有">
+                        <input autocomplete="off" type="text" class="form-control" id="dfh" list="dfhList" placeholder="无 / 有">
                     </div>
                 </div>
             </div>
 
-            <!-- 备注 -->
             <div class="row g-3">
                 <div class="col-12">
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-chat-left-text"></i></span>
-                        <input autocomplete="off" type="text" class="form-control" id="guestRemark"
-                               placeholder="客户备注信息（可选）">
+                        <input autocomplete="off" type="text" class="form-control" id="remark" placeholder="备注信息">
                     </div>
                 </div>
             </div>
 
-            <!-- 更新客户按钮 -->
-            <div class="mt-3 text-end">
-                <button class="btn btn-save-guest btn-action-primary" id="guestUpdate" type="button">
+            <div class="action-bar justify-content-end">
+                <button class="btn-save-guest" id="guestUpdate" type="button">
                     <i class="bi bi-check-lg"></i> 更新客户信息
                 </button>
             </div>
         </div>
 
-        <!-- 产品订单卡片 -->
-        <div class="section-card" id="storeSection">
-            <div class="section-title d-flex justify-content-between align-items-center">
-                <span><i class="bi bi-box-seam"></i> 产品订单信息</span>
-                <span class="status-badge status-empty" id="storeStatus">待加载</span>
+
+        <!-- 2. 产品信息卡片（12组键值对，默认展开，可折叠） -->
+        <div class="section-card">
+            <div class="section-title d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <span><i class="bi bi-box-seam"></i> 定制产品信息<span class="status-badge status-empty ms-2" id="guestLoadStatus">加载中...</span></span>
+                <div class="d-flex gap-2">
+                    <button class="btn-toggle" id="toggleProduct" type="button">
+                        <i class="bi bi-chevron-up"></i> 详细参数
+                    </button>
+                </div>
             </div>
-            <div id="store_content">
-                <div class="custom-kv-grid">
-                    <div class="custom-kv-pair">
-                        <input class="form-control form-control-sm key-input store-key" autocomplete="off" type="text"
-                               id="key10" placeholder="参数名">
-                        <span class="text-muted">:</span>
-                        <input class="form-control form-control-sm store-val" autocomplete="off" type="text" id="val10"
-                               placeholder="参数值">
+
+            <div id="productExtra">
+                <!-- 12组键值对 -->
+                <div class="row g-3 mb-2">
+                    <div class="col-md-6">
+                        <div class="input-group"><input type="text" class="form-control" id="key1" placeholder="参数名"><span class="input-group-text">:</span><input type="text" class="form-control" id="val1" placeholder="参数值"></div>
                     </div>
-                    <div class="custom-kv-pair">
-                        <input class="form-control form-control-sm key-input store-key" autocomplete="off" type="text"
-                               id="key20" placeholder="参数名">
-                        <span class="text-muted">:</span>
-                        <input class="form-control form-control-sm store-val" autocomplete="off" type="text" id="val20"
-                               placeholder="参数值">
+                </div>
+                <div class="row g-3 mb-2">
+                    <div class="col-md-6">
+                        <div class="input-group"><input type="text" class="form-control" id="key2" placeholder="参数名"><span class="input-group-text">:</span><input type="text" class="form-control" id="val2" placeholder="参数值"></div>
                     </div>
-                    <div class="custom-kv-pair">
-                        <input class="form-control form-control-sm key-input store-key" autocomplete="off" type="text"
-                               id="key30" placeholder="参数名">
-                        <span class="text-muted">:</span>
-                        <input class="form-control form-control-sm store-val" autocomplete="off" type="text" id="val30"
-                               placeholder="参数值">
+                </div>
+                <div class="row g-3 mb-2">
+                    <div class="col-md-6">
+                        <div class="input-group"><input type="text" class="form-control" id="key3" placeholder="参数名"><span class="input-group-text">:</span><input type="text" class="form-control" id="val3" placeholder="参数值"></div>
                     </div>
-                    <div class="custom-kv-pair">
-                        <input class="form-control form-control-sm key-input store-key" autocomplete="off" type="text"
-                               id="key40" placeholder="参数名">
-                        <span class="text-muted">:</span>
-                        <input class="form-control form-control-sm store-val" autocomplete="off" type="text" id="val40"
-                               placeholder="参数值">
+                </div>
+                <div class="row g-3 mb-2">
+                    <div class="col-md-6">
+                        <div class="input-group"><input type="text" class="form-control" id="key4" placeholder="参数名"><span class="input-group-text">:</span><input type="text" class="form-control" id="val4" placeholder="参数值"></div>
                     </div>
-                    <div class="custom-kv-pair">
-                        <input class="form-control form-control-sm key-input store-key" autocomplete="off" type="text"
-                               id="key50" placeholder="参数名">
-                        <span class="text-muted">:</span>
-                        <input class="form-control form-control-sm store-val" autocomplete="off" type="text" id="val50"
-                               placeholder="参数值">
+                </div>
+                <div class="row g-3 mb-2">
+                    <div class="col-md-6">
+                        <div class="input-group"><input type="text" class="form-control" id="key5" placeholder="参数名"><span class="input-group-text">:</span><input type="text" class="form-control" id="val5" placeholder="参数值"></div>
                     </div>
-                    <div class="custom-kv-pair">
-                        <input class="form-control form-control-sm key-input store-key" autocomplete="off" type="text"
-                               id="key60" placeholder="参数名">
-                        <span class="text-muted">:</span>
-                        <input class="form-control form-control-sm store-val" autocomplete="off" type="text" id="val60"
-                               placeholder="参数值">
+                </div>
+                <div class="row g-3 mb-2">
+                    <div class="col-md-6">
+                        <div class="input-group"><input type="text" class="form-control" id="key6" placeholder="参数名"><span class="input-group-text">:</span><input type="text" class="form-control" id="val6" placeholder="参数值"></div>
                     </div>
-                    <div class="custom-kv-pair">
-                        <input class="form-control form-control-sm key-input store-key" autocomplete="off" type="text"
-                               id="key70" placeholder="参数名">
-                        <span class="text-muted">:</span>
-                        <input class="form-control form-control-sm store-val" autocomplete="off" type="text" id="val70"
-                               placeholder="参数值">
+                </div>
+                <div class="row g-3 mb-2">
+                    <div class="col-md-6">
+                        <div class="input-group"><input type="text" class="form-control" id="key7" placeholder="参数名"><span class="input-group-text">:</span><input type="text" class="form-control" id="val7" placeholder="参数值"></div>
                     </div>
-                    <div class="custom-kv-pair">
-                        <input class="form-control form-control-sm key-input store-key" autocomplete="off" type="text"
-                               id="key80" placeholder="参数名">
-                        <span class="text-muted">:</span>
-                        <input class="form-control form-control-sm store-val" autocomplete="off" type="text" id="val80"
-                               placeholder="参数值">
+                </div>
+                <div class="row g-3 mb-2">
+                    <div class="col-md-6">
+                        <div class="input-group"><input type="text" class="form-control" id="key8" placeholder="参数名"><span class="input-group-text">:</span><input type="text" class="form-control" id="val8" placeholder="参数值"></div>
                     </div>
-                    <div class="custom-kv-pair">
-                        <input class="form-control form-control-sm key-input store-key" autocomplete="off" type="text"
-                               id="key90" placeholder="参数名">
-                        <span class="text-muted">:</span>
-                        <input class="form-control form-control-sm store-val" autocomplete="off" type="text" id="val90"
-                               placeholder="参数值">
+                </div>
+                <div class="row g-3 mb-2">
+                    <div class="col-md-6">
+                        <div class="input-group"><input type="text" class="form-control" id="key9" placeholder="参数名"><span class="input-group-text">:</span><input type="text" class="form-control" id="val9" placeholder="参数值"></div>
                     </div>
-                    <div class="custom-kv-pair">
-                        <input class="form-control form-control-sm key-input store-key" autocomplete="off" type="text"
-                               id="key00" placeholder="参数名">
-                        <span class="text-muted">:</span>
-                        <input class="form-control form-control-sm store-val" autocomplete="off" type="text" id="val00"
-                               placeholder="参数值">
+                </div>
+                <div class="row g-3 mb-2">
+                    <div class="col-md-6">
+                        <div class="input-group"><input type="text" class="form-control" id="key10" placeholder="参数名"><span class="input-group-text">:</span><input type="text" class="form-control" id="val10" placeholder="参数值"></div>
+                    </div>
+                </div>
+                <div class="row g-3 mb-2">
+                    <div class="col-md-6">
+                        <div class="input-group"><input type="text" class="form-control" id="key11" placeholder="参数名"><span class="input-group-text">:</span><input type="text" class="form-control" id="val11" placeholder="参数值"></div>
+                    </div>
+                </div>
+                <div class="row g-3 mb-2">
+                    <div class="col-md-6">
+                        <div class="input-group"><input type="text" class="form-control" id="key12" placeholder="参数名"><span class="input-group-text">:</span><input type="text" class="form-control" id="val12" placeholder="参数值"></div>
                     </div>
                 </div>
                 <small class="text-muted d-block mt-2">
-                    <i class="bi bi-info-circle"></i> 共10组自定义产品参数，留空则不保存对应项。
+                    <i class="bi bi-info-circle"></i> 填写12组自定义产品参数，参数名不能重复，留空则不保存。
                 </small>
-            </div>
-
-            <!-- 更新订单按钮 -->
-            <div class="mt-3 text-end">
-                <button class="btn btn-save-store btn-action-primary" id="storeUpdate" type="button">
-                    <i class="bi bi-check-lg"></i> 更新产品订单
-                </button>
             </div>
         </div>
 
         <!-- 底部操作栏 -->
         <div class="action-bar justify-content-end">
-            <button class="btn btn-delete-record btn-action-primary" id="delete" type="button">
-                <i class="bi bi-trash3"></i> 删除此记录
+            <button class="btn btn-outline-danger btn-back-page" id="delete" type="button">
+                <i class="bi bi-trash3"></i> 删除此订单
             </button>
         </div>
     </div>
 {% endblock %}
 
 {% block javascript %}
-    <script>
-        // ========== API 端点 ==========
-        const store_detail = "{% url 'maneu_store:api_detail' %}";
-        const store_delete = "{% url 'maneu_store:api_delete' %}";
-        const guest_update = "{% url 'maneu_guest:api_update' %}";
-        const store_update = "{% url 'maneu_store:api_update' %}";
-        const store_QRcode = "{% url 'maneu_store:api_QRcode' %}";
+<script>
+  const index_id = "{{ index_id }}";
+  const API = {
+    detail: "{% url 'maneu_store:api_detail' %}",
+    delete: "{% url 'maneu_store:api_delete' %}",
+    update: "{% url 'maneu_store:api_update' %}",
+    guestUpdate: "{% url 'maneu_guest:api_update' %}",
+    qrcode: "{% url 'maneu_store:api_QRcode' %}"
+  };
 
-        // 从URL获取记录ID
-        const urlParams = new URLSearchParams(window.location.search);
-        const index_id = urlParams.get('index_id') || '{{ index_id|default:"" }}';
-    </script>
-    <script src="{% static 'js/maneu_store/detail20260428.js' %}"></script>
+  $(function() {
+    const $time = $('#time'), $remark = $('#remark');
+    const $guestExtra = $('#guestExtra'), $productExtra = $('#productExtra');
+    // 产品卡片的状态标签（第二个 section-card 中的状态徽标）
+    const $productStatus = $('.section-card:eq(1) .status-badge');
+
+    // 折叠交互
+    function setupToggle(triggerId, panel) {
+      $(triggerId).on('click', function() {
+        panel.slideToggle(200);
+        $(this).find('i').toggleClass('bi-chevron-down bi-chevron-up');
+        // 更新按钮文字
+        const expanded = panel.is(':visible');
+        $(this).html($(this).find('i').prop('outerHTML') + ' ' + (expanded ? '收起参数' : '展开参数'));
+      });
+    }
+    setupToggle('#toggleGuest', $guestExtra);
+    setupToggle('#toggleProduct', $productExtra);
+
+    // 收集产品键值对数据（12组）
+    function collectStoreData() {
+      const obj = {};
+      const keys = [];
+      for (let i = 1; i <= 12; i++) {
+        const key = $(`#key${i}`).val().trim();
+        const val = $(`#val${i}`).val().trim();
+        if (key !== '') {
+          if (keys.includes(key)) {
+            alert(`产品参数名“${key}”重复，请修改后再提交。`);
+            return null;  // 返回 null 表示校验失败
+          }
+          keys.push(key);
+          obj[key] = val;
+        }
+      }
+      return obj;
+    }
+
+    // 通用异步提交
+    function ajaxUpdate(url, data, successMsg) {
+      $.ajax({
+        url, method: 'GET', data,
+        success: res => alert(res?.status ? successMsg : `更新失败：${res?.message || ''}`),
+        error: () => alert('网络错误')
+      });
+    }
+
+    // 客户信息更新
+    $('#guestUpdate').on('click', function() {
+      ajaxUpdate(API.guestUpdate, {
+        index_id,
+        time: $time.val(),
+        name: $('#name').val(),
+        phone: $('#phone').val(),
+        age: $('#age').val(),
+        sex: $('#sex').val(),
+        dfh: $('#dfh').val(),
+        ot: $('#ot').val(),
+        em: $('#em').val(),
+        guestRemark: $remark.val()
+      }, '客户信息更新成功');
+    });
+
+    // 产品信息更新（如后续需要按钮，可绑定此函数）
+    function updateStore() {
+      const storeObj = collectStoreData();
+      if (storeObj === null) return;  // 参数重复，已提示
+      ajaxUpdate(API.update, {
+        index_id,
+        content: JSON.stringify([storeObj])   // 保持与原后端一致的结构
+      }, '产品信息更新成功');
+    }
+    // 当前页面无产品更新按钮，如需可取消下面注释并添加对应按钮
+    // $('#storeUpdate').on('click', updateStore);
+
+    // 删除订单
+    $('#delete').on('click', function() {
+      if (!confirm('确定要删除这条记录吗？此操作不可恢复。')) return;
+      $.ajax({
+        url: API.delete,
+        data: { index_id },
+        success: function(res) {
+          if (res?.status) {
+            alert('删除成功');
+            location.replace("{% url 'maneu_store:index' %}");  // 删除后返回列表
+          } else {
+            alert('删除失败：' + (res?.message || ''));
+          }
+        },
+        error: () => alert('网络错误')
+      });
+    });
+
+    // 生成二维码
+    $('#generate_qr_code').on('click', function() {
+      $.ajax({
+        url: API.qrcode,
+        data: { index_id },
+        method: 'GET',
+        xhrFields: { responseType: 'blob' },
+        success: function(blob) {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = index_id + '.png';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        },
+        error: () => alert('二维码生成失败')
+      });
+    });
+
+    // 加载详情
+    function loadDetail() {
+      $.ajax({
+        url: API.detail,
+        data: { index_id },
+        success: function(res) {
+          if (!res?.status) {
+            alert('加载详情失败');
+            return;
+          }
+          const { guest, store } = res.content;
+
+          // 填充客户信息
+          if (guest && guest.status) {
+            const g = guest.content;
+            $time.val(g.time);
+            $('#name').val(g.name);
+            $('#phone').val(g.phone);
+            $('#sex').val(g.sex);
+            $('#age').val(g.age);
+            $('#dfh').val(g.dfh);
+            $('#em').val(g.em);
+            $('#ot').val(g.ot);
+            $remark.val(g.remark);
+            $('#guestLoadStatus').removeClass('status-empty').addClass('status-loaded').text('已加载');
+          } else {
+            $('#guestLoadStatus').removeClass('status-empty').addClass('status-warning').text('加载失败');
+          }
+
+          // 填充产品信息（假设 store.content 是键值对对象）
+          if (store && store.status) {
+            const storeData = store.content;
+            // 如果是数组，取第一个对象（兼容旧格式）
+            const obj = Array.isArray(storeData) ? (storeData[0] || {}) : storeData;
+            let idx = 1;
+            for (const [key, value] of Object.entries(obj)) {
+              if (idx <= 12) {
+                $(`#key${idx}`).val(key);
+                $(`#val${idx}`).val(value);
+                idx++;
+              }
+            }
+            $productStatus.removeClass('status-empty').addClass('status-loaded').text('已加载');
+          } else {
+            $productStatus.removeClass('status-empty').addClass('status-warning').text('加载失败');
+          }
+        },
+        error: function() {
+          alert('网络错误，无法加载详情');
+        }
+      });
+    }
+
+    loadDetail();
+  });
+</script>
+{% endblock %}
+
+{% block css %}
+<style>
+  :root {
+    --store-accent: hsl(38, 92%, 55%);
+    --store-surface: #ffffff;
+    --store-border: #e8ecf1;
+    --store-text: #1e293b;
+    --store-muted: #64748b;
+    --store-radius: 12px;
+    --store-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
+  }
+
+  .page-wrapper { padding: 0 0.5rem; }
+
+  .section-card {
+    background: var(--store-surface);
+    border: 1px solid var(--store-border);
+    border-radius: var(--store-radius);
+    padding: 1.5rem;
+    box-shadow: var(--store-shadow);
+    margin-bottom: 1.5rem;
+  }
+
+  .section-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--brand-color);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    letter-spacing: 0.02em;
+    border-bottom: 2px solid var(--brand-color-pale);
+    padding-bottom: 0.6rem;
+  }
+  .section-title i { font-size: 1.3rem; color: var(--brand-accent); }
+
+  .action-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  .btn-action-primary {
+    border-radius: 2rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1.3rem;
+    transition: all 0.2s ease;
+  }
+  .btn-action-primary:hover { transform: translateY(-1px); }
+
+  .btn-save-guest {
+    background: var(--brand-color);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    padding: 0.45rem 1.2rem;
+    border-radius: 2rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-save-guest:hover { opacity: 0.9; }
+
+  .btn-save-store {
+    background: var(--brand-accent);
+    border: none;
+    color: #000;
+    font-weight: 600;
+    padding: 0.45rem 1.2rem;
+    border-radius: 2rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-save-store:hover { background: #f5a623; }
+
+  .btn-delete-record {
+    background: transparent;
+    border: 1px solid #dc3545;
+    color: #dc3545;
+    font-weight: 600;
+    padding: 0.45rem 1.2rem;
+    border-radius: 2rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-delete-record:hover { background: #dc3545; color: #fff; }
+
+  .btn-qrcode {
+    background: #fff;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+  }
+  .btn-qrcode:hover {
+    background: var(--brand-color-pale);
+    border-color: var(--brand-color);
+    color: var(--brand-color);
+  }
+
+  .btn-back-page {
+    border-radius: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 500;
+  }
+
+  .btn-toggle {
+    background: transparent;
+    border: 1px solid var(--store-border);
+    color: var(--store-muted);
+    font-size: 0.85rem;
+    padding: 0.35rem 0.9rem;
+    border-radius: 2rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-toggle:hover {
+    background: var(--brand-color-pale);
+    border-color: var(--brand-color);
+    color: var(--brand-color);
+  }
+
+  .status-badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.7rem;
+    border-radius: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+  .status-loaded { background: #d1fae5; color: #065f46; }
+  .status-empty  { background: #fef3c7; color: #92400e; }
+  .status-warning { background: #fca5a5; color: #bb2d3b; }
+
+  .product-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.8rem;
+  }
+  .product-row input {
+    border: 1px solid var(--store-border);
+    border-radius: var(--store-radius);
+    padding: 0.45rem 0.75rem;
+    font-size: 0.9rem;
+  }
+  .product-row input:focus {
+    border-color: var(--brand-accent);
+    box-shadow: 0 0 0 0.15rem rgba(255, 193, 7, 0.15);
+  }
+  .product-cat { flex: 1; }
+  .product-brand { flex: 1; }
+  .product-model { flex: 1; }
+  .product-param { flex: 2.5; }
+  .product-price { flex: 0.8; }
+
+  @media (max-width: 768px) {
+    .action-bar { flex-direction: column; }
+    .action-bar .btn { width: 100%; justify-content: center; }
+    .product-row { flex-wrap: wrap; }
+    .product-cat, .product-brand, .product-model, .product-price { flex: 1 1 45%; }
+    .product-param { flex: 1 1 100%; }
+  }
+  @media (max-width: 576px) {
+    .section-card { padding: 1rem 0.8rem; }
+  }
+</style>
 {% endblock %}
