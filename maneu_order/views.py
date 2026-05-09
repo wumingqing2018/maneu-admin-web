@@ -4,12 +4,12 @@ from common import common
 
 
 def index(request):
-    return render(request, 'maneu_order/index.html', {'timeS': common.time_start, 'timeE': common.time_end})
+    return render(request, 'order_index.html', {'timeS': common.time_start, 'timeE': common.time_end})
 
 
 def insert(request):
-    return render(request, 'maneu_order/insert.html', {'time': common.current_time()})
+    return render(request, 'order_insert.html', {'time': common.current_time()})
 
 
 def detail(request):
-    return render(request, 'maneu_order/detail.html', {'index_id': request.GET.get('index_id')})
+    return render(request, 'order_detail.html', {'index_id': request.GET.get('index_id')})

@@ -3,14 +3,9 @@
 
 {% block css %}
 <style>
-    /* 定制管理页面专属样式 */
+    /* ---------- 页面专属样式（复用 base 设计变量） ---------- */
     :root {
-        --store-accent: hsl(38, 92%, 55%);
-        --store-surface: #ffffff;
-        --store-border: #e8ecf1;
-        --store-text: #1e293b;
-        --store-muted: #64748b;
-        --store-radius: 12px;
+        /* 仅保留与 base 不同的阴影值，其余样式均使用 base 变量 */
         --store-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
     }
 
@@ -41,9 +36,9 @@
 
     /* 筛选卡片 */
     .filter-card {
-        background: var(--store-surface);
-        border: 1px solid var(--store-border);
-        border-radius: var(--store-radius);
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
         padding: 1.5rem;
         box-shadow: var(--store-shadow);
         margin-bottom: 1.8rem;
@@ -65,12 +60,12 @@
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.04em;
-        color: var(--store-muted);
+        color: var(--text-secondary);
     }
 
     .filter-group .input-group {
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
-        border-radius: var(--store-radius);
+        border-radius: var(--radius-md);
         overflow: hidden;
     }
 
@@ -107,33 +102,44 @@
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
     }
 
-    /* 列表头部 (仅桌面端显示) */
+    /* 列表头部 */
     .list-header {
         display: flex;
         padding: 0.8rem 1.2rem;
         background: var(--brand-color-pale);
-        border-radius: var(--store-radius) var(--store-radius) 0 0;
+        border-radius: var(--radius-md) var(--radius-md) 0 0;
         font-weight: 600;
         font-size: 0.85rem;
         color: var(--brand-color);
         letter-spacing: 0.03em;
-        border: 1px solid var(--store-border);
+        border: 1px solid var(--border-subtle);
         border-bottom: none;
     }
 
-    .list-header .col-time { flex: 0 0 160px; }
-    .list-header .col-name { flex: 0 0 100px; }
-    .list-header .col-phone { flex: 0 0 130px; }
-    .list-header .col-remark { flex: 1; }
-    .list-header .col-actions { flex: 0 0 140px; text-align: right; }
+    .list-header .col-time {
+        flex: 0 0 160px;
+    }
+    .list-header .col-name {
+        flex: 0 0 100px;
+    }
+    .list-header .col-phone {
+        flex: 0 0 130px;
+    }
+    .list-header .col-remark {
+        flex: 1;
+    }
+    .list-header .col-actions {
+        flex: 0 0 140px;
+        text-align: right;
+    }
 
-    /* 列表项卡片 */
+    /* 列表卡片 */
     .store-list-item {
         display: flex;
         align-items: center;
         padding: 1rem 1.2rem;
-        background: var(--store-surface);
-        border: 1px solid var(--store-border);
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
         border-top: none;
         transition: all 0.2s ease;
         gap: 0.2rem;
@@ -141,8 +147,8 @@
     }
 
     .store-list-item:last-child {
-        border-radius: 0 0 var(--store-radius) var(--store-radius);
-        border-bottom: 1px solid var(--store-border);
+        border-radius: 0 0 var(--radius-md) var(--radius-md);
+        border-bottom: 1px solid var(--border-subtle);
     }
 
     .store-list-item:hover {
@@ -162,7 +168,7 @@
     .store-list-item .col-time {
         flex: 0 0 160px;
         font-size: 0.9rem;
-        color: var(--store-muted);
+        color: var(--text-secondary);
     }
 
     .store-list-item .col-name {
@@ -172,7 +178,7 @@
 
     .store-list-item .col-phone {
         flex: 0 0 130px;
-        color: var(--store-muted);
+        color: var(--text-secondary);
         font-size: 0.9rem;
     }
 
@@ -197,9 +203,9 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        border: 1px solid var(--store-border);
+        border: 1px solid var(--border-subtle);
         background: white;
-        color: var(--store-muted);
+        color: var(--text-secondary);
         transition: all 0.15s ease;
         padding: 0;
         cursor: pointer;
@@ -217,9 +223,11 @@
         color: #dc2626;
     }
 
-    /* 移动端卡片重排 */
+    /* 移动端适配 */
     @media (max-width: 768px) {
-        .list-header { display: none; }
+        .list-header {
+            display: none;
+        }
 
         .store-list-item {
             flex-direction: column;
@@ -241,7 +249,7 @@
         .store-list-item .col-actions {
             justify-content: flex-start;
             padding-top: 0.5rem;
-            border-top: 1px dashed var(--store-border);
+            border-top: 1px dashed var(--border-subtle);
             margin-top: 0.3rem;
         }
 
@@ -251,7 +259,7 @@
             top: 0.5rem;
             right: 1rem;
             font-size: 0.7rem;
-            color: var(--store-muted);
+            color: var(--text-secondary);
             font-weight: 600;
             letter-spacing: 0.03em;
         }
@@ -262,14 +270,13 @@
         }
     }
 
-    /* 空状态 */
     .empty-state {
         text-align: center;
         padding: 3rem 1rem;
-        background: var(--store-surface);
-        border: 1px solid var(--store-border);
-        border-radius: var(--store-radius);
-        color: var(--store-muted);
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        color: var(--text-secondary);
         font-size: 1rem;
     }
 
@@ -280,7 +287,6 @@
         color: #cbd5e1;
     }
 
-    /* 加载动画 */
     .loading-spinner {
         display: flex;
         justify-content: center;
@@ -291,12 +297,13 @@
 
 {% block content %}
 <div class="main-content-wrapper">
+    <!-- 页面标题 -->
     <div class="page-header">
         <h1 class="page-title">
-            <i class="bi bi-gear-wide-connected"></i> 定制化管理
+            <i class="bi bi-receipt"></i> 订单管理
         </h1>
-        <a href="{% url 'maneu_store:insert' %}" class="btn-add-record">
-            <i class="bi bi-plus-lg"></i> 新增记录
+        <a href="{% url 'maneu_order:insert' %}" class="btn-add-record">
+            <i class="bi bi-plus-lg"></i> 新增订单
         </a>
     </div>
 
@@ -327,7 +334,7 @@
         </div>
     </div>
 
-    <!-- 列表头部（桌面端） -->
+    <!-- 列表头部（桌面） -->
     <div class="list-header d-none d-md-flex">
         <div class="col-time">录入时间</div>
         <div class="col-name">客户姓名</div>
@@ -349,28 +356,80 @@
 
 {% block javascript %}
 <script>
-    const api_detail = "{% url 'maneu_store:detail' %}";
-    const api_delete = "{% url 'maneu_store:api_delete' %}";
-    const search_data_url = "{% url 'maneu_store:api_search_data' %}";
-    const search_time_url = "{% url 'maneu_store:api_search_time' %}";
+(function() {
+    // ---------- 配置 ----------
+    const CONFIG = {
+        api_detail: "{% url 'maneu_order:detail' %}",
+        api_delete: "{% url 'maneu_order:api_delete' %}",
+        search_data_url: "{% url 'maneu_order:search_data' %}",
+        search_time_url: "{% url 'maneu_order:search_time' %}"
+    };
 
-    // 删除记录（含动画及空状态检测）
-    function deleteRecord(btn) {
-        if (!confirm("确定要删除这条记录吗？此操作不可恢复。")) return;
+    // ---------- DOM 引用 ----------
+    const $body = $('#body');
+    const $timeS = $('#timeS');
+    const $timeE = $('#timeE');
+    const $keyword = $('#value');
 
+    // ---------- 工具函数 ----------
+    function createItemHTML(item) {
+        const remarkText = item.remark || '-';
+        const escapedRemark = remarkText.replace(/"/g, '&quot;');
+        return `
+        <div class="store-list-item" data-mobile-label="${item.time || ''}">
+            <div class="col-time"><i class="bi bi-clock me-2 d-md-none"></i>${item.time || '-'}</div>
+            <div class="col-name"><i class="bi bi-person me-2 d-md-none"></i>${item.name || '-'}</div>
+            <div class="col-phone"><i class="bi bi-phone me-2 d-md-none"></i>${item.phone || '-'}</div>
+            <div class="col-remark" title="${escapedRemark}">
+                <i class="bi bi-chat-left-text me-2 d-md-none"></i>${remarkText}
+            </div>
+            <div class="col-actions">
+                <a href="${CONFIG.api_detail}?index_id=${item.id}" class="btn-action" title="查看详情">
+                    <i class="bi bi-eye"></i>
+                </a>
+                <button class="btn-action delete-btn" data-index_id="${item.id}" title="删除订单">
+                    <i class="bi bi-trash3"></i>
+                </button>
+            </div>
+        </div>`;
+    }
+
+    function showEmptyState() {
+        $body.html(`
+        <div class="empty-state">
+            <i class="bi bi-inbox"></i>
+            <p>暂无订单记录</p>
+            <small>尝试调整筛选条件或新增一条订单</small>
+        </div>`);
+    }
+
+    function showLoading() {
+        $body.html(`<div class="loading-spinner"><div class="spinner-border text-primary" role="status"></div></div>`);
+    }
+
+    function renderList(dataArray) {
+        $body.empty();
+        if (!dataArray || dataArray.length === 0) {
+            showEmptyState();
+            return;
+        }
+        dataArray.forEach(item => $body.append(createItemHTML(item)));
+    }
+
+    // 删除记录（使用事件委托，避免每个按钮绑定事件）
+    function handleDelete(btn) {
+        if (!confirm("确定要删除这条订单吗？此操作不可恢复。")) return;
         const indexId = btn.dataset.index_id;
         $.ajax({
-            url: api_delete,
-            type: 'GET',
+            url: CONFIG.api_delete,
+            method: 'GET',
             data: {index_id: indexId},
-            success: function (res) {
+            success: function(res) {
                 if (res.status === true) {
-                    const item = btn.closest('.store-list-item');
-                    if (item) {
-                        item.style.transition = 'all 0.3s ease';
-                        item.style.opacity = '0';
-                        item.style.transform = 'translateX(20px)';
-                        setTimeout(() => item.remove(), 300);
+                    const $item = $(btn).closest('.store-list-item');
+                    if ($item.length) {
+                        $item.css({transition: 'all 0.3s ease', opacity: '0', transform: 'translateX(20px)'});
+                        setTimeout(() => $item.remove(), 300);
                     }
                     if ($('#body .store-list-item').length === 0) {
                         showEmptyState();
@@ -379,102 +438,70 @@
                     alert(res.message || '删除失败，请稍后重试');
                 }
             },
-            error: function () {
+            error: function() {
                 alert('网络错误，请稍后重试');
             }
         });
     }
 
-    // 构建列表 HTML
-    function renderList(dataArray) {
-        const container = $('#body');
-        container.empty();
-
-        if (!dataArray || dataArray.length === 0) {
-            showEmptyState();
-            return;
-        }
-
-        dataArray.forEach(item => {
-            const remarkText = item.remark || '-';
-            const rowHtml = `
-                <div class="store-list-item" data-mobile-label="${item.time || ''}">
-                    <div class="col-time"><i class="bi bi-clock me-2 d-md-none"></i>${item.time || '-'}</div>
-                    <div class="col-name"><i class="bi bi-person me-2 d-md-none"></i>${item.name || '-'}</div>
-                    <div class="col-phone"><i class="bi bi-phone me-2 d-md-none"></i>${item.phone || '-'}</div>
-                    <div class="col-remark" title="${remarkText.replace(/"/g, '&quot;')}">
-                        <i class="bi bi-chat-left-text me-2 d-md-none"></i>${remarkText}
-                    </div>
-                    <div class="col-actions">
-                        <a href="${api_detail}?index_id=${item.id}" class="btn-action" title="查看详情">
-                            <i class="bi bi-eye"></i>
-                        </a>
-                        <button class="btn-action delete-btn" data-index_id="${item.id}" onclick="deleteRecord(this)" title="删除记录">
-                            <i class="bi bi-trash3"></i>
-                        </button>
-                    </div>
-                </div>`;
-            container.append(rowHtml);
-        });
-    }
-
-    function showEmptyState() {
-        $('#body').html(`
-            <div class="empty-state">
-                <i class="bi bi-inbox"></i>
-                <p>暂无定制记录</p>
-                <small>尝试调整筛选条件或新增一条记录</small>
-            </div>`);
-    }
-
-    // 通用加载并渲染
+    // 数据获取与渲染
     function fetchAndRender(url, params) {
-        const body = $('#body');
-        body.html(`<div class="loading-spinner"><div class="spinner-border text-primary" role="status"></div></div>`);
-
+        showLoading();
         $.ajax({
             url: url,
             method: 'GET',
             data: params,
-            success: function (res) {
+            success: function(res) {
                 renderList(res.content || []);
             },
-            error: function () {
-                body.html(`<div class="empty-state"><i class="bi bi-exclamation-triangle"></i><p>加载失败，请稍后重试</p></div>`);
+            error: function() {
+                $body.html(`<div class="empty-state"><i class="bi bi-exclamation-triangle"></i><p>加载失败，请稍后重试</p></div>`);
             }
         });
     }
 
-    $(function () {
-        // 初始加载：默认时间范围
-        const timeS = $("#timeS").val();
-        const timeE = $("#timeE").val();
-        fetchAndRender(search_time_url, {timeS: timeS, timeE: timeE});
+    // ---------- 事件绑定 ----------
+    function bindEvents() {
+        // 删除按钮委托（动态元素）
+        $body.on('click', '.delete-btn', function() {
+            handleDelete(this);
+        });
 
         // 时间筛选
-        $('#search_time').on('click', function () {
-            fetchAndRender(search_time_url, {
-                timeS: $("#timeS").val(),
-                timeE: $("#timeE").val()
+        $('#search_time').on('click', function() {
+            fetchAndRender(CONFIG.search_time_url, {
+                timeS: $timeS.val(),
+                timeE: $timeE.val()
             });
         });
 
         // 关键词搜索
-        $('#search_data').on('click', function () {
-            const keyword = $("#value").val().trim();
+        function performSearch() {
+            const keyword = $keyword.val().trim();
             if (!keyword) {
                 alert('请输入搜索关键词');
                 return;
             }
-            fetchAndRender(search_data_url, {value: keyword});
-        });
+            fetchAndRender(CONFIG.search_data_url, {value: keyword});
+        }
 
-        // 回车搜索
-        $('#value').on('keypress', function (e) {
+        $('#search_data').on('click', performSearch);
+        $keyword.on('keypress', function(e) {
             if (e.which === 13) {
-                $('#search_data').trigger('click');
+                performSearch();
             }
         });
+    }
+
+    // ---------- 初始化 ----------
+    $(function() {
+        bindEvents();
+        // 初始加载默认时间范围
+        fetchAndRender(CONFIG.search_time_url, {
+            timeS: $timeS.val(),
+            timeE: $timeE.val()
+        });
     });
+})();
 </script>
 {% endblock %}

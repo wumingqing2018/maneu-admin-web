@@ -18,7 +18,8 @@
     <!-- 自定义基础样式 -->
     <link href="{% static 'css/maneu/base.css' %}" rel="stylesheet">
 
-    {% block css %}{% endblock %}
+    {% block css %}
+    {% endblock %}
 
 </head>
 
@@ -27,7 +28,7 @@
 <!-- ==================== 顶部导航栏 ==================== -->
 <nav class="navbar-main" id="mainNavbar">
     <!-- 品牌标识 -->
-    <a href="/" class="navbar-brand-wrapper" title="徕可首页">
+    <a href="#" class="navbar-brand-wrapper" title="徕可首页">
         <img src="{% static 'images/maneu/logo.svg' %}" alt="徕可Logo">
         <span class="navbar-brand-name">徕可</span>
     </a>

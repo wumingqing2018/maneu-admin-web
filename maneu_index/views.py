@@ -101,4 +101,4 @@ def index(request):
         'od_add': json.dumps(od_add),
         'os_add': json.dumps(os_add),
     }
-    return render(request, 'maneu_index/index.html', context)
+    return render(request, 'index_index.html', context)

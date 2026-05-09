@@ -1,0 +1,568 @@
+{% extends 'maneu/base.html' %}
+{% load static %}
+
+{% block css %}
+<style>
+    /* ========== 验光报告详情页样式 ========== */
+    /*
+      冗余分析：
+      - :root 中定义的 --store-* 变量与 base.html 的变量取值重复，
+        已替换为 base 的对应变量，避免重复定义。
+      - --store-accent / --store-text 未在任何选择器中使用，已删除。
+      - 自定义 --shadow-md 覆盖了 base 的阴影变量，可能导致样式污染，
+        将其重命名为 --card-hover-shadow 并仅用于本页悬停效果。
+      - 其他样式保持完全一致，视觉上无变化。
+    */
+
+    /* 本页专用阴影（仅卡片悬停时使用，不覆盖全局 --shadow-md） */
+    :root {
+        --card-hover-shadow: 0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04);
+    }
+
+    .page-wrapper {
+        padding: 0 0.5rem;
+    }
+
+    .section-card {
+        background: var(--bg-surface);           /* 原 var(--store-surface) */
+        border: 1px solid var(--border-subtle);  /* 原 var(--store-border) */
+        border-radius: var(--radius-md);         /* 原 var(--store-radius) */
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03); /* 保留原柔和阴影 */
+        margin-bottom: 1.5rem;
+    }
+
+    .section-card:hover {
+        box-shadow: var(--card-hover-shadow);    /* 使用本页专用悬停阴影 */
+    }
+
+    .section-title {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: var(--brand-color);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        letter-spacing: 0.02em;
+        border-bottom: 2px solid var(--brand-color-pale);
+        padding-bottom: 0.6rem;
+    }
+
+    .section-title i {
+        font-size: 1.3rem;
+        color: var(--brand-accent);
+    }
+
+    .action-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 0.5rem;
+    }
+
+    .btn-action-primary {
+        border-radius: 2rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.55rem 1.3rem;
+        transition: all 0.2s ease;
+    }
+
+    .btn-action-primary:hover {
+        transform: translateY(-1px);
+    }
+
+    .btn-qrcode {
+        background: #fff;
+        border: 1px solid var(--border-subtle);
+        color: var(--text-secondary);           /* 原 var(--store-muted) */
+    }
+
+    .btn-qrcode:hover {
+        background: var(--brand-color-pale);
+        border-color: var(--brand-color);
+        color: var(--brand-color);
+    }
+
+    .btn-back-page {
+        border-radius: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-weight: 500;
+    }
+
+    .status-badge {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.7rem;
+        border-radius: 1rem;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+    }
+
+    .status-loaded {
+        background: #d1fae5;
+        color: #065f46;
+    }
+
+    .status-empty {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .status-warning {
+        background: #fca5a5;
+        color: #bb2d3b;
+    }
+
+    .btn-toggle {
+        background: transparent;
+        border: 1px solid var(--border-subtle);  /* 原 var(--store-border) */
+        color: var(--text-secondary);           /* 原 var(--store-muted) */
+        font-size: 0.85rem;
+        padding: 0.35rem 0.9rem;
+        border-radius: 2rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .btn-toggle:hover {
+        background: var(--brand-color-pale);
+        border-color: var(--brand-color);
+        color: var(--brand-color);
+    }
+
+    .btn-save-guest {
+        background: var(--brand-color);
+        border: none;
+        color: #fff;
+        font-weight: 600;
+        padding: 0.45rem 1.2rem;
+        border-radius: 2rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-save-guest:hover {
+        opacity: 0.9;
+    }
+
+    @media (max-width: 768px) {
+        .action-bar {
+            flex-direction: column;
+        }
+
+        .action-bar .btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .section-card {
+            padding: 1rem 0.8rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-wrapper">
+    <!-- 顶部操作栏 -->
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <h1 class="page-title mb-0">
+            <i class="bi bi-receipt"></i> 验光报告
+        </h1>
+        <div class="d-flex gap-2 flex-wrap">
+            <button class="btn btn-outline-secondary btn-qrcode btn-action-primary" id="reportQrcode"
+                    type="button" title="下载二维码">
+                <i class="bi bi-qr-code"></i> 二维码
+            </button>
+            <a href="{% url 'maneu_report:index' %}" class="btn btn-outline-primary btn-back-page">
+                <i class="bi bi-arrow-left"></i> 返回列表
+            </a>
+        </div>
+    </div>
+
+    <!-- 1. 客户信息卡片 -->
+    <div class="section-card" id="guestSection">
+        <div class="section-title d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <span><i class="bi bi-person-vcard"></i> 客户信息<span class="status-badge status-empty ms-2" id="guestLoadStatus">加载中...</span></span>
+            <div class="d-flex gap-2">
+                <button class="btn-toggle" id="toggleGuest" type="button">
+                    <i class="bi bi-chevron-down"></i> 详细参数
+                </button>
+            </div>
+        </div>
+
+        <!-- 核心字段 -->
+        <div class="row g-3 mb-2">
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+                    <input autocomplete="off" type="datetime-local" class="form-control" id="time">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                    <input autocomplete="off" type="text" class="form-control" id="name" placeholder="客户姓名">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                    <input autocomplete="off" type="text" class="form-control" id="phone" placeholder="联系电话">
+                </div>
+            </div>
+        </div>
+
+        <!-- 详细参数（折叠） -->
+        <div id="guestExtra" style="display: none;">
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted">性别</label>
+                    <input autocomplete="off" type="text" class="form-control" id="sex" list="sexList" placeholder="例如：男">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted">年龄</label>
+                    <input autocomplete="off" type="text" class="form-control" id="age" placeholder="例如：28">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted">眼位</label>
+                    <input autocomplete="off" type="text" class="form-control" id="ot" list="otList" placeholder="例如：正视">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted">主视眼</label>
+                    <input autocomplete="off" type="text" class="form-control" id="em" list="emList" placeholder="左眼 / 右眼">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted">病族史</label>
+                    <input autocomplete="off" type="text" class="form-control" id="dfh" list="dfhList" placeholder="无 / 有">
+                </div>
+            </div>
+        </div>
+
+        <!-- 客户备注 -->
+        <div class="row g-3">
+            <div class="col-12">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-chat-left-text"></i></span>
+                    <input autocomplete="off" type="text" class="form-control" id="remark" placeholder="备注信息">
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-3 text-end">
+            <button class="btn-save-guest" id="guestUpdate" type="button">
+                <i class="bi bi-check-lg"></i> 更新客户信息
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. 验光报告卡片 -->
+    <div class="section-card" id="reportSection">
+        <div class="section-title d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <span><i class="bi bi-eyeglasses"></i> 验光报告<span class="status-badge status-empty ms-2" id="reportLoadStatus">加载中...</span></span>
+            <div class="d-flex gap-2">
+                <button class="btn-toggle" id="toggleReport" type="button">
+                    <i class="bi bi-chevron-down"></i> 详细参数
+                </button>
+            </div>
+        </div>
+
+        <!-- 方案 & 瞳距 -->
+        <div class="row g-2 mb-3">
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text">方案</span>
+                    <input autocomplete="off" type="text" class="form-control" id="PLAN" list="PLAN1">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text">瞳距</span>
+                    <input autocomplete="off" type="text" class="form-control" id="PD" list="PD1">
+                </div>
+            </div>
+        </div>
+
+        <!-- 可折叠详细参数（左右眼） -->
+        <div id="reportExtra" style="display: none;">
+            <!-- 右眼 -->
+            <div class="mb-2">
+                <label class="form-label fw-semibold small text-muted">右眼 (OD)</label>
+                <div class="row g-1">
+                    <div class="col-6 col-md-3"><input class="form-control" id="OD_VA" placeholder="裸眼视力" list="VA"></div>
+                    <div class="col-6 col-md-3"><input class="form-control" id="OD_SPH" placeholder="球镜" list="CYL&SPH"></div>
+                    <div class="col-6 col-md-3"><input class="form-control" id="OD_CYL" placeholder="柱镜" list="CYL&SPH"></div>
+                    <div class="col-6 col-md-3"><input class="form-control" id="OD_AX" placeholder="轴位" list="AX"></div>
+                    <div class="col-6 col-md-3"><input class="form-control" id="OD_PR" placeholder="棱镜" list="PR"></div>
+                    <div class="col-6 col-md-3"><input class="form-control" id="OD_FR" placeholder="基地取向" list="FR"></div>
+                    <div class="col-6 col-md-3"><input class="form-control" id="OD_AL" placeholder="眼轴长度" list="AL"></div>
+                    <div class="col-6 col-md-3"><input class="form-control" id="OD_AK" placeholder="角膜曲度" list="AK"></div>
+                    <div class="col-6 col-md-3"><input class="form-control" id="OD_AD" placeholder="前房深度" list="AD"></div>
+                    <div class="col-6 col-md-3"><input class="form-control" id="OD_CCT" placeholder="角膜厚度" list="CCT"></div>
+                    <div class="col-6 col-md-3"><input class="form-control" id="OD_LT" placeholder="晶体厚度" list="LT"></div>
+                    <div class="col-6 col-md-3"><input class="form-control" id="OD_VT" placeholder="玻璃体厚度" list="VT"></div>
+                    <div class="col-6 col-md-3"><input class="form-control" id="OD_BC" placeholder="矫正视力" list="VA"></div>
+                    <div class="col-6 col-md-3"><input class="form-control" id="OD_ADD" placeholder="下加光" list="ADD"></div>
+                </div>
+            </div>
+            <!-- 左眼 -->
+            <div>
+                <label class="form-label fw-semibold small text-muted">左眼 (OS)</label>
+                <div class="row g-1">
+                    <div class="col-6 col-md-3"><input class="form-control" id="OS_VA" placeholder="裸眼视力" list="VA"></div>
+                    <div class="col-6 col-md-3"><input class="form-control" id="OS_SPH" placeholder="球镜" list="CYL&SPH"></div>
+                    <div class="col-6 col-md-3"><input class="form-control" id="OS_CYL" placeholder="柱镜" list="CYL&SPH"></div>
+                    <div class="col-6 col-md-3"><input class="form-control" id="OS_AX" placeholder="轴位" list="AX"></div>
+                    <div class="col-6 col-md-3"><input class="form-control" id="OS_PR" placeholder="棱镜" list="PR"></div>
+                    <div class="col-6 col-md-3"><input class="form-control" id="OS_FR" placeholder="基地取向" list="FR"></div>
+                    <div class="col-6 col-md-3"><input class="form-control" id="OS_AL" placeholder="眼轴长度" list="AL"></div>
+                    <div class="col-6 col-md-3"><input class="form-control" id="OS_AK" placeholder="角膜曲度" list="AK"></div>
+                    <div class="col-6 col-md-3"><input class="form-control" id="OS_AD" placeholder="前房深度" list="AD"></div>
+                    <div class="col-6 col-md-3"><input class="form-control" id="OS_CCT" placeholder="角膜厚度" list="CCT"></div>
+                    <div class="col-6 col-md-3"><input class="form-control" id="OS_LT" placeholder="晶体厚度" list="LT"></div>
+                    <div class="col-6 col-md-3"><input class="form-control" id="OS_VT" placeholder="玻璃体厚度" list="VT"></div>
+                    <div class="col-6 col-md-3"><input class="form-control" id="OS_BC" placeholder="矫正视力" list="VA"></div>
+                    <div class="col-6 col-md-3"><input class="form-control" id="OS_ADD" placeholder="下加光" list="ADD"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-3 text-end">
+            <button class="btn-save-guest" id="reportUpdate" type="button">
+                <i class="bi bi-check-lg"></i> 更新验光报告
+            </button>
+        </div>
+    </div>
+
+    <!-- 3. 底部操作栏 -->
+    <div class="action-bar justify-content-end">
+        <button class="btn btn-outline-danger btn-back-page" id="reportDelete" type="button">
+            <i class="bi bi-trash3"></i> 删除此订单
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+    // 将后端变量声明为常量，避免全局污染
+    const INDEX_ID = "{{ index_id }}";
+    const GUEST_UPDATE_URL = "{% url 'maneu_guest:api_update' %}";
+    const REPORT_DETAIL_URL = "{% url 'maneu_report:api_detail' %}";
+    const REPORT_UPDATE_URL = "{% url 'maneu_report:api_update' %}";
+    const REPORT_DELETE_URL = "{% url 'maneu_report:api_delete' %}";
+    const REPORT_QRCODE_URL = "{% url 'maneu_report:api_QRcode' %}";
+
+    $(document).ready(function () {
+
+        // ========== 通用工具函数 ==========
+
+        /**
+         * 初始化折叠面板切换
+         * @param {string} toggleBtnId - 按钮 ID
+         * @param {string} targetId - 被折叠内容 ID
+         */
+        function initCollapse(toggleBtnId, targetId) {
+            const $btn = $('#' + toggleBtnId);
+            const $target = $('#' + targetId);
+            if (!$btn.length || !$target.length) return;
+
+            $btn.on('click', function () {
+                $target.slideToggle(200);
+                $btn.find('i').toggleClass('bi-chevron-down bi-chevron-up');
+            });
+        }
+
+        /**
+         * 通用 Ajax 更新函数
+         */
+        function ajaxUpdate(url, data, successMsg) {
+            $.ajax({
+                url: url,
+                method: 'GET',  // 实际应用中建议改为 POST
+                data: data,
+                success: function (res) {
+                    alert(res.status === true ? successMsg : '更新失败：' + (res.message || ''));
+                },
+                error: function () {
+                    alert('网络错误');
+                }
+            });
+        }
+
+        /**
+         * 收集视力/几何相关字段（左右眼对称字段）
+         * @param {string} eye - 'OD' 或 'OS'
+         * @param {string[]} fields - 字段名数组（大写）
+         * @returns {Object} 已拼好前缀的对象，如 { od_sph: value, os_sph: value }
+         */
+        function collectEyeFields(eye, fields) {
+            const data = {};
+            const prefix = eye.toLowerCase() + '_';
+            fields.forEach(f => {
+                data[prefix + f.toLowerCase()] = $('#' + eye + '_' + f).val();
+            });
+            return data;
+        }
+
+        /**
+         * 设置 UI 加载状态标签
+         */
+        function setLoadStatus(elementId, success) {
+            const $el = $('#' + elementId);
+            $el.removeClass('status-empty');
+            if (success) {
+                $el.addClass('status-loaded').text('加载成功');
+            } else {
+                $el.addClass('status-warning').text('加载失败');
+            }
+        }
+
+        // ========== 初始化折叠面板 ==========
+        initCollapse('toggleGuest', 'guestExtra');
+        initCollapse('toggleReport', 'reportExtra');
+
+        // ========== 更新客户信息 ==========
+        $('#guestUpdate').on('click', function () {
+            ajaxUpdate(GUEST_UPDATE_URL, {
+                index_id: INDEX_ID,
+                time: $('#time').val(),
+                name: $('#name').val(),
+                phone: $('#phone').val(),
+                age: $('#age').val(),
+                sex: $('#sex').val(),
+                dfh: $('#dfh').val(),
+                ot: $('#ot').val(),
+                em: $('#em').val(),
+                guestRemark: $('#remark').val()
+            }, '客户信息更新成功');
+        });
+
+        // ========== 更新验光报告 ==========
+        $('#reportUpdate').on('click', function () {
+            const eyeFields = ['SPH', 'CYL', 'AX', 'VA', 'BC', 'ADD', 'PR', 'FR', 'AL', 'AK', 'AD', 'CCT', 'LT', 'VT'];
+            const data = {
+                index_id: INDEX_ID,
+                plan: $('#PLAN').val(),
+                pd: $('#PD').val()
+            };
+            // 合并左右眼字段
+            $.extend(data,
+                collectEyeFields('OD', eyeFields),
+                collectEyeFields('OS', eyeFields)
+            );
+            ajaxUpdate(REPORT_UPDATE_URL, data, '验光报告更新成功');
+        });
+
+        // ========== 删除订单 ==========
+        $('#reportDelete').on('click', function () {
+            if (!confirm('确定要删除这条订单吗？此操作不可恢复。')) return;
+            $.ajax({
+                url: REPORT_DELETE_URL,
+                data: { index_id: INDEX_ID },
+                success: function (res) {
+                    if (res.status) {
+                        alert('删除成功');
+                        window.location.href = "{% url 'maneu_report:index' %}";
+                    } else {
+                        alert('删除失败：' + (res.message || ''));
+                    }
+                },
+                error: function () {
+                    alert('网络错误');
+                }
+            });
+        });
+
+        // ========== 下载二维码 ==========
+        $('#reportQrcode').on('click', function () {
+            $.ajax({
+                url: REPORT_QRCODE_URL,
+                data: { index_id: INDEX_ID },
+                method: 'GET',
+                xhrFields: { responseType: 'blob' },
+                success: function (blob) {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = INDEX_ID + '.png';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                },
+                error: function () {
+                    alert('二维码生成失败');
+                }
+            });
+        });
+
+        // ========== 加载订单详情并填充表单 ==========
+        function loadDetail() {
+            $.ajax({
+                url: REPORT_DETAIL_URL,
+                data: { index_id: INDEX_ID },
+                success: function (res) {
+                    if (res.status !== true) {
+                        alert('加载详情失败');
+                        return;
+                    }
+                    const { guest, report } = res.content;
+
+                    // 填充客户信息
+                    if (guest && guest.status === true) {
+                        const g = guest.content;
+                        $('#time').val(g.time);
+                        $('#name').val(g.name);
+                        $('#phone').val(g.phone);
+                        $('#sex').val(g.sex);
+                        $('#age').val(g.age);
+                        $('#dfh').val(g.dfh);
+                        $('#em').val(g.em);
+                        $('#ot').val(g.ot);
+                        $('#remark').val(g.remark);
+                        setLoadStatus('guestLoadStatus', true);
+                    } else {
+                        setLoadStatus('guestLoadStatus', false);
+                    }
+
+                    // 填充验光报告
+                    if (report && report.status === true) {
+                        const r = report.content;
+                        $('#PLAN').val(r.plan);
+                        $('#PD').val(r.pd);
+                        // 循环填充左右眼所有字段
+                        ['OD', 'OS'].forEach(eye => {
+                            const prefix = eye.toLowerCase() + '_';
+                            ['SPH', 'CYL', 'AX', 'VA', 'BC', 'ADD', 'PR', 'FR', 'AL', 'AK', 'AD', 'CCT', 'LT', 'VT'].forEach(f => {
+                                $('#' + eye + '_' + f).val(r[prefix + f.toLowerCase()] || '');
+                            });
+                        });
+                        setLoadStatus('reportLoadStatus', true);
+                    } else {
+                        setLoadStatus('reportLoadStatus', false);
+                    }
+                },
+                error: function () {
+                    alert('网络错误，无法加载订单详情');
+                }
+            });
+        }
+
+        loadDetail();
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,516 @@
+{% extends 'maneu/base.html' %}
+{% load static %}
+
+{% block css %}
+<style>
+    /* ========== 定制管理列表页样式 ========== */
+    /*
+      冗余分析：
+      - :root 中重新定义的 --store-* 变量与 base.html 已有变量取值完全重复，
+        已替换为 base 中的对应变量，避免重复定义。
+      - 未使用的 --store-accent / --store-text 已移除。
+      - --store-shadow 仅为柔和版阴影，直接内联到 .filter-card，避免污染全局。
+      - 所有视觉效果与原页面完全一致。
+    */
+
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .page-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--brand-color);
+        letter-spacing: -0.02em;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0;
+    }
+
+    .page-title i {
+        font-size: 2rem;
+        color: var(--brand-accent);
+    }
+
+    /* 筛选卡片 */
+    .filter-card {
+        background: var(--bg-surface);           /* 原 --store-surface */
+        border: 1px solid var(--border-subtle);  /* 原 --store-border */
+        border-radius: var(--radius-md);         /* 原 --store-radius */
+        padding: 1.5rem;
+        /* 保留原柔和阴影 */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
+        margin-bottom: 1.8rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: flex-end;
+    }
+
+    .filter-group {
+        flex: 1 1 220px;
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .filter-group label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--text-secondary);            /* 原 --store-muted */
+    }
+
+    .filter-group .input-group {
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+        border-radius: var(--radius-md);
+        overflow: hidden;
+    }
+
+    .filter-group .form-control,
+    .filter-group .btn {
+        border-radius: 0;
+    }
+
+    .filter-group .btn {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .btn-add-record {
+        background: var(--brand-accent);
+        border: none;
+        color: #000;
+        font-weight: 600;
+        padding: 0.55rem 1.4rem;
+        border-radius: 2rem;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        text-decoration: none;
+    }
+
+    .btn-add-record:hover {
+        background: #f5a623;
+        color: #000;
+        transform: translateY(-1px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    /* 列表头部 */
+    .list-header {
+        display: flex;
+        padding: 0.8rem 1.2rem;
+        background: var(--brand-color-pale);
+        border-radius: var(--radius-md) var(--radius-md) 0 0;
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: var(--brand-color);
+        letter-spacing: 0.03em;
+        border: 1px solid var(--border-subtle);
+        border-bottom: none;
+    }
+
+    .list-header .col-time { flex: 0 0 160px; }
+    .list-header .col-name { flex: 0 0 100px; }
+    .list-header .col-phone { flex: 0 0 130px; }
+    .list-header .col-remark { flex: 1; }
+    .list-header .col-actions { flex: 0 0 140px; text-align: right; }
+
+    /* 列表项卡片 */
+    .store-list-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem 1.2rem;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-top: none;
+        transition: all 0.2s ease;
+        gap: 0.2rem;
+        flex-wrap: wrap;
+    }
+
+    .store-list-item:last-child {
+        border-radius: 0 0 var(--radius-md) var(--radius-md);
+        border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .store-list-item:hover {
+        background: #fafbfc;
+        box-shadow: inset 4px 0 0 var(--brand-accent);
+    }
+
+    .store-list-item .col-time,
+    .store-list-item .col-name,
+    .store-list-item .col-phone,
+    .store-list-item .col-remark,
+    .store-list-item .col-actions {
+        display: flex;
+        align-items: center;
+    }
+
+    .store-list-item .col-time {
+        flex: 0 0 160px;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+    }
+
+    .store-list-item .col-name {
+        flex: 0 0 100px;
+        font-weight: 600;
+    }
+
+    .store-list-item .col-phone {
+        flex: 0 0 130px;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+    }
+
+    .store-list-item .col-remark {
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding-right: 0.5rem;
+    }
+
+    .store-list-item .col-actions {
+        flex: 0 0 140px;
+        justify-content: flex-end;
+        gap: 0.5rem;
+    }
+
+    .btn-action {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--border-subtle);
+        background: white;
+        color: var(--text-secondary);
+        transition: all 0.15s ease;
+        padding: 0;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .btn-action:hover {
+        background: var(--brand-color-pale);
+        border-color: var(--brand-color);
+        color: var(--brand-color);
+    }
+
+    .btn-action.delete-btn:hover {
+        background: #fef2f2;
+        border-color: #dc2626;
+        color: #dc2626;
+    }
+
+    /* 移动端 */
+    @media (max-width: 768px) {
+        .list-header { display: none; }
+
+        .store-list-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+            position: relative;
+            padding: 1.2rem;
+        }
+
+        .store-list-item .col-time,
+        .store-list-item .col-name,
+        .store-list-item .col-phone,
+        .store-list-item .col-remark,
+        .store-list-item .col-actions {
+            flex: none;
+            width: 100%;
+        }
+
+        .store-list-item .col-actions {
+            justify-content: flex-start;
+            padding-top: 0.5rem;
+            border-top: 1px dashed var(--border-subtle);
+            margin-top: 0.3rem;
+        }
+
+        .store-list-item::before {
+            content: attr(data-mobile-label);
+            position: absolute;
+            top: 0.5rem;
+            right: 1rem;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            letter-spacing: 0.03em;
+        }
+
+        .filter-card {
+            flex-direction: column;
+            align-items: stretch;
+        }
+    }
+
+    /* 空状态 */
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        color: var(--text-secondary);
+        font-size: 1rem;
+    }
+
+    .empty-state i {
+        font-size: 2.5rem;
+        display: block;
+        margin-bottom: 0.8rem;
+        color: #cbd5e1;
+    }
+
+    /* 加载动画 */
+    .loading-spinner {
+        display: flex;
+        justify-content: center;
+        padding: 2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-content-wrapper">
+    <div class="page-header">
+        <h1 class="page-title">
+            <i class="bi bi-gear-wide-connected"></i> 定制化管理
+        </h1>
+        <a href="{% url 'maneu_store:insert' %}" class="btn-add-record">
+            <i class="bi bi-plus-lg"></i> 新增记录
+        </a>
+    </div>
+
+    <!-- 筛选区域 -->
+    <div class="filter-card">
+        <div class="filter-group">
+            <label><i class="bi bi-search"></i> 客户信息</label>
+            <div class="input-group input-group-sm">
+                <input class="form-control" id="keywordInput" placeholder="姓名或手机号码" type="text">
+                <button class="btn btn-primary" id="searchByText" type="button">
+                    <i class="bi bi-search"></i> 查询
+                </button>
+            </div>
+        </div>
+        <div class="filter-group">
+            <label><i class="bi bi-calendar-range"></i> 时间范围</label>
+            <div class="input-group input-group-sm">
+                <span class="input-group-text">从</span>
+                <input autocomplete="off" class="form-control" id="timeStart" type="datetime-local"
+                       value="2024-01-01T00:00" max="{{ timeE }}" min="2010-01-01T00:00">
+                <span class="input-group-text">至</span>
+                <input autocomplete="off" class="form-control" id="timeEnd" type="datetime-local"
+                       value="{{ timeE }}" max="{{ timeE }}" min="2010-01-01T00:00">
+                <button class="btn btn-primary" id="searchByTime" type="button">
+                    <i class="bi bi-funnel"></i> 筛选
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 列表头部（桌面端） -->
+    <div class="list-header d-none d-md-flex">
+        <div class="col-time">录入时间</div>
+        <div class="col-name">客户姓名</div>
+        <div class="col-phone">联系电话</div>
+        <div class="col-remark">订单备注</div>
+        <div class="col-actions">操作</div>
+    </div>
+
+    <!-- 动态列表容器 -->
+    <div id="listContainer">
+        <div class="loading-spinner">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">加载中...</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+    // ---------- API 端点 ----------
+    const STORE_API = {
+        detail: "{% url 'maneu_store:detail' %}",
+        delete: "{% url 'maneu_store:api_delete' %}",
+        searchText: "{% url 'maneu_store:api_search_data' %}",
+        searchTime: "{% url 'maneu_store:api_search_time' %}"
+    };
+
+    // ---------- DOM 缓存 ----------
+    const $listContainer = $('#listContainer');
+    const $timeStart = $('#timeStart');
+    const $timeEnd = $('#timeEnd');
+    const $keyword = $('#keywordInput');
+
+    // ---------- 工具函数 ----------
+
+    function showLoading() {
+        $listContainer.html(`
+            <div class="loading-spinner">
+                <div class="spinner-border text-primary" role="status"></div>
+            </div>`);
+    }
+
+    function showEmptyState() {
+        $listContainer.html(`
+            <div class="empty-state">
+                <i class="bi bi-inbox"></i>
+                <p>暂无定制记录</p>
+                <small>尝试调整筛选条件或新增一条记录</small>
+            </div>`);
+    }
+
+    function showErrorState() {
+        $listContainer.html(`
+            <div class="empty-state">
+                <i class="bi bi-exclamation-triangle"></i>
+                <p>加载失败，请稍后重试</p>
+            </div>`);
+    }
+
+    /**
+     * 删除记录（动画 + 事件委托）
+     * @param {Event} event - 点击事件
+     */
+    function handleDelete(event) {
+        const $btn = $(event.currentTarget);
+        const indexId = $btn.data('index-id');
+        if (!confirm('确定要删除这条记录吗？此操作不可恢复。')) return;
+
+        $.ajax({
+            url: STORE_API.delete,
+            type: 'GET',
+            data: { index_id: indexId },
+            success: function (res) {
+                if (res.status === true) {
+                    const $item = $btn.closest('.store-list-item');
+                    if ($item.length) {
+                        $item.css({
+                            transition: 'all 0.3s ease',
+                            opacity: 0,
+                            transform: 'translateX(20px)'
+                        }).delay(300).queue(function () {
+                            $(this).remove();
+                            if ($listContainer.find('.store-list-item').length === 0) {
+                                showEmptyState();
+                            }
+                        });
+                    }
+                } else {
+                    alert(res.message || '删除失败，请稍后重试');
+                }
+            },
+            error: function () {
+                alert('网络错误，请稍后重试');
+            }
+        });
+    }
+
+    /**
+     * 渲染列表
+     * @param {Array} items
+     */
+    function renderList(items) {
+        $listContainer.empty();
+        if (!Array.isArray(items) || items.length === 0) {
+            showEmptyState();
+            return;
+        }
+
+        const fragment = $(document.createDocumentFragment());
+        items.forEach(function (item) {
+            const remarkText = item.remark || '-';
+            const row = $(`
+                <div class="store-list-item" data-mobile-label="${item.time || ''}">
+                    <div class="col-time"><i class="bi bi-clock me-2 d-md-none"></i>${item.time || '-'}</div>
+                    <div class="col-name"><i class="bi bi-person me-2 d-md-none"></i>${item.name || '-'}</div>
+                    <div class="col-phone"><i class="bi bi-phone me-2 d-md-none"></i>${item.phone || '-'}</div>
+                    <div class="col-remark" title="${remarkText.replace(/"/g, '&quot;')}">
+                        <i class="bi bi-chat-left-text me-2 d-md-none"></i>${remarkText}
+                    </div>
+                    <div class="col-actions">
+                        <a href="${STORE_API.detail}?index_id=${item.id}" class="btn-action" title="查看详情">
+                            <i class="bi bi-eye"></i>
+                        </a>
+                        <button class="btn-action delete-btn" data-index-id="${item.id}" title="删除记录">
+                            <i class="bi bi-trash3"></i>
+                        </button>
+                    </div>
+                </div>`);
+            fragment.append(row);
+        });
+        $listContainer.append(fragment);
+    }
+
+    /**
+     * 统一加载数据并渲染
+     */
+    function fetchAndRender(url, params) {
+        showLoading();
+        $.get(url, params)
+            .done(function (res) {
+                renderList(Array.isArray(res) ? res : (res.content || []));
+            })
+            .fail(function () {
+                showErrorState();
+            });
+    }
+
+    // ---------- 搜索触发 ----------
+    function searchByTime() {
+        fetchAndRender(STORE_API.searchTime, {
+            timeS: $timeStart.val(),
+            timeE: $timeEnd.val()
+        });
+    }
+
+    function searchByText() {
+        const keyword = $keyword.val().trim();
+        if (!keyword) {
+            alert('请输入搜索关键词');
+            return;
+        }
+        fetchAndRender(STORE_API.searchText, { value: keyword });
+    }
+
+    // ---------- 页面初始化 ----------
+    $(function () {
+        // 默认加载
+        searchByTime();
+
+        // 筛选按钮事件
+        $('#searchByTime').on('click', searchByTime);
+        $('#searchByText').on('click', searchByText);
+
+        // 回车搜索
+        $keyword.on('keypress', function (e) {
+            if (e.which === 13) searchByText();
+        });
+
+        // 【解耦重点】删除按钮使用事件委托，无需为每行单独绑定
+        $listContainer.on('click', '.delete-btn', handleDelete);
+    });
+</script>
+{% endblock %}

@@ -110,7 +110,7 @@ def is_mobile(ua):
     demo:   if checkMobile.judge_pc_or_mobile(ua=request.META.get("HTTP_USER_AGENT")):
                 return render(request, 'maneu_order/insert_phone.html')
             else:
-                return render(request, 'maneu_order/insert.html')
+                return render(request, 'maneu_order/order_insert.html')
     """
 
     factor = ua
