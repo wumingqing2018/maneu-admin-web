@@ -4,7 +4,8 @@ from maneu.models import ManeuOrder
 
 
 def order_insert(admin_id='', index_id='', name='', time='', phone='', status='', remark='', content=''):
-    return ManeuOrder.objects.create(id=index_id, name=name, time=time, phone=phone, status=status, admin_id=admin_id, remark=remark, content=content)
+    return ManeuOrder.objects.create(id=index_id, name=name, time=time, phone=phone, status=status, admin_id=admin_id,
+                                     remark=remark, content=content)
 
 
 def order_delete(admin_id='', index_id=''):
@@ -20,9 +21,10 @@ def order_search_time(admin_id='', timeS='', timeE=''):
 
 
 def order_search_data(admin_id='', value=''):
-    return ManeuOrder.objects.filter(Q(name__icontains=value, admin_id=admin_id) | Q(phone__icontains=value, admin_id=admin_id)).order_by('-time').all()
+    return ManeuOrder.objects.filter(
+        Q(name__icontains=value, admin_id=admin_id) | Q(phone__icontains=value, admin_id=admin_id)).order_by(
+        '-time').all()
 
 
 def order_update_data(admin_id='', index_id='', remark="", content=''):
     return ManeuOrder.objects.filter(admin_id=admin_id, id=index_id).update(remark=remark, content=content)
-

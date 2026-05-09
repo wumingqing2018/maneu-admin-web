@@ -8,7 +8,8 @@ def store_update(admin_id='', index_id='', content=''):
 
 
 def store_insert(admin_id='', index_id='', name='', time='', phone='', status='', remark='', content=''):
-    return ManeuStore.objects.create(id=index_id, admin_id=admin_id, time=time, name=name, phone=phone, status=status, remark=remark, content=content)
+    return ManeuStore.objects.create(id=index_id, admin_id=admin_id, time=time, name=name, phone=phone, status=status,
+                                     remark=remark, content=content)
 
 
 def store_delete(admin_id='', index_id=''):
@@ -24,4 +25,6 @@ def store_search_time(admin_id='', timeS='', timeE=''):
 
 
 def store_search_data(admin_id='', value=''):
-    return ManeuStore.objects.filter(Q(name__icontains=value, admin_id=admin_id) | Q(phone__icontains=value, admin_id=admin_id)).order_by('-time').all()
+    return ManeuStore.objects.filter(
+        Q(name__icontains=value, admin_id=admin_id) | Q(phone__icontains=value, admin_id=admin_id)).order_by(
+        '-time').all()

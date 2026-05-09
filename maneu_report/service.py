@@ -90,8 +90,11 @@ def report_delete(admin_id='', index_id=''):
 
 
 def report_search_time(admin_id='', timeS='', timeE=''):
-    return ManeuReport.objects.filter(admin_id=admin_id, time__gte=timeS, time__lte=timeE, status=2).order_by('-time').all()
+    return ManeuReport.objects.filter(admin_id=admin_id, time__gte=timeS, time__lte=timeE, status=2).order_by(
+        '-time').all()
 
 
 def report_search_data(admin_id='', value=''):
-    return ManeuReport.objects.filter(Q(admin_id=admin_id, name__icontains=value,status=2) | Q(admin_id=admin_id, phone__icontains=value,status=2)).order_by('-time').all()
+    return ManeuReport.objects.filter(
+        Q(admin_id=admin_id, name__icontains=value, status=2) | Q(admin_id=admin_id, phone__icontains=value,
+                                                                  status=2)).order_by('-time').all()

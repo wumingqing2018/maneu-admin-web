@@ -144,7 +144,7 @@ $(document).ready(function () {
                             store.find(".arg13").val(order.content.content[i]['arg13'])
                             store.find(".arg14").val(order.content.content[i]['arg14'])
                         }
-                    }else {
+                    } else {
                         console.log(order.content)
                     }
 
@@ -183,9 +183,9 @@ $(document).ready(function () {
                 },
                 success: function (res) {
                     console.log(res)
-                    if (res.status === true){
+                    if (res.status === true) {
                         alert('删除成功')
-                    }else {
+                    } else {
                         alert('删除失败')
                     }
                 },
@@ -240,9 +240,9 @@ $(document).ready(function () {
             },
             success: function (res) {
                 console.log(res)
-                if (res.status === true){
+                if (res.status === true) {
                     alert('更新成功')
-                }else {
+                } else {
                     alert('更新失败')
                 }
             },
@@ -256,7 +256,7 @@ $(document).ready(function () {
 
     $('#guestUpdate').click(function update_guest() {
         $.ajax({
-            url:  guest_update,
+            url: guest_update,
             method: 'GET',
             data: {
                 index_id: index_id,
@@ -272,9 +272,9 @@ $(document).ready(function () {
             },
             success: function (res) {
                 console.log(res)
-                if (res.status === true){
+                if (res.status === true) {
                     alert('更新成功')
-                }else {
+                } else {
                     alert('更新失败')
                 }
             },
@@ -308,9 +308,9 @@ $(document).ready(function () {
             },
             success: function (res) {
                 console.log(res)
-                if (res.status === true){
+                if (res.status === true) {
                     alert('更新成功')
-                }else {
+                } else {
                     alert('更新失败')
                 }
             },
@@ -331,7 +331,7 @@ $(document).ready(function () {
             xhrFields: {
                 responseType: 'blob'  // 关键：告诉 jQuery 将响应解析为 Blob
             },
-            success: function(blob) {
+            success: function (blob) {
                 // 创建对象 URL
                 const blobUrl = URL.createObjectURL(blob);
 
@@ -346,7 +346,7 @@ $(document).ready(function () {
                 document.body.removeChild(link);
                 URL.revokeObjectURL(blobUrl);
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 console.error('下载失败:', error);
             }
         });

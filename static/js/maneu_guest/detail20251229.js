@@ -17,7 +17,8 @@ $(document).ready(function () {
                         window.location.href = guest_index
                     } else {
                         alert(data.message)
-                    }            },
+                    }
+                },
                 error: function () {
                     alert('order,网络出错')
                 }

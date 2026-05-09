@@ -1,71 +1,164 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
-    <title>徕可</title>
-    <link href="{% static 'images/maneu/logo.svg' %}" rel="icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>徕可 · 管理平台</title>
+
+    <!-- Favicon -->
+    <link href="{% static 'images/maneu/logo.svg' %}" rel="icon" type="image/svg+xml">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Bootswatch Cerulean 主题 (Bootstrap 5) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.8/cerulean/bootstrap.min.css" rel="stylesheet">
+
+    <!-- 自定义基础样式 -->
     <link href="{% static 'css/maneu/base.css' %}" rel="stylesheet">
-    <!-- 新 Bootstrap5 核心 CSS 文件 -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.8/cerulean/bootstrap.min.css" rel="stylesheet"/>
-    <!--  popper.min.js 用于弹窗、提示、下拉菜单 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js"></script>
-    <!-- 最新的 Bootstrap5 核心 JavaScript 文件 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    {% block css %}{% endblock %}
 
 </head>
 
+<body>
 
-<body class="blue">
-<nav class="navbar navbar-expand-md bg-dark navbar-dark">
-    <!-- Brand -->
-    <img src="{% static 'images/maneu/logo.svg' %}" style="height: 30px">
-    <!-- Toggler/collapsibe Button -->
-    <button class="navbar-toggler" data-bs-target="#collapsibleNavbar" data-bs-toggle="collapse" type="button">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <!-- Navbar links -->
-    <div class="collapse navbar-collapse" id="collapsibleNavbar">
-        <ul class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link">数据可视化</a>
+<!-- ==================== 顶部导航栏 ==================== -->
+<nav class="navbar-main" id="mainNavbar">
+    <!-- 品牌标识 -->
+    <a href="/" class="navbar-brand-wrapper" title="徕可首页">
+        <img src="{% static 'images/maneu/logo.svg' %}" alt="徕可Logo">
+        <span class="navbar-brand-name">徕可</span>
+    </a>
+
+    <!-- 桌面端导航链接 -->
+    <div class="desktop-nav" id="desktopNav">
+        <ul class="navbar-nav-custom">
+            <li class="nav-item-custom">
+                <a class="nav-link-custom" href="{% url 'maneu_index:index' %}" title="数据可视化面板">
+                    <i class="bi bi-bar-chart-line"></i> 可视化面板
+                </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'maneu_order:index' %}">订单管理</a>
+            <li class="nav-item-custom">
+                <a class="nav-link-custom" href="{% url 'maneu_order:index' %}" title="订单管理">
+                    <i class="bi bi-receipt"></i> 订单管理
+                </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'maneu_report:index' %}">报告管理</a>
+            <li class="nav-item-custom">
+                <a class="nav-link-custom" href="{% url 'maneu_report:index' %}" title="报告管理">
+                    <i class="bi bi-file-earmark-text"></i> 报告管理
+                </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'maneu_store:index' %}">定制化精品管理</a>
+            <li class="nav-item-custom">
+                <a class="nav-link-custom" href="{% url 'maneu_store:index' %}" title="定制管理">
+                    <i class="bi bi-gear"></i> 定制管理
+                </a>
             </li>
-            {#            <li class="nav-item">#}
-            {#                <a class="nav-link" href="{% url 'maneu_guest:index' %}">客户管理</a>#}
-            {#            </li>#}
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'maneu_admin:index' %}">个人中心</a>
+        </ul>
+
+        <!-- 右侧用户区域 -->
+        <ul class="navbar-nav-custom" style="margin-left: auto;">
+            <li class="nav-item-custom dropdown">
+                <a class="nav-link-custom dropdown-toggle-custom"
+                   href="#"
+                   role="button"
+                   id="userDropdown"
+                   title="个人中心"
+                   onclick="toggleUserDropdown(event)"
+                   aria-expanded="false">
+                        <span class="user-avatar-badge">
+                            <i class="bi bi-person-fill" style="font-size:0.9rem;"></i>
+                        </span>
+                    <span class="d-none d-lg-inline">个人中心</span>
+                </a>
+                <div class="dropdown-menu-custom" id="userDropdownMenu"
+                     style="position:absolute;right:0;top:100%;margin-top:6px;display:none;min-width:170px;">
+                    <a class="dropdown-item-custom" href="{% url 'maneu_admin:index' %}">
+                        <i class="bi bi-pencil-square"></i> 修改资料
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item-custom text-danger" href="{% url 'logout' %}">
+                        <i class="bi bi-box-arrow-right"></i> 退出登录
+                    </a>
+                </div>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'logout' %}">退出登录</a>
-            </li>
-            {#            <li class="nav-item dropdown">#}
-            {#                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="{% url 'maneu_admin:index' %}"#}
-            {#                   id="navbardrop">个人中心</a>#}
-            {#                <div class="dropdown-menu">#}
-            {#                    <a class="dropdown-item" href="{% url 'maneu_admin:index' %}">修改资料</a>#}
-            {#                    <a class="dropdown-item" href="{% url 'logout' %}">退出登录</a>#}
-            {#                </div>#}
-            {#            </li>#}
         </ul>
     </div>
+
+    <!-- 移动端汉堡按钮 -->
+    <div class="mobile-toggler-wrapper">
+        <button class="navbar-toggler-custom" id="mobileMenuToggle"
+                aria-label="打开菜单" title="菜单"
+                onclick="openMobileMenu()">
+            <i class="bi bi-list"></i>
+        </button>
+    </div>
 </nav>
-{% block content %} {% endblock %}
-{% block css %}{% endblock %}
+
+<!-- 移动端遮罩层 -->
+<div class="mobile-menu-overlay" id="mobileMenuOverlay" onclick="closeMobileMenu()"></div>
+
+<!-- 移动端侧滑菜单 -->
+<div class="mobile-menu-panel" id="mobileMenuPanel">
+    <div class="mobile-menu-header">
+            <span style="font-weight:700;color:var(--brand-color);font-size:1.1rem;">
+                <img src="{% static 'images/maneu/logo.svg' %}"
+                     style="height:24px;vertical-align:middle;margin-right:6px;" alt="">
+                徕可
+            </span>
+        <button class="btn-close-mobile" onclick="closeMobileMenu()" aria-label="关闭菜单">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+    <a class="nav-link-mobile" href="{% url 'maneu_index:index' %}" onclick="closeMobileMenu()">
+        <i class="bi bi-bar-chart-line"></i> 数据可视化
+    </a>
+    <a class="nav-link-mobile" href="{% url 'maneu_order:index' %}" onclick="closeMobileMenu()">
+        <i class="bi bi-receipt"></i> 订单管理
+    </a>
+    <a class="nav-link-mobile" href="{% url 'maneu_report:index' %}" onclick="closeMobileMenu()">
+        <i class="bi bi-file-earmark-text"></i> 报告管理
+    </a>
+    <a class="nav-link-mobile" href="{% url 'maneu_store:index' %}" onclick="closeMobileMenu()">
+        <i class="bi bi-gear"></i> 定制管理
+    </a>
+    <hr style="border-color:var(--border-subtle);margin:0.5rem 0;">
+    <a class="nav-link-mobile" href="{% url 'maneu_admin:index' %}" onclick="closeMobileMenu()">
+        <i class="bi bi-pencil-square"></i> 修改资料
+    </a>
+    <a class="nav-link-mobile" href="{% url 'logout' %}" onclick="closeMobileMenu()"
+       style="color:#dc2626;">
+        <i class="bi bi-box-arrow-right"></i> 退出登录
+    </a>
+</div>
+
+<!-- ==================== 主内容区 ==================== -->
+<div class="main-content-wrapper">
+    {% block content %}
+        {# 子页面内容将填充在此处 #}
+    {% endblock %}
+</div>
+
+<!-- ==================== 页脚 ==================== -->
+<footer class="footer-main">
+    <span>&copy; {% now "Y" %} 徕可 · 版权所有</span>
+    <span class="footer-divider">|</span>
+    <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener noreferrer">
+        粤ICP备2023070483号
+    </a>
+</footer>
+
+<!-- ==================== JavaScript 库 ==================== -->
+<!-- jQuery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<!-- Popper.js (Bootstrap 依赖) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js"></script>
+<!-- Bootstrap 5 JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.min.js"></script>
+
+<script src="{% static 'js/maneu/base.js' %}"></script>
+
 {% block javascript %}{% endblock %}
 </body>
-
-
-<footer>
-    <a href="https://beian.miit.gov.cn">粤ICP备2023070483号</a>
-</footer>
 </html>

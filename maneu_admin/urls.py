@@ -6,8 +6,7 @@ app_name = 'maneu_admin'
 urlpatterns = [
     path('', views.index, name='index'),
     path('insert/', views.insert, name='insert'),
-    path('detail/', views.detail, name='detail'),
     path('update/', views.update, name='update'),
-    path('api_detail/', api.detail, name='api_detail'),
+    path('api_index/', api.index, name='api_index'),
     path('update_data/', api.update, name='api_update'),
 ]

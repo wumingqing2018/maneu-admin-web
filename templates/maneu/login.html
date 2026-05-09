@@ -1,59 +1,429 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 
 <head>
-    <title>徕可</title>
-    <link href="{% static 'images/maneu/logo.svg' %}" rel="icon">
-    <link href="{% static 'css/maneu/login.css' %}" rel="stylesheet">
-    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>徕可管理系统 · 登录</title>
+    <link rel="icon" href="{% static 'images/maneu/logo.svg' %}">
 
-    <!-- 新 Bootstrap5 核心 CSS 文件 -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.8/cerulean/bootstrap.min.css" rel="stylesheet"/>
-    <!--  popper.min.js 用于弹窗、提示、下拉菜单 -->
+    <!-- Bootstrap 5 + Bootswatch Cerulean -->
+    <link crossorigin="anonymous"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.8/cerulean/bootstrap.min.css"
+          integrity="sha512-3n/Isj9MCqCc1wf/QfjLigco9sx9xr9m3TqgxstJrSxmwZ05qjl4owbfkioZ0y3w8fNWcVLnJGHfVqKF/L1Qsw=="
+          referrerpolicy="no-referrer" rel="stylesheet"/>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js"></script>
-    <!-- 最新的 Bootstrap5 核心 JavaScript 文件 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-    <script>
-        sendsms = "{% url 'sendsms' %}"
-        login_verify = "{% url 'login_api' %}"
-        maneu_order_index = "{% url 'maneu_order:index' %}"
-    </script>
-    <script src="{% static 'js/maneu/maneu_login20251229.js' %}"></script>
+    <style>
+        :root {
+            --deep-blue: #003153;
+            --gold: #FFC048;
+            --gold-soft: #FFD580;
+            --text-primary: #ffffff;
+            --text-secondary: #b0bec5;
+            --surface: rgba(255, 255, 255, 0.06);
+            --border-glow: rgba(255, 192, 72, 0.3);
+            --radius-card: 32px;
+            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: radial-gradient(circle at 50% 20%, #002a45 0%, #001a2e 60%, #000d1a 100%);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 科技网格背景 */
+        .tech-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(rgba(255, 192, 72, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 192, 72, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* 浮动光点 */
+        .glow-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(50px);
+            opacity: 0.07;
+            z-index: 0;
+            pointer-events: none;
+            animation: float 8s infinite alternate ease-in-out;
+        }
+
+        .glow-orb.orb-1 {
+            width: 250px;
+            height: 250px;
+            background: var(--gold);
+            top: -10%;
+            left: -10%;
+        }
+
+        .glow-orb.orb-2 {
+            width: 180px;
+            height: 180px;
+            background: #2ecc71;
+            bottom: -5%;
+            right: -5%;
+            animation-duration: 10s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0);
+            }
+            100% {
+                transform: translate(30px, 20px);
+            }
+        }
+
+        /* 主内容区 */
+        .main-content {
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1.5rem;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: var(--radius-card);
+            border: 1px solid var(--border-glow);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 192, 72, 0.08) inset;
+            text-align: center;
+            padding: 2.5rem 1.5rem 2rem;
+            transition: all 0.3s ease;
+            animation: cardEntry 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes cardEntry {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .brand-name {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--gold);
+            margin-bottom: 0.3rem;
+            text-shadow: 0 0 10px rgba(255, 192, 72, 0.3);
+        }
+
+        .brand-sub {
+            font-size: 0.85rem;
+            font-weight: 300;
+            letter-spacing: 3px;
+            color: var(--gold-soft);
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+        }
+
+        /* 输入组 */
+        .input-group-custom {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .input-item {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.8rem 0.5rem;
+            font-size: 1rem;
+            color: var(--text-primary);
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            letter-spacing: 0.5px;
+        }
+
+        .input-item::placeholder {
+            color: rgba(255, 255, 255, 0.45);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        .input-item:focus {
+            border-bottom-color: var(--gold);
+            box-shadow: 0 2px 8px -2px rgba(255, 192, 72, 0.3);
+        }
+
+        .msg {
+            display: block;
+            font-size: 0.75rem;
+            margin-top: 0.4rem;
+            color: #ff6b6b;
+            min-height: 1.2rem;
+        }
+
+        /* 按钮通用样式 */
+        .btn-custom {
+            width: 100%;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 40px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #fff;
+            margin-bottom: 0.8rem;
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, #FFC048, #e6a800);
+            box-shadow: 0 4px 15px rgba(255, 192, 72, 0.3);
+            color: #003153;
+        }
+
+        .btn-gold:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(255, 192, 72, 0.45);
+        }
+
+        .btn-gold:active {
+            transform: translateY(0);
+        }
+
+        .btn-disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .btn-disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-outline-light {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .btn-outline-light:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--gold-soft);
+            color: var(--gold-soft);
+        }
+
+        /* 返回链接 */
+        .back-link {
+            display: inline-block;
+            color: var(--gold-soft);
+            text-decoration: none;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--gold);
+            text-decoration: underline;
+        }
+
+        /* 页脚 */
+        .footer {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 1rem;
+            font-size: 0.7rem;
+            color: rgba(255, 192, 72, 0.5);
+        }
+
+        .footer a {
+            color: rgba(255, 192, 72, 0.6);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer a:hover {
+            color: var(--gold);
+        }
+
+        /* 移动端调整 */
+        @media (max-width: 400px) {
+            .login-card {
+                padding: 2rem 1.2rem 1.8rem;
+            }
+
+            .brand-name {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
 </head>
 
 <body>
-<div class="container-fluid">
-    <div class="login-wrapper">
-        <div class="header">徕可管理系统</div>
-        <div class="form-wrapper">
+
+<!-- 科技感背景元素 -->
+<div class="tech-bg"></div>
+<div class="glow-orb orb-1"></div>
+<div class="glow-orb orb-2"></div>
+
+<!-- 主要内容 -->
+<div class="main-content">
+    <div class="login-card">
+        <h1 class="brand-name">徕可管理系统</h1>
+        <p class="brand-sub">Account Login</p>
+
+        <!-- 手机号输入 -->
+        <div class="input-group-custom">
             <input autocomplete="off" class="input-item" id="call" placeholder="手机号码" type="text">
             <span class="msg" id="msg"></span>
         </div>
 
-        <div class="form-wrapper" id="password">
+        <!-- 验证码输入 -->
+        <div class="input-group-custom" id="password">
             <input autocomplete="off" class="input-item" id="code" placeholder="验证码" type="text">
-            <button class="btn" id="login-hold" style="background: gray; color: white;">请输入验证码后再登陆</button>
-            <button class="btn" id="login-btn" style="display: none">登录</button>
+        </div>
 
-        </div>
-        <div class="form-wrapper">
-            <button class="btn" id="wait-btn" style="background: gray; color: white; display: none">请稍后再获取验证码
-            </button>
-            <button class="btn" id="sendsms-btn">获取验证码</button>
-        </div>
-        <div class="form-wrapper">
-            <a href="{% url 'index' %}">
-                <button class="btn">返回</button>
-            </a>
-        </div>
+        <!-- 登录按钮（动态显示） -->
+        <button class="btn-custom btn-disabled" id="login-hold" style="display: none;">请输入验证码后再登录</button>
+        <button class="btn-custom btn-gold" id="login-btn">登录</button>
+
+        <!-- 获取验证码按钮区域 -->
+        <button class="btn-custom btn-outline-light" id="sendsms-btn">获取验证码</button>
+        <button class="btn-custom btn-disabled" id="wait-btn" style="display: none;">请稍后再获取验证码</button>
+
+        <!-- 返回首页链接 -->
+        <a href="{% url 'index' %}" class="back-link">← 返回首页</a>
     </div>
 </div>
-</body>
 
-<footer class="fixed-bottom text-center">
-    <a href="https://beian.miit.gov.cn">粤ICP备2023070483号</a>
+<!-- 页脚备案 -->
+<footer class="footer">
+    <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener">粤ICP备2023070483号</a>
 </footer>
+
+<script>
+    // 后端路由地址
+    const sendsms = "{% url 'sendsms' %}";
+    const login_verify = "{% url 'login_api' %}";
+    const maneu_index_index = "{% url 'maneu_index:index' %}";
+
+    $(document).ready(function () {
+        // 初始状态：验证码为空，显示禁用登录按钮，隐藏真实登录按钮
+        function toggleLoginButton() {
+            if ($("#code").val().trim() === '') {
+                $("#login-hold").show();
+                $("#login-btn").hide();
+            } else {
+                $("#login-hold").hide();
+                $("#login-btn").show();
+            }
+        }
+
+        // 页面加载时调用
+        toggleLoginButton();
+
+        // 监听验证码输入
+        $("#code").on('input', toggleLoginButton);
+
+        // 获取验证码
+        $("#sendsms-btn").click(function () {
+            const phone = $("#call").val().trim();
+            if (!phone) {
+                $("#msg").text("请输入手机号码").css("color", "#ff6b6b");
+                return;
+            }
+
+            $.ajax({
+                url: sendsms,
+                method: 'GET',
+                data: {call: phone},
+                success: function (res) {
+                    if (res.status === true) {
+                        // 切换按钮状态
+                        $("#wait-btn").show();
+                        $("#sendsms-btn").hide();
+                        $("#msg").text("").css("color", "");
+
+                        // 60秒后恢复
+                        setTimeout(function () {
+                            $("#wait-btn").hide();
+                            $("#sendsms-btn").show();
+                        }, 60000);
+                    } else {
+                        $("#msg").text("发送失败：" + (res.message || "未知错误")).css("color", "#ff6b6b");
+                    }
+                },
+                error: function () {
+                    $("#msg").text("网络错误，请稍后重试").css("color", "#ff6b6b");
+                }
+            });
+        });
+
+        // 登录
+        $("#login-btn").click(function () {
+            const phone = $("#call").val().trim();
+            const code = $("#code").val().trim();
+
+            if (!phone || !code) {
+                $("#msg").text("请填写完整信息").css("color", "#ff6b6b");
+                return;
+            }
+
+            $.ajax({
+                url: login_verify,
+                method: 'GET',
+                data: {call: phone, code: code},
+                success: function (res) {
+                    if (res.status === true) {
+                        window.location.href = maneu_index_index;
+                    } else {
+                        $("#msg").text(res.message || "登录失败").css("color", "#ff6b6b");
+                    }
+                },
+                error: function () {
+                    $("#msg").text("登录请求失败，请检查网络").css("color", "#ff6b6b");
+                }
+            });
+        });
+    });
+</script>
+
+</body>
 </html>

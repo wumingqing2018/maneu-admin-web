@@ -141,9 +141,9 @@ $(document).ready(function () {
             },
             success: function (res) {
                 console.log(res)
-                if (res.status === true){
+                if (res.status === true) {
                     alert('更新成功')
-                }else {
+                } else {
                     alert('更新失败')
                 }
             },

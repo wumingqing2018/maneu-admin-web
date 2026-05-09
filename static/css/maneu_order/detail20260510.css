@@ -1,3 +1,4 @@
+
 /* ========== 定制详情页专属样式 ========== */
 .page-wrapper {
     padding: 0 0.5rem;
@@ -195,6 +196,10 @@
     background: #fef3c7;
     color: #92400e;
 }
+.status-warning {
+    background: #fca5a5;
+    color: #bb2d3b;
+}
 
 /* 加载动画 */
 .loading-overlay {
@@ -324,9 +329,8 @@
 }
 
 .btn-delete-record {
-    background: #dc3545;
-    border: none;
-    color: white;
+    border: #dc3545;
+    color: #dc3545;
     font-weight: 600;
     padding: 0.45rem 1.2rem;
     border-radius: 2rem;

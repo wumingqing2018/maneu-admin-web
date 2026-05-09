@@ -10,7 +10,8 @@ def search_time(request):
 
         try:
             data = report_search_time(admin_id=admin_id, timeS=request.GET.get('timeS'), timeE=request.GET.get('timeE'))
-            content = {'status': True, 'message': '', 'content': list(data.values('id','name','phone','time', 'remark'))}
+            content = {'status': True, 'message': '',
+                       'content': list(data.values('id', 'name', 'phone', 'time', 'remark'))}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
 
@@ -25,7 +26,8 @@ def search_data(request):
 
         try:
             data = report_search_data(admin_id=admin_id, value=request.GET.get('value'))
-            content = {'status': True, 'message': '', 'content': list(data.values('id','name','phone','time', 'remark'))}
+            content = {'status': True, 'message': '',
+                       'content': list(data.values('id', 'name', 'phone', 'time', 'remark'))}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
 

@@ -18,7 +18,8 @@ def insert(request):
 
         try:
             content = guest_simple(request)
-            guest_id = guest_insert(admin_id=admin_id, index_id=index_id, time=time, name=name, phone=phone, status=3, content=content, remark=request.GET.get('guestRemark')).id
+            guest_id = guest_insert(admin_id=admin_id, index_id=index_id, time=time, name=name, phone=phone, status=3,
+                                    content=content, remark=request.GET.get('guestRemark')).id
             guest = {'status': True, 'message': guest_id, 'content': {}}
         except Exception as e:
             guest = {'status': False, 'message': str(e), 'content': {}}
@@ -34,17 +35,15 @@ def detail(request):
     index_id = is_uuid(request.GET.get('index_id'))
     if admin_id and index_id:
 
-
         try:
             data = guest_detail(admin_id=admin_id, index_id=index_id)
             guest_id = {'status': True, 'message': '', 'content': model_to_dict(data)}
         except Exception as e:
             guest_id = {'status': False, 'message': str(e), 'content': {}}
 
-
-        content = {'status': True, 'message': '', 'content':{'guest_id': guest_id}}
+        content = {'status': True, 'message': '', 'content': {'guest_id': guest_id}}
     else:
-        content = {'status': False, 'message': index_id, 'content':{'guest_id': {}}}
+        content = {'status': False, 'message': index_id, 'content': {'guest_id': {}}}
     return JsonResponse(content)
 
 
@@ -53,17 +52,15 @@ def delete(request):
     index_id = is_uuid(request.GET.get('index_id'))
     if admin_id and index_id:
 
-
         try:
             guest_delete(admin_id=admin_id, index_id=index_id)
             guest_id = {'status': True, 'message': "", 'content': {}}
         except Exception as e:
             guest_id = {'status': False, 'message': str(e), 'content': {}}
 
-
         content = {'status': True, 'message': '', 'content': {'guest_id': guest_id}}
     else:
-        content = {'status': False, 'message': index_id, 'content':{'guest_id': {}}}
+        content = {'status': False, 'message': index_id, 'content': {'guest_id': {}}}
     return JsonResponse(content)
 
 
@@ -88,7 +85,6 @@ def update(request):
         except Exception as e:
             guest = {'status': False, 'message': str(e), 'content': {}}
 
-
         try:
             data = order_update(admin_id=admin_id,
                                 index_id=index_id,
@@ -100,7 +96,6 @@ def update(request):
             order = {'status': True, 'message': '', 'content': data}
         except Exception as e:
             order = {'status': False, 'message': str(e), 'content': {}}
-
 
         try:
             data = store_update(admin_id=admin_id,
@@ -114,7 +109,6 @@ def update(request):
         except Exception as e:
             store = {'status': False, 'message': str(e), 'content': {}}
 
-
         try:
             data = report_update(admin_id=admin_id,
                                  index_id=index_id,
@@ -127,8 +121,8 @@ def update(request):
         except Exception as e:
             report = {'status': False, 'message': str(e), 'content': {}}
 
-
-        content = {'status': True, 'message': '', 'content': {'order': order, 'guest': guest, 'store': store, 'report': report}}
+        content = {'status': True, 'message': '',
+                   'content': {'order': order, 'guest': guest, 'store': store, 'report': report}}
     else:
         content = {'status': True, 'message': '', 'content': {'order': {}, 'guest': {}, 'store': {}, 'report': {}}}
     return JsonResponse(content)
@@ -140,7 +134,8 @@ def search_time(request):
     if admin_id:
         try:
             data = guest_search_time(admin_id, request.GET.get('timeS'), request.GET.get('timeE'))
-            content = {'status': True, 'message': admin_id, 'content': list(data.values('id','name','phone','time', 'remark'))}
+            content = {'status': True, 'message': admin_id,
+                       'content': list(data.values('id', 'name', 'phone', 'time', 'remark'))}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
     else:
@@ -155,7 +150,8 @@ def search_data(request):
     if admin_id:
         try:
             data = guest_search_data(admin_id, request.GET.get('value'))
-            content = {'status': True, 'message': admin_id, 'content': list(data.values('id', 'name', 'phone', 'time', 'remark'))}
+            content = {'status': True, 'message': admin_id,
+                       'content': list(data.values('id', 'name', 'phone', 'time', 'remark'))}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
     else:

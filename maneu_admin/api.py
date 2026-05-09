@@ -4,12 +4,11 @@ from common.verify import is_uuid
 from maneu_admin.service import *
 
 
-def detail(request):
-    admin_id = is_uuid(request.GET.get('id'))
+def index(request):
+    index_id = is_uuid(request.GET.get('index_id'))
 
-    if admin_id == request.session.get('id'):
-        try:
-            userContent = user_detail(admin_id=admin_id)
+    try:
+            userContent = user_detail(index_id=index_id)
             data = {'nickname': userContent.nickname,
                     'location': userContent.location,
                     'phone': userContent.phone,
@@ -18,27 +17,23 @@ def detail(request):
             print(data)
 
             content = {'status': True, 'message': '', 'content': data}
-        except Exception as e:
+    except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
-    else:
-        content = {'status': False, 'message': '请输入正确的参数', 'content': {}}
 
     return JsonResponse(content)
 
 
 def update(request):
-    admin_id = is_uuid(request.GET.get('id'))
+        index_id = is_uuid(request.GET.get('index_id'))
 
-    if admin_id == request.session.get('id'):
         try:
-            data = user_update(admin_id=admin_id, phone=request.GET.get('phone'), nickname=request.GET.get('nickname'), location=request.GET.get('location'))
+            data = user_update(index_id=index_id, phone=request.GET.get('phone'), nickname=request.GET.get('nickname'),
+                               location=request.GET.get('location'))
             content = {'status': True, 'message': '', 'content': data}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
-    else:
-        content = {'status': False, 'message': '请输入正确的参数', 'content': {}}
 
-    return JsonResponse(content)
+        return JsonResponse(content)
 
 
 def search_time(request):

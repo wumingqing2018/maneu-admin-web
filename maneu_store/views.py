@@ -1,8 +1,6 @@
 from django.shortcuts import render
 
 from common import common
-from maneu.models import ManeuStore, ManeuOrder
-import json
 
 
 def index(request):
@@ -14,4 +12,4 @@ def insert(request):
 
 
 def detail(request):
-    return render(request, 'maneu_store/detail.html',{'index_id': request.GET.get('index_id')})
+    return render(request, 'maneu_store/detail.html', {'index_id': request.GET.get('index_id')})

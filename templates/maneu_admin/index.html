@@ -1,70 +1,222 @@
 {% extends 'maneu/base.html' %}
 {% load static %}
+
+{% block css %}
+    <link href="{% static 'css/maneu_store/index20260428.css' %}" rel="stylesheet">
+    <style>
+        :root {
+            --store-accent: hsl(38, 92%, 55%);
+            --store-surface: #ffffff;
+            --store-border: #e8ecf1;
+            --store-text: #1e293b;
+            --store-muted: #64748b;
+            --store-radius: 12px;
+            --store-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--brand-color);
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0;
+        }
+
+        .page-title i {
+            font-size: 2rem;
+            color: var(--brand-accent);
+        }
+
+        .btn-back {
+            background: transparent;
+            border: 1.5px solid var(--store-border);
+            color: var(--store-text);
+            font-weight: 600;
+            padding: 0.55rem 1.4rem;
+            border-radius: 2rem;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            text-decoration: none;
+        }
+
+        .btn-back:hover {
+            background: var(--brand-color-pale);
+            border-color: var(--brand-color);
+            color: var(--brand-color);
+            transform: translateY(-1px);
+        }
+
+        .form-card {
+            background: var(--store-surface);
+            border: 1px solid var(--store-border);
+            border-radius: var(--store-radius);
+            padding: 1.5rem;
+            box-shadow: var(--store-shadow);
+            margin-bottom: 1.5rem;
+        }
+
+        .form-card-title {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--store-text);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-card-title i {
+            color: var(--brand-accent);
+            font-size: 1.2rem;
+        }
+
+        .btn-submit {
+            background: var(--brand-accent);
+            border: none;
+            color: #000;
+            font-weight: 600;
+            padding: 0.55rem 1.8rem;
+            border-radius: 2rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 0.5rem;
+            cursor: pointer;
+        }
+
+        .btn-submit:hover {
+            background: #f5a623;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
-    <div class="container">
-        <form action="{% url 'maneu_guest:index' %}" class="vertical2" method="get">
-            <div class="vertical1 col-1">
-                <div class="input-group input-group-sm">
-                    <input class="btn btn-primary" type="submit" value="返回列表">
-                </div>
-            </div>
-        </form>
-        <hr>
+    <div class="main-content-wrapper">
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="bi bi-person-gear"></i> 账号管理
+            </h1>
+            <a href="#" class="btn-back" onclick="history.back(); return false;">
+                <i class="bi bi-arrow-left"></i> 返回上一页
+            </a>
+        </div>
 
-        {# 基础数据 #}
-        <form class="vertical2">
-            {# 客户数据 #}
-            <h5>基础数据</h5>
-            <div class="vertical1 col-9">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-text">时间</span>
-                    <input autocomplete="off" class="form-control" id="time" type="datetime-local" value="{{ time }}">
-                </div>
+        <!-- 账号信息卡片 -->
+        <div class="form-card">
+            <div class="form-card-title">
+                <i class="bi bi-info-circle"></i> 基础数据
             </div>
-            <div class="vertical1 col-9">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-text">电话</span>
-                    <input autocomplete="off" class="form-control" id="phone" type="text">
-                </div>
-            </div>
-            <div class="vertical1 col-9">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-text">店名</span>
-                    <input autocomplete="off" class="form-control" id="nickname" type="text">
-                </div>
-            </div>
-            <div class="vertical1 col-9">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-text">地址</span>
-                    <input autocomplete="off" class="form-control" id="location" type="text">
-                </div>
-            </div>
-            <div class="vertical1 col-9">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-text">简介</span>
-                    <input autocomplete="off" class="form-control" id="content" type="text">
-                </div>
-            </div>
-        </form>
-        <hr>
 
-        {# 提交或返回按钮 #}
-        <form class="vertical2">
-            <div class="vertical1 col-1">
-                <div class="input-group input-group-sm">
-                    <input class="btn btn-danger" id="update" type="button" value="提交数据">
+            <div class="row g-2 mb-3">
+                <div class="col-md-6">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text">时间</span>
+                        <input autocomplete="off" type="datetime-local" class="form-control" id="time">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text">电话</span>
+                        <input autocomplete="off" type="text" class="form-control" id="phone" placeholder="联系电话">
+                    </div>
                 </div>
             </div>
-        </form>
+
+            <div class="row g-2 mb-3">
+                <div class="col-md-6">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text">店名</span>
+                        <input autocomplete="off" type="text" class="form-control" id="nickname" placeholder="店铺名称">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text">地址</span>
+                        <input autocomplete="off" type="text" class="form-control" id="location" placeholder="详细地址">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 提交按钮 -->
+        <div class="form-card text-end">
+            <button class="btn-submit" id="update" type="button">
+                <i class="bi bi-check-lg"></i> 提交数据
+            </button>
+        </div>
     </div>
 {% endblock %}
+
 {% block javascript %}
     <script>
-        admin_id = "{{ id }}"
-        admin_index = "{% url 'maneu_admin:index' %}"
-        admin_detail = "{% url 'maneu_admin:api_detail' %}"
-        admin_update = "{% url 'maneu_admin:api_update' %}"
+        const index_id = "{{ index_id }}";
+        const api_index = "{% url 'maneu_admin:api_index' %}";
+        const admin_update = "{% url 'maneu_admin:api_update' %}";
+
+        $(document).ready(function () {
+            loadDetail();
+
+            function loadDetail() {
+                $.ajax({
+                    url: api_index,
+                    method: 'GET',
+                    data: { index_id: index_id },
+                    success: function (res) {
+                        if (res && res.content) {
+                            $('#time').val(res.content.time);
+                            $('#phone').val(res.content.phone);
+                            $('#nickname').val(res.content.nickname);
+                            $('#location').val(res.content.location);
+                            $('#content').val(res.content.content);
+                        }
+                    },
+                    error: function () {
+                        alert('加载账号信息失败');
+                    }
+                });
+            }
+
+            $('#update').click(function () {
+                $.ajax({
+                    url: admin_update,
+                    method: 'GET',
+                    data: {
+                        index_id: index_id,
+                        phone: $('#phone').val(),
+                        nickname: $('#nickname').val(),
+                        location: $('#location').val(),
+                        content: $('#content').val()
+                    },
+                    success: function (res) {
+                        if (res && res.status === true) {
+                            alert('修改成功');
+                        } else {
+                            alert('修改失败：' + (res.message || ''));
+                        }
+                    },
+                    error: function () {
+                        alert('网络错误，请稍后重试');
+                    }
+                });
+            });
+        });
     </script>
-    <script src="{% static 'js/maneu_index/index20251229.js' %}" type="application/javascript"></script>
-    <link href="{% static 'css/maneu_index/index20251229.css' %}" rel="stylesheet">
 {% endblock %}

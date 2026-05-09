@@ -1,179 +1,234 @@
 {% extends 'maneu/base.html' %}
 {% load static %}
-{% block content %}
 
-    <div class="container" style="margin-top: 2%; margin-bottom: 4%;">
-
-        <form action="{% url 'maneu_store:index' %}" class="vertical2" method="get">
-            <div class="vertical1 col-1">
-                <div class="input-group">
-                    <input class="btn btn-primary" type="submit" value="返回列表">
-                </div>
-            </div>
-        </form>
-        <hr>
-
-
-        {# 客户基础数据 #}
-        <form class="vertical2">
-            <button class="vertical1 btn btn-primary" id="guest_show" type="button">客户数据 > 展开参数</button>
-            <button class="vertical1 btn btn-primary" id="guest_hide" type="button">客户数据 < 收起参数</button>
-
-            <div class="vertical1 col-6">
-                <div class="input-group">
-                    <span class="input-group-text">时间</span>
-                    <input autocomplete="off" type="datetime-local" class="form-control" id="time">
-                </div>
-            </div>
-
-            <div class="vertical1 col-6">
-                <div class="input-group">
-                    <span class="input-group-text">姓名</span>
-                    <input autocomplete="off" type="text" class="form-control" id="name">
-                    <span class="input-group-text">电话</span>
-                    <input autocomplete="off" type="text" class="form-control" id="phone">
-                </div>
-            </div>
-            <div id="guest_content">
-                <div class="vertical1 col-9">
-                    <div class="input-group">
-                        <span class="input-group-text col-1">性别</span>
-                        <input autocomplete="off" type="text" class="form-control" id="sex" list="sexList">
-                        <span class="input-group-text col-1">年龄</span>
-                        <input autocomplete="off" type="text" class="form-control" id="age" list="age">
-                        <span class="input-group-text col-1">眼位</span>
-                        <input autocomplete="off" type="text" class="form-control" id="ot" list="otList">
-                        <span class="input-group-text col-1">主视眼</span>
-                        <input autocomplete="off" type="text" class="form-control" id="em" list="emList">
-                        <span class="input-group-text col-1">病族史</span>
-                        <input autocomplete="off" type="text" class="form-control" id="dfh" list="dfhList">
-                    </div>
-                </div>
-            </div>
-            <div class="vertical1 col-6">
-                <div class="input-group">
-                    <span class="input-group-text">备注</span>
-                    <input autocomplete="off" type="text" class="form-control" id="guestRemark">
-                </div>
-            </div>
-            <button class="vertical1 btn btn-warning" id="guestUpdate" type="button">更新数据</button>
-        </form>
-        <hr>
-
-
-        {# 产品信息 #}
-        <form class="vertical2">
-            <button class="vertical1 btn btn-primary" type="button">产品订单</button>
-
-            <div id="guest_content">
-                <div class="vertical1 col-6">
-                    <div class="input-group">
-                        <input class="form-control store-key" autocomplete="off" type="text" placeholder="自定义标题" id="key10">
-                        <input class="form-control store-val" autocomplete="off" type="text" placeholder="自定义参数" id="val10">
-                    </div>
-                </div>
-
-                <div class="vertical1 col-6">
-                    <div class="input-group">
-                        <input class="form-control store-key" autocomplete="off" type="text" placeholder="自定义标题" id="key20">
-                        <input class="form-control store-val" autocomplete="off" type="text" placeholder="自定义参数" id="val20">
-                    </div>
-                </div>
-
-                <div class="vertical1 col-6">
-                    <div class="input-group">
-                        <input class="form-control store-key" autocomplete="off" type="text" placeholder="自定义标题" id="key30">
-                        <input class="form-control store-val" autocomplete="off" type="text" placeholder="自定义参数" id="val30">
-                    </div>
-                </div>
-
-                <div class="vertical1 col-6">
-                    <div class="input-group">
-                        <input class="form-control store-key" autocomplete="off" type="text" placeholder="自定义标题" id="key40">
-                        <input class="form-control store-val" autocomplete="off" type="text" placeholder="自定义参数" id="val40">
-                    </div>
-                </div>
-
-                <div class="vertical1 col-6">
-                    <div class="input-group">
-                        <input class="form-control store-key" autocomplete="off" type="text" placeholder="自定义标题" id="key50">
-                        <input class="form-control store-val" autocomplete="off" type="text" placeholder="自定义参数" id="val50">
-                    </div>
-                </div>
-
-                <div class="vertical1 col-6">
-                    <div class="input-group">
-                        <input class="form-control store-key" autocomplete="off" type="text" placeholder="自定义标题" id="key60">
-                        <input class="form-control store-val" autocomplete="off" type="text" placeholder="自定义参数" id="val60">
-                    </div>
-                </div>
-
-                <div class="vertical1 col-6">
-                    <div class="input-group">
-                        <input class="form-control store-key" autocomplete="off" type="text" placeholder="自定义标题" id="key70">
-                        <input class="form-control store-val" autocomplete="off" type="text" placeholder="自定义参数" id="val70">
-                    </div>
-                </div>
-
-                <div class="vertical1 col-6">
-                    <div class="input-group">
-                        <input class="form-control store-key" autocomplete="off" type="text" placeholder="自定义标题" id="key80">
-                        <input class="form-control store-val" autocomplete="off" type="text" placeholder="自定义参数" id="val80">
-                    </div>
-                </div>
-
-                <div class="vertical1 col-6">
-                    <div class="input-group">
-                        <input class="form-control store-key" autocomplete="off" type="text" placeholder="自定义标题" id="key90">
-                        <input class="form-control store-val" autocomplete="off" type="text" placeholder="自定义参数" id="val90">
-                    </div>
-                </div>
-
-                <div class="vertical1 col-6">
-                    <div class="input-group">
-                        <input class="form-control store-key" autocomplete="off" type="text" placeholder="自定义标题" id="key00">
-                        <input class="form-control store-val" autocomplete="off" type="text" placeholder="自定义参数" id="val00">
-                    </div>
-                </div>
-            </div>
-
-        </form>
-        <hr>
-
-
-        {# 提交或返回按钮 #}
-        <form class="vertical2 row">
-            <div class="vertical1 col-1">
-                <div class="input-group">
-                    <input class="btn btn-danger" id="storeUpdate" type="button" value="更新订单">
-                </div>
-            </div>
-
-            <div class="vertical1 col-1">
-                <div class="input-group">
-                    <input class="btn btn-danger" id="generate_qr_code" type="button" value="生成二维码">
-                </div>
-            </div>
-
-            <div class="vertical1 col-1">
-                <div class="input-group">
-                    <input class="btn btn-danger" id="delete" type="button" value="删除订单">
-                </div>
-            </div>
-        </form>
-
-    </div>
-
+{% block css %}
+    <link href="{% static 'css/maneu_store/detail20260428.css' %}" rel="stylesheet">
 {% endblock %}
+
+{% block content %}
+    <div class="page-wrapper">
+        <!-- 顶部操作栏 -->
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <h1 class="page-title mb-0">
+                <i class="bi bi-pencil-square"></i> 定制记录详情
+                <span class="status-badge status-empty ms-2" id="loadStatus">加载中...</span>
+            </h1>
+            <div class="d-flex gap-2 flex-wrap">
+                <button class="btn btn-outline-secondary btn-qrcode btn-action-primary" id="generate_qr_code"
+                        type="button"
+                        title="下载二维码">
+                    <i class="bi bi-qr-code"></i> 二维码
+                </button>
+                <a href="{% url 'maneu_store:index' %}" class="btn btn-outline-primary btn-back-page">
+                    <i class="bi bi-arrow-left"></i> 返回列表
+                </a>
+            </div>
+        </div>
+
+        <!-- 时间卡片 -->
+        <div class="section-card">
+            <div class="section-title">
+                <i class="bi bi-calendar-event"></i> 记录时间
+            </div>
+            <div class="single-field">
+                <label for="time" class="form-label mb-0">日期与时间</label>
+                <input autocomplete="off" type="datetime-local" class="form-control" id="time"
+                       value="{{ time }}" style="max-width: 320px;">
+            </div>
+        </div>
+
+        <!-- 客户基础信息卡片 -->
+        <div class="section-card" id="guestSection">
+            <div class="section-title d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <span><i class="bi bi-person-vcard"></i> 客户信息</span>
+                <div class="d-flex gap-2">
+                    <button class="btn-collapse-custom" id="guest_show" type="button" style="display:none;">
+                        <i class="bi bi-chevron-down"></i> 展开详细参数
+                    </button>
+                    <button class="btn-collapse-custom" id="guest_hide" type="button">
+                        <i class="bi bi-chevron-up"></i> 收起详细参数
+                    </button>
+                </div>
+            </div>
+
+            <!-- 核心字段 -->
+            <div class="row g-3 mb-2">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                        <input autocomplete="off" type="text" class="form-control" id="name" placeholder="客户姓名">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                        <input autocomplete="off" type="text" class="form-control" id="phone" placeholder="联系电话">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 详细参数区域（可折叠） -->
+            <div id="guest_content">
+                <div class="row g-3 mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold text-muted">性别</label>
+                        <input autocomplete="off" type="text" class="form-control" id="sex" list="sexList"
+                               placeholder="例如：男">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold text-muted">年龄</label>
+                        <input autocomplete="off" type="text" class="form-control" id="age" placeholder="例如：28">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold text-muted">眼位</label>
+                        <input autocomplete="off" type="text" class="form-control" id="ot" list="otList"
+                               placeholder="例如：正视">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold text-muted">主视眼</label>
+                        <input autocomplete="off" type="text" class="form-control" id="em" list="emList"
+                               placeholder="左眼 / 右眼">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold text-muted">病族史</label>
+                        <input autocomplete="off" type="text" class="form-control" id="dfh" list="dfhList"
+                               placeholder="无 / 有">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 备注 -->
+            <div class="row g-3">
+                <div class="col-12">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-chat-left-text"></i></span>
+                        <input autocomplete="off" type="text" class="form-control" id="guestRemark"
+                               placeholder="客户备注信息（可选）">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 更新客户按钮 -->
+            <div class="mt-3 text-end">
+                <button class="btn btn-save-guest btn-action-primary" id="guestUpdate" type="button">
+                    <i class="bi bi-check-lg"></i> 更新客户信息
+                </button>
+            </div>
+        </div>
+
+        <!-- 产品订单卡片 -->
+        <div class="section-card" id="storeSection">
+            <div class="section-title d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-box-seam"></i> 产品订单信息</span>
+                <span class="status-badge status-empty" id="storeStatus">待加载</span>
+            </div>
+            <div id="store_content">
+                <div class="custom-kv-grid">
+                    <div class="custom-kv-pair">
+                        <input class="form-control form-control-sm key-input store-key" autocomplete="off" type="text"
+                               id="key10" placeholder="参数名">
+                        <span class="text-muted">:</span>
+                        <input class="form-control form-control-sm store-val" autocomplete="off" type="text" id="val10"
+                               placeholder="参数值">
+                    </div>
+                    <div class="custom-kv-pair">
+                        <input class="form-control form-control-sm key-input store-key" autocomplete="off" type="text"
+                               id="key20" placeholder="参数名">
+                        <span class="text-muted">:</span>
+                        <input class="form-control form-control-sm store-val" autocomplete="off" type="text" id="val20"
+                               placeholder="参数值">
+                    </div>
+                    <div class="custom-kv-pair">
+                        <input class="form-control form-control-sm key-input store-key" autocomplete="off" type="text"
+                               id="key30" placeholder="参数名">
+                        <span class="text-muted">:</span>
+                        <input class="form-control form-control-sm store-val" autocomplete="off" type="text" id="val30"
+                               placeholder="参数值">
+                    </div>
+                    <div class="custom-kv-pair">
+                        <input class="form-control form-control-sm key-input store-key" autocomplete="off" type="text"
+                               id="key40" placeholder="参数名">
+                        <span class="text-muted">:</span>
+                        <input class="form-control form-control-sm store-val" autocomplete="off" type="text" id="val40"
+                               placeholder="参数值">
+                    </div>
+                    <div class="custom-kv-pair">
+                        <input class="form-control form-control-sm key-input store-key" autocomplete="off" type="text"
+                               id="key50" placeholder="参数名">
+                        <span class="text-muted">:</span>
+                        <input class="form-control form-control-sm store-val" autocomplete="off" type="text" id="val50"
+                               placeholder="参数值">
+                    </div>
+                    <div class="custom-kv-pair">
+                        <input class="form-control form-control-sm key-input store-key" autocomplete="off" type="text"
+                               id="key60" placeholder="参数名">
+                        <span class="text-muted">:</span>
+                        <input class="form-control form-control-sm store-val" autocomplete="off" type="text" id="val60"
+                               placeholder="参数值">
+                    </div>
+                    <div class="custom-kv-pair">
+                        <input class="form-control form-control-sm key-input store-key" autocomplete="off" type="text"
+                               id="key70" placeholder="参数名">
+                        <span class="text-muted">:</span>
+                        <input class="form-control form-control-sm store-val" autocomplete="off" type="text" id="val70"
+                               placeholder="参数值">
+                    </div>
+                    <div class="custom-kv-pair">
+                        <input class="form-control form-control-sm key-input store-key" autocomplete="off" type="text"
+                               id="key80" placeholder="参数名">
+                        <span class="text-muted">:</span>
+                        <input class="form-control form-control-sm store-val" autocomplete="off" type="text" id="val80"
+                               placeholder="参数值">
+                    </div>
+                    <div class="custom-kv-pair">
+                        <input class="form-control form-control-sm key-input store-key" autocomplete="off" type="text"
+                               id="key90" placeholder="参数名">
+                        <span class="text-muted">:</span>
+                        <input class="form-control form-control-sm store-val" autocomplete="off" type="text" id="val90"
+                               placeholder="参数值">
+                    </div>
+                    <div class="custom-kv-pair">
+                        <input class="form-control form-control-sm key-input store-key" autocomplete="off" type="text"
+                               id="key00" placeholder="参数名">
+                        <span class="text-muted">:</span>
+                        <input class="form-control form-control-sm store-val" autocomplete="off" type="text" id="val00"
+                               placeholder="参数值">
+                    </div>
+                </div>
+                <small class="text-muted d-block mt-2">
+                    <i class="bi bi-info-circle"></i> 共10组自定义产品参数，留空则不保存对应项。
+                </small>
+            </div>
+
+            <!-- 更新订单按钮 -->
+            <div class="mt-3 text-end">
+                <button class="btn btn-save-store btn-action-primary" id="storeUpdate" type="button">
+                    <i class="bi bi-check-lg"></i> 更新产品订单
+                </button>
+            </div>
+        </div>
+
+        <!-- 底部操作栏 -->
+        <div class="action-bar justify-content-end">
+            <button class="btn btn-delete-record btn-action-primary" id="delete" type="button">
+                <i class="bi bi-trash3"></i> 删除此记录
+            </button>
+        </div>
+    </div>
+{% endblock %}
+
 {% block javascript %}
     <script>
-        index_id = "{{ index_id }}"
-        store_QRcode = "{% url 'maneu_store:api_QRcode' %}"
-        store_detail = "{% url 'maneu_store:api_detail' %}"
-        store_delete = "{% url 'maneu_store:api_delete' %}"
-        store_update = "{% url 'maneu_store:api_update' %}"
-        guest_update = "{% url 'maneu_guest:api_update' %}"
+        // ========== API 端点 ==========
+        const store_detail = "{% url 'maneu_store:api_detail' %}";
+        const store_delete = "{% url 'maneu_store:api_delete' %}";
+        const guest_update = "{% url 'maneu_guest:api_update' %}";
+        const store_update = "{% url 'maneu_store:api_update' %}";
+        const store_QRcode = "{% url 'maneu_store:api_QRcode' %}";
+
+        // 从URL获取记录ID
+        const urlParams = new URLSearchParams(window.location.search);
+        const index_id = urlParams.get('index_id') || '{{ index_id|default:"" }}';
     </script>
-    <script src="{% static 'js/maneu_store/detail20260418.js' %}" type="application/javascript"></script>
-    <link href="{% static 'css/maneu_order/detail20251229.css' %}" rel="stylesheet">
+    <script src="{% static 'js/maneu_store/detail20260428.js' %}"></script>
 {% endblock %}

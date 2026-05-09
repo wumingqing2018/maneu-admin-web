@@ -160,9 +160,9 @@ $(document).ready(function () {
                 },
                 success: function (res) {
                     console.log(res)
-                    if (res.status === true){
+                    if (res.status === true) {
                         alert('删除成功')
-                    }else {
+                    } else {
                         alert('删除失败')
                     }
                 },
@@ -216,9 +216,9 @@ $(document).ready(function () {
             },
             success: function (res) {
                 console.log(res)
-                if (res.status === true){
+                if (res.status === true) {
                     alert('更新成功')
-                }else {
+                } else {
                     alert('更新失败')
                 }
             },
@@ -232,7 +232,7 @@ $(document).ready(function () {
 
     $('#guestUpdate').click(function update_guest() {
         $.ajax({
-            url:  guest_update,
+            url: guest_update,
             method: 'GET',
             data: {
                 index_id: index_id,
@@ -248,9 +248,9 @@ $(document).ready(function () {
             },
             success: function (res) {
                 console.log(res)
-                if (res.status === true){
+                if (res.status === true) {
                     alert('更新成功')
-                }else {
+                } else {
                     alert('更新失败')
                 }
             },

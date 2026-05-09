@@ -70,7 +70,8 @@ def getip(request):
 
 
 def sendsms(code, call):
-    credentials = AccessKeyCredential(os.environ['ALIBABA_CLOUD_ACCESS_KEY_ID'], os.environ['ALIBABA_CLOUD_ACCESS_KEY_SECRET'])
+    credentials = AccessKeyCredential(os.environ['ALIBABA_CLOUD_ACCESS_KEY_ID'],
+                                      os.environ['ALIBABA_CLOUD_ACCESS_KEY_SECRET'])
 
     request = SendSmsRequest()
     request.set_accept_format('json')

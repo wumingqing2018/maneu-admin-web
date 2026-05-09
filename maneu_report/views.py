@@ -12,4 +12,4 @@ def insert(request):
 
 
 def detail(request):
-    return render(request, 'maneu_report/detail.html',{'index_id': request.GET.get('index_id')})
+    return render(request, 'maneu_report/detail.html', {'index_id': request.GET.get('index_id')})
