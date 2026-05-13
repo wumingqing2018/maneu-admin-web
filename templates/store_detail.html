@@ -369,6 +369,16 @@
                 <i class="bi bi-info-circle"></i> 填写12组自定义产品参数，参数名不能重复，留空则不保存。
             </small>
         </div>
+
+        <div class="action-bar justify-content-end">
+            <button class="btn-save-guest" id="storeUpdate" type="button">
+                <i class="bi bi-check-lg"></i> 更新产品信息
+            </button>
+            <!-- 产品更新按钮（如需要可取消注释） -->
+            <!-- <button class="btn-save-store" id="storeUpdate" type="button">
+                <i class="bi bi-check-lg"></i> 更新产品信息
+            </button> -->
+        </div>
     </div>
 
     <!-- 底部操作栏 -->
@@ -475,6 +485,7 @@
 
         // ---------- 更新客户信息 ----------
         $('#guestUpdate').on('click', function () {
+            if (!confirm('确定要更新这条记录吗？此操作不可恢复。')) return;
             ajaxUpdate(STORE_API.guestUpdate, {
                 index_id: INDEX_ID,
                 time: $time.val(),
@@ -490,16 +501,18 @@
         });
 
         // ---------- 更新产品信息（预留，可绑定到按钮） ----------
-        function updateStore() {
+
+        $('#storeUpdate').on('click', function () {
+            if (!confirm('确定要更新这条记录吗？此操作不可恢复。')) return;
             const storeObj = collectStoreData();
+            console.log(storeObj)
             if (storeObj === null) return;
             ajaxUpdate(STORE_API.update, {
                 index_id: INDEX_ID,
-                content: JSON.stringify([storeObj])
+                storeContent: JSON.stringify([storeObj])
             }, '产品信息更新成功');
-        }
-        // 如需启用，取消按钮注释并绑定：
-        // $('#storeUpdate').on('click', updateStore);
+        })
+
 
         // ---------- 删除订单 ----------
         $('#deleteOrder').on('click', function () {

@@ -437,6 +437,7 @@
 
         // ========== 更新客户信息 ==========
         $('#guestUpdate').on('click', function () {
+            if (!confirm('确定要更新这条记录吗？此操作不可恢复。')) return;
             ajaxUpdate(GUEST_UPDATE_URL, {
                 index_id: INDEX_ID,
                 time: $('#time').val(),
@@ -453,6 +454,7 @@
 
         // ========== 更新验光报告 ==========
         $('#reportUpdate').on('click', function () {
+            if (!confirm('确定要更新这条记录吗？此操作不可恢复。')) return;
             const eyeFields = ['SPH', 'CYL', 'AX', 'VA', 'BC', 'ADD', 'PR', 'FR', 'AL', 'AK', 'AD', 'CCT', 'LT', 'VT'];
             const data = {
                 index_id: INDEX_ID,

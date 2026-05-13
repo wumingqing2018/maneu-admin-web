@@ -455,6 +455,7 @@
   // ==================== 业务操作模块 ====================
   // 更新订单（产品信息）
   function updateOrder() {
+      if (!confirm('确定要更新这条记录吗？此操作不可恢复。')) return;
     const data = {
       index_id: index_id,
       time: $('#time').val(),
@@ -466,6 +467,7 @@
 
   // 更新客户信息
   function updateGuest() {
+      if (!confirm('确定要更新这条记录吗？此操作不可恢复。')) return;
     const data = {
       index_id: index_id,
       time: $('#time').val(),
@@ -500,6 +502,7 @@
 
   // 更新验光报告
   function updateReport() {
+      if (!confirm('确定要更新这条记录吗？此操作不可恢复。')) return;
     ajaxUpdate(API.reportUpdate, collectReportData(), '验光报告更新成功');
   }
 
