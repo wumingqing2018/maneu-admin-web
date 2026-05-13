@@ -39,12 +39,76 @@
     }
     .section-title i { font-size: 1.3rem; color: var(--brand-accent); }
 
+    /* ========== 键值对行 ========== */
+    .kv-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .kv-row input {
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        padding: 0.45rem 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    .kv-row input:focus {
+        border-color: var(--brand-accent);
+        box-shadow: 0 0 0 0.15rem rgba(255, 193, 7, 0.15);
+    }
+
+    .kv-key {
+        flex: 1;
+    }
+
+    .kv-sep {
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+
+    .kv-val {
+        flex: 2;
+    }
+
+    /* ========== 操作栏 ========== */
     .action-bar {
         display: flex;
         flex-wrap: wrap;
         gap: 0.75rem;
         margin-top: 0.5rem;
     }
+
+    /* ========== 响应式 ========== */
+    @media (max-width: 768px) {
+        .form-card {
+            padding: 1rem;
+        }
+
+        .kv-row {
+            flex-wrap: wrap;
+        }
+
+        .kv-key,
+        .kv-val {
+            flex: 1 1 100%;
+        }
+
+        .kv-sep {
+            display: none;
+        }
+
+        .action-bar {
+            flex-direction: column;
+        }
+
+        .action-bar .btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
 
     .btn-action-primary {
         border-radius: 2rem;
@@ -173,8 +237,6 @@
     .product-price { flex: 0.8; }
 
     @media (max-width: 768px) {
-        .action-bar { flex-direction: column; }
-        .action-bar .btn { width: 100%; justify-content: center; }
         .product-row { flex-wrap: wrap; }
         .product-cat, .product-brand, .product-model, .product-price { flex: 1 1 45%; }
         .product-param { flex: 1 1 100%; }
@@ -195,7 +257,7 @@
             <button class="btn btn-outline-secondary btn-qrcode btn-action-primary" id="generateQrCode" type="button" title="下载二维码">
                 <i class="bi bi-qr-code"></i> 二维码
             </button>
-            <a href="{% url 'maneu_order:index' %}" class="btn btn-outline-primary btn-back-page">
+            <a href="{% url 'maneu_store:index' %}" class="btn btn-outline-primary btn-back-page">
                 <i class="bi bi-arrow-left"></i> 返回列表
             </a>
         </div>
@@ -284,25 +346,25 @@
             <span><i class="bi bi-box-seam"></i> 定制产品信息<span class="status-badge status-empty ms-2" id="storeLoadStatus">加载中...</span></span>
             <div class="d-flex gap-2">
                 <button class="btn-toggle" id="toggleProduct" type="button">
-                    <i class="bi bi-chevron-up"></i> 详细参数
+                    <i class="bi bi-chevron-down"></i> 详细参数
                 </button>
             </div>
         </div>
 
-        <div id="productExtra">
+        <div class="col-md-6" id="productExtra">
             <!-- 12组键值对 -->
-            <div class="row g-3 mb-2"><div class="col-md-6"><div class="input-group"><input type="text" class="form-control" id="key1" placeholder="参数名"><span class="input-group-text">:</span><input type="text" class="form-control" id="val1" placeholder="参数值"></div></div></div>
-            <div class="row g-3 mb-2"><div class="col-md-6"><div class="input-group"><input type="text" class="form-control" id="key2" placeholder="参数名"><span class="input-group-text">:</span><input type="text" class="form-control" id="val2" placeholder="参数值"></div></div></div>
-            <div class="row g-3 mb-2"><div class="col-md-6"><div class="input-group"><input type="text" class="form-control" id="key3" placeholder="参数名"><span class="input-group-text">:</span><input type="text" class="form-control" id="val3" placeholder="参数值"></div></div></div>
-            <div class="row g-3 mb-2"><div class="col-md-6"><div class="input-group"><input type="text" class="form-control" id="key4" placeholder="参数名"><span class="input-group-text">:</span><input type="text" class="form-control" id="val4" placeholder="参数值"></div></div></div>
-            <div class="row g-3 mb-2"><div class="col-md-6"><div class="input-group"><input type="text" class="form-control" id="key5" placeholder="参数名"><span class="input-group-text">:</span><input type="text" class="form-control" id="val5" placeholder="参数值"></div></div></div>
-            <div class="row g-3 mb-2"><div class="col-md-6"><div class="input-group"><input type="text" class="form-control" id="key6" placeholder="参数名"><span class="input-group-text">:</span><input type="text" class="form-control" id="val6" placeholder="参数值"></div></div></div>
-            <div class="row g-3 mb-2"><div class="col-md-6"><div class="input-group"><input type="text" class="form-control" id="key7" placeholder="参数名"><span class="input-group-text">:</span><input type="text" class="form-control" id="val7" placeholder="参数值"></div></div></div>
-            <div class="row g-3 mb-2"><div class="col-md-6"><div class="input-group"><input type="text" class="form-control" id="key8" placeholder="参数名"><span class="input-group-text">:</span><input type="text" class="form-control" id="val8" placeholder="参数值"></div></div></div>
-            <div class="row g-3 mb-2"><div class="col-md-6"><div class="input-group"><input type="text" class="form-control" id="key9" placeholder="参数名"><span class="input-group-text">:</span><input type="text" class="form-control" id="val9" placeholder="参数值"></div></div></div>
-            <div class="row g-3 mb-2"><div class="col-md-6"><div class="input-group"><input type="text" class="form-control" id="key10" placeholder="参数名"><span class="input-group-text">:</span><input type="text" class="form-control" id="val10" placeholder="参数值"></div></div></div>
-            <div class="row g-3 mb-2"><div class="col-md-6"><div class="input-group"><input type="text" class="form-control" id="key11" placeholder="参数名"><span class="input-group-text">:</span><input type="text" class="form-control" id="val11" placeholder="参数值"></div></div></div>
-            <div class="row g-3 mb-2"><div class="col-md-6"><div class="input-group"><input type="text" class="form-control" id="key12" placeholder="参数名"><span class="input-group-text">:</span><input type="text" class="form-control" id="val12" placeholder="参数值"></div></div></div>
+            <div class="kv-row"><input type="text" class="kv-key" id="key1" placeholder="参数名"><span class="kv-sep">:</span><input type="text" class="kv-val" id="val1" placeholder="参数值"></div>
+            <div class="kv-row"><input type="text" class="kv-key" id="key2" placeholder="参数名"><span class="kv-sep">:</span><input type="text" class="kv-val" id="val2" placeholder="参数值"></div>
+            <div class="kv-row"><input type="text" class="kv-key" id="key3" placeholder="参数名"><span class="kv-sep">:</span><input type="text" class="kv-val" id="val3" placeholder="参数值"></div>
+            <div class="kv-row"><input type="text" class="kv-key" id="key4" placeholder="参数名"><span class="kv-sep">:</span><input type="text" class="kv-val" id="val4" placeholder="参数值"></div>
+            <div class="kv-row"><input type="text" class="kv-key" id="key5" placeholder="参数名"><span class="kv-sep">:</span><input type="text" class="kv-val" id="val5" placeholder="参数值"></div>
+            <div class="kv-row"><input type="text" class="kv-key" id="key6" placeholder="参数名"><span class="kv-sep">:</span><input type="text" class="kv-val" id="val6" placeholder="参数值"></div>
+            <div class="kv-row"><input type="text" class="kv-key" id="key7" placeholder="参数名"><span class="kv-sep">:</span><input type="text" class="kv-val" id="val7" placeholder="参数值"></div>
+            <div class="kv-row"><input type="text" class="kv-key" id="key8" placeholder="参数名"><span class="kv-sep">:</span><input type="text" class="kv-val" id="val8" placeholder="参数值"></div>
+            <div class="kv-row"><input type="text" class="kv-key" id="key9" placeholder="参数名"><span class="kv-sep">:</span><input type="text" class="kv-val" id="val9" placeholder="参数值"></div>
+            <div class="kv-row"><input type="text" class="kv-key" id="key10" placeholder="参数名"><span class="kv-sep">:</span><input type="text" class="kv-val" id="val10" placeholder="参数值"></div>
+            <div class="kv-row"><input type="text" class="kv-key" id="key11" placeholder="参数名"><span class="kv-sep">:</span><input type="text" class="kv-val" id="val11" placeholder="参数值"></div>
+            <div class="kv-row"><input type="text" class="kv-key" id="key12" placeholder="参数名"><span class="kv-sep">:</span><input type="text" class="kv-val" id="val12" placeholder="参数值"></div>
             <small class="text-muted d-block mt-2">
                 <i class="bi bi-info-circle"></i> 填写12组自定义产品参数，参数名不能重复，留空则不保存。
             </small>

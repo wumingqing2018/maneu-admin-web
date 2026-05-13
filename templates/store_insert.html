@@ -298,18 +298,19 @@
         </div>
     </div>
 
+
     <!-- 2. 产品信息卡片（12组键值对，默认展开，可折叠） -->
-    <div class="form-card">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <div class="form-card-title mb-0">
-                <i class="bi bi-box-seam"></i> 定制产品信息
+    <div class="section-card" id="storeSection">
+        <div class="section-title d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <span><i class="bi bi-box-seam"></i> 定制产品信息</span>
+            <div class="d-flex gap-2">
+                <button class="btn-toggle" id="toggleProduct" type="button">
+                    <i class="bi bi-chevron-down"></i> 详细参数
+                </button>
             </div>
-            <button class="btn-toggle" id="toggleProduct" type="button">
-                <i class="bi bi-chevron-up"></i> 详细参数
-            </button>
         </div>
 
-        <div id="productExtra">
+        <div class="col-md-6" id="productExtra">
             <!-- 12组键值对 -->
             <div class="kv-row"><input type="text" class="kv-key" id="key1" placeholder="参数名"><span class="kv-sep">:</span><input type="text" class="kv-val" id="val1" placeholder="参数值"></div>
             <div class="kv-row"><input type="text" class="kv-key" id="key2" placeholder="参数名"><span class="kv-sep">:</span><input type="text" class="kv-val" id="val2" placeholder="参数值"></div>
@@ -328,6 +329,7 @@
             </small>
         </div>
     </div>
+
 
     <!-- 3. 底部操作栏 -->
     <div class="action-bar justify-content-end">
