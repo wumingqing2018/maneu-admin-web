@@ -1,98 +1,384 @@
 {% extends 'maneu/base.html' %}
 {% load static %}
 
-{% block content %}
-    <div class="container" style="margin-top: 2%; margin-bottom: 4%;">
-        <form action="{% url 'maneu_guest:index' %}" class="vertical2" method="get">
-            <div class="vertical1 col-1">
-                <div class="input-group input-group-sm">
-                    <input class="btn btn-primary" type="submit" value="返回列表">
-                </div>
-            </div>
-        </form>
-        <hr>
+{% block css %}
+    <style>
+        /* -------------------- 本页专用阴影（不覆盖全局变量） -------------------- */
+        :root {
+            --card-hover-shadow: 0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04);
+        }
 
-        {# 基础数据 #}
-        <form class="vertical2">
-            {# 客户数据 #}
-            <h5>客户数据</h5>
-            <div class="vertical1 col-3">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-text col-3">时间</span>
-                    <input autocomplete="off" class="form-control" name="time" type="datetime-local" value="{{ time }}">
-                </div>
-            </div>
-            <div class="vertical1 col-3">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-text col-3">电话</span>
-                    <input autocomplete="off" class="form-control" name="call" type="text">
-                </div>
-            </div>
-            <div class="vertical1 col-3">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-text col-3">姓名</span>
-                    <input autocomplete="off" class="form-control" name="name" type="text">
-                </div>
-            </div>
-            <div class="vertical1 col-9">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-text col-1">性别</span>
-                    <input autocomplete="off" class="form-control" list="sex" name="sex" type="text">
-                    <span class="input-group-text col-1">年龄</span>
-                    <input autocomplete="off" class="form-control" list="age" name="age" type="text">
-                    <span class="input-group-text col-1">眼位</span>
-                    <input autocomplete="off" class="form-control" list="OT" name="OT" type="text">
-                    <span class="input-group-text col-1">主视眼</span>
-                    <input autocomplete="off" class="form-control" list="EM" name="EM" type="text">
-                    <span class="input-group-text col-1">病族史</span>
-                    <input autocomplete="off" class="form-control" list="DFH" name="DFH" type="text">
-                </div>
-            </div>
-            <div class="vertical1 col-9">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-text col-1">备注</span>
-                    <input autocomplete="off" class="form-control" name="remark" type="text">
-                </div>
-            </div>
-        </form>
-        <hr>
+        /* -------------------- 卡片通用样式 -------------------- */
+        .section-card,
+        .form-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
+            margin-bottom: 1.5rem;
+        }
 
-        {# 提交或返回按钮 #}
-        <form class="vertical2">
-            <div class="vertical1 col-1">
-                <div class="input-group input-group-sm">
-                    <input class="btn btn-danger" id="insert" type="button" value="提交数据">
-                </div>
-            </div>
-        </form>
-    </div>
+        .form-card-title {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
 
+        .form-card-title i {
+            color: var(--brand-accent);
+            font-size: 1.2rem;
+        }
 
-    <div>
-        <datalist id="DFH">
-            <option>有</option>
-            <option>无</option>
-        </datalist>
-        <datalist id="EM">
-            <option>右</option>
-            <option>左</option>
-        </datalist>
-        <datalist id="OT">
-            <option>正位眼</option>
-            <option>斜视</option>
-        </datalist>
-        <datalist id="sex">
-            <option>男</option>
-            <option>女</option>
-        </datalist>
-    </div>
+        .section-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--brand-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            letter-spacing: 0.02em;
+            border-bottom: 2px solid var(--brand-color-pale);
+            padding-bottom: 0.6rem;
+        }
 
+        .section-title i {
+            font-size: 1.3rem;
+            color: var(--brand-accent);
+        }
+
+        /* -------------------- 页面头部 -------------------- */
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--brand-color);
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0;
+        }
+
+        .page-title i {
+            font-size: 2rem;
+            color: var(--brand-accent);
+        }
+
+        /* -------------------- 按钮样式 -------------------- */
+        .btn-back {
+            background: transparent;
+            border: 1.5px solid var(--border-subtle);
+            color: var(--text-primary);
+            font-weight: 600;
+            padding: 0.55rem 1.4rem;
+            border-radius: 2rem;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            text-decoration: none;
+        }
+
+        .btn-back:hover {
+            background: var(--brand-color-pale);
+            border-color: var(--brand-color);
+            color: var(--brand-color);
+            transform: translateY(-1px);
+        }
+
+        .btn-back-page {
+            border-radius: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: 500;
+        }
+
+        .btn-toggle {
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            padding: 0.35rem 0.9rem;
+            border-radius: 2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-toggle:hover {
+            background: var(--brand-color-pale);
+            border-color: var(--brand-color);
+            color: var(--brand-color);
+        }
+
+        /* -------------------- 键值对输入行（未在本页使用，保留以备扩展） -------------------- */
+        .kv-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .kv-row input {
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 0.45rem 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .kv-row input:focus {
+            border-color: var(--brand-accent);
+            box-shadow: 0 0 0 0.15rem rgba(255, 193, 7, 0.15);
+        }
+
+        .kv-key {
+            flex: 1;
+        }
+
+        .kv-sep {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .kv-val {
+            flex: 2;
+        }
+
+        /* -------------------- 底部操作栏 -------------------- */
+        .action-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        /* -------------------- 响应式适配 -------------------- */
+        @media (max-width: 768px) {
+            .form-card {
+                padding: 1rem;
+            }
+
+            .kv-row {
+                flex-wrap: wrap;
+            }
+
+            .kv-key,
+            .kv-val {
+                flex: 1 1 100%;
+            }
+
+            .kv-sep {
+                display: none;
+            }
+
+            .action-bar {
+                flex-direction: column;
+            }
+
+            .action-bar .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .section-card {
+                padding: 1rem 0.8rem;
+            }
+        }
+    </style>
 {% endblock %}
+
+{% block content %}
+    <div class="main-content-wrapper">
+        <!-- 页面头部：标题 + 返回列表按钮 -->
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="bi bi-plus-circle-dotted"></i> 新增客户记录
+            </h1>
+            <div class="d-flex gap-2 flex-wrap">
+                <button class="btn-back" id="btn-goBack" type="button">
+                    <i class="bi bi-arrow-left"></i> 返回列表
+                </button>
+            </div>
+        </div>
+
+        <!-- 客户信息卡片（支持折叠详细参数） -->
+        <div class="section-card" id="guestSection">
+            <div class="section-title d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <span><i class="bi bi-person-vcard"></i> 客户信息</span>
+                <div class="d-flex gap-2">
+                    <button class="btn-toggle" id="toggleGuest" type="button">
+                        <i class="bi bi-chevron-down"></i> 详细参数
+                    </button>
+                </div>
+            </div>
+
+            <!-- 核心必填字段 -->
+            <div class="row g-3 mb-2">
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+                        <input autocomplete="off" type="datetime-local" class="form-control" id="time" value="{{ time }}">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                        <input autocomplete="off" type="text" class="form-control" id="name" placeholder="客户姓名">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                        <input autocomplete="off" type="text" class="form-control" id="phone" placeholder="联系电话">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 详细参数区域（默认折叠） -->
+            <div id="guestExtra" style="display: none;">
+                <div class="row g-3 mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold text-muted">性别</label>
+                        <input autocomplete="off" type="text" class="form-control" id="sex" list="sexList" placeholder="例如：男">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold text-muted">年龄</label>
+                        <input autocomplete="off" type="text" class="form-control" id="age" placeholder="例如：28">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold text-muted">眼位</label>
+                        <input autocomplete="off" type="text" class="form-control" id="ot" list="otList" placeholder="例如：正视">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold text-muted">主视眼</label>
+                        <input autocomplete="off" type="text" class="form-control" id="em" list="emList" placeholder="左眼 / 右眼">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold text-muted">病族史</label>
+                        <input autocomplete="off" type="text" class="form-control" id="dfh" list="dfhList" placeholder="无 / 有">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 客户备注 -->
+            <div class="row g-3">
+                <div class="col-12">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-chat-left-text"></i></span>
+                        <input autocomplete="off" type="text" class="form-control" id="remark" placeholder="备注信息">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部操作栏：提交订单按钮 -->
+        <div class="action-bar justify-content-end">
+            <button class="btn btn-outline-primary btn-back-page" id="submitOrderBtn" type="button">
+                <i class="bi bi-check-lg"></i> 提交订单
+            </button>
+        </div>
+    </div>
+{% endblock %}
+
 {% block javascript %}
     <script>
-        guest_index = "{% url 'maneu_guest:index' %}"
-        guest_api = "{% url 'maneu_guest:api_insert' %}"
+        // ---------- API 端点配置 ----------
+        const GUEST_INSERT_API = "{% url 'maneu_guest:api_insert' %}";
+
+        // ---------- 辅助函数 ----------
+
+        /**
+         * 初始化折叠面板的交互行为
+         * @param {string} btnId - 触发按钮的ID
+         * @param {string} panelId - 要折叠/展开的元素ID
+         */
+        function initCollapse(btnId, panelId) {
+            const $btn = $('#' + btnId);
+            const $panel = $('#' + panelId);
+
+            if (!$btn.length || !$panel.length) {
+                return; // 缺少必要元素则退出
+            }
+
+            $btn.on('click', function () {
+                $panel.slideToggle(200);
+                // 切换按钮内的图标方向
+                $(this).find('i').toggleClass('bi-chevron-down bi-chevron-up');
+            });
+        }
+
+        /**
+         * 提交订单：收集客户信息并通过 GET 请求发送至后端
+         * （注意：原接口为 GET 方式，实际生产环境建议改为 POST）
+         */
+        function submitOrder() {
+            // 收集表单数据
+            const formData = {
+                time: $('#time').val(),
+                name: $('#name').val(),
+                phone: $('#phone').val(),
+                age: $('#age').val(),
+                sex: $('#sex').val(),
+                dfh: $('#dfh').val(),
+                ot: $('#ot').val(),
+                em: $('#em').val(),
+                remark: $('#remark').val(),
+            };
+
+            $.ajax({
+                url: GUEST_INSERT_API,
+                method: 'GET',      // 保持与原代码一致（仅示意，生产环境建议 POST）
+                data: formData,
+                success: function (res) {
+                    if (res.status === true) {
+                        alert('记录提交成功');
+                    } else {
+                        alert('提交失败：' + (res.message || '未知错误'));
+                    }
+                },
+                error: function () {
+                    alert('网络错误，请稍后重试');
+                }
+            });
+        }
+
+
+        /**
+         * 返回上一页
+         */
+        function goBack(e) {
+            e.preventDefault();
+            window.history.back();
+        }
+
+
+        // ---------- 页面就绪初始化 ----------
+        $(function () {
+            // 仅初始化客户信息折叠面板（产品部分已从本版本中移除，保持原有功能不变）
+            initCollapse('toggleGuest', 'guestExtra');
+
+            // 绑定提交按钮事件
+            $('#submitOrderBtn').on('click', submitOrder);
+            $('#btn-goBack').on('click', goBack);
+        });
     </script>
-    <script src="{% static 'js/maneu_guest/insert20251229.js' %}" type="application/javascript"></script>
-    <link href="{% static 'css/maneu_guest/insert20251229.css' %}" rel="stylesheet">
 {% endblock %}

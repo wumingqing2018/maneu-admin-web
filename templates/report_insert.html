@@ -2,432 +2,449 @@
 {% load static %}
 
 {% block css %}
-<style>
-    /* ========== 新增验光报告页样式 ========== */
-    /*
-      冗余分析：
-      - :root 中定义的 --store-surface / --store-border / --store-muted / --store-radius
-        与 base.html 的对应变量值完全相同，已替换为 base 变量，避免重复定义。
-      - --store-accent 与 --store-text 未使用，直接删除。
-      - --store-shadow 为柔和版阴影，仅用于 .section-card，已内联数值，避免污染全局。
-      - 其他样式完全一致，视觉效果无变化。
-    */
-
-    .page-wrapper {
-        padding: 0 0.5rem;
-    }
-
-    .section-card {
-        background: var(--bg-surface);           /* 原 --store-surface */
-        border: 1px solid var(--border-subtle);  /* 原 --store-border */
-        border-radius: var(--radius-md);         /* 原 --store-radius */
-        padding: 1.5rem;
-        /* 保留原柔和阴影 */
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
-        margin-bottom: 1.5rem;
-    }
-
-    .section-card:hover {
-        box-shadow: var(--shadow-md);            /* 使用 base 的阴影，悬停稍强 */
-    }
-
-    .section-title {
-        font-weight: 700;
-        font-size: 1.1rem;
-        color: var(--brand-color);
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        letter-spacing: 0.02em;
-        border-bottom: 2px solid var(--brand-color-pale);
-        padding-bottom: 0.6rem;
-    }
-
-    .section-title i {
-        font-size: 1.3rem;
-        color: var(--brand-accent);
-    }
-
-    .btn-back-page {
-        border-radius: 2rem;
-        display: flex;
-        align-items: center;
-        gap: 0.4rem;
-        font-weight: 500;
-    }
-
-    .action-bar {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.75rem;
-        margin-top: 0.5rem;
-    }
-
-    /* 响应式调整 */
-    @media (max-width: 768px) {
-        .action-bar {
-            flex-direction: column;
+    <style>
+        /* ========== 新增验光报告页样式 ========== */
+        /* 本页专用阴影（仅卡片悬停时使用，不覆盖全局 --shadow-md） */
+        :root {
+            --card-hover-shadow: 0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04);
         }
-
-        .action-bar .btn {
-            width: 100%;
-            justify-content: center;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .section-card {
-            padding: 1rem 0.8rem;
-        }
-    }
-
-    .btn-toggle {
-        background: transparent;
-        border: 1px solid var(--border-subtle);  /* 原 --store-border */
-        color: var(--text-secondary);           /* 原 --store-muted */
-        font-size: 0.85rem;
-        padding: 0.35rem 0.9rem;
-        border-radius: 2rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.3rem;
-        cursor: pointer;
-        transition: all 0.15s;
-    }
-
-    .btn-toggle:hover {
-        background: var(--brand-color-pale);
-        border-color: var(--brand-color);
-        color: var(--brand-color);
-    }
-
-    .product-row {
-        display: flex;
-        gap: 0.5rem;
-        margin-bottom: 0.8rem;
-    }
-
-    .product-row input {
-        border: 1px solid var(--border-subtle);
-        border-radius: var(--radius-md);
-        padding: 0.45rem 0.75rem;
-        font-size: 0.9rem;
-    }
-
-    .product-row input:focus {
-        border-color: var(--brand-accent);
-        box-shadow: 0 0 0 0.15rem rgba(255, 193, 7, 0.15);
-    }
-
-    .product-cat { flex: 1; }
-    .product-brand { flex: 1; }
-    .product-model { flex: 1; }
-    .product-param { flex: 2.5; }
-    .product-price { flex: 0.8; }
-
-    @media (max-width: 768px) {
-        .product-row {
+        /* ========== 页面头部 ========== */
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
 
-        .product-cat, .product-brand, .product-model, .product-price {
-            flex: 1 1 45%;
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--brand-color);
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0;
         }
 
-        .product-param {
-            flex: 1 1 100%;
+        .page-title i {
+            font-size: 2rem;
+            color: var(--brand-accent);
         }
-    }
-</style>
+
+        .section-card {
+            background: var(--bg-surface);           /* 原 --store-surface */
+            border: 1px solid var(--border-subtle);  /* 原 --store-border */
+            border-radius: var(--radius-md);         /* 原 --store-radius */
+            padding: 1.5rem;
+            /* 保留原柔和阴影 */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
+            margin-bottom: 1.5rem;
+        }
+
+        .section-card:hover {
+            box-shadow: var(--shadow-md);            /* 使用 base 的阴影，悬停稍强 */
+        }
+
+        .section-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--brand-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            letter-spacing: 0.02em;
+            border-bottom: 2px solid var(--brand-color-pale);
+            padding-bottom: 0.6rem;
+        }
+
+        .section-title i {
+            font-size: 1.3rem;
+            color: var(--brand-accent);
+        }
+
+        .btn-back-page {
+            border-radius: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: 500;
+        }
+
+        .action-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .action-bar {
+                flex-direction: column;
+            }
+
+            .action-bar .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .section-card {
+                padding: 1rem 0.8rem;
+            }
+        }
+
+        .btn-toggle {
+            background: transparent;
+            border: 1px solid var(--border-subtle);  /* 原 --store-border */
+            color: var(--text-secondary);           /* 原 --store-muted */
+            font-size: 0.85rem;
+            padding: 0.35rem 0.9rem;
+            border-radius: 2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-toggle:hover {
+            background: var(--brand-color-pale);
+            border-color: var(--brand-color);
+            color: var(--brand-color);
+        }
+
+        .product-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .product-row input {
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 0.45rem 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .product-row input:focus {
+            border-color: var(--brand-accent);
+            box-shadow: 0 0 0 0.15rem rgba(255, 193, 7, 0.15);
+        }
+
+        .product-cat { flex: 1; }
+        .product-brand { flex: 1; }
+        .product-model { flex: 1; }
+        .product-param { flex: 2.5; }
+        .product-price { flex: 0.8; }
+
+        @media (max-width: 768px) {
+            .product-row {
+                flex-wrap: wrap;
+            }
+
+            .product-cat, .product-brand, .product-model, .product-price {
+                flex: 1 1 45%;
+            }
+
+            .product-param {
+                flex: 1 1 100%;
+            }
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
-<div class="page-wrapper">
-    <!-- 顶部操作栏 -->
-    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-        <h1 class="page-title mb-0">
-            <i class="bi bi-file-earmark-plus"></i> 新增验光报告
-        </h1>
-        <div class="d-flex gap-2 flex-wrap">
-            <a href="{% url 'maneu_report:index' %}" class="btn btn-outline-primary btn-back-page">
-                <i class="bi bi-arrow-left"></i> 返回列表
-            </a>
+    <div class="main-content-wrapper">
+        <!-- 顶部操作栏 -->
+        <div class="page-header">
+            <h1 class="page-title mb-0">
+                <i class="bi bi-file-earmark-plus"></i> 新增验光报告
+            </h1>
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="{% url 'maneu_report:index' %}" class="btn btn-outline-primary btn-back-page">
+                    <i class="bi bi-arrow-left"></i> 返回列表
+                </a>
+            </div>
+        </div>
+
+        <!-- 1. 客户信息卡片 -->
+        <div class="section-card" id="guestSection">
+            <div class="section-title d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <span><i class="bi bi-person-vcard"></i> 客户信息</span>
+                <div class="d-flex gap-2">
+                    <button class="btn-toggle" id="toggleGuest" type="button">
+                        <i class="bi bi-chevron-down"></i> 详细参数
+                    </button>
+                </div>
+            </div>
+
+            <!-- 核心字段 -->
+            <div class="row g-3 mb-2">
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+                        <input autocomplete="off" type="datetime-local" class="form-control" id="time" value="{{ time }}">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                        <input autocomplete="off" type="text" class="form-control" id="name" placeholder="客户姓名">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                        <input autocomplete="off" type="text" class="form-control" id="phone" placeholder="联系电话">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 详细参数（可折叠） -->
+            <div id="guestExtra" style="display: none;">
+                <div class="row g-3 mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold text-muted">性别</label>
+                        <input autocomplete="off" type="text" class="form-control" id="sex" list="sexList" placeholder="例如：男">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold text-muted">年龄</label>
+                        <input autocomplete="off" type="text" class="form-control" id="age" placeholder="例如：28">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold text-muted">眼位</label>
+                        <input autocomplete="off" type="text" class="form-control" id="ot" list="otList" placeholder="例如：正视">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold text-muted">主视眼</label>
+                        <input autocomplete="off" type="text" class="form-control" id="em" list="emList" placeholder="左眼 / 右眼">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold text-muted">病族史</label>
+                        <input autocomplete="off" type="text" class="form-control" id="dfh" list="dfhList" placeholder="无 / 有">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 客户备注 -->
+            <div class="row g-3">
+                <div class="col-12">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-chat-left-text"></i></span>
+                        <input autocomplete="off" type="text" class="form-control" id="remark" placeholder="备注信息">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. 验光报告卡片 -->
+        <div class="section-card" id="reportSection">
+            <div class="section-title d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <span><i class="bi bi-eyeglasses"></i> 验光报告</span>
+                <div class="d-flex gap-2">
+                    <button class="btn-toggle" id="toggleReport" type="button">
+                        <i class="bi bi-chevron-down"></i> 详细参数
+                    </button>
+                </div>
+            </div>
+
+            <!-- 方案 & 瞳距 -->
+            <div class="row g-2 mb-3">
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text">方案</span>
+                        <input autocomplete="off" type="text" class="form-control" id="PLAN" list="PLAN1">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text">瞳距</span>
+                        <input autocomplete="off" type="text" class="form-control" id="PD" list="PD1">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 可折叠详细参数（左右眼） -->
+            <div id="reportExtra" style="display: none;">
+                <!-- 右眼 -->
+                <div class="mb-2">
+                    <label class="form-label fw-semibold small text-muted">右眼 (OD)</label>
+                    <div class="row g-1">
+                        <div class="col-6 col-md-3"><input class="form-control" id="OD_VA" placeholder="裸眼视力" list="VA"></div>
+                        <div class="col-6 col-md-3"><input class="form-control" id="OD_SPH" placeholder="球镜" list="CYL&SPH"></div>
+                        <div class="col-6 col-md-3"><input class="form-control" id="OD_CYL" placeholder="柱镜" list="CYL&SPH"></div>
+                        <div class="col-6 col-md-3"><input class="form-control" id="OD_AX" placeholder="轴位" list="AX"></div>
+                        <div class="col-6 col-md-3"><input class="form-control" id="OD_PR" placeholder="棱镜" list="PR"></div>
+                        <div class="col-6 col-md-3"><input class="form-control" id="OD_FR" placeholder="基地取向" list="FR"></div>
+                        <div class="col-6 col-md-3"><input class="form-control" id="OD_AL" placeholder="眼轴长度" list="AL"></div>
+                        <div class="col-6 col-md-3"><input class="form-control" id="OD_AK" placeholder="角膜曲度" list="AK"></div>
+                        <div class="col-6 col-md-3"><input class="form-control" id="OD_AD" placeholder="前房深度" list="AD"></div>
+                        <div class="col-6 col-md-3"><input class="form-control" id="OD_CCT" placeholder="角膜厚度" list="CCT"></div>
+                        <div class="col-6 col-md-3"><input class="form-control" id="OD_LT" placeholder="晶体厚度" list="LT"></div>
+                        <div class="col-6 col-md-3"><input class="form-control" id="OD_VT" placeholder="玻璃体厚度" list="VT"></div>
+                        <div class="col-6 col-md-3"><input class="form-control" id="OD_BC" placeholder="矫正视力" list="VA"></div>
+                        <div class="col-6 col-md-3"><input class="form-control" id="OD_ADD" placeholder="下加光" list="ADD"></div>
+                    </div>
+                </div>
+                <!-- 左眼 -->
+                <div>
+                    <label class="form-label fw-semibold small text-muted">左眼 (OS)</label>
+                    <div class="row g-1">
+                        <div class="col-6 col-md-3"><input class="form-control" id="OS_VA" placeholder="裸眼视力" list="VA"></div>
+                        <div class="col-6 col-md-3"><input class="form-control" id="OS_SPH" placeholder="球镜" list="CYL&SPH"></div>
+                        <div class="col-6 col-md-3"><input class="form-control" id="OS_CYL" placeholder="柱镜" list="CYL&SPH"></div>
+                        <div class="col-6 col-md-3"><input class="form-control" id="OS_AX" placeholder="轴位" list="AX"></div>
+                        <div class="col-6 col-md-3"><input class="form-control" id="OS_PR" placeholder="棱镜" list="PR"></div>
+                        <div class="col-6 col-md-3"><input class="form-control" id="OS_FR" placeholder="基地取向" list="FR"></div>
+                        <div class="col-6 col-md-3"><input class="form-control" id="OS_AL" placeholder="眼轴长度" list="AL"></div>
+                        <div class="col-6 col-md-3"><input class="form-control" id="OS_AK" placeholder="角膜曲度" list="AK"></div>
+                        <div class="col-6 col-md-3"><input class="form-control" id="OS_AD" placeholder="前房深度" list="AD"></div>
+                        <div class="col-6 col-md-3"><input class="form-control" id="OS_CCT" placeholder="角膜厚度" list="CCT"></div>
+                        <div class="col-6 col-md-3"><input class="form-control" id="OS_LT" placeholder="晶体厚度" list="LT"></div>
+                        <div class="col-6 col-md-3"><input class="form-control" id="OS_VT" placeholder="玻璃体厚度" list="VT"></div>
+                        <div class="col-6 col-md-3"><input class="form-control" id="OS_BC" placeholder="矫正视力" list="VA"></div>
+                        <div class="col-6 col-md-3"><input class="form-control" id="OS_ADD" placeholder="下加光" list="ADD"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. 底部操作栏 -->
+        <div class="action-bar justify-content-end">
+            <button class="btn btn-outline-primary btn-back-page" id="submitReport" type="button">
+                <i class="bi bi-check-lg"></i> 提交报告
+            </button>
         </div>
     </div>
 
-    <!-- 1. 客户信息卡片 -->
-    <div class="section-card" id="guestSection">
-        <div class="section-title d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <span><i class="bi bi-person-vcard"></i> 客户信息</span>
-            <div class="d-flex gap-2">
-                <button class="btn-toggle" id="toggleGuest" type="button">
-                    <i class="bi bi-chevron-down"></i> 详细参数
-                </button>
-            </div>
-        </div>
-
-        <!-- 核心字段 -->
-        <div class="row g-3 mb-2">
-            <div class="col-md-4">
-                <div class="input-group">
-                    <span class="input-group-text"><i class="bi bi-calendar"></i></span>
-                    <input autocomplete="off" type="datetime-local" class="form-control" id="time" value="{{ time }}">
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="input-group">
-                    <span class="input-group-text"><i class="bi bi-person"></i></span>
-                    <input autocomplete="off" type="text" class="form-control" id="name" placeholder="客户姓名">
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="input-group">
-                    <span class="input-group-text"><i class="bi bi-telephone"></i></span>
-                    <input autocomplete="off" type="text" class="form-control" id="phone" placeholder="联系电话">
-                </div>
-            </div>
-        </div>
-
-        <!-- 详细参数（可折叠） -->
-        <div id="guestExtra" style="display: none;">
-            <div class="row g-3 mb-3">
-                <div class="col-md-4">
-                    <label class="form-label small fw-bold text-muted">性别</label>
-                    <input autocomplete="off" type="text" class="form-control" id="sex" list="sexList" placeholder="例如：男">
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label small fw-bold text-muted">年龄</label>
-                    <input autocomplete="off" type="text" class="form-control" id="age" placeholder="例如：28">
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label small fw-bold text-muted">眼位</label>
-                    <input autocomplete="off" type="text" class="form-control" id="ot" list="otList" placeholder="例如：正视">
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label small fw-bold text-muted">主视眼</label>
-                    <input autocomplete="off" type="text" class="form-control" id="em" list="emList" placeholder="左眼 / 右眼">
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label small fw-bold text-muted">病族史</label>
-                    <input autocomplete="off" type="text" class="form-control" id="dfh" list="dfhList" placeholder="无 / 有">
-                </div>
-            </div>
-        </div>
-
-        <!-- 客户备注 -->
-        <div class="row g-3">
-            <div class="col-12">
-                <div class="input-group">
-                    <span class="input-group-text"><i class="bi bi-chat-left-text"></i></span>
-                    <input autocomplete="off" type="text" class="form-control" id="remark" placeholder="备注信息">
-                </div>
-            </div>
-        </div>
+    {# datalist 保持不变 #}
+    <div>
+        <datalist id="dfhList">
+            <option>有</option>
+            <option>无</option>
+        </datalist>
+        <datalist id="emList">
+            <option>右</option>
+            <option>左</option>
+        </datalist>
+        <datalist id="otList">
+            <option>正位眼</option>
+            <option>斜视眼</option>
+        </datalist>
+        <datalist id="sexList">
+            <option>男</option>
+            <option>女</option>
+        </datalist>
+        <datalist id="VA"> ... </datalist>
+        <datalist id="CYL&SPH"> ... </datalist>
+        <datalist id="AX"> ... </datalist>
+        <datalist id="ADD"> ... </datalist>
+        <datalist id="PLAN1">
+            <option>两用解决方案</option>
+            <option>近用解决方案</option>
+            <option>远用解决方案</option>
+        </datalist>
+        <datalist id="PD1"> ... </datalist>
     </div>
-
-    <!-- 2. 验光报告卡片 -->
-    <div class="section-card" id="reportSection">
-        <div class="section-title d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <span><i class="bi bi-eyeglasses"></i> 验光报告</span>
-            <div class="d-flex gap-2">
-                <button class="btn-toggle" id="toggleReport" type="button">
-                    <i class="bi bi-chevron-down"></i> 详细参数
-                </button>
-            </div>
-        </div>
-
-        <!-- 方案 & 瞳距 -->
-        <div class="row g-2 mb-3">
-            <div class="col-md-4">
-                <div class="input-group">
-                    <span class="input-group-text">方案</span>
-                    <input autocomplete="off" type="text" class="form-control" id="PLAN" list="PLAN1">
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="input-group">
-                    <span class="input-group-text">瞳距</span>
-                    <input autocomplete="off" type="text" class="form-control" id="PD" list="PD1">
-                </div>
-            </div>
-        </div>
-
-        <!-- 可折叠详细参数（左右眼） -->
-        <div id="reportExtra" style="display: none;">
-            <!-- 右眼 -->
-            <div class="mb-2">
-                <label class="form-label fw-semibold small text-muted">右眼 (OD)</label>
-                <div class="row g-1">
-                    <div class="col-6 col-md-3"><input class="form-control" id="OD_VA" placeholder="裸眼视力" list="VA"></div>
-                    <div class="col-6 col-md-3"><input class="form-control" id="OD_SPH" placeholder="球镜" list="CYL&SPH"></div>
-                    <div class="col-6 col-md-3"><input class="form-control" id="OD_CYL" placeholder="柱镜" list="CYL&SPH"></div>
-                    <div class="col-6 col-md-3"><input class="form-control" id="OD_AX" placeholder="轴位" list="AX"></div>
-                    <div class="col-6 col-md-3"><input class="form-control" id="OD_PR" placeholder="棱镜" list="PR"></div>
-                    <div class="col-6 col-md-3"><input class="form-control" id="OD_FR" placeholder="基地取向" list="FR"></div>
-                    <div class="col-6 col-md-3"><input class="form-control" id="OD_AL" placeholder="眼轴长度" list="AL"></div>
-                    <div class="col-6 col-md-3"><input class="form-control" id="OD_AK" placeholder="角膜曲度" list="AK"></div>
-                    <div class="col-6 col-md-3"><input class="form-control" id="OD_AD" placeholder="前房深度" list="AD"></div>
-                    <div class="col-6 col-md-3"><input class="form-control" id="OD_CCT" placeholder="角膜厚度" list="CCT"></div>
-                    <div class="col-6 col-md-3"><input class="form-control" id="OD_LT" placeholder="晶体厚度" list="LT"></div>
-                    <div class="col-6 col-md-3"><input class="form-control" id="OD_VT" placeholder="玻璃体厚度" list="VT"></div>
-                    <div class="col-6 col-md-3"><input class="form-control" id="OD_BC" placeholder="矫正视力" list="VA"></div>
-                    <div class="col-6 col-md-3"><input class="form-control" id="OD_ADD" placeholder="下加光" list="ADD"></div>
-                </div>
-            </div>
-            <!-- 左眼 -->
-            <div>
-                <label class="form-label fw-semibold small text-muted">左眼 (OS)</label>
-                <div class="row g-1">
-                    <div class="col-6 col-md-3"><input class="form-control" id="OS_VA" placeholder="裸眼视力" list="VA"></div>
-                    <div class="col-6 col-md-3"><input class="form-control" id="OS_SPH" placeholder="球镜" list="CYL&SPH"></div>
-                    <div class="col-6 col-md-3"><input class="form-control" id="OS_CYL" placeholder="柱镜" list="CYL&SPH"></div>
-                    <div class="col-6 col-md-3"><input class="form-control" id="OS_AX" placeholder="轴位" list="AX"></div>
-                    <div class="col-6 col-md-3"><input class="form-control" id="OS_PR" placeholder="棱镜" list="PR"></div>
-                    <div class="col-6 col-md-3"><input class="form-control" id="OS_FR" placeholder="基地取向" list="FR"></div>
-                    <div class="col-6 col-md-3"><input class="form-control" id="OS_AL" placeholder="眼轴长度" list="AL"></div>
-                    <div class="col-6 col-md-3"><input class="form-control" id="OS_AK" placeholder="角膜曲度" list="AK"></div>
-                    <div class="col-6 col-md-3"><input class="form-control" id="OS_AD" placeholder="前房深度" list="AD"></div>
-                    <div class="col-6 col-md-3"><input class="form-control" id="OS_CCT" placeholder="角膜厚度" list="CCT"></div>
-                    <div class="col-6 col-md-3"><input class="form-control" id="OS_LT" placeholder="晶体厚度" list="LT"></div>
-                    <div class="col-6 col-md-3"><input class="form-control" id="OS_VT" placeholder="玻璃体厚度" list="VT"></div>
-                    <div class="col-6 col-md-3"><input class="form-control" id="OS_BC" placeholder="矫正视力" list="VA"></div>
-                    <div class="col-6 col-md-3"><input class="form-control" id="OS_ADD" placeholder="下加光" list="ADD"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 3. 底部操作栏 -->
-    <div class="action-bar justify-content-end">
-        <button class="btn btn-outline-primary btn-back-page" id="submitReport" type="button">
-            <i class="bi bi-check-lg"></i> 提交报告
-        </button>
-    </div>
-</div>
-
-{# datalist 保持不变 #}
-<div>
-    <datalist id="dfhList">
-        <option>有</option>
-        <option>无</option>
-    </datalist>
-    <datalist id="emList">
-        <option>右</option>
-        <option>左</option>
-    </datalist>
-    <datalist id="otList">
-        <option>正位眼</option>
-        <option>斜视眼</option>
-    </datalist>
-    <datalist id="sexList">
-        <option>男</option>
-        <option>女</option>
-    </datalist>
-    <datalist id="VA"> ... </datalist>
-    <datalist id="CYL&SPH"> ... </datalist>
-    <datalist id="AX"> ... </datalist>
-    <datalist id="ADD"> ... </datalist>
-    <datalist id="PLAN1">
-        <option>两用解决方案</option>
-        <option>近用解决方案</option>
-        <option>远用解决方案</option>
-    </datalist>
-    <datalist id="PD1"> ... </datalist>
-</div>
 {% endblock %}
 
 {% block javascript %}
-<script>
-    // API 端点
-    const REPORT_INSERT_API = "{% url 'maneu_report:api_insert' %}";
+    <script>
+        // API 端点
+        const REPORT_INSERT_API = "{% url 'maneu_report:api_insert' %}";
 
-    /**
-     * 初始化折叠面板（通用）
-     * @param {string} btnId - 按钮 ID
-     * @param {string} panelId - 需要折叠的面板 ID
-     */
-    function initCollapse(btnId, panelId) {
-        const $btn = $('#' + btnId);
-        const $panel = $('#' + panelId);
-        if (!$btn.length || !$panel.length) return;
+        /**
+         * 初始化折叠面板（通用）
+         * @param {string} btnId - 按钮 ID
+         * @param {string} panelId - 需要折叠的面板 ID
+         */
+        function initCollapse(btnId, panelId) {
+            const $btn = $('#' + btnId);
+            const $panel = $('#' + panelId);
+            if (!$btn.length || !$panel.length) return;
 
-        $btn.on('click', function () {
-            $panel.slideToggle(200);
-            // 仅切换图标，文字无需变动（始终为“详细参数”）
-            $(this).find('i').toggleClass('bi-chevron-down bi-chevron-up');
-        });
-    }
+            $btn.on('click', function () {
+                $panel.slideToggle(200);
+                // 仅切换图标，文字无需变动（始终为“详细参数”）
+                $(this).find('i').toggleClass('bi-chevron-down bi-chevron-up');
+            });
+        }
 
-    /**
-     * 收集表单数据并提交新验光报告
-     */
-    function submitReport() {
-        $.ajax({
-            url: REPORT_INSERT_API,
-            method: 'GET', // 建议生产环境改为 POST
-            data: {
-                time: $('#time').val(),
-                name: $('#name').val(),
-                phone: $('#phone').val(),
-                remark: $('#remark').val(),
-                age: $('#age').val(),
-                sex: $('#sex').val(),
-                dfh: $('#dfh').val(),
-                ot: $('#ot').val(),
-                em: $('#em').val(),
-                plan: $('#PLAN').val(),
-                pd: $('#PD').val(),
-                od_va: $('#OD_VA').val(),
-                od_sph: $('#OD_SPH').val(),
-                od_cyl: $('#OD_CYL').val(),
-                od_ax: $('#OD_AX').val(),
-                od_pr: $('#OD_PR').val(),
-                od_fr: $('#OD_FR').val(),
-                od_add: $('#OD_ADD').val(),
-                od_al: $('#OD_AL').val(),
-                od_ak: $('#OD_AK').val(),
-                od_ad: $('#OD_AD').val(),
-                od_cct: $('#OD_CCT').val(),
-                od_lt: $('#OD_LT').val(),
-                od_vt: $('#OD_VT').val(),
-                od_bc: $('#OD_BC').val(),
-                os_va: $('#OS_VA').val(),
-                os_sph: $('#OS_SPH').val(),
-                os_cyl: $('#OS_CYL').val(),
-                os_ax: $('#OS_AX').val(),
-                os_pr: $('#OS_PR').val(),
-                os_fr: $('#OS_FR').val(),
-                os_add: $('#OS_ADD').val(),
-                os_al: $('#OS_AL').val(),
-                os_ak: $('#OS_AK').val(),
-                os_ad: $('#OS_AD').val(),
-                os_cct: $('#OS_CCT').val(),
-                os_lt: $('#OS_LT').val(),
-                os_vt: $('#OS_VT').val(),
-                os_bc: $('#OS_BC').val()
-            },
-            success: function (res) {
-                if (res.status === true) {
-                    alert('报告提交成功');
-                } else {
-                    alert(res.message || '提交失败，请稍后重试');
+        /**
+         * 收集表单数据并提交新验光报告
+         */
+        function submitReport() {
+            $.ajax({
+                url: REPORT_INSERT_API,
+                method: 'GET', // 建议生产环境改为 POST
+                data: {
+                    time: $('#time').val(),
+                    name: $('#name').val(),
+                    phone: $('#phone').val(),
+                    remark: $('#remark').val(),
+                    age: $('#age').val(),
+                    sex: $('#sex').val(),
+                    dfh: $('#dfh').val(),
+                    ot: $('#ot').val(),
+                    em: $('#em').val(),
+                    plan: $('#PLAN').val(),
+                    pd: $('#PD').val(),
+                    od_va: $('#OD_VA').val(),
+                    od_sph: $('#OD_SPH').val(),
+                    od_cyl: $('#OD_CYL').val(),
+                    od_ax: $('#OD_AX').val(),
+                    od_pr: $('#OD_PR').val(),
+                    od_fr: $('#OD_FR').val(),
+                    od_add: $('#OD_ADD').val(),
+                    od_al: $('#OD_AL').val(),
+                    od_ak: $('#OD_AK').val(),
+                    od_ad: $('#OD_AD').val(),
+                    od_cct: $('#OD_CCT').val(),
+                    od_lt: $('#OD_LT').val(),
+                    od_vt: $('#OD_VT').val(),
+                    od_bc: $('#OD_BC').val(),
+                    os_va: $('#OS_VA').val(),
+                    os_sph: $('#OS_SPH').val(),
+                    os_cyl: $('#OS_CYL').val(),
+                    os_ax: $('#OS_AX').val(),
+                    os_pr: $('#OS_PR').val(),
+                    os_fr: $('#OS_FR').val(),
+                    os_add: $('#OS_ADD').val(),
+                    os_al: $('#OS_AL').val(),
+                    os_ak: $('#OS_AK').val(),
+                    os_ad: $('#OS_AD').val(),
+                    os_cct: $('#OS_CCT').val(),
+                    os_lt: $('#OS_LT').val(),
+                    os_vt: $('#OS_VT').val(),
+                    os_bc: $('#OS_BC').val()
+                },
+                success: function (res) {
+                    if (res.status === true) {
+                        alert('报告提交成功');
+                    } else {
+                        alert(res.message || '提交失败，请稍后重试');
+                    }
+                },
+                error: function () {
+                    alert('提交失败，网络错误，请稍后重试');
                 }
-            },
-            error: function () {
-                alert('提交失败，网络错误，请稍后重试');
-            }
+            });
+        }
+
+        // 页面初始化
+        $(function () {
+            // 初始化折叠面板
+            initCollapse('toggleGuest', 'guestExtra');
+            initCollapse('toggleReport', 'reportExtra');
+
+            // 提交按钮事件
+            $('#submitReport').on('click', submitReport);
         });
-    }
-
-    // 页面初始化
-    $(function () {
-        // 初始化折叠面板
-        initCollapse('toggleGuest', 'guestExtra');
-        initCollapse('toggleReport', 'reportExtra');
-
-        // 提交按钮事件
-        $('#submitReport').on('click', submitReport);
-    });
-</script>
+    </script>
 {% endblock %}

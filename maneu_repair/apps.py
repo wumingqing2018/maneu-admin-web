@@ -1,6 +1,5 @@
 from django.apps import AppConfig
 
 
-class ManeuRepairConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
+class ManeuClientConfig(AppConfig):
     name = 'maneu_repair'

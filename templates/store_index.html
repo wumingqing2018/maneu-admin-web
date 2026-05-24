@@ -1,17 +1,14 @@
 {% extends 'maneu/base.html' %}
 {% load static %}
 
+
 {% block css %}
 <style>
     /* ========== 定制管理列表页样式 ========== */
-    /*
-      冗余分析：
-      - :root 中重新定义的 --store-* 变量与 base.html 已有变量取值完全重复，
-        已替换为 base 中的对应变量，避免重复定义。
-      - 未使用的 --store-accent / --store-text 已移除。
-      - --store-shadow 仅为柔和版阴影，直接内联到 .filter-card，避免污染全局。
-      - 所有视觉效果与原页面完全一致。
-    */
+    /* 本页专用阴影（仅卡片悬停时使用，不覆盖全局 --shadow-md） */
+    :root {
+        --card-hover-shadow: 0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04);
+    }
 
     .page-header {
         display: flex;
@@ -290,6 +287,7 @@
 </style>
 {% endblock %}
 
+
 {% block content %}
 <div class="main-content-wrapper">
     <div class="page-header">
@@ -429,6 +427,17 @@
     }
 
     /**
+     * 查看记录（动画 + 事件委托）
+     * @param {Event} event - 点击事件
+     */
+    function handleDetail(event) {
+        const $btn = $(event.currentTarget);
+        const indexId = $btn.data('index-id');
+
+        window.location.href = STORE_API.detail + '?index_id=' + indexId;
+    }
+
+    /**
      * 渲染列表
      * @param {Array} items
      */
@@ -451,9 +460,9 @@
                         <i class="bi bi-chat-left-text me-2 d-md-none"></i>${remarkText}
                     </div>
                     <div class="col-actions">
-                        <a href="${STORE_API.detail}?index_id=${item.id}" class="btn-action" title="查看详情">
+                        <button class="btn-action detail-btn" data-index-id="${item.id}" title="查看详情">
                             <i class="bi bi-eye"></i>
-                        </a>
+                        </button>
                         <button class="btn-action delete-btn" data-index-id="${item.id}" title="删除记录">
                             <i class="bi bi-trash3"></i>
                         </button>
@@ -511,6 +520,7 @@
 
         // 【解耦重点】删除按钮使用事件委托，无需为每行单独绑定
         $listContainer.on('click', '.delete-btn', handleDelete);
+        $listContainer.on('click', '.detail-btn', handleDetail);
     });
 </script>
 {% endblock %}

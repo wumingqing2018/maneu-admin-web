@@ -4,17 +4,10 @@
 {% block css %}
 <style>
     /* ========== 定制化产品详情页样式 ========== */
-    /*
-      冗余分析：
-      - :root 中定义的 --store-surface / --store-border / --store-muted / --store-radius
-        与 base.html 的对应变量值完全相同，已替换为 base 变量，避免重复定义。
-      - --store-accent 与 --store-text 未使用，直接删除。
-      - --store-shadow 仅用于 .section-card，已内联数值，避免污染全局。
-      - 其他样式完全一致，视觉效果无变化。
-    */
-
-    .page-wrapper { padding: 0 0.5rem; }
-
+    /* 本页专用阴影（仅卡片悬停时使用，不覆盖全局 --shadow-md） */
+    :root {
+        --card-hover-shadow: 0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04);
+    }
     .section-card {
         background: var(--bg-surface);           /* 原 --store-surface */
         border: 1px solid var(--border-subtle);  /* 原 --store-border */
@@ -244,24 +237,222 @@
     @media (max-width: 576px) {
         .section-card { padding: 1rem 0.8rem; }
     }
+
+    /* ========== 卡片样式 ========== */
+    .section-card,
+    .form-card {
+        background: var(--bg-surface);           /* 原 --store-surface */
+        border: 1px solid var(--border-subtle);  /* 原 --store-border */
+        border-radius: var(--radius-md);         /* 原 --store-radius */
+        padding: 1.5rem;
+        /* 保留原柔和阴影 */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
+        margin-bottom: 1.5rem;
+    }
+
+    .form-card-title {
+        font-weight: 600;
+        font-size: 1rem;
+        color: var(--text-primary);             /* 原 --store-text */
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-card-title i {
+        color: var(--brand-accent);
+        font-size: 1.2rem;
+    }
+
+    .section-title {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: var(--brand-color);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        letter-spacing: 0.02em;
+        border-bottom: 2px solid var(--brand-color-pale);
+        padding-bottom: 0.6rem;
+    }
+
+    .section-title i {
+        font-size: 1.3rem;
+        color: var(--brand-accent);
+    }
+
+    /* ========== 页面头部 ========== */
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .page-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--brand-color);
+        letter-spacing: -0.02em;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0;
+    }
+
+    .page-title i {
+        font-size: 2rem;
+        color: var(--brand-accent);
+    }
+
+    /* ========== 按钮样式 ========== */
+    .btn-back {
+        background: transparent;
+        border: 1.5px solid var(--border-subtle);
+        color: var(--text-primary);
+        font-weight: 600;
+        padding: 0.55rem 1.4rem;
+        border-radius: 2rem;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        text-decoration: none;
+    }
+
+    .btn-back:hover {
+        background: var(--brand-color-pale);
+        border-color: var(--brand-color);
+        color: var(--brand-color);
+        transform: translateY(-1px);
+    }
+
+    .btn-back-page {
+        border-radius: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-weight: 500;
+    }
+
+    .btn-toggle {
+        background: transparent;
+        border: 1px solid var(--border-subtle);
+        color: var(--text-secondary);           /* 原 --store-muted */
+        font-size: 0.85rem;
+        padding: 0.35rem 0.9rem;
+        border-radius: 2rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .btn-toggle:hover {
+        background: var(--brand-color-pale);
+        border-color: var(--brand-color);
+        color: var(--brand-color);
+    }
+
+    /* ========== 键值对行 ========== */
+    .kv-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .kv-row input {
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        padding: 0.45rem 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    .kv-row input:focus {
+        border-color: var(--brand-accent);
+        box-shadow: 0 0 0 0.15rem rgba(255, 193, 7, 0.15);
+    }
+
+    .kv-key {
+        flex: 1;
+    }
+
+    .kv-sep {
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+
+    .kv-val {
+        flex: 2;
+    }
+
+    /* ========== 操作栏 ========== */
+    .action-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 0.5rem;
+    }
+
+    /* ========== 响应式 ========== */
+    @media (max-width: 768px) {
+        .form-card {
+            padding: 1rem;
+        }
+
+        .kv-row {
+            flex-wrap: wrap;
+        }
+
+        .kv-key,
+        .kv-val {
+            flex: 1 1 100%;
+        }
+
+        .kv-sep {
+            display: none;
+        }
+
+        .action-bar {
+            flex-direction: column;
+        }
+
+        .action-bar .btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .section-card {
+            padding: 1rem 0.8rem;
+        }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="page-wrapper">
-    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-        <h1 class="page-title mb-0">
+<div class="main-content-wrapper">
+    <div class="page-header">
+        <h1 class="page-title">
             <i class="bi bi-gear-wide-connected"></i> 定制化产品详情
         </h1>
         <div class="d-flex gap-2 flex-wrap">
             <button class="btn btn-outline-secondary btn-qrcode btn-action-primary" id="generateQrCode" type="button" title="下载二维码">
                 <i class="bi bi-qr-code"></i> 二维码
             </button>
-            <a href="{% url 'maneu_store:index' %}" class="btn btn-outline-primary btn-back-page">
+            <a href="{% url 'maneu_store:index' %}" class="btn-back">
                 <i class="bi bi-arrow-left"></i> 返回列表
             </a>
         </div>
     </div>
+
 
     <!-- 客户信息卡片 -->
     <div class="section-card" id="guestSection">

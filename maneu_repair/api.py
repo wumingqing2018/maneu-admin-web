@@ -1,11 +1,7 @@
 import uuid
-from io import BytesIO
 
-import qrcode
 from django.forms import model_to_dict
-from django.http import HttpResponse
 from django.http import JsonResponse
-
 
 from common.simple import guest_simple
 from common.verify import is_uuid
@@ -22,7 +18,8 @@ def insert(request):
 
         try:
             content = guest_simple(request)
-            guest_id = guest_insert(admin_id=admin_id, index_id=index_id, time=time, name=name, phone=phone, status=5, content=content, remark=request.GET.get('guestRemark')).id
+            guest_id = guest_insert(admin_id=admin_id, index_id=index_id, time=time, name=name, phone=phone, status=3,
+                                    content=content, remark=request.GET.get('guestRemark')).id
             guest = {'status': True, 'message': guest_id, 'content': {}}
         except Exception as e:
             guest = {'status': False, 'message': str(e), 'content': {}}
@@ -39,15 +36,14 @@ def detail(request):
     if admin_id and index_id:
 
         try:
-            guest = guest_detail(admin_id=admin_id, index_id=index_id)
-            content = model_to_dict(guest)
-            guest = {'status': True, 'message': '', 'content': content}
+            data = guest_detail(admin_id=admin_id, index_id=index_id)
+            guest_id = {'status': True, 'message': '', 'content': model_to_dict(data)}
         except Exception as e:
-            guest = {'status': False, 'message': str(e), 'content': {}}
+            guest_id = {'status': False, 'message': str(e), 'content': {}}
 
-        content = {'status': True, 'message': '', 'content': {'guest': guest}}
+        content = {'status': True, 'message': '', 'content': {'guest_id': guest_id}}
     else:
-        content = {'status': False, 'message': '请输入正确的参数', 'content': {'guest': {}}}
+        content = {'status': False, 'message': index_id, 'content': {'guest_id': {}}}
     return JsonResponse(content)
 
 
@@ -138,7 +134,8 @@ def search_time(request):
     if admin_id:
         try:
             data = guest_search_time(admin_id, request.GET.get('timeS'), request.GET.get('timeE'))
-            content = {'status': True, 'message': admin_id, 'content': list(data.values('id', 'name', 'phone', 'time', 'status', 'remark'))}
+            content = {'status': True, 'message': admin_id,
+                       'content': list(data.values('id', 'name', 'phone', 'time', 'remark'))}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
     else:
@@ -153,34 +150,11 @@ def search_data(request):
     if admin_id:
         try:
             data = guest_search_data(admin_id, request.GET.get('value'))
-            content = {'status': True, 'message': admin_id, 'content': list(data.values('id', 'name', 'phone', 'time', 'status', 'remark'))}
+            content = {'status': True, 'message': admin_id,
+                       'content': list(data.values('id', 'name', 'phone', 'time', 'remark'))}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
     else:
         content = {'status': False, 'message': '参数错误请确认', 'content': {}}
 
     return JsonResponse(content)
-
-
-def generate_qr_code(request):
-    link = 'https://maneu.online/verify_guest/?index_id=' + request.GET.get('index_id')
-
-    # 创建二维码对象
-    qr = qrcode.QRCode(
-        version=1,
-        error_correction=qrcode.constants.ERROR_CORRECT_L,
-        box_size=10,
-        border=4,
-    )
-    qr.add_data(link)
-    qr.make(fit=True)
-
-    img = qr.make_image(fill_color="black", back_color="white")
-
-    # 将图片存入内存
-    buffer = BytesIO()
-    img.save(buffer, format="PNG")
-    buffer.seek(0)
-
-    # 返回图片响应
-    return HttpResponse(buffer, content_type="image/png")

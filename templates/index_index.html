@@ -2,344 +2,362 @@
 {% load static %}
 
 {% block css %}
-<style>
-    /* ========== 可视化面板样式（复用 base 变量，保持统一） ========== */
+    <style>
+        /* ============================================================
+           可视化面板专用样式
+           依赖：基础样式表（base.css）中定义的全局 CSS 变量
+           说明：本文件只包含面板页面的独立样式，复用全局变量以保持视觉统一
+           ============================================================ */
 
-    .page-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 1rem;
-        margin-bottom: 1.8rem;
-    }
+        /* ---------- 1. 局部 CSS 变量 ---------- */
+        :root {
+            /* 卡片在 hover 状态时使用的阴影（此处仅作定义，实际需配合 :hover 伪类生效） */
+            /* 单独定义变量是为了不覆盖全局的 --shadow-md */
+            --card-hover-shadow: 0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04);
+        }
 
-    .page-title {
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: var(--brand-color);
-        letter-spacing: -0.02em;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin: 0;
-    }
+        /* ---------- 2. 页面头部 ---------- */
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;          /* 允许在小屏幕上换行 */
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
 
-    .page-title i {
-        font-size: 2rem;
-        color: var(--brand-accent);
-    }
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--brand-color);      /* 主品牌色，来自 base */
+            letter-spacing: -0.02em;       /* 微调字间距，让标题更紧凑 */
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0;                     /* 清除浏览器默认外边距 */
+        }
 
-    /* 图表卡片：使用 base 定义的背景、边框、圆角、阴影 */
-    .chart-card {
-        background: var(--bg-surface);          /* 原 --store-surface */
-        border: 1px solid var(--border-subtle); /* 原 --store-border */
-        border-radius: var(--radius-md);        /* 原 --store-radius */
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
-    }
+        /* 标题中的图标 */
+        .page-title i {
+            font-size: 2rem;               /* 图标比文字稍大，形成层次 */
+            color: var(--brand-accent);    /* 强调色，与品牌色形成对比 */
+        }
 
-    .chart-card .chart-title {
-        font-weight: 600;
-        font-size: 1rem;
-        color: var(--text-primary);            /* 原 --store-text */
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
+        /* ---------- 3. 图表卡片 ---------- */
+        .chart-card {
+            /* 所有基础变量均继承自全局定义（原 store- 前缀变量已统一为 --bg-surface 等） */
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            /* 卡片默认使用轻微多层阴影，营造轻量浮起感 */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;         /* 卡片之间的垂直间距 */
+        }
 
-    .chart-card .chart-title i {
-        color: var(--brand-accent);
-        font-size: 1.2rem;
-    }
+        /* 卡片内的标题行 */
+        .chart-card .chart-title {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
 
-    /* 图表容器 */
-    .chart-container {
-        width: 100%;
-        height: 300px;
-    }
+        /* 标题中的小图标 */
+        .chart-card .chart-title i {
+            color: var(--brand-accent);
+            font-size: 1.2rem;
+        }
 
-    .chart-container-lg {
-        height: 350px;
-    }
-</style>
+        /* ---------- 4. 图表容器尺寸 ---------- */
+        .chart-container {
+            width: 100%;
+            height: 300px;                /* 标准图表高度 */
+        }
+
+        /* 较大图表版本 */
+        .chart-container-lg {
+            height: 350px;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
-<div class="main-content-wrapper">
-    <!-- 页面标题 -->
-    <div class="page-header">
-        <h1 class="page-title">
-            <i class="bi bi-bar-chart-line"></i> 验光数据可视化面板
-        </h1>
-    </div>
+    <div class="main-content-wrapper">
+        <!-- 页面标题 -->
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="bi bi-bar-chart-line"></i> 验光数据可视化面板
+            </h1>
+        </div>
 
-    <!-- 第一行：裸眼视力分布 + 眼轴长度分布 -->
-    <div class="row g-4">
-        <div class="col-md-6">
-            <div class="chart-card">
-                <div class="chart-title"><i class="bi bi-eye"></i> 裸眼视力分布</div>
-                <div id="va-chart" class="chart-container"></div>
+        <!-- 第一行：裸眼视力分布 + 眼轴长度分布 -->
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="chart-card">
+                    <div class="chart-title"><i class="bi bi-eye"></i> 裸眼视力分布</div>
+                    <div id="va-chart" class="chart-container"></div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-card">
+                    <div class="chart-title"><i class="bi bi-rulers"></i> 眼轴长度分布</div>
+                    <div id="al-chart" class="chart-container"></div>
+                </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="chart-card">
-                <div class="chart-title"><i class="bi bi-rulers"></i> 眼轴长度分布</div>
-                <div id="al-chart" class="chart-container"></div>
-            </div>
-        </div>
-    </div>
 
-    <!-- 第二行：球镜度数 + 柱镜度数 -->
-    <div class="row g-4">
-        <div class="col-md-6">
-            <div class="chart-card">
-                <div class="chart-title"><i class="bi bi-circle"></i> 球镜度数分布 (SPH)</div>
-                <div id="sph-chart" class="chart-container"></div>
+        <!-- 第二行：球镜度数 + 柱镜度数 -->
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="chart-card">
+                    <div class="chart-title"><i class="bi bi-circle"></i> 球镜度数分布 (SPH)</div>
+                    <div id="sph-chart" class="chart-container"></div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-card">
+                    <div class="chart-title"><i class="bi bi-circle-half"></i> 柱镜度数分布 (CYL)</div>
+                    <div id="cyl-chart" class="chart-container"></div>
+                </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="chart-card">
-                <div class="chart-title"><i class="bi bi-circle-half"></i> 柱镜度数分布 (CYL)</div>
-                <div id="cyl-chart" class="chart-container"></div>
-            </div>
-        </div>
-    </div>
 
-    <!-- 第三行：角膜曲率散点图（全宽） -->
-    <div class="row g-4">
-        <div class="col-12">
-            <div class="chart-card">
-                <div class="chart-title"><i class="bi bi-graph-up"></i> 角膜曲率对比 (右眼 vs 左眼)</div>
-                <div id="ak-scatter-chart" class="chart-container-lg"></div>
+        <!-- 第三行：角膜曲率散点图（全宽） -->
+        <div class="row g-4">
+            <div class="col-12">
+                <div class="chart-card">
+                    <div class="chart-title"><i class="bi bi-graph-up"></i> 角膜曲率对比 (右眼 vs 左眼)</div>
+                    <div id="ak-scatter-chart" class="chart-container-lg"></div>
+                </div>
             </div>
         </div>
     </div>
-</div>
 {% endblock %}
 
 {% block javascript %}
-<!-- 引入 ECharts -->
-<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
-<script>
-    (function() {
-        // ========== 从 Django 上下文获取数据 ==========
-        // 注意：odVaCat/osVaCat 已经是类别统计对象（如 {"0.1": 5, "0.2": 12}）
-        const odVaCat = {{ od_va_cat|safe }};
-        const osVaCat = {{ os_va_cat|safe }};
-        // 以下均为原始数值数组（如 [1.5, 2.0, ...]）
-        const odSph = {{ od_sph|safe }};
-        const osSph = {{ os_sph|safe }};
-        const odCyl = {{ od_cyl|safe }};
-        const osCyl = {{ os_cyl|safe }};
-        const odAl = {{ od_al|safe }};
-        const osAl = {{ os_al|safe }};
-        const odAk = {{ od_ak|safe }};
-        const osAk = {{ os_ak|safe }};
+    <!-- 引入 ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script>
+        (function() {
+            // ========== 从 Django 上下文获取数据 ==========
+            // 注意：odVaCat/osVaCat 已经是类别统计对象（如 {"0.1": 5, "0.2": 12}）
+            const odVaCat = {{ od_va_cat|safe }};
+            const osVaCat = {{ os_va_cat|safe }};
+            // 以下均为原始数值数组（如 [1.5, 2.0, ...]）
+            const odSph = {{ od_sph|safe }};
+            const osSph = {{ os_sph|safe }};
+            const odCyl = {{ od_cyl|safe }};
+            const osCyl = {{ os_cyl|safe }};
+            const odAl = {{ od_al|safe }};
+            const osAl = {{ os_al|safe }};
+            const odAk = {{ od_ak|safe }};
+            const osAk = {{ os_ak|safe }};
 
-        // ========== 通用工具函数 ==========
+            // ========== 通用工具函数 ==========
 
-        /**
-         * 生成直方图数据（自动分箱）
-         * @param {number[]} data - 原始数值数组
-         * @param {number} binCount - 箱子数量
-         */
-        function histogramData(data, binCount = 10) {
-            if (!data || data.length === 0) return { categories: [], values: [] };
-            const min = Math.min(...data);
-            const max = Math.max(...data);
-            const step = (max - min) / binCount || 1;
-            const bins = new Array(binCount).fill(0);
-            const categories = [];
-            // 构造区间标签
-            for (let i = 0; i < binCount; i++) {
-                const low = (min + i * step).toFixed(1);
-                const high = (min + (i + 1) * step).toFixed(1);
-                categories.push(`${low}~${high}`);
+            /**
+             * 生成直方图数据（自动分箱）
+             * @param {number[]} data - 原始数值数组
+             * @param {number} binCount - 箱子数量
+             */
+            function histogramData(data, binCount = 10) {
+                if (!data || data.length === 0) return { categories: [], values: [] };
+                const min = Math.min(...data);
+                const max = Math.max(...data);
+                const step = (max - min) / binCount || 1;
+                const bins = new Array(binCount).fill(0);
+                const categories = [];
+                // 构造区间标签
+                for (let i = 0; i < binCount; i++) {
+                    const low = (min + i * step).toFixed(1);
+                    const high = (min + (i + 1) * step).toFixed(1);
+                    categories.push(`${low}~${high}`);
+                }
+                // 统计各区间数量
+                data.forEach(v => {
+                    let idx = Math.floor((v - min) / step);
+                    if (idx >= binCount) idx = binCount - 1;  // 最大值归入最后一组
+                    bins[idx]++;
+                });
+                return { categories, values: bins };
             }
-            // 统计各区间数量
-            data.forEach(v => {
-                let idx = Math.floor((v - min) / step);
-                if (idx >= binCount) idx = binCount - 1;  // 最大值归入最后一组
-                bins[idx]++;
-            });
-            return { categories, values: bins };
-        }
 
-        /**
-         * 初始化 ECharts 图表（背景透明，与卡片融合）
-         * @param {string} domId - 容器元素 ID
-         * @returns {echarts.ECharts | null}
-         */
-        function initChart(domId) {
-            const el = document.getElementById(domId);
-            if (!el) return null;
-            return echarts.init(el, null, { backgroundColor: 'transparent' });
-        }
+            /**
+             * 初始化 ECharts 图表（背景透明，与卡片融合）
+             * @param {string} domId - 容器元素 ID
+             * @returns {echarts.ECharts | null}
+             */
+            function initChart(domId) {
+                const el = document.getElementById(domId);
+                if (!el) return null;
+                return echarts.init(el, null, { backgroundColor: 'transparent' });
+            }
 
-        // ========== 1. 裸眼视力分布（左右眼对比柱状图） ==========
-        function drawVaCompareChart(domId, odData, osData) {
-            const chart = initChart(domId);
-            if (!chart) return;
+            // ========== 1. 裸眼视力分布（左右眼对比柱状图） ==========
+            function drawVaCompareChart(domId, odData, osData) {
+                const chart = initChart(domId);
+                if (!chart) return;
 
-            // 合并所有类别并排序（按视力值升序）
-            const allKeys = new Set([...Object.keys(odData), ...Object.keys(osData)]);
-            const sortedKeys = Array.from(allKeys).sort((a, b) => parseFloat(a) - parseFloat(b));
-            // 获取对应值，缺失类别补0
-            const odValues = sortedKeys.map(k => odData[k] || 0);
-            const osValues = sortedKeys.map(k => osData[k] || 0);
+                // 合并所有类别并排序（按视力值升序）
+                const allKeys = new Set([...Object.keys(odData), ...Object.keys(osData)]);
+                const sortedKeys = Array.from(allKeys).sort((a, b) => parseFloat(a) - parseFloat(b));
+                // 获取对应值，缺失类别补0
+                const odValues = sortedKeys.map(k => odData[k] || 0);
+                const osValues = sortedKeys.map(k => osData[k] || 0);
 
-            chart.setOption({
-                tooltip: { trigger: 'axis' },
-                legend: {
-                    data: ['右眼', '左眼'],
-                    top: 'bottom',
-                    textStyle: { color: '#64748b' }
-                },
-                xAxis: {
-                    data: sortedKeys,
-                    axisLabel: { color: '#64748b', rotate: sortedKeys.length > 10 ? 45 : 0 }
-                },
-                yAxis: {
-                    name: '人数',
-                    nameTextStyle: { color: '#64748b' }
-                },
-                series: [
-                    {
-                        name: '右眼',
-                        type: 'bar',
-                        data: odValues,          // 修复：右眼使用 odData
-                        itemStyle: { color: '#5470C6' },
-                        barGap: '20%'
+                chart.setOption({
+                    tooltip: { trigger: 'axis' },
+                    legend: {
+                        data: ['右眼', '左眼'],
+                        top: 'bottom',
+                        textStyle: { color: '#64748b' }
                     },
-                    {
-                        name: '左眼',
-                        type: 'bar',
-                        data: osValues,          // 修复：左眼使用 osData
-                        itemStyle: { color: '#91cc75' }
-                    }
-                ]
-            });
-            return chart;
-        }
-        drawVaCompareChart('va-chart', odVaCat, osVaCat);
-
-        // ========== 2. 眼轴长度分布（直方图对比） ==========
-        function drawAlCompareHistogram(domId, odData, osData) {
-            const chart = initChart(domId);
-            if (!chart) return;
-            // 左右眼分别计算直方图
-            const odHist = histogramData(odData, 10);
-            const osHist = histogramData(osData, 10);
-            // 统一使用右眼的区间作为 X 轴（也可合并区间，此处简化）
-            chart.setOption({
-                tooltip: { trigger: 'axis' },
-                legend: {
-                    data: ['右眼', '左眼'],
-                    top: 'bottom',
-                    textStyle: { color: '#64748b' }
-                },
-                xAxis: {
-                    data: odHist.categories,
-                    axisLabel: { color: '#64748b' }
-                },
-                yAxis: {
-                    name: '人数',
-                    nameTextStyle: { color: '#64748b' }
-                },
-                series: [
-                    {
-                        name: '右眼',
-                        type: 'bar',
-                        data: odHist.values,
-                        itemStyle: { color: '#fc8452' }
+                    xAxis: {
+                        data: sortedKeys,
+                        axisLabel: { color: '#64748b', rotate: sortedKeys.length > 10 ? 45 : 0 }
                     },
-                    {
-                        name: '左眼',
-                        type: 'bar',
-                        data: osHist.values,
-                        itemStyle: { color: '#fac858' }
-                    }
-                ]
-            });
-            return chart;
-        }
-        drawAlCompareHistogram('al-chart', odAl, osAl);
+                    yAxis: {
+                        name: '人数',
+                        nameTextStyle: { color: '#64748b' }
+                    },
+                    series: [
+                        {
+                            name: '右眼',
+                            type: 'bar',
+                            data: odValues,          // 修复：右眼使用 odData
+                            itemStyle: { color: '#5470C6' },
+                            barGap: '20%'
+                        },
+                        {
+                            name: '左眼',
+                            type: 'bar',
+                            data: osValues,          // 修复：左眼使用 osData
+                            itemStyle: { color: '#91cc75' }
+                        }
+                    ]
+                });
+                return chart;
+            }
+            drawVaCompareChart('va-chart', odVaCat, osVaCat);
 
-        // ========== 3. 球镜度数分布 ==========
-        const odSphHist = histogramData(odSph, 12);
-        const osSphHist = histogramData(osSph, 12);
-        const sphChart = initChart('sph-chart');
-        if (sphChart) {
-            sphChart.setOption({
-                tooltip: { trigger: 'axis' },
-                legend: {
-                    data: ['右眼', '左眼'],
-                    textStyle: { color: '#64748b' }
-                },
-                xAxis: { data: odSphHist.categories, axisLabel: { color: '#64748b' } },
-                yAxis: { name: '人数', nameTextStyle: { color: '#64748b' } },
-                series: [
-                    { name: '右眼', type: 'bar', data: odSphHist.values, itemStyle: { color: '#5470C6' } },
-                    { name: '左眼', type: 'bar', data: osSphHist.values, itemStyle: { color: '#91cc75' } }
-                ]
-            });
-        }
+            // ========== 2. 眼轴长度分布（直方图对比） ==========
+            function drawAlCompareHistogram(domId, odData, osData) {
+                const chart = initChart(domId);
+                if (!chart) return;
+                // 左右眼分别计算直方图
+                const odHist = histogramData(odData, 10);
+                const osHist = histogramData(osData, 10);
+                // 统一使用右眼的区间作为 X 轴（也可合并区间，此处简化）
+                chart.setOption({
+                    tooltip: { trigger: 'axis' },
+                    legend: {
+                        data: ['右眼', '左眼'],
+                        top: 'bottom',
+                        textStyle: { color: '#64748b' }
+                    },
+                    xAxis: {
+                        data: odHist.categories,
+                        axisLabel: { color: '#64748b' }
+                    },
+                    yAxis: {
+                        name: '人数',
+                        nameTextStyle: { color: '#64748b' }
+                    },
+                    series: [
+                        {
+                            name: '右眼',
+                            type: 'bar',
+                            data: odHist.values,
+                            itemStyle: { color: '#5470C6' },
+                        },
+                        {
+                            name: '左眼',
+                            type: 'bar',
+                            data: osHist.values,
+                            itemStyle: { color: '#91cc75' }
+                        }
+                    ]
+                });
+                return chart;
+            }
+            drawAlCompareHistogram('al-chart', odAl, osAl);
 
-        // ========== 4. 柱镜度数分布 ==========
-        const odCylHist = histogramData(odCyl, 10);
-        const osCylHist = histogramData(osCyl, 10);
-        const cylChart = initChart('cyl-chart');
-        if (cylChart) {
-            cylChart.setOption({
-                tooltip: { trigger: 'axis' },
-                legend: {
-                    data: ['右眼', '左眼'],
-                    textStyle: { color: '#64748b' }
-                },
-                xAxis: { data: odCylHist.categories, axisLabel: { color: '#64748b' } },
-                yAxis: { name: '人数', nameTextStyle: { color: '#64748b' } },
-                series: [
-                    { name: '右眼', type: 'bar', data: odCylHist.values, itemStyle: { color: '#5470C6' } },
-                    { name: '左眼', type: 'bar', data: osCylHist.values, itemStyle: { color: '#91cc75' } }
-                ]
-            });
-        }
+            // ========== 3. 球镜度数分布 ==========
+            const odSphHist = histogramData(odSph, 12);
+            const osSphHist = histogramData(osSph, 12);
+            const sphChart = initChart('sph-chart');
+            if (sphChart) {
+                sphChart.setOption({
+                    tooltip: { trigger: 'axis' },
+                    legend: {
+                        data: ['右眼', '左眼'],
+                        textStyle: { color: '#64748b' }
+                    },
+                    xAxis: { data: odSphHist.categories, axisLabel: { color: '#64748b' } },
+                    yAxis: { name: '人数', nameTextStyle: { color: '#64748b' } },
+                    series: [
+                        { name: '右眼', type: 'bar', data: odSphHist.values, itemStyle: { color: '#5470C6' } },
+                        { name: '左眼', type: 'bar', data: osSphHist.values, itemStyle: { color: '#91cc75' } }
+                    ]
+                });
+            }
 
-        // ========== 5. 角膜曲率散点图 ==========
-        const akPairs = [];
-        const minLen = Math.min(odAk.length, osAk.length);
-        for (let i = 0; i < minLen; i++) {
-            akPairs.push([odAk[i], osAk[i]]);   // [右眼值, 左眼值]
-        }
-        const akScatter = initChart('ak-scatter-chart');
-        if (akScatter) {
-            akScatter.setOption({
-                tooltip: {
-                    trigger: 'item',
-                    formatter: p => `右眼: ${p.value[0]}<br/>左眼: ${p.value[1]}`
-                },
-                xAxis: { name: '右眼角膜曲率 (D)', nameTextStyle: { color: '#64748b' } },
-                yAxis: { name: '左眼角膜曲率 (D)', nameTextStyle: { color: '#64748b' } },
-                series: [{
-                    type: 'scatter',
-                    data: akPairs,
-                    symbolSize: 6,
-                    itemStyle: { color: '#5470C6' }
-                }]
-            });
-        }
+            // ========== 4. 柱镜度数分布 ==========
+            const odCylHist = histogramData(odCyl, 10);
+            const osCylHist = histogramData(osCyl, 10);
+            const cylChart = initChart('cyl-chart');
+            if (cylChart) {
+                cylChart.setOption({
+                    tooltip: { trigger: 'axis' },
+                    legend: {
+                        data: ['右眼', '左眼'],
+                        textStyle: { color: '#64748b' }
+                    },
+                    xAxis: { data: odCylHist.categories, axisLabel: { color: '#64748b' } },
+                    yAxis: { name: '人数', nameTextStyle: { color: '#64748b' } },
+                    series: [
+                        { name: '右眼', type: 'bar', data: odCylHist.values, itemStyle: { color: '#5470C6' } },
+                        { name: '左眼', type: 'bar', data: osCylHist.values, itemStyle: { color: '#91cc75' } }
+                    ]
+                });
+            }
 
-        // ========== 响应式缩放（仅当前页面存在的图表） ==========
-        const chartIds = ['va-chart', 'al-chart', 'sph-chart', 'cyl-chart', 'ak-scatter-chart'];
-        window.addEventListener('resize', () => {
-            chartIds.forEach(id => {
-                const instance = echarts.getInstanceByDom(document.getElementById(id));
-                if (instance) instance.resize();
+            // ========== 5. 角膜曲率散点图 ==========
+            const akPairs = [];
+            const minLen = Math.min(odAk.length, osAk.length);
+            for (let i = 0; i < minLen; i++) {
+                akPairs.push([odAk[i], osAk[i]]);   // [右眼值, 左眼值]
+            }
+            const akScatter = initChart('ak-scatter-chart');
+            if (akScatter) {
+                akScatter.setOption({
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: p => `右眼: ${p.value[0]}<br/>左眼: ${p.value[1]}`
+                    },
+                    xAxis: { name: '右眼角膜曲率 (D)', nameTextStyle: { color: '#64748b' } },
+                    yAxis: { name: '左眼角膜曲率 (D)', nameTextStyle: { color: '#64748b' } },
+                    series: [{
+                        type: 'scatter',
+                        data: akPairs,
+                        symbolSize: 6,
+                        itemStyle: { color: '#5470C6' }
+                    }]
+                });
+            }
+
+            // ========== 响应式缩放（仅当前页面存在的图表） ==========
+            const chartIds = ['va-chart', 'al-chart', 'sph-chart', 'cyl-chart', 'ak-scatter-chart'];
+            window.addEventListener('resize', () => {
+                chartIds.forEach(id => {
+                    const instance = echarts.getInstanceByDom(document.getElementById(id));
+                    if (instance) instance.resize();
+                });
             });
-        });
-    })();
-</script>
+        })();
+    </script>
 {% endblock %}
