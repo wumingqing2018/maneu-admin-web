@@ -342,7 +342,7 @@
 {% block javascript %}
     <script>
         // ---------- API 端点 ----------
-        const GUEST = {
+        const REPORT = {
             web_detail: "{% url 'maneu_report:detail' %}",
             api_delete: "{% url 'maneu_report:api_delete' %}",
             api_searchText: "{% url 'maneu_report:search_data' %}",
@@ -382,13 +382,12 @@
 
         /**
          * 查看记录（动画 + 事件委托）
-         * @param {Event} event - 点击事件
+         * @param {HTMLElement} btn - 触发按钮
          */
-        function handleDetail(event) {
-            const $btn = $(event.currentTarget);
-            const indexId = $btn.data('index-id');
+        function handleDetail(btn) {
+            const indexId = btn.getAttribute('data-index-id');
 
-            window.location.href = GUEST.web_detail + '?index_id=' + indexId;
+            window.location.href = REPORT.web_detail + '?index_id=' + indexId;
         }
 
         /**
@@ -399,7 +398,7 @@
             if (!confirm("确定要删除这条报告吗？此操作不可恢复。")) return;
             const indexId = btn.getAttribute('data-index-id');
             $.ajax({
-                url: GUEST.api_delete,
+                url: REPORT.api_delete,
                 type: 'GET',
                 data: { index_id: indexId },
                 success(res) {
@@ -479,7 +478,7 @@
 
         // ---------- 搜索触发 ----------
         function searchByTime() {
-            fetchAndRender(GUEST.api_searchTime, {
+            fetchAndRender(REPORT.api_searchTime, {
                 timeS: $timeStart.val(),
                 timeE: $timeEnd.val()
             });
@@ -491,7 +490,7 @@
                 alert('请输入搜索关键词');
                 return;
             }
-            fetchAndRender(GUEST.api_searchText, { value: keyword });
+            fetchAndRender(REPORT.api_searchText, { value: keyword });
         }
 
         // ---------- 初始化事件 ----------
@@ -507,7 +506,10 @@
             $keyword.on('keypress', function (e) {
                 if (e.which === 13) searchByText();
             });
-            $listContainer.on('click', '.detail-btn', handleDetail);
+            
+            $listContainer.on('click', '.detail-btn', function () {
+                handleDetail(this);
+            });
 
             // 【解耦重点】使用事件委托管理删除操作，无需为每个按钮单独绑定
             $listContainer.on('click', '.delete-btn', function () {

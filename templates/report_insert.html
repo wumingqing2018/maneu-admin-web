@@ -276,40 +276,180 @@
                 <div class="mb-2">
                     <label class="form-label fw-semibold small text-muted">右眼 (OD)</label>
                     <div class="row g-1">
-                        <div class="col-6 col-md-3"><input class="form-control" id="OD_VA" placeholder="裸眼视力" list="VA"></div>
-                        <div class="col-6 col-md-3"><input class="form-control" id="OD_SPH" placeholder="球镜" list="CYL&SPH"></div>
-                        <div class="col-6 col-md-3"><input class="form-control" id="OD_CYL" placeholder="柱镜" list="CYL&SPH"></div>
-                        <div class="col-6 col-md-3"><input class="form-control" id="OD_AX" placeholder="轴位" list="AX"></div>
-                        <div class="col-6 col-md-3"><input class="form-control" id="OD_PR" placeholder="棱镜" list="PR"></div>
-                        <div class="col-6 col-md-3"><input class="form-control" id="OD_FR" placeholder="基地取向" list="FR"></div>
-                        <div class="col-6 col-md-3"><input class="form-control" id="OD_AL" placeholder="眼轴长度" list="AL"></div>
-                        <div class="col-6 col-md-3"><input class="form-control" id="OD_AK" placeholder="角膜曲度" list="AK"></div>
-                        <div class="col-6 col-md-3"><input class="form-control" id="OD_AD" placeholder="前房深度" list="AD"></div>
-                        <div class="col-6 col-md-3"><input class="form-control" id="OD_CCT" placeholder="角膜厚度" list="CCT"></div>
-                        <div class="col-6 col-md-3"><input class="form-control" id="OD_LT" placeholder="晶体厚度" list="LT"></div>
-                        <div class="col-6 col-md-3"><input class="form-control" id="OD_VT" placeholder="玻璃体厚度" list="VT"></div>
-                        <div class="col-6 col-md-3"><input class="form-control" id="OD_BC" placeholder="矫正视力" list="VA"></div>
-                        <div class="col-6 col-md-3"><input class="form-control" id="OD_ADD" placeholder="下加光" list="ADD"></div>
+                        <div class="col-6 col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text col-4">裸眼视力</span>
+                                <input class="form-control col-8" id="OD_VA" list="VA">
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text col-4">球镜</span>
+                                <input class="form-control col-8" id="OD_SPH" list="CYL&amp;SPH">
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text col-4">柱镜</span>
+                                <input class="form-control col-8" id="OD_CYL" list="CYL&amp;SPH">
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text col-4">轴位</span>
+                                <input class="form-control col-8" id="OD_AX" list="AX">
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text col-4">棱镜</span>
+                                <input class="form-control col-8" id="OD_PR" list="PR">
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text col-4">基地取向</span>
+                                <input class="form-control col-8" id="OD_FR" list="FR">
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text col-4">眼轴长度</span>
+                                <input class="form-control col-8" id="OD_AL" list="AL">
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text col-4">角膜曲度</span>
+                                <input class="form-control col-8" id="OD_AK" list="AK">
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text col-4">前房深度</span>
+                                <input class="form-control col-8" id="OD_AD" list="AD">
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text col-4">角膜厚度</span>
+                                <input class="form-control col-8" id="OD_CCT" list="CCT">
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text col-4">晶体厚度</span>
+                                <input class="form-control col-8" id="OD_LT" list="LT">
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text col-4">玻璃体厚度</span>
+                                <input class="form-control col-8" id="OD_VT" list="VT">
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text col-4">矫正视力</span>
+                                <input class="form-control col-8" id="OD_BC" list="VA">
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text col-4">下加光</span>
+                                <input class="form-control col-8" id="OD_ADD" list="ADD">
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <!-- 左眼 -->
                 <div>
                     <label class="form-label fw-semibold small text-muted">左眼 (OS)</label>
                     <div class="row g-1">
-                        <div class="col-6 col-md-3"><input class="form-control" id="OS_VA" placeholder="裸眼视力" list="VA"></div>
-                        <div class="col-6 col-md-3"><input class="form-control" id="OS_SPH" placeholder="球镜" list="CYL&SPH"></div>
-                        <div class="col-6 col-md-3"><input class="form-control" id="OS_CYL" placeholder="柱镜" list="CYL&SPH"></div>
-                        <div class="col-6 col-md-3"><input class="form-control" id="OS_AX" placeholder="轴位" list="AX"></div>
-                        <div class="col-6 col-md-3"><input class="form-control" id="OS_PR" placeholder="棱镜" list="PR"></div>
-                        <div class="col-6 col-md-3"><input class="form-control" id="OS_FR" placeholder="基地取向" list="FR"></div>
-                        <div class="col-6 col-md-3"><input class="form-control" id="OS_AL" placeholder="眼轴长度" list="AL"></div>
-                        <div class="col-6 col-md-3"><input class="form-control" id="OS_AK" placeholder="角膜曲度" list="AK"></div>
-                        <div class="col-6 col-md-3"><input class="form-control" id="OS_AD" placeholder="前房深度" list="AD"></div>
-                        <div class="col-6 col-md-3"><input class="form-control" id="OS_CCT" placeholder="角膜厚度" list="CCT"></div>
-                        <div class="col-6 col-md-3"><input class="form-control" id="OS_LT" placeholder="晶体厚度" list="LT"></div>
-                        <div class="col-6 col-md-3"><input class="form-control" id="OS_VT" placeholder="玻璃体厚度" list="VT"></div>
-                        <div class="col-6 col-md-3"><input class="form-control" id="OS_BC" placeholder="矫正视力" list="VA"></div>
-                        <div class="col-6 col-md-3"><input class="form-control" id="OS_ADD" placeholder="下加光" list="ADD"></div>
+                        <div class="col-6 col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text col-4">裸眼视力</span>
+                                <input class="form-control col-8" id="OS_VA" list="VA">
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text col-4">球镜</span>
+                                <input class="form-control col-8" id="OS_SPH" list="CYL&amp;SPH">
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text col-4">柱镜</span>
+                                <input class="form-control col-8" id="OS_CYL" list="CYL&amp;SPH">
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text col-4">轴位</span>
+                                <input class="form-control col-8" id="OS_AX" list="AX">
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text col-4">棱镜</span>
+                                <input class="form-control col-8" id="OS_PR" list="PR">
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text col-4">基地取向</span>
+                                <input class="form-control col-8" id="OS_FR" list="FR">
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text col-4">眼轴长度</span>
+                                <input class="form-control col-8" id="OS_AL" list="AL">
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text col-4">角膜曲度</span>
+                                <input class="form-control col-8" id="OS_AK" list="AK">
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text col-4">前房深度</span>
+                                <input class="form-control col-8" id="OS_AD" list="AD">
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text col-4">角膜厚度</span>
+                                <input class="form-control col-8" id="OS_CCT" list="CCT">
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text col-4">晶体厚度</span>
+                                <input class="form-control col-8" id="OS_LT" list="LT">
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text col-4">玻璃体厚度</span>
+                                <input class="form-control col-8" id="OS_VT" list="VT">
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text col-4">矫正视力</span>
+                                <input class="form-control col-8" id="OS_BC" list="VA">
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text col-4">下加光</span>
+                                <input class="form-control col-8" id="OS_ADD" list="ADD">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

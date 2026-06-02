@@ -371,60 +371,69 @@
 
 {% block javascript %}
     <script>
-        (function() {
-            /* ==================== 重构说明 ====================
-               1. 合并了重复的 API 配置对象，建立统一的 API_MAP。
-               2. 提取了通用的删除请求函数 deleteByType，消除三段重复代码。
-               3. 优化了 handleDetail 中的条件判断，使其更清晰。
-               4. 修正了 data-status 属性值错误引号（原代码中中文双引号导致无效）。
-               5. 统一变量命名风格，增加 JSDoc 注释。
-               6. 简化了 fetchAndRender 的错误处理，保留原有逻辑。
-               7. 将初始化默认加载的数据源明确为时间搜索接口。
-            ================================================== */
+        // ---------- API 端点配置（统一管理，兼容多模块）----------
+        const API = {
+            order: {
+                detail: "{% url 'maneu_order:detail' %}",
+                delete: "{% url 'maneu_order:api_delete' %}"
+            },
+            store: {
+                detail: "{% url 'maneu_store:detail' %}",
+                delete: "{% url 'maneu_store:api_delete' %}"
+            },
+            report: {
+                detail: "{% url 'maneu_report:detail' %}",
+                delete: "{% url 'maneu_report:api_delete' %}"
+            },
+            guest: {
+                detail: "{% url 'maneu_guest:detail' %}",
+                delete: "{% url 'maneu_guest:api_delete' %}",
+                searchData: "{% url 'maneu_guest:search_data' %}",
+                searchTime: "{% url 'maneu_guest:search_time' %}"
+            }
+        };
 
-            // ---------- 1. API 端点配置（统一管理，避免散落）----------
-            const API = {
-                // 订单相关
-                order: {
-                    detail: "{% url 'maneu_order:detail' %}",
-                    delete: "{% url 'maneu_order:api_delete' %}"
-                },
-                // 门店相关
-                store: {
-                    detail: "{% url 'maneu_store:detail' %}",
-                    delete: "{% url 'maneu_store:api_delete' %}"
-                },
-                // 报表相关
-                report: {
-                    detail: "{% url 'maneu_report:detail' %}",
-                    delete: "{% url 'maneu_report:api_delete' %}"
-                },
-                // 客人搜索接口
-                guest: {
-                    detail: "{% url 'maneu_guest:detail' %}",
-                    delete: "{% url 'maneu_guest:api_delete' %}",
-                    searchData: "{% url 'maneu_guest:search_data' %}",
-                    searchTime: "{% url 'maneu_guest:search_time' %}"
-                }
-            };
+        // ---------- DOM 缓存 ----------
+        const $listContainer = $('#body');
+        const $timeStart = $('#timeS');
+        const $timeEnd = $('#timeE');
+        const $keyword = $('#value');
 
-            // ---------- 2. DOM 引用 ----------
-            const $body = $('#body');
-            const $timeS = $('#timeS');
-            const $timeE = $('#timeE');
-            const $keyword = $('#value');
+        // ---------- 工具函数 ----------
+        function showLoading() {
+            $listContainer.html(`
+        <div class="loading-spinner">
+            <div class="spinner-border text-primary" role="status"></div>
+        </div>`);
+        }
 
-            // ---------- 3. 辅助函数：渲染列表项 ----------
-            /**
-             * 生成单个订单记录的 HTML 字符串
-             * @param {Object} item 订单数据对象
-             * @returns {string} HTML 片段
-             */
-            function createItemHTML(item) {
-                const remarkText = item.remark || '-';
-                const escapedRemark = remarkText.replace(/"/g, '&quot;');
-                // 注意：原 data-status 值使用了中文双引号，此处修正为英文双引号（但实际值应为数字字符串）
-                return `
+        function showEmptyState() {
+            $listContainer.html(`
+        <div class="empty-state">
+            <i class="bi bi-inbox"></i>
+            <p>暂无订单记录</p>
+            <small>尝试调整筛选条件或新增一条订单</small>
+        </div>`);
+        }
+
+        function showErrorState() {
+            $listContainer.html(`
+        <div class="empty-state">
+            <i class="bi bi-exclamation-triangle"></i>
+            <p>加载失败，请稍后重试</p>
+        </div>`);
+        }
+
+        /**
+         * 生成单个列表项的 HTML
+         * @param {Object} item 数据对象
+         * @returns {string}
+         */
+        function createItemHTML(item) {
+            const remarkText = item.remark || '-';
+            const escapedRemark = remarkText.replace(/"/g, '&quot;');
+            // 注意：data-status 值已在原 HTML 中正确设置（数字字符串）
+            return `
         <div class="store-list-item" data-mobile-label="${item.time || ''}">
             <div class="col-time"><i class="bi bi-clock me-2 d-md-none"></i>${item.time || '-'}</div>
             <div class="col-name"><i class="bi bi-person me-2 d-md-none"></i>${item.name || '-'}</div>
@@ -441,199 +450,159 @@
                 </button>
             </div>
         </div>`;
+        }
+
+        /**
+         * 渲染列表
+         * @param {Array} items 数据数组
+         */
+        function renderList(items) {
+            $listContainer.empty();
+            if (!Array.isArray(items) || items.length === 0) {
+                showEmptyState();
+                return;
+            }
+            items.forEach(item => {
+                $listContainer.append(createItemHTML(item));
+            });
+        }
+
+        /**
+         * 查看详情（根据 status 跳转不同模块）
+         * @param {HTMLElement} btn 触发按钮
+         */
+        function handleDetail(btn) {
+            const indexId = btn.getAttribute('data-index_id');
+            const status = btn.getAttribute('data-status');
+            let detailUrl = null;
+
+            if (status === '5') {
+                detailUrl = API.guest.detail;
+            } else if (status === '1') {
+                detailUrl = API.store.detail;
+            } else if (status === '2') {
+                detailUrl = API.report.detail;
+            } else if (status === '3') {
+                detailUrl = API.order.detail;
             }
 
-            /**
-             * 显示空状态提示
-             */
-            function showEmptyState() {
-                $body.html(`
-        <div class="empty-state">
-            <i class="bi bi-inbox"></i>
-            <p>暂无订单记录</p>
-            <small>尝试调整筛选条件或新增一条订单</small>
-        </div>`);
+            if (detailUrl) {
+                window.location.href = detailUrl + '?index_id=' + indexId;
+            } else {
+                console.warn('未知的状态值:', status);
+            }
+        }
+
+        /**
+         * 删除记录（根据 status 调用不同删除接口）
+         * @param {HTMLElement} btn 触发按钮
+         */
+        function deleteRecord(btn) {
+            if (!confirm("确定要删除这条订单吗？此操作不可恢复。")) return;
+
+            const indexId = btn.getAttribute('data-index_id');
+            const status = btn.getAttribute('data-status');
+            let deleteUrl = null;
+
+            if (status === '0') {
+                deleteUrl = API.guest.delete;
+            } else if (status === '1') {
+                deleteUrl = API.store.delete;
+            } else if (status === '2') {
+                deleteUrl = API.report.delete;
+            } else if (status === '3') {
+                deleteUrl = API.order.delete;
             }
 
-            /**
-             * 显示加载中动画
-             */
-            function showLoading() {
-                $body.html(`<div class="loading-spinner"><div class="spinner-border text-primary" role="status"></div></div>`);
+            if (!deleteUrl) {
+                alert('无效的记录类型，无法删除');
+                return;
             }
 
-            /**
-             * 渲染订单列表
-             * @param {Array} dataArray 订单数据数组
-             */
-            function renderList(dataArray) {
-                $body.empty();
-                if (!dataArray || dataArray.length === 0) {
-                    showEmptyState();
-                    return;
-                }
-                dataArray.forEach(item => $body.append(createItemHTML(item)));
-            }
-
-            // ---------- 4. 业务操作：查看详情 ----------
-            /**
-             * 根据订单的 status 跳转到对应的详情页面
-             * @param {HTMLElement} btn 触发按钮元素
-             */
-            function handleDetail(btn) {
-                const indexId = btn.dataset.index_id;
-                const status = btn.dataset.status;   // '1' 门店, '2' 报表, '3' 订单
-                let detailUrl = null;
-                if (status === '5') {
-                    detailUrl = API.guest.detail;
-                } else if (status === '1') {
-                    detailUrl = API.store.detail;
-                } else if (status === '2') {
-                    detailUrl = API.report.detail;
-                } else if (status === '3') {
-                    detailUrl = API.order.detail;
-                }
-
-                if (detailUrl) {
-                    window.location.href = detailUrl + '?index_id=' + indexId;
-                } else {
-                    console.warn('未知的状态值:', status);
-                }
-            }
-
-            /**
-             * 通用的删除请求，根据 status 选择对应的 API
-             * @param {string} indexId 记录 ID
-             * @param {string} status  状态码
-             * @param {jQuery} $item  列表项 DOM 元素，用于删除后移除动画
-             */
-            function deleteByType(indexId, status, $item) {
-                let deleteUrl = null;
-                if (status === '0') {
-                    deleteUrl = API.guest.detail;
-                } else if (status === '1') {
-                    deleteUrl = API.store.delete;
-                } else if (status === '2') {
-                    deleteUrl = API.report.delete;
-                } else if (status === '3') {
-                    deleteUrl = API.order.delete;
-                }
-
-                if (!deleteUrl) {
-                    alert('无效的记录类型，无法删除');
-                    return;
-                }
-
-                $.ajax({
-                    url: deleteUrl,
-                    method: 'GET',
-                    data: { index_id: indexId },
-                    success: function(res) {
-                        if (res.status === true) {
-                            // 删除成功动画
+            $.ajax({
+                url: deleteUrl,
+                method: 'GET',
+                data: { index_id: indexId },
+                success(res) {
+                    if (res.status === true) {
+                        const $item = $(btn).closest('.store-list-item');
+                        if ($item.length) {
                             $item.css({
                                 transition: 'all 0.3s ease',
-                                opacity: '0',
+                                opacity: 0,
                                 transform: 'translateX(20px)'
-                            });
-                            setTimeout(() => {
-                                $item.remove();
-                                if ($('#body .store-list-item').length === 0) {
+                            }).delay(300).queue(function () {
+                                $(this).remove();
+                                if (!$listContainer.find('.store-list-item').length) {
                                     showEmptyState();
                                 }
-                            }, 300);
-                        } else {
-                            alert(res.message || '删除失败，请稍后重试');
+                            });
                         }
-                    },
-                    error: function() {
-                        alert('网络错误，请稍后重试');
+                    } else {
+                        alert(res.message || '删除失败，请稍后重试');
                     }
-                });
-            }
-
-            /**
-             * 处理删除操作（带确认对话框）
-             * @param {HTMLElement} btn 删除按钮元素
-             */
-            function handleDelete(btn) {
-                if (!confirm("确定要删除这条订单吗？此操作不可恢复。")) return;
-                const indexId = btn.dataset.index_id;
-                const status = btn.dataset.status;
-                const $item = $(btn).closest('.store-list-item');
-                deleteByType(indexId, status, $item);
-            }
-
-            // ---------- 5. 数据获取与渲染 ----------
-            /**
-             * 从指定 URL 获取数据并渲染列表
-             * @param {string} url   请求地址
-             * @param {Object} params 请求参数
-             */
-            function fetchAndRender(url, params) {
-                showLoading();
-                $.ajax({
-                    url: url,
-                    method: 'GET',
-                    data: params,
-                    success: function(res) {
-                        // 兼容后端返回格式：res.content 为数组
-                        renderList(res.content || []);
-                    },
-                    error: function() {
-                        $body.html(`<div class="empty-state"><i class="bi bi-exclamation-triangle"></i><p>加载失败，请稍后重试</p></div>`);
-                    }
-                });
-            }
-
-            // ---------- 6. 事件绑定 ----------
-            function bindEvents() {
-                // 查看详情委托
-                $body.on('click', '.detail-btn', function() {
-                    handleDetail(this);
-                });
-
-                // 删除委托
-                $body.on('click', '.delete-btn', function() {
-                    handleDelete(this);
-                });
-
-                // 时间范围筛选
-                $('#search_time').on('click', function() {
-                    fetchAndRender(API.guest.searchTime, {
-                        timeS: $timeS.val(),
-                        timeE: $timeE.val()
-                    });
-                });
-
-                // 关键词搜索
-                function performSearch() {
-                    const keyword = $keyword.val().trim();
-                    if (!keyword) {
-                        alert('请输入搜索关键词');
-                        return;
-                    }
-                    fetchAndRender(API.guest.searchData, { value: keyword });
+                },
+                error() {
+                    alert('网络错误，请稍后重试');
                 }
-
-                $('#search_data').on('click', performSearch);
-                // 回车触发搜索
-                $keyword.on('keypress', function(e) {
-                    if (e.which === 13) {
-                        performSearch();
-                    }
-                });
-            }
-
-            // ---------- 7. 初始化 ----------
-            $(function() {
-                bindEvents();
-                // 初始加载默认时间范围的订单列表
-                fetchAndRender(API.guest.searchTime, {
-                    timeS: $timeS.val(),
-                    timeE: $timeE.val()
-                });
             });
-        })();
+        }
+
+        /**
+         * 统一数据加载并渲染
+         * @param {string} url 请求地址
+         * @param {Object} params 参数
+         */
+        function fetchAndRender(url, params) {
+            showLoading();
+            $.get(url, params)
+                .done(res => {
+                    const data = Array.isArray(res) ? res : (res.content || []);
+                    renderList(data);
+                })
+                .fail(() => showErrorState());
+        }
+
+        // ---------- 搜索触发函数 ----------
+        function searchByTime() {
+            fetchAndRender(API.guest.searchTime, {
+                timeS: $timeStart.val(),
+                timeE: $timeEnd.val()
+            });
+        }
+
+        function searchByText() {
+            const keyword = $keyword.val().trim();
+            if (!keyword) {
+                alert('请输入搜索关键词');
+                return;
+            }
+            fetchAndRender(API.guest.searchData, { value: keyword });
+        }
+
+        // ---------- 初始化事件绑定 ----------
+        $(function () {
+            // 默认加载时间范围内的数据
+            searchByTime();
+
+            // 筛选按钮
+            $('#search_time').on('click', searchByTime);
+            $('#search_data').on('click', searchByText);
+
+            // 回车搜索
+            $keyword.on('keypress', function (e) {
+                if (e.which === 13) searchByText();
+            });
+
+            // 事件委托：查看详情
+            $listContainer.on('click', '.detail-btn', function () {
+                handleDetail(this);
+            });
+
+            // 事件委托：删除记录
+            $listContainer.on('click', '.delete-btn', function () {
+                deleteRecord(this);
+            });
+        });
     </script>
 {% endblock %}
