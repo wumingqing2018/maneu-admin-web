@@ -1,12 +1,10 @@
 /* ============================================================
-          数据列表页样式（如门店/记录列表）
-          依赖：全局 base.css 中的 CSS 变量
-          ============================================================ */
+   订单管理页面样式
+   基于全局 CSS 变量，仅定义当前页面专属样式
+   ============================================================ */
 
+/* 扩展全局变量以覆盖硬编码颜色 */
 :root {
-    /* 卡片专用阴影 */
-    --store-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
-    /* 扩展全局变量以覆盖硬编码颜色 */
     --bg-hover: #f8f9fc;
     --danger-color: #dc2626;
     --danger-bg: #fef2f2;
@@ -28,10 +26,10 @@
     font-weight: 700;
     color: var(--brand-color);
     letter-spacing: -0.02em;
+    margin: 0;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    margin: 0;
 }
 
 .page-title i {
@@ -39,18 +37,42 @@
     color: var(--brand-accent);
 }
 
-/* 筛选区域 */
+/* 新增按钮（胶囊风格） */
+.btn-add-record {
+    background: var(--brand-accent);
+    border: none;
+    color: #000;
+    font-weight: 600;
+    padding: 0.55rem 1.4rem;
+    border-radius: 2rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.btn-add-record:hover {
+    background: #e0a800;
+    color: #000;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* 筛选卡片 */
 .filter-card {
     background: var(--bg-surface);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
     padding: 1.5rem;
-    box-shadow: var(--store-shadow);
     margin-bottom: 1.8rem;
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
     align-items: flex-end;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
 }
 
 .filter-group {
@@ -69,7 +91,6 @@
 }
 
 .filter-group .input-group {
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
     border-radius: var(--radius-md);
     overflow: hidden;
 }
@@ -80,36 +101,12 @@
 }
 
 .filter-group .btn {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 0.3rem;
 }
 
-/* 新增按钮 */
-.btn-add-record {
-    background: var(--brand-accent);
-    border: none;
-    color: #000;
-    font-weight: 600;
-    padding: 0.55rem 1.4rem;
-    border-radius: 2rem;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    text-decoration: none;
-    white-space: nowrap;
-}
-
-.btn-add-record:hover {
-    background: #e0a800;
-    color: #000;
-    transform: translateY(-1px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
-}
-
-/* 列表头部（桌面） */
+/* 列表表头（桌面端可见） */
 .list-header {
     display: flex;
     padding: 0.8rem 1.2rem;
@@ -207,7 +204,7 @@
     gap: 0.5rem;
 }
 
-/* 操作按钮 */
+/* 操作按钮（圆形图标） */
 .btn-action {
     width: 36px;
     height: 36px;
@@ -219,7 +216,6 @@
     background: white;
     color: var(--text-secondary);
     transition: all 0.15s ease;
-    padding: 0;
     cursor: pointer;
 }
 
@@ -235,7 +231,7 @@
     color: var(--danger-color);
 }
 
-/* 移动端适配 */
+/* 移动端响应式（转为卡片布局） */
 @media (max-width: 768px) {
     .list-header {
         display: none;
@@ -258,6 +254,7 @@
         width: 100%;
     }
 
+    /* 时间行放在最上方，并显示为强调色 */
     .store-list-item .col-time {
         order: 1;
         font-size: 0.75rem;
@@ -288,7 +285,7 @@
         margin-top: 0.3rem;
     }
 
-    /* 移除原来的绝对定位伪元素，改为直接显示在 col-time 中 */
+    /* 移除原来的伪元素绝对定位（避免重叠） */
     .store-list-item::before {
         display: none;
     }
@@ -304,7 +301,7 @@
     }
 }
 
-/* 空状态 & 加载 */
+/* 空状态与加载动画 */
 .empty-state {
     text-align: center;
     padding: 3rem 1rem;
@@ -312,7 +309,6 @@
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
     color: var(--text-secondary);
-    font-size: 1rem;
 }
 
 .empty-state i {

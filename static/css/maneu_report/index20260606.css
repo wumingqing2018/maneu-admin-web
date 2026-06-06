@@ -1,19 +1,13 @@
-/* ============================================================
-          数据列表页样式（如门店/记录列表）
-          依赖：全局 base.css 中的 CSS 变量
-          ============================================================ */
-
+/* ========== 定制管理列表页样式 ========== */
+/* 扩展全局变量（覆盖硬编码颜色） */
 :root {
-    /* 卡片专用阴影 */
-    --store-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
-    /* 扩展全局变量以覆盖硬编码颜色 */
-    --bg-hover: #f8f9fc;
+    --card-hover-shadow: 0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04);
+    --bg-hover: #fafbfc;
     --danger-color: #dc2626;
     --danger-bg: #fef2f2;
     --empty-icon: #cbd5e1;
 }
 
-/* 页面头部 */
 .page-header {
     display: flex;
     align-items: center;
@@ -39,13 +33,13 @@
     color: var(--brand-accent);
 }
 
-/* 筛选区域 */
+/* 筛选卡片 */
 .filter-card {
     background: var(--bg-surface);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
     padding: 1.5rem;
-    box-shadow: var(--store-shadow);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
     margin-bottom: 1.8rem;
     display: flex;
     flex-wrap: wrap;
@@ -85,7 +79,6 @@
     gap: 0.3rem;
 }
 
-/* 新增按钮 */
 .btn-add-record {
     background: var(--brand-accent);
     border: none;
@@ -109,7 +102,7 @@
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
 }
 
-/* 列表头部（桌面） */
+/* 列表头部 */
 .list-header {
     display: flex;
     padding: 0.8rem 1.2rem;
@@ -144,7 +137,7 @@
     text-align: right;
 }
 
-/* 列表项 */
+/* 列表项卡片 */
 .store-list-item {
     display: flex;
     align-items: center;
@@ -207,7 +200,6 @@
     gap: 0.5rem;
 }
 
-/* 操作按钮 */
 .btn-action {
     width: 36px;
     height: 36px;
@@ -221,6 +213,7 @@
     transition: all 0.15s ease;
     padding: 0;
     cursor: pointer;
+    text-decoration: none;
 }
 
 .btn-action:hover {
@@ -288,7 +281,7 @@
         margin-top: 0.3rem;
     }
 
-    /* 移除原来的绝对定位伪元素，改为直接显示在 col-time 中 */
+    /* 移除原来的伪元素标签 */
     .store-list-item::before {
         display: none;
     }

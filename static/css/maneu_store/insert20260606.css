@@ -1,15 +1,16 @@
-/* -------------------- 本页专用阴影（不覆盖全局变量） -------------------- */
+/* 本页专用阴影（仅卡片悬停时使用，不覆盖全局 --shadow-md） */
 :root {
     --card-hover-shadow: 0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
-/* -------------------- 卡片通用样式 -------------------- */
+/* ========== 卡片样式 ========== */
 .section-card,
 .form-card {
-    background: var(--bg-surface);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-md);
+    background: var(--bg-surface); /* 原 --store-surface */
+    border: 1px solid var(--border-subtle); /* 原 --store-border */
+    border-radius: var(--radius-md); /* 原 --store-radius */
     padding: 1.5rem;
+    /* 保留原柔和阴影 */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
     margin-bottom: 1.5rem;
 }
@@ -17,7 +18,7 @@
 .form-card-title {
     font-weight: 600;
     font-size: 1rem;
-    color: var(--text-primary);
+    color: var(--text-primary); /* 原 --store-text */
     margin-bottom: 1rem;
     display: flex;
     align-items: center;
@@ -47,7 +48,7 @@
     color: var(--brand-accent);
 }
 
-/* -------------------- 页面头部 -------------------- */
+/* ========== 页面头部 ========== */
 .page-header {
     display: flex;
     align-items: center;
@@ -73,7 +74,7 @@
     color: var(--brand-accent);
 }
 
-/* -------------------- 按钮样式 -------------------- */
+/* ========== 按钮样式 ========== */
 .btn-back {
     background: transparent;
     border: 1.5px solid var(--border-subtle);
@@ -106,7 +107,7 @@
 .btn-toggle {
     background: transparent;
     border: 1px solid var(--border-subtle);
-    color: var(--text-secondary);
+    color: var(--text-secondary); /* 原 --store-muted */
     font-size: 0.85rem;
     padding: 0.35rem 0.9rem;
     border-radius: 2rem;
@@ -123,7 +124,7 @@
     color: var(--brand-color);
 }
 
-/* -------------------- 键值对输入行（未在本页使用，保留以备扩展） -------------------- */
+/* ========== 键值对行 ========== */
 .kv-row {
     display: flex;
     align-items: center;
@@ -156,7 +157,7 @@
     flex: 2;
 }
 
-/* -------------------- 底部操作栏 -------------------- */
+/* ========== 操作栏 ========== */
 .action-bar {
     display: flex;
     flex-wrap: wrap;
@@ -164,7 +165,7 @@
     margin-top: 0.5rem;
 }
 
-/* -------------------- 响应式适配 -------------------- */
+/* ========== 响应式 ========== */
 @media (max-width: 768px) {
     .form-card {
         padding: 1rem;
@@ -198,4 +199,3 @@
         padding: 1rem 0.8rem;
     }
 }
-    
