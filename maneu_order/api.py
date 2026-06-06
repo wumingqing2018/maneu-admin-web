@@ -7,7 +7,7 @@ from django.forms import model_to_dict
 from django.http import HttpResponse
 from django.http import JsonResponse
 
-from common.simple import store_simple, report_simple, guest_simple
+from common.simple import filter_store_request_data, extract_report_simple_params, extract_guest_simple_params
 from common.verify import is_uuid
 from maneu_guest.service import *
 from maneu_order.service import *
@@ -25,7 +25,7 @@ def insert(request):
 
     if admin_id:
         try:
-            content = store_simple(request.GET.get('content'))
+            content = filter_store_request_data(request.GET.get('content'))
             data = order_insert(admin_id=admin_id, index_id=index_id, status=3, time=time, name=name, phone=phone,
                                 remark=remark, content=content).id
             order = {'status': True, 'message': '', 'content': data}
@@ -33,7 +33,7 @@ def insert(request):
             order = {'status': False, 'message': str(e), 'content': {}}
 
         try:
-            content = report_simple(request)
+            content = extract_report_simple_params(request)
             data = report_insert(admin_id=admin_id, index_id=index_id, status=3, time=time, name=name, phone=phone,
                                  remark=remark, content=content).id
             report = {'status': True, 'message': '', 'content': data}
@@ -41,7 +41,7 @@ def insert(request):
             report = {'status': False, 'message': str(e), 'content': {}}
 
         try:
-            content = guest_simple(request)
+            content = extract_guest_simple_params(request)
             data = guest_insert(admin_id=admin_id, index_id=index_id, status=3, time=time, name=name, phone=phone,
                                 remark=remark, content=content).id
             guest = {'status': True, 'message': '', 'content': data}
@@ -49,7 +49,7 @@ def insert(request):
             guest = {'status': False, 'message': str(e), 'content': {}}
 
         try:
-            content = store_simple(request.GET.get('content'))
+            content = filter_store_request_data(request.GET.get('content'))
             data = store_insert(admin_id=admin_id, index_id=index_id, status=3, time=time, name=name, phone=phone,
                                 remark=remark, content=content).id
             store = {'status': True, 'message': '', 'content': data}
@@ -147,7 +147,7 @@ def update(request):
 
         try:
             remark = request.GET.get('orderRemark')
-            content = store_simple(request.GET.get('content'))
+            content = filter_store_request_data(request.GET.get('content'))
             data = order_update_data(admin_id=admin_id, index_id=index_id, content=content, remark=remark)
             content = {'status': True, 'message': '', 'content': data}
         except Exception as e:

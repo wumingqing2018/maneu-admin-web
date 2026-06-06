@@ -12,7 +12,7 @@ urlpatterns = [
     path('api_detail/', api.detail, name='api_detail'),
     path('api_delete/', api.delete, name='api_delete'),
     path('api_update/', api.update, name='api_update'),
-    path('search_time/', api.search_time, name='search_time'),
-    path('search_data/', api.search_data, name='search_data'),
     path('api_QRcode/', api.generate_qr_code, name='api_QRcode'),
+    path('api_search_time/', api.search_time, name='api_search_time'),
+    path('api_search_data/', api.search_data, name='api_search_data'),
 ]

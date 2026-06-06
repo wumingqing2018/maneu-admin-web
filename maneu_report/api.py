@@ -6,8 +6,8 @@ from django.forms import model_to_dict
 from django.http import HttpResponse
 from django.http import JsonResponse
 
-from common.simple import guest_simple
-from common.simple import report_simple
+from common.simple import extract_guest_simple_params
+from common.simple import extract_report_simple_params
 from common.verify import is_uuid
 from maneu_guest.service import *
 from maneu_report.service import *
@@ -23,7 +23,7 @@ def insert(request):
         index_id = uuid.uuid4()
 
         try:
-            content = guest_simple(request)
+            content = extract_guest_simple_params(request)
             guest = guest_insert(admin_id=admin_id, index_id=index_id, time=time, name=name, phone=phone, status=2,
                                  content=content, remark=request.GET.get('guestRemark')).id
             guest_id = {'status': True, 'message': guest, 'content': {}}
@@ -31,7 +31,7 @@ def insert(request):
             guest_id = {'status': False, 'message': str(e), 'content': {}}
 
         try:
-            content = report_simple(request)
+            content = extract_report_simple_params(request)
             report = report_insert(admin_id=admin_id, index_id=index_id, time=time, name=name, phone=phone, status=2,
                                    content=content, remark=request.GET.get('reportRemark')).id
             report_id = {'status': True, 'message': report, 'content': {}}
@@ -102,7 +102,7 @@ def update(request):
     if admin_id and index_id:
 
         try:
-            content = report_simple(request)
+            content = extract_report_simple_params(request)
             data = report_update(admin_id=admin_id, index_id=index_id, content=content)
             content = {'status': True, 'message': '', 'content': data}
         except Exception as e:

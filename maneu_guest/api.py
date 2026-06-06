@@ -7,7 +7,7 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 
 
-from common.simple import guest_simple
+from common.simple import extract_guest_simple_params
 from common.verify import is_uuid
 from maneu_guest.service import *
 
@@ -21,7 +21,7 @@ def insert(request):
         index_id = uuid.uuid4()
 
         try:
-            content = guest_simple(request)
+            content = extract_guest_simple_params(request)
             guest_id = guest_insert(admin_id=admin_id, index_id=index_id, time=time, name=name, phone=phone, status=5, content=content, remark=request.GET.get('guestRemark')).id
             guest = {'status': True, 'message': guest_id, 'content': {}}
         except Exception as e:
