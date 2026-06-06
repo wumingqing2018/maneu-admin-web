@@ -5,9 +5,13 @@
 {% block css %}
     <style>
         /* ========== 定制管理列表页样式 ========== */
-        /* 本页专用阴影（仅卡片悬停时使用，不覆盖全局 --shadow-md） */
+        /* 扩展全局变量（覆盖硬编码颜色） */
         :root {
             --card-hover-shadow: 0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04);
+            --bg-hover: #fafbfc;
+            --danger-color: #dc2626;
+            --danger-bg: #fef2f2;
+            --empty-icon: #cbd5e1;
         }
 
         .page-header {
@@ -37,11 +41,10 @@
 
         /* 筛选卡片 */
         .filter-card {
-            background: var(--bg-surface);           /* 原 --store-surface */
-            border: 1px solid var(--border-subtle);  /* 原 --store-border */
-            border-radius: var(--radius-md);         /* 原 --store-radius */
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
             padding: 1.5rem;
-            /* 保留原柔和阴影 */
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
             margin-bottom: 1.8rem;
             display: flex;
@@ -62,7 +65,7 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.04em;
-            color: var(--text-secondary);            /* 原 --store-muted */
+            color: var(--text-secondary);
         }
 
         .filter-group .input-group {
@@ -95,10 +98,11 @@
             align-items: center;
             gap: 0.4rem;
             text-decoration: none;
+            white-space: nowrap;
         }
 
         .btn-add-record:hover {
-            background: #f5a623;
+            background: #e0a800;
             color: #000;
             transform: translateY(-1px);
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
@@ -143,7 +147,7 @@
         }
 
         .store-list-item:hover {
-            background: #fafbfc;
+            background: var(--bg-hover);
             box-shadow: inset 4px 0 0 var(--brand-accent);
         }
 
@@ -210,21 +214,23 @@
         }
 
         .btn-action.delete-btn:hover {
-            background: #fef2f2;
-            border-color: #dc2626;
-            color: #dc2626;
+            background: var(--danger-bg);
+            border-color: var(--danger-color);
+            color: var(--danger-color);
         }
 
-        /* 移动端 */
+        /* 移动端适配 */
         @media (max-width: 768px) {
-            .list-header { display: none; }
+            .list-header {
+                display: none;
+            }
 
             .store-list-item {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 0.5rem;
+                gap: 0.6rem;
                 position: relative;
-                padding: 1.2rem;
+                padding: 1rem;
             }
 
             .store-list-item .col-time,
@@ -236,31 +242,50 @@
                 width: 100%;
             }
 
+            .store-list-item .col-time {
+                order: 1;
+                font-size: 0.75rem;
+                color: var(--brand-accent);
+                font-weight: 500;
+                border-bottom: 1px dashed var(--border-subtle);
+                padding-bottom: 0.4rem;
+                margin-bottom: 0.2rem;
+            }
+
+            .store-list-item .col-name {
+                order: 2;
+            }
+            .store-list-item .col-phone {
+                order: 3;
+            }
+            .store-list-item .col-remark {
+                order: 4;
+            }
             .store-list-item .col-actions {
+                order: 5;
                 justify-content: flex-start;
                 padding-top: 0.5rem;
                 border-top: 1px dashed var(--border-subtle);
                 margin-top: 0.3rem;
             }
 
+            /* 移除原来的伪元素标签 */
             .store-list-item::before {
-                content: attr(data-mobile-label);
-                position: absolute;
-                top: 0.5rem;
-                right: 1rem;
-                font-size: 0.7rem;
-                color: var(--text-secondary);
-                font-weight: 600;
-                letter-spacing: 0.03em;
+                display: none;
             }
 
             .filter-card {
                 flex-direction: column;
                 align-items: stretch;
             }
+
+            .btn-add-record {
+                max-width: 100%;
+                justify-content: center;
+            }
         }
 
-        /* 空状态 */
+        /* 空状态 & 加载 */
         .empty-state {
             text-align: center;
             padding: 3rem 1rem;
@@ -275,14 +300,19 @@
             font-size: 2.5rem;
             display: block;
             margin-bottom: 0.8rem;
-            color: #cbd5e1;
+            color: var(--empty-icon);
         }
 
-        /* 加载动画 */
         .loading-spinner {
             display: flex;
             justify-content: center;
             padding: 2rem;
+        }
+
+        /* 关键词输入框校验样式 */
+        .is-invalid {
+            border-color: var(--danger-color) !important;
+            box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25);
         }
     </style>
 {% endblock %}
@@ -309,13 +339,14 @@
                         <i class="bi bi-search"></i> 查询
                     </button>
                 </div>
+                <div class="invalid-feedback" style="display: none;">请输入搜索关键词</div>
             </div>
             <div class="filter-group">
                 <label><i class="bi bi-calendar-range"></i> 时间范围</label>
                 <div class="input-group input-group-sm">
                     <span class="input-group-text">从</span>
                     <input autocomplete="off" class="form-control" id="timeStart" type="datetime-local"
-                           value="2024-01-01T00:00" max="{{ timeE }}" min="2010-01-01T00:00">
+                           value="{{ default_time_start }}" max="{{ timeE }}" min="2010-01-01T00:00">
                     <span class="input-group-text">至</span>
                     <input autocomplete="off" class="form-control" id="timeEnd" type="datetime-local"
                            value="{{ timeE }}" max="{{ timeE }}" min="2010-01-01T00:00">
@@ -346,8 +377,45 @@
     </div>
 {% endblock %}
 
+
 {% block javascript %}
     <script>
+        // ==================== 工具函数 ====================
+        // XSS 防护：转义 HTML 特殊字符
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        // 获取 CSRF Token（Django 默认在 Cookie 中）
+        function getCSRFToken() {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, 10) === 'csrftoken=') {
+                        cookieValue = decodeURIComponent(cookie.substring(10));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // 格式化时间显示（移动端短格式，可选）
+        function formatTimeShort(timeStr) {
+            if (!timeStr) return '';
+            const parts = timeStr.split(' ');
+            if (parts.length >= 1) return parts[0];
+            return timeStr.substring(0, 10);
+        }
+
         // ---------- API 端点 ----------
         const STORE = {
             web_detail: "{% url 'maneu_store:detail' %}",
@@ -361,156 +429,209 @@
         const $timeStart = $('#timeStart');
         const $timeEnd = $('#timeEnd');
         const $keyword = $('#keywordInput');
+        const $searchByTextBtn = $('#searchByText');
+        const $searchByTimeBtn = $('#searchByTime');
 
-        // ---------- 工具函数 ----------
+        // 请求取消控制器
+        let currentRequest = null;
+
+        // ---------- UI 状态函数 ----------
         function showLoading() {
             $listContainer.html(`
-        <div class="loading-spinner">
-            <div class="spinner-border text-primary" role="status"></div>
-        </div>`);
+                <div class="loading-spinner">
+                    <div class="spinner-border text-primary" role="status"></div>
+                </div>
+            `);
         }
 
         function showEmptyState() {
             $listContainer.html(`
-        <div class="empty-state">
-            <i class="bi bi-inbox"></i>
-            <p>暂无定制记录</p>
-            <small>尝试调整筛选条件或新增一条记录</small>
-        </div>`);
+                <div class="empty-state">
+                    <i class="bi bi-inbox"></i>
+                    <p>暂无定制记录</p>
+                    <small>尝试调整筛选条件或新增一条记录</small>
+                </div>
+            `);
         }
 
         function showErrorState() {
             $listContainer.html(`
-        <div class="empty-state">
-            <i class="bi bi-exclamation-triangle"></i>
-            <p>加载失败，请稍后重试</p>
-        </div>`);
+                <div class="empty-state">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <p>加载失败，请稍后重试</p>
+                </div>
+            `);
         }
 
-        /**
-         * 查看记录
-         * @param {HTMLElement} btn - 触发按钮
-         */
-        function handleDetail(btn) {
-            const indexId = btn.getAttribute('data-index-id');
-            window.location.href = STORE.web_detail + '?index_id=' + indexId;
+        // 清除关键词输入框的验证样式
+        function clearKeywordInvalid() {
+            $keyword.removeClass('is-invalid');
+            $keyword.closest('.filter-group').find('.invalid-feedback').hide();
         }
 
-        /**
-         * 删除记录（事件委托调用）
-         * @param {HTMLElement} btn - 触发按钮
-         */
-        function deleteRecord(btn) {
-            if (!confirm("确定要删除这条记录吗？此操作不可恢复。")) return;
-            const indexId = btn.getAttribute('data-index-id');
-            $.ajax({
-                url: STORE.api_delete,
-                type: 'GET',
-                data: { index_id: indexId },
-                success(res) {
-                    if (res.status) {
-                        const $item = $(btn).closest('.store-list-item');
-                        if ($item.length) {
-                            $item.css({
-                                transition: 'all 0.3s ease',
-                                opacity: 0,
-                                transform: 'translateX(20px)'
-                            }).delay(300).queue(function () {
-                                $(this).remove();
-                                if (!$listContainer.find('.store-list-item').length) {
-                                    showEmptyState();
-                                }
-                            });
-                        }
-                    } else {
-                        alert(res.message || '删除失败，请稍后重试');
-                    }
-                },
-                error() {
-                    alert('网络错误，请稍后重试');
-                }
-            });
+        function showKeywordInvalid() {
+            $keyword.addClass('is-invalid');
+            $keyword.closest('.filter-group').find('.invalid-feedback').show();
         }
 
-        /**
-         * 渲染列表
-         * @param {Array} items - 定制记录对象数组
-         */
+        // ---------- 生成列表项 HTML（XSS 防护）----------
+        function createItemHTML(item) {
+            const timeRaw = item.time || '';
+            const name = escapeHtml(item.name) || '-';
+            const phone = escapeHtml(item.phone) || '-';
+            const remarkRaw = item.remark || '-';
+            const remark = escapeHtml(remarkRaw);
+            const escapedRemarkAttr = remarkRaw.replace(/"/g, '&quot;');
+            const id = escapeHtml(item.id);
+
+            // 移动端在 col-time 内显示时间（不再使用伪元素）
+            return `
+                <div class="store-list-item">
+                    <div class="col-time">
+                        <i class="bi bi-clock me-2 d-md-none"></i>
+                        ${escapeHtml(timeRaw) || '-'}
+                    </div>
+                    <div class="col-name">
+                        <i class="bi bi-person me-2 d-md-none"></i>
+                        ${name}
+                    </div>
+                    <div class="col-phone">
+                        <i class="bi bi-phone me-2 d-md-none"></i>
+                        ${phone}
+                    </div>
+                    <div class="col-remark" title="${escapedRemarkAttr}">
+                        <i class="bi bi-chat-left-text me-2 d-md-none"></i>
+                        ${remark}
+                    </div>
+                    <div class="col-actions">
+                        <button class="btn-action detail-btn" data-index-id="${id}" title="查看详情">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                        <button class="btn-action delete-btn" data-index-id="${id}" title="删除记录">
+                            <i class="bi bi-trash3"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 渲染列表（使用 Fragment 提高性能）
         function renderList(items) {
             $listContainer.empty();
             if (!Array.isArray(items) || items.length === 0) {
                 showEmptyState();
                 return;
             }
-
             const fragment = $(document.createDocumentFragment());
             items.forEach(item => {
-                const remarkText = item.remark || '-';
-                const row = $(`
-            <div class="store-list-item" data-mobile-label="${item.time || ''}">
-                <div class="col-time"><i class="bi bi-clock me-2 d-md-none"></i>${item.time || '-'}</div>
-                <div class="col-name"><i class="bi bi-person me-2 d-md-none"></i>${item.name || '-'}</div>
-                <div class="col-phone"><i class="bi bi-phone me-2 d-md-none"></i>${item.phone || '-'}</div>
-                <div class="col-remark" title="${remarkText.replace(/"/g, '&quot;')}">
-                    <i class="bi bi-chat-left-text me-2 d-md-none"></i>${remarkText}
-                </div>
-                <div class="col-actions">
-                    <button class="btn-action detail-btn" data-index-id="${item.id}" title="查看详情">
-                        <i class="bi bi-eye"></i>
-                    </button>
-                    <button class="btn-action delete-btn" data-index-id="${item.id}" title="删除记录">
-                        <i class="bi bi-trash3"></i>
-                    </button>
-                </div>
-            </div>`);
-                fragment.append(row);
+                fragment.append(createItemHTML(item));
             });
-
             $listContainer.append(fragment);
         }
 
-        /**
-         * 统一加载数据并渲染
-         */
+        // ---------- 业务操作：详情跳转 ----------
+        function handleDetail(btn) {
+            const indexId = btn.getAttribute('data-index-id');
+            window.location.href = STORE.web_detail + '?index_id=' + indexId;
+        }
+
+        // 删除记录（改用 DELETE 方法 + CSRF token）
+        function deleteRecord(btn) {
+            if (!confirm("确定要删除这条记录吗？此操作不可恢复。")) return;
+
+            const indexId = btn.getAttribute('data-index-id');
+            $.ajax({
+                url: STORE.api_delete,
+                method: 'GET',
+                data: { index_id: indexId },
+                success(res) {
+                    if (res.status === true) {
+                        const $item = $(btn).closest('.store-list-item');
+                        if ($item.length) {
+                            $item.css({
+                                transition: 'all 0.3s ease',
+                                opacity: 0,
+                                transform: 'translateX(20px)'
+                            });
+                            setTimeout(() => {
+                                $item.remove();
+                                if (!$listContainer.find('.store-list-item').length) {
+                                    showEmptyState();
+                                }
+                            }, 300);
+                        }
+                    } else {
+                        alert(res.message || '删除失败，请稍后重试');
+                    }
+                },
+                error(xhr) {
+                    if (xhr.status === 403) {
+                        alert('CSRF 验证失败，请刷新页面后重试');
+                    } else {
+                        alert('网络错误，请稍后重试');
+                    }
+                }
+            });
+        }
+
+        // ---------- 数据加载（支持 abort 前一个请求）----------
         function fetchAndRender(url, params) {
+            if (currentRequest && currentRequest.readyState !== 4) {
+                currentRequest.abort();
+            }
             showLoading();
-            $.get(url, params)
+            currentRequest = $.get(url, params)
                 .done(res => {
                     const data = Array.isArray(res) ? res : (res.content || []);
                     renderList(data);
                 })
-                .fail(() => showErrorState());
+                .fail(xhr => {
+                    if (xhr.statusText === 'abort') return;
+                    showErrorState();
+                });
         }
 
-        // ---------- 搜索触发 ----------
+        // 时间范围搜索
         function searchByTime() {
+            clearKeywordInvalid();
             fetchAndRender(STORE.api_searchTime, {
                 timeS: $timeStart.val(),
                 timeE: $timeEnd.val()
             });
         }
 
+        // 关键词搜索
         function searchByText() {
             const keyword = $keyword.val().trim();
             if (!keyword) {
-                alert('请输入搜索关键词');
+                showKeywordInvalid();
                 return;
             }
+            clearKeywordInvalid();
             fetchAndRender(STORE.api_searchText, { value: keyword });
         }
 
-        // ---------- 初始化事件 ----------
+        // ---------- 初始化事件绑定 ----------
         $(function () {
-            // 默认加载
+            // 如果后端未传递 default_time_start，前端设置默认起始时间为30天前
+            if (!$timeStart.val()) {
+                const thirtyDaysAgo = new Date();
+                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                $timeStart.val(thirtyDaysAgo.toISOString().slice(0, 16));
+            }
+            // 默认加载时间范围内的数据
             searchByTime();
 
-            // 筛选按钮
-            $('#searchByTime').on('click', searchByTime);
-            $('#searchByText').on('click', searchByText);
+            // 按钮事件
+            $searchByTimeBtn.on('click', searchByTime);
+            $searchByTextBtn.on('click', searchByText);
 
             // 回车搜索
             $keyword.on('keypress', function (e) {
-                if (e.which === 13) searchByText();
+                if (e.which === 13) {
+                    e.preventDefault();
+                    searchByText();
+                }
             });
 
             // 事件委托：查看详情

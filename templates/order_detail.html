@@ -429,7 +429,7 @@
                         </div>
                     </div>
                 </div>
-                <div>
+                <div class="mb-2">
                     <label class="form-label fw-semibold small text-muted">左眼 (OS)</label>
                     <div class="row g-1">
                         <div class="col-6 col-md-3">
@@ -559,12 +559,15 @@
 
 {% block javascript %}
     <script>
-        // ==================== 配置 ====================
+        // ==================== 全局配置与工具函数 ====================
+        // 订单ID（由 Django 模板注入）
         const index_id = "{{ index_id }}";
-        const ORDER_API =  {
+
+        // API 端点（与原始后端保持一致）
+        const ORDER_API = {
             api_detail      : "{% url 'maneu_order:api_detail' %}",
             api_delete      : "{% url 'maneu_order:api_delete' %}",
-            api_update : "{% url 'maneu_order:api_update' %}",
+            api_update      : "{% url 'maneu_order:api_update' %}",
             api_qrcode      : "{% url 'maneu_order:api_QRcode' %}"
         };
 
@@ -573,18 +576,200 @@
             reportUpdate: "{% url 'maneu_report:api_update' %}",
         };
 
-        // ==================== 工具函数 ====================
-        // 折叠面板切换
-        function setupToggle(triggerId, panel) {
-            $(triggerId).on('click', function() {
-                panel.slideToggle(200);
-                $(this).find('i').toggleClass('bi-chevron-down bi-chevron-up');
+        // CSRF Token 获取（为后续可能的 POST 请求预留，当前所有更新使用 GET，但保持风格统一）
+        function getCSRFToken() {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, 10) === 'csrftoken=') {
+                        cookieValue = decodeURIComponent(cookie.substring(10));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // 将 "YYYY-MM-DD HH:MM:SS" 或类似格式转换为 datetime-local 可识别的 "YYYY-MM-DDTHH:MM"
+        function toDatetimeLocal(value) {
+            if (!value) return '';
+            // 若已经是 datetime-local 格式则直接返回
+            if (value.includes('T')) return value.substring(0, 16);
+            // 处理 "YYYY-MM-DD HH:MM:SS" 格式
+            let parts = value.split(' ');
+            if (parts.length >= 2) {
+                return parts[0] + 'T' + parts[1].substring(0, 5);
+            }
+            return value.substring(0, 16);
+        }
+
+        // 通用错误提示（风格与订单管理页保持一致）
+        function showError(message) {
+            alert(message || '操作失败，请稍后重试');
+        }
+
+        // ==================== 防重复提交控制 ====================
+        let isSubmitting = false;
+
+        function setSubmitting(btn, state, originalText = null) {
+            isSubmitting = state;
+            if (btn) {
+                if (state) {
+                    btn.prop('disabled', true);
+                    btn.data('original-text', btn.html());
+                    btn.html('<span class="spinner-border spinner-border-sm me-1" role="status"></span> 处理中...');
+                } else {
+                    btn.prop('disabled', false);
+                    if (btn.data('original-text')) {
+                        btn.html(btn.data('original-text'));
+                    }
+                }
+            }
+        }
+
+        // ==================== 数据加载与渲染 ====================
+        // 加载状态标签控制
+        function setLoadStatus($el, status, message) {
+            $el.removeClass('status-empty status-loaded status-warning');
+            if (status === 'loading') {
+                $el.addClass('status-empty').text(message || '加载中...');
+            } else if (status === 'success') {
+                $el.addClass('status-loaded').text(message || '加载成功');
+            } else if (status === 'error') {
+                $el.addClass('status-warning').text(message || '加载失败');
+            }
+        }
+
+        // 渲染客户信息
+        function renderGuestDetail(guest) {
+            if (guest?.status) {
+                const g = guest.content;
+                $('#time').val(toDatetimeLocal(g.time));
+                $('#name').val(g.name || '');
+                $('#phone').val(g.phone || '');
+                $('#sex').val(g.sex || '');
+                $('#age').val(g.age || '');
+                $('#dfh').val(g.dfh || '');
+                $('#em').val(g.em || '');
+                $('#ot').val(g.ot || '');
+                $('#remark').val(g.remark || '');
+                setLoadStatus($('#guestLoadStatus'), 'success', '已加载');
+            } else {
+                setLoadStatus($('#guestLoadStatus'), 'error', '加载失败');
+            }
+        }
+
+        // 渲染验光报告
+        function renderReportDetail(report) {
+            if (report?.status) {
+                const r = report.content;
+                $('#PLAN').val(r.plan || '');
+                $('#PD').val(r.pd || '');
+                const eyes = ['OD', 'OS'];
+                const fields = ['SPH','CYL','AX','VA','BC','ADD','PR','FR','AL','AK','AD','CCT','LT','VT'];
+                eyes.forEach(function(eye) {
+                    fields.forEach(function(f) {
+                        const value = r[eye.toLowerCase() + '_' + f.toLowerCase()];
+                        $('#' + eye + '_' + f).val(value || '');
+                    });
+                });
+                setLoadStatus($('#reportLoadStatus'), 'success', '已加载');
+            } else {
+                setLoadStatus($('#reportLoadStatus'), 'error', '加载失败');
+            }
+        }
+
+        // 渲染订单产品信息
+        function renderOrderDetail(order) {
+            if (order?.status && Array.isArray(order.content)) {
+                $('.product-row').each(function(i) {
+                    const p = order.content[i];
+                    if (p) {
+                        $(this).find('.arg10').val(p.arg10 || '');
+                        $(this).find('.arg11').val(p.arg11 || '');
+                        $(this).find('.arg12').val(p.arg12 || '');
+                        $(this).find('.arg13').val(p.arg13 || '');
+                        $(this).find('.arg14').val(p.arg14 || '');
+                    }
+                });
+                setLoadStatus($('#storeLoadStatus'), 'success', '已加载');
+            } else {
+                setLoadStatus($('#storeLoadStatus'), 'error', '加载失败');
+            }
+        }
+
+        // 主加载函数（带加载状态）
+        let currentDetailRequest = null;
+        function loadDetail() {
+            if (currentDetailRequest && currentDetailRequest.readyState !== 4) {
+                currentDetailRequest.abort();
+            }
+            // 重置状态标签为“加载中”
+            setLoadStatus($('#guestLoadStatus'), 'loading', '加载中...');
+            setLoadStatus($('#reportLoadStatus'), 'loading', '加载中...');
+            setLoadStatus($('#storeLoadStatus'), 'loading', '加载中...');
+
+            currentDetailRequest = $.ajax({
+                url: ORDER_API.api_detail,
+                method: 'GET',
+                data: { index_id: index_id },
+                success: function(res) {
+                    if (!res?.status) {
+                        showError('加载详情失败：' + (res?.message || ''));
+                        setLoadStatus($('#guestLoadStatus'), 'error', '加载失败');
+                        setLoadStatus($('#reportLoadStatus'), 'error', '加载失败');
+                        setLoadStatus($('#storeLoadStatus'), 'error', '加载失败');
+                        return;
+                    }
+                    const { guest, report, order } = res.content;
+                    renderGuestDetail(guest);
+                    renderReportDetail(report);
+                    renderOrderDetail(order);
+                },
+                error: function(xhr) {
+                    if (xhr.statusText === 'abort') return;
+                    showError('网络错误，无法加载订单详情');
+                    setLoadStatus($('#guestLoadStatus'), 'error', '加载失败');
+                    setLoadStatus($('#reportLoadStatus'), 'error', '加载失败');
+                    setLoadStatus($('#storeLoadStatus'), 'error', '加载失败');
+                }
             });
         }
 
-        // 收集所有产品行数据
-        function collectProductData() {
-            return $('.product-row').map(function() {
+        // ==================== 更新操作（带防抖与刷新） ====================
+        // 通用更新方法（GET 请求，沿用后端现有风格）
+        function performUpdate(url, data, successMsg, $btn, onSuccess) {
+            if (isSubmitting) return;
+            if (!confirm('确定要更新这条记录吗？')) return;
+
+            setSubmitting($btn, true);
+            $.ajax({
+                url: url,
+                method: 'GET',
+                data: data,
+                success: function(res) {
+                    setSubmitting($btn, false);
+                    if (res && res.status) {
+                        alert(successMsg);
+                        // 更新成功后重新加载详情，保持界面最新
+                        loadDetail();
+                        if (onSuccess) onSuccess(res);
+                    } else {
+                        showError('更新失败：' + (res?.message || '未知错误'));
+                    }
+                },
+                error: function(xhr) {
+                    setSubmitting($btn, false);
+                    showError('网络错误，请稍后重试');
+                }
+            });
+        }
+
+        // 更新订单（产品信息）
+        function updateOrder() {
+            const productData = $('.product-row').map(function() {
                 const $row = $(this);
                 return {
                     arg10: $row.find('.arg10').val(),
@@ -594,48 +779,17 @@
                     arg14: $row.find('.arg14').val()
                 };
             }).get();
-        }
-
-        // 通用 Ajax 更新
-        function ajaxUpdate(url, data, successMsg) {
-            $.ajax({
-                url: url,
-                method: 'GET',
-                data: data,
-                success: function(res) {
-                    if (res && res.status) {
-                        alert(successMsg);
-                    } else {
-                        alert('更新失败：' + (res?.message || ''));
-                    }
-                },
-                error: function() {
-                    alert('网络错误，请稍后重试');
-                }
-            });
-        }
-
-        // 通用错误处理
-        function handleError() {
-            alert('网络错误，请稍后重试');
-        }
-
-        // ==================== 业务操作模块 ====================
-        // 更新订单（产品信息）
-        function updateOrder() {
-            if (!confirm('确定要更新这条记录吗？此操作不可恢复。')) return;
             const data = {
                 index_id: index_id,
                 time: $('#time').val(),
                 orderRemark: $('#remark').val(),
-                content: JSON.stringify(collectProductData())
+                content: JSON.stringify(productData)
             };
-            ajaxUpdate(ORDER_API.api_update, data, '订单信息更新成功');
+            performUpdate(ORDER_API.api_update, data, '订单信息更新成功', $('#orderUpdate'));
         }
 
         // 更新客户信息
         function updateGuest() {
-            if (!confirm('确定要更新这条记录吗？此操作不可恢复。')) return;
             const data = {
                 index_id: index_id,
                 time: $('#time').val(),
@@ -648,7 +802,7 @@
                 em: $('#em').val(),
                 guestRemark: $('#remark').val()
             };
-            ajaxUpdate(API.guestUpdate, data, '客户信息更新成功');
+            performUpdate(API.guestUpdate, data, '客户信息更新成功', $('#guestUpdate'));
         }
 
         // 收集验光报告数据
@@ -670,34 +824,42 @@
 
         // 更新验光报告
         function updateReport() {
-            if (!confirm('确定要更新这条记录吗？此操作不可恢复。')) return;
-            ajaxUpdate(API.reportUpdate, collectReportData(), '验光报告更新成功');
+            const data = collectReportData();
+            performUpdate(API.reportUpdate, data, '验光报告更新成功', $('#reportUpdate'));
         }
 
-        // 删除订单
+        // ==================== 删除操作（带动画与跳转） ====================
         function deleteOrder() {
             if (!confirm('确定要删除这条订单吗？此操作不可恢复。')) return;
+            const $deleteBtn = $('#delete');
+            setSubmitting($deleteBtn, true);
             $.ajax({
                 url: ORDER_API.api_delete,
+                method: 'GET',
                 data: { index_id: index_id },
                 success: function(res) {
+                    setSubmitting($deleteBtn, false);
                     if (res?.status) {
                         alert('删除成功');
+                        // 模拟淡出效果后跳转（因页面即将跳转，简单跳转即可）
                         location.replace("{% url 'maneu_order:index' %}");
                     } else {
-                        alert('删除失败：' + (res?.message || ''));
+                        showError('删除失败：' + (res?.message || ''));
                     }
                 },
-                error: handleError
+                error: function() {
+                    setSubmitting($deleteBtn, false);
+                    showError('网络错误，删除失败');
+                }
             });
         }
 
-        // 生成并下载二维码
+        // ==================== 二维码下载 ====================
         function downloadQRCode() {
             $.ajax({
                 url: ORDER_API.api_qrcode,
-                data: { index_id: index_id },
                 method: 'GET',
+                data: { index_id: index_id },
                 xhrFields: { responseType: 'blob' },
                 success: function(blob) {
                     const url = URL.createObjectURL(blob);
@@ -710,118 +872,31 @@
                     URL.revokeObjectURL(url);
                 },
                 error: function() {
-                    alert('二维码生成失败');
-                }
-            });
-        }
-
-        // ==================== 详情加载与渲染 ====================
-        function renderGuestDetail(guest) {
-            if (guest?.status) {
-                const g = guest.content;
-                $('#time').val(g.time);
-                $('#name').val(g.name);
-                $('#phone').val(g.phone);
-                $('#sex').val(g.sex);
-                $('#age').val(g.age);
-                $('#dfh').val(g.dfh);
-                $('#em').val(g.em);
-                $('#ot').val(g.ot);
-                $('#remark').val(g.remark);
-                $('#guestLoadStatus')
-                    .removeClass('status-empty')
-                    .addClass('status-loaded')
-                    .text('加载成功');
-            } else {
-                $('#guestLoadStatus')
-                    .removeClass('status-empty')
-                    .addClass('status-warning')
-                    .text('加载失败');
-            }
-        }
-
-        function renderReportDetail(report) {
-            if (report?.status) {
-                const r = report.content;
-                $('#PLAN').val(r.plan);
-                $('#PD').val(r.pd);
-                const eyes = ['OD', 'OS'];
-                const fields = ['SPH','CYL','AX','VA','BC','ADD','PR','FR','AL','AK','AD','CCT','LT','VT'];
-                eyes.forEach(function(eye) {
-                    fields.forEach(function(f) {
-                        $('#' + eye + '_' + f).val(r[eye.toLowerCase() + '_' + f.toLowerCase()] || '');
-                    });
-                });
-                $('#reportLoadStatus')
-                    .removeClass('status-empty')
-                    .addClass('status-loaded')
-                    .text('加载成功');
-            } else {
-                $('#reportLoadStatus')
-                    .removeClass('status-empty')
-                    .addClass('status-warning')
-                    .text('加载失败');
-            }
-        }
-
-        function renderOrderDetail(order) {
-            if (order?.status && Array.isArray(order.content)) {
-                $('.product-row').each(function(i) {
-                    const p = order.content[i];
-                    if (p) {
-                        $(this).find('.arg10').val(p.arg10);
-                        $(this).find('.arg11').val(p.arg11);
-                        $(this).find('.arg12').val(p.arg12);
-                        $(this).find('.arg13').val(p.arg13);
-                        $(this).find('.arg14').val(p.arg14);
-                    }
-                });
-                $('#storeLoadStatus')
-                    .removeClass('status-empty')
-                    .addClass('status-loaded')
-                    .text('加载成功');
-            } else {
-                $('#storeLoadStatus')
-                    .removeClass('status-empty')
-                    .addClass('status-warning')
-                    .text('加载失败');
-            }
-        }
-
-        function loadDetail() {
-            $.ajax({
-                url: ORDER_API.api_detail,
-                data: { index_id: index_id },
-                success: function(res) {
-                    if (!res?.status) {
-                        alert('加载详情失败');
-                        return;
-                    }
-                    const { guest, report, order } = res.content;
-                    renderGuestDetail(guest);
-                    renderReportDetail(report);
-                    renderOrderDetail(order);
-                },
-                error: function() {
-                    alert('网络错误，无法加载订单详情');
+                    showError('二维码生成失败，请稍后重试');
                 }
             });
         }
 
         // ==================== 页面初始化 ====================
         $(function() {
-            // 折叠交互
-            setupToggle('#toggleGuest', $('#guestExtra'));
-            setupToggle('#toggleReport', $('#reportExtra'));
+            // 折叠面板切换（与订单管理页风格一致）
+            function setupToggle(triggerId, panelId) {
+                $(triggerId).on('click', function() {
+                    $(panelId).slideToggle(200);
+                    $(this).find('i').toggleClass('bi-chevron-down bi-chevron-up');
+                });
+            }
+            setupToggle('#toggleGuest', '#guestExtra');
+            setupToggle('#toggleReport', '#reportExtra');
 
-            // 绑定操作按钮事件
+            // 绑定所有操作按钮
             $('#orderUpdate').on('click', updateOrder);
             $('#guestUpdate').on('click', updateGuest);
             $('#reportUpdate').on('click', updateReport);
             $('#delete').on('click', deleteOrder);
             $('#generate_qr_code').on('click', downloadQRCode);
 
-            // 加载数据
+            // 加载详情数据
             loadDetail();
         });
     </script>

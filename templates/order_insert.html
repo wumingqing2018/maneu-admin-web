@@ -507,64 +507,87 @@
             </button>
         </div>
     </div>
-
-    {# datalist 保持不变 #}
-    <div>
-        <datalist id="dfhList">
-            <option>有</option>
-            <option>无</option>
-        </datalist>
-        <datalist id="emList">
-            <option>右</option>
-            <option>左</option>
-        </datalist>
-        <datalist id="otList">
-            <option>正位眼</option>
-            <option>斜视眼</option>
-        </datalist>
-        <datalist id="sexList">
-            <option>男</option>
-            <option>女</option>
-        </datalist>
-        <datalist id="VA"> ... </datalist>
-        <datalist id="CYL&SPH"> ... </datalist>
-        <datalist id="AX"> ... </datalist>
-        <datalist id="ADD"> ... </datalist>
-        <datalist id="PLAN1">
-            <option>两用解决方案</option>
-            <option>近用解决方案</option>
-            <option>远用解决方案</option>
-        </datalist>
-        <datalist id="PD1"> ... </datalist>
-    </div>
 {% endblock %}
 
 {% block javascript %}
     <script>
-        // API 地址
+        // ==================== 全局配置与工具函数 ====================
+        // API 端点（由 Django 模板反向解析）
         const ORDER_INSERT_API = "{% url 'maneu_order:api_insert' %}";
 
-        /**
-         * 通用折叠切换功能
-         * @param {string} buttonId - 触发按钮的 ID
-         * @param {string} targetId - 被折叠元素的 ID
-         */
-        function initCollapseToggle(buttonId, targetId) {
-            const $btn = $('#' + buttonId);
-            const $target = $('#' + targetId);
-            if (!$btn.length || !$target.length) return;
-
-            $btn.on('click', function() {
-                $target.slideToggle(200);
-                // 仅切换图标，文字无需改变（始终为“详细参数”）
-                $btn.find('i').toggleClass('bi-chevron-down bi-chevron-up');
-            });
+        // 获取 CSRF Token（为后续可能的 POST 请求预留，当前使用 GET，但保持风格统一）
+        function getCSRFToken() {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, 10) === 'csrftoken=') {
+                        cookieValue = decodeURIComponent(cookie.substring(10));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
         }
 
-        /**
-         * 收集表单数据并提交订单
-         */
+        // 通用错误提示（风格与订单管理页保持一致）
+        function showError(message) {
+            alert(message || '操作失败，请稍后重试');
+        }
+
+        // ==================== 防重复提交控制 ====================
+        let isSubmitting = false;
+
+        function setSubmitting(btn, state, originalText = null) {
+            isSubmitting = state;
+            if (btn) {
+                if (state) {
+                    btn.prop('disabled', true);
+                    btn.data('original-text', btn.html());
+                    btn.html('<span class="spinner-border spinner-border-sm me-1" role="status"></span> 提交中...');
+                } else {
+                    btn.prop('disabled', false);
+                    if (btn.data('original-text')) {
+                        btn.html(btn.data('original-text'));
+                    }
+                }
+            }
+        }
+
+        // ==================== 表单验证 ====================
+        function validateForm() {
+            const name = $('#name').val().trim();
+            const phone = $('#phone').val().trim();
+
+            if (!name) {
+                showError('请填写客户姓名');
+                $('#name').focus();
+                return false;
+            }
+            if (!phone) {
+                showError('请填写联系电话');
+                $('#phone').focus();
+                return false;
+            }
+            // 简单手机号验证（可根据需要调整）
+            const phoneRegex = /^1[3-9]\d{9}$|^\d{7,15}$/;
+            if (!phoneRegex.test(phone)) {
+                showError('请输入有效的联系电话');
+                $('#phone').focus();
+                return false;
+            }
+            return true;
+        }
+
+        // ==================== 提交订单（带防抖与加载状态） ====================
         function submitOrder() {
+            // 防重复提交
+            if (isSubmitting) return;
+
+            // 表单验证
+            if (!validateForm()) return;
+
             // 收集产品信息
             const products = [];
             $('.product-row').each(function() {
@@ -581,14 +604,14 @@
             const requestData = {
                 content: JSON.stringify(products),
                 time: $('#time').val(),
-                name: $('#name').val(),
-                phone: $('#phone').val(),
-                remark: $('#remark').val(),
-                age: $('#age').val(),
-                sex: $('#sex').val(),
-                dfh: $('#dfh').val(),
-                ot: $('#ot').val(),
-                em: $('#em').val(),
+                name: $('#name').val().trim(),
+                phone: $('#phone').val().trim(),
+                remark: $('#remark').val().trim(),
+                age: $('#age').val().trim(),
+                sex: $('#sex').val().trim(),
+                dfh: $('#dfh').val().trim(),
+                ot: $('#ot').val().trim(),
+                em: $('#em').val().trim(),
                 plan: $('#PLAN').val(),
                 pd: $('#PD').val(),
                 od_va: $('#OD_VA').val(),
@@ -621,31 +644,58 @@
                 os_bc: $('#OS_BC').val()
             };
 
+            const $submitBtn = $('#insert');
+            setSubmitting($submitBtn, true);
+
             $.ajax({
                 url: ORDER_INSERT_API,
-                method: 'GET',   // 注意：提交数据建议改为 POST，此处保持原有方式
+                method: 'GET',   // 保持与原代码一致（后端接口为 GET）
                 data: requestData,
                 success: function(res) {
+                    setSubmitting($submitBtn, false);
                     if (res.status === true) {
                         alert('订单提交成功');
+                        // 可选：提交成功后重置表单（保留时间默认值）
+                        $('#name, #phone, #remark, #age, #sex, #dfh, #ot, #em, #PLAN, #PD').val('');
+                        $('#guestExtra input, #reportExtra input').val('');
+                        $('.product-row input').val('');
+                        $('#name').focus();
                     } else {
-                        alert(res.message || '提交失败，请稍后重试');
+                        showError('提交失败：' + (res.message || '未知错误'));
                     }
                 },
-                error: function() {
-                    alert('提交失败，网络错误，请稍后重试');
+                error: function(xhr) {
+                    setSubmitting($submitBtn, false);
+                    showError('网络错误，请稍后重试');
                 }
             });
         }
 
-        // 页面初始化事件绑定
-        $(document).ready(function() {
-            // 初始化两个折叠面板
-            initCollapseToggle('toggleGuest', 'guestExtra');
-            initCollapseToggle('toggleReport', 'reportExtra');
+        // ==================== 折叠面板切换 ====================
+        function setupToggle(triggerId, panelId) {
+            $(triggerId).on('click', function() {
+                const $panel = $(panelId);
+                $panel.slideToggle(200);
+                $(this).find('i').toggleClass('bi-chevron-down bi-chevron-up');
+            });
+        }
 
-            // 提交订单按钮
+        // ==================== 页面初始化 ====================
+        $(function() {
+            // 初始化两个折叠面板
+            setupToggle('#toggleGuest', '#guestExtra');
+            setupToggle('#toggleReport', '#reportExtra');
+
+            // 绑定提交按钮事件
             $('#insert').on('click', submitOrder);
+
+            // 可选：支持按回车键快速提交（在表单输入框内按回车）
+            $('#guestSection input, #reportSection input, .product-row input').on('keypress', function(e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    submitOrder();
+                }
+            });
         });
     </script>
 {% endblock %}

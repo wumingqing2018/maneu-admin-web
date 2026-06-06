@@ -532,212 +532,291 @@
 
 {% block javascript %}
     <script>
-        // 将后端变量声明为常量，避免全局污染
+        // ==================== 全局配置与工具函数 ====================
+        // 订单ID（由 Django 模板注入）
         const INDEX_ID = "{{ index_id }}";
+
+        // API 端点（与后端保持一致）
         const GUEST_UPDATE_URL = "{% url 'maneu_guest:api_update' %}";
         const REPORT_DETAIL_URL = "{% url 'maneu_report:api_detail' %}";
         const REPORT_UPDATE_URL = "{% url 'maneu_report:api_update' %}";
         const REPORT_DELETE_URL = "{% url 'maneu_report:api_delete' %}";
         const REPORT_QRCODE_URL = "{% url 'maneu_report:api_QRcode' %}";
 
-        $(document).ready(function () {
-
-            // ========== 通用工具函数 ==========
-
-            /**
-             * 初始化折叠面板切换
-             * @param {string} toggleBtnId - 按钮 ID
-             * @param {string} targetId - 被折叠内容 ID
-             */
-            function initCollapse(toggleBtnId, targetId) {
-                const $btn = $('#' + toggleBtnId);
-                const $target = $('#' + targetId);
-                if (!$btn.length || !$target.length) return;
-
-                $btn.on('click', function () {
-                    $target.slideToggle(200);
-                    $btn.find('i').toggleClass('bi-chevron-down bi-chevron-up');
-                });
-            }
-
-            /**
-             * 通用 Ajax 更新函数
-             */
-            function ajaxUpdate(url, data, successMsg) {
-                $.ajax({
-                    url: url,
-                    method: 'GET',  // 实际应用中建议改为 POST
-                    data: data,
-                    success: function (res) {
-                        alert(res.status === true ? successMsg : '更新失败：' + (res.message || ''));
-                    },
-                    error: function () {
-                        alert('网络错误');
+        // 获取 CSRF Token（为后续可能的 POST 请求预留，当前使用 GET，但保持风格统一）
+        function getCSRFToken() {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, 10) === 'csrftoken=') {
+                        cookieValue = decodeURIComponent(cookie.substring(10));
+                        break;
                     }
-                });
-            }
-
-            /**
-             * 收集视力/几何相关字段（左右眼对称字段）
-             * @param {string} eye - 'OD' 或 'OS'
-             * @param {string[]} fields - 字段名数组（大写）
-             * @returns {Object} 已拼好前缀的对象，如 { od_sph: value, os_sph: value }
-             */
-            function collectEyeFields(eye, fields) {
-                const data = {};
-                const prefix = eye.toLowerCase() + '_';
-                fields.forEach(f => {
-                    data[prefix + f.toLowerCase()] = $('#' + eye + '_' + f).val();
-                });
-                return data;
-            }
-
-            /**
-             * 设置 UI 加载状态标签
-             */
-            function setLoadStatus(elementId, success) {
-                const $el = $('#' + elementId);
-                $el.removeClass('status-empty');
-                if (success) {
-                    $el.addClass('status-loaded').text('加载成功');
-                } else {
-                    $el.addClass('status-warning').text('加载失败');
                 }
             }
+            return cookieValue;
+        }
 
-            // ========== 初始化折叠面板 ==========
-            initCollapse('toggleGuest', 'guestExtra');
-            initCollapse('toggleReport', 'reportExtra');
+        // 将 "YYYY-MM-DD HH:MM:SS" 或类似格式转换为 datetime-local 可识别的 "YYYY-MM-DDTHH:MM"
+        function toDatetimeLocal(value) {
+            if (!value) return '';
+            if (value.includes('T')) return value.substring(0, 16);
+            let parts = value.split(' ');
+            if (parts.length >= 2) {
+                return parts[0] + 'T' + parts[1].substring(0, 5);
+            }
+            return value.substring(0, 16);
+        }
 
-            // ========== 更新客户信息 ==========
-            $('#guestUpdate').on('click', function () {
-                if (!confirm('确定要更新这条记录吗？此操作不可恢复。')) return;
-                ajaxUpdate(GUEST_UPDATE_URL, {
-                    index_id: INDEX_ID,
-                    time: $('#time').val(),
-                    name: $('#name').val(),
-                    phone: $('#phone').val(),
-                    age: $('#age').val(),
-                    sex: $('#sex').val(),
-                    dfh: $('#dfh').val(),
-                    ot: $('#ot').val(),
-                    em: $('#em').val(),
-                    guestRemark: $('#remark').val()
-                }, '客户信息更新成功');
-            });
+        // 通用错误提示（风格与订单管理页保持一致）
+        function showError(message) {
+            alert(message || '操作失败，请稍后重试');
+        }
 
-            // ========== 更新验光报告 ==========
-            $('#reportUpdate').on('click', function () {
-                if (!confirm('确定要更新这条记录吗？此操作不可恢复。')) return;
-                const eyeFields = ['SPH', 'CYL', 'AX', 'VA', 'BC', 'ADD', 'PR', 'FR', 'AL', 'AK', 'AD', 'CCT', 'LT', 'VT'];
-                const data = {
-                    index_id: INDEX_ID,
-                    plan: $('#PLAN').val(),
-                    pd: $('#PD').val()
-                };
-                // 合并左右眼字段
-                $.extend(data,
-                    collectEyeFields('OD', eyeFields),
-                    collectEyeFields('OS', eyeFields)
-                );
-                ajaxUpdate(REPORT_UPDATE_URL, data, '验光报告更新成功');
-            });
+        // ==================== 防重复提交控制 ====================
+        let isSubmitting = false;
 
-            // ========== 删除订单 ==========
-            $('#reportDelete').on('click', function () {
-                if (!confirm('确定要删除这条订单吗？此操作不可恢复。')) return;
-                $.ajax({
-                    url: REPORT_DELETE_URL,
-                    data: { index_id: INDEX_ID },
-                    success: function (res) {
-                        if (res.status) {
-                            alert('删除成功');
-                            window.location.href = "{% url 'maneu_report:index' %}";
-                        } else {
-                            alert('删除失败：' + (res.message || ''));
-                        }
-                    },
-                    error: function () {
-                        alert('网络错误');
+        function setSubmitting(btn, state, originalText = null) {
+            isSubmitting = state;
+            if (btn) {
+                if (state) {
+                    btn.prop('disabled', true);
+                    btn.data('original-text', btn.html());
+                    btn.html('<span class="spinner-border spinner-border-sm me-1" role="status"></span> 处理中...');
+                } else {
+                    btn.prop('disabled', false);
+                    if (btn.data('original-text')) {
+                        btn.html(btn.data('original-text'));
                     }
+                }
+            }
+        }
+
+        // ==================== 数据加载与渲染 ====================
+        // 加载状态标签控制
+        function setLoadStatus($el, status, message) {
+            $el.removeClass('status-empty status-loaded status-warning');
+            if (status === 'loading') {
+                $el.addClass('status-empty').text(message || '加载中...');
+            } else if (status === 'success') {
+                $el.addClass('status-loaded').text(message || '已加载');
+            } else if (status === 'error') {
+                $el.addClass('status-warning').text(message || '加载失败');
+            }
+        }
+
+        // 渲染客户信息
+        function renderGuestDetail(guest) {
+            if (guest?.status) {
+                const g = guest.content;
+                $('#time').val(toDatetimeLocal(g.time));
+                $('#name').val(g.name || '');
+                $('#phone').val(g.phone || '');
+                $('#sex').val(g.sex || '');
+                $('#age').val(g.age || '');
+                $('#dfh').val(g.dfh || '');
+                $('#em').val(g.em || '');
+                $('#ot').val(g.ot || '');
+                $('#remark').val(g.remark || '');
+                setLoadStatus($('#guestLoadStatus'), 'success', '已加载');
+            } else {
+                setLoadStatus($('#guestLoadStatus'), 'error', '加载失败');
+            }
+        }
+
+        // 渲染验光报告
+        function renderReportDetail(report) {
+            if (report?.status) {
+                const r = report.content;
+                $('#PLAN').val(r.plan || '');
+                $('#PD').val(r.pd || '');
+                const eyes = ['OD', 'OS'];
+                const fields = ['SPH','CYL','AX','VA','BC','ADD','PR','FR','AL','AK','AD','CCT','LT','VT'];
+                eyes.forEach(function(eye) {
+                    fields.forEach(function(f) {
+                        const value = r[eye.toLowerCase() + '_' + f.toLowerCase()];
+                        $('#' + eye + '_' + f).val(value || '');
+                    });
+                });
+                setLoadStatus($('#reportLoadStatus'), 'success', '已加载');
+            } else {
+                setLoadStatus($('#reportLoadStatus'), 'error', '加载失败');
+            }
+        }
+
+        // 主加载函数（带加载状态和请求取消）
+        let currentDetailRequest = null;
+        function loadDetail() {
+            if (currentDetailRequest && currentDetailRequest.readyState !== 4) {
+                currentDetailRequest.abort();
+            }
+            // 重置状态标签为“加载中”
+            setLoadStatus($('#guestLoadStatus'), 'loading', '加载中...');
+            setLoadStatus($('#reportLoadStatus'), 'loading', '加载中...');
+
+            currentDetailRequest = $.ajax({
+                url: REPORT_DETAIL_URL,
+                method: 'GET',
+                data: { index_id: INDEX_ID },
+                success: function(res) {
+                    if (!res?.status) {
+                        showError('加载详情失败：' + (res?.message || ''));
+                        setLoadStatus($('#guestLoadStatus'), 'error', '加载失败');
+                        setLoadStatus($('#reportLoadStatus'), 'error', '加载失败');
+                        return;
+                    }
+                    const { guest, report } = res.content;
+                    renderGuestDetail(guest);
+                    renderReportDetail(report);
+                },
+                error: function(xhr) {
+                    if (xhr.statusText === 'abort') return;
+                    showError('网络错误，无法加载订单详情');
+                    setLoadStatus($('#guestLoadStatus'), 'error', '加载失败');
+                    setLoadStatus($('#reportLoadStatus'), 'error', '加载失败');
+                }
+            });
+        }
+
+        // ==================== 更新操作（带防抖与刷新） ====================
+        // 通用更新方法（GET 请求，沿用后端现有风格）
+        function performUpdate(url, data, successMsg, $btn, onSuccess) {
+            if (isSubmitting) return;
+            if (!confirm('确定要更新这条记录吗？')) return;
+
+            setSubmitting($btn, true);
+            $.ajax({
+                url: url,
+                method: 'GET',
+                data: data,
+                success: function(res) {
+                    setSubmitting($btn, false);
+                    if (res && res.status) {
+                        alert(successMsg);
+                        // 更新成功后重新加载详情，保持界面最新
+                        loadDetail();
+                        if (onSuccess) onSuccess(res);
+                    } else {
+                        showError('更新失败：' + (res?.message || '未知错误'));
+                    }
+                },
+                error: function(xhr) {
+                    setSubmitting($btn, false);
+                    showError('网络错误，请稍后重试');
+                }
+            });
+        }
+
+        // 更新客户信息
+        function updateGuest() {
+            const data = {
+                index_id: INDEX_ID,
+                time: $('#time').val(),
+                name: $('#name').val(),
+                phone: $('#phone').val(),
+                age: $('#age').val(),
+                sex: $('#sex').val(),
+                dfh: $('#dfh').val(),
+                ot: $('#ot').val(),
+                em: $('#em').val(),
+                guestRemark: $('#remark').val()
+            };
+            performUpdate(GUEST_UPDATE_URL, data, '客户信息更新成功', $('#guestUpdate'));
+        }
+
+        // 收集验光报告数据
+        function collectReportData() {
+            const data = {
+                index_id: INDEX_ID,
+                plan: $('#PLAN').val(),
+                pd: $('#PD').val()
+            };
+            const eyes = ['OD', 'OS'];
+            const fields = ['SPH','CYL','AX','VA','BC','ADD','PR','FR','AL','AK','AD','CCT','LT','VT'];
+            eyes.forEach(function(eye) {
+                fields.forEach(function(f) {
+                    data[eye.toLowerCase() + '_' + f.toLowerCase()] = $('#' + eye + '_' + f).val();
                 });
             });
+            return data;
+        }
 
-            // ========== 下载二维码 ==========
-            $('#reportQrcode').on('click', function () {
-                $.ajax({
-                    url: REPORT_QRCODE_URL,
-                    data: { index_id: INDEX_ID },
-                    method: 'GET',
-                    xhrFields: { responseType: 'blob' },
-                    success: function (blob) {
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = INDEX_ID + '.png';
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(url);
-                    },
-                    error: function () {
-                        alert('二维码生成失败');
+        // 更新验光报告
+        function updateReport() {
+            const data = collectReportData();
+            performUpdate(REPORT_UPDATE_URL, data, '验光报告更新成功', $('#reportUpdate'));
+        }
+
+        // ==================== 删除操作（带动画与跳转） ====================
+        function deleteReport() {
+            if (!confirm('确定要删除这条订单吗？此操作不可恢复。')) return;
+            const $deleteBtn = $('#reportDelete');
+            setSubmitting($deleteBtn, true);
+            $.ajax({
+                url: REPORT_DELETE_URL,
+                method: 'GET',
+                data: { index_id: INDEX_ID },
+                success: function(res) {
+                    setSubmitting($deleteBtn, false);
+                    if (res?.status) {
+                        alert('删除成功');
+                        location.replace("{% url 'maneu_report:index' %}");
+                    } else {
+                        showError('删除失败：' + (res?.message || ''));
                     }
-                });
+                },
+                error: function() {
+                    setSubmitting($deleteBtn, false);
+                    showError('网络错误，删除失败');
+                }
             });
+        }
 
-            // ========== 加载订单详情并填充表单 ==========
-            function loadDetail() {
-                $.ajax({
-                    url: REPORT_DETAIL_URL,
-                    data: { index_id: INDEX_ID },
-                    success: function (res) {
-                        if (res.status !== true) {
-                            alert('加载详情失败');
-                            return;
-                        }
-                        const { guest, report } = res.content;
+        // ==================== 二维码下载 ====================
+        function downloadQRCode() {
+            $.ajax({
+                url: REPORT_QRCODE_URL,
+                method: 'GET',
+                data: { index_id: INDEX_ID },
+                xhrFields: { responseType: 'blob' },
+                success: function(blob) {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = INDEX_ID + '.png';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                },
+                error: function() {
+                    showError('二维码生成失败，请稍后重试');
+                }
+            });
+        }
 
-                        // 填充客户信息
-                        if (guest && guest.status === true) {
-                            const g = guest.content;
-                            $('#time').val(g.time);
-                            $('#name').val(g.name);
-                            $('#phone').val(g.phone);
-                            $('#sex').val(g.sex);
-                            $('#age').val(g.age);
-                            $('#dfh').val(g.dfh);
-                            $('#em').val(g.em);
-                            $('#ot').val(g.ot);
-                            $('#remark').val(g.remark);
-                            setLoadStatus('guestLoadStatus', true);
-                        } else {
-                            setLoadStatus('guestLoadStatus', false);
-                        }
-
-                        // 填充验光报告
-                        if (report && report.status === true) {
-                            const r = report.content;
-                            $('#PLAN').val(r.plan);
-                            $('#PD').val(r.pd);
-                            // 循环填充左右眼所有字段
-                            ['OD', 'OS'].forEach(eye => {
-                                const prefix = eye.toLowerCase() + '_';
-                                ['SPH', 'CYL', 'AX', 'VA', 'BC', 'ADD', 'PR', 'FR', 'AL', 'AK', 'AD', 'CCT', 'LT', 'VT'].forEach(f => {
-                                    $('#' + eye + '_' + f).val(r[prefix + f.toLowerCase()] || '');
-                                });
-                            });
-                            setLoadStatus('reportLoadStatus', true);
-                        } else {
-                            setLoadStatus('reportLoadStatus', false);
-                        }
-                    },
-                    error: function () {
-                        alert('网络错误，无法加载订单详情');
-                    }
+        // ==================== 页面初始化 ====================
+        $(function() {
+            // 折叠面板切换（与订单管理页风格一致）
+            function setupToggle(triggerId, panelId) {
+                $(triggerId).on('click', function() {
+                    const $panel = $(panelId);
+                    $panel.slideToggle(200);
+                    $(this).find('i').toggleClass('bi-chevron-down bi-chevron-up');
                 });
             }
+            setupToggle('#toggleGuest', '#guestExtra');
+            setupToggle('#toggleReport', '#reportExtra');
 
+            // 绑定所有操作按钮
+            $('#guestUpdate').on('click', updateGuest);
+            $('#reportUpdate').on('click', updateReport);
+            $('#reportDelete').on('click', deleteReport);
+            $('#reportQrcode').on('click', downloadQRCode);
+
+            // 加载详情数据
             loadDetail();
         });
     </script>

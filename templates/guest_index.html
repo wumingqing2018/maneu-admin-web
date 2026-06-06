@@ -6,21 +6,24 @@
         /* ============================================================
            数据列表页样式（如门店/记录列表）
            依赖：全局 base.css 中的 CSS 变量
-           注意：本文件只定义页面专属样式，颜色/圆角/边框等均复用全局变量
            ============================================================ */
 
-        /* ---------- 1. 局部变量（仅覆盖/补充全局无定义的值） ---------- */
         :root {
-            /* 卡片专用阴影（比全局更轻），用于 .filter-card 等 */
+            /* 卡片专用阴影 */
             --store-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
+            /* 扩展全局变量以覆盖硬编码颜色 */
+            --bg-hover: #f8f9fc;
+            --danger-color: #dc2626;
+            --danger-bg: #fef2f2;
+            --empty-icon: #cbd5e1;
         }
 
-        /* ---------- 2. 页面头部 ---------- */
+        /* 页面头部 */
         .page-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            flex-wrap: wrap;            /* 小屏自动换行 */
+            flex-wrap: wrap;
             gap: 1rem;
             margin-bottom: 1.5rem;
         }
@@ -28,37 +31,35 @@
         .page-title {
             font-size: 1.8rem;
             font-weight: 700;
-            color: var(--brand-color);      /* 全局主色 */
-            letter-spacing: -0.02em;       /* 收紧字距，更精致 */
+            color: var(--brand-color);
+            letter-spacing: -0.02em;
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            margin: 0;                     /* 清除默认 margin */
+            margin: 0;
         }
 
-        /* 标题中的图标 */
         .page-title i {
-            font-size: 2rem;               /* 图标略大于文字，增强视觉层次 */
-            color: var(--brand-accent);    /* 强调色，与主色形成对比 */
+            font-size: 2rem;
+            color: var(--brand-accent);
         }
 
-        /* ---------- 3. 筛选区域 ---------- */
+        /* 筛选区域 */
         .filter-card {
             background: var(--bg-surface);
             border: 1px solid var(--border-subtle);
             border-radius: var(--radius-md);
             padding: 1.5rem;
-            box-shadow: var(--store-shadow);    /* 使用本文件定义的轻阴影 */
+            box-shadow: var(--store-shadow);
             margin-bottom: 1.8rem;
             display: flex;
             flex-wrap: wrap;
             gap: 1rem;
-            align-items: flex-end;             /* 让按钮与输入框底部对齐 */
+            align-items: flex-end;
         }
 
-        /* 单个筛选字段组 */
         .filter-group {
-            flex: 1 1 220px;                   /* 最小宽度220px，自动伸缩 */
+            flex: 1 1 220px;
             display: flex;
             flex-direction: column;
             gap: 0.4rem;
@@ -69,30 +70,27 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.04em;
-            color: var(--text-secondary);      /* 使用基础次级文本色 */
+            color: var(--text-secondary);
         }
 
-        /* 输入组微调阴影并统一圆角溢出隐藏 */
         .filter-group .input-group {
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
             border-radius: var(--radius-md);
-            overflow: hidden;                  /* 保证内部元素圆角裁剪 */
+            overflow: hidden;
         }
 
-        /* 去除 Bootstrap 默认圆角，使输入组更统一 */
         .filter-group .form-control,
         .filter-group .btn {
             border-radius: 0;
         }
 
-        /* 筛选按钮内图标与文字间距 */
         .filter-group .btn {
             display: flex;
             align-items: center;
             gap: 0.3rem;
         }
 
-        /* 新增记录按钮（胶囊形强调按钮） */
+        /* 新增按钮 */
         .btn-add-record {
             background: var(--brand-accent);
             border: none;
@@ -105,63 +103,60 @@
             display: flex;
             align-items: center;
             gap: 0.4rem;
-            text-decoration: none;             /* 若用于 <a> 标签，去除下划线 */
+            text-decoration: none;
+            white-space: nowrap;
         }
 
         .btn-add-record:hover {
-            background: #f5a623;               /* 具体色值，与品牌强调色略有差异，可考虑统一为变量 */
+            background: #e0a800;
             color: #000;
             transform: translateY(-1px);
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
         }
 
-        /* ---------- 4. 列表头部（表头行） ---------- */
+        /* 列表头部（桌面） */
         .list-header {
             display: flex;
             padding: 0.8rem 1.2rem;
-            background: var(--brand-color-pale);   /* 品牌浅色背景 */
+            background: var(--brand-color-pale);
             border-radius: var(--radius-md) var(--radius-md) 0 0;
             font-weight: 600;
             font-size: 0.85rem;
             color: var(--brand-color);
             letter-spacing: 0.03em;
             border: 1px solid var(--border-subtle);
-            border-bottom: none;                   /* 与列表项边框无缝衔接 */
+            border-bottom: none;
         }
 
-        /* 各列宽度分配（flex: none 固定宽度） */
         .list-header .col-time    { flex: 0 0 160px; }
         .list-header .col-name    { flex: 0 0 100px; }
         .list-header .col-phone   { flex: 0 0 130px; }
-        .list-header .col-remark  { flex: 1; }        /* 自适应剩余空间 */
+        .list-header .col-remark  { flex: 1; }
         .list-header .col-actions { flex: 0 0 140px; text-align: right; }
 
-        /* ---------- 5. 列表项 ---------- */
+        /* 列表项 */
         .store-list-item {
             display: flex;
             align-items: center;
             padding: 1rem 1.2rem;
             background: var(--bg-surface);
             border: 1px solid var(--border-subtle);
-            border-top: none;                      /* 避免与表头边框重复 */
+            border-top: none;
             transition: all 0.2s ease;
             gap: 0.2rem;
-            flex-wrap: wrap;                       /* 允许内容少时换行，增强健壮性 */
+            flex-wrap: wrap;
         }
 
-        /* 最后一个列表项补上底部边框和圆角 */
         .store-list-item:last-child {
             border-radius: 0 0 var(--radius-md) var(--radius-md);
             border-bottom: 1px solid var(--border-subtle);
         }
 
-        /* 悬停高亮：左侧强调色条 + 浅灰背景 */
         .store-list-item:hover {
-            background: #fafbfc;                       /* 未使用变量，可根据需要改为 var(--brand-color-pale) */
+            background: var(--bg-hover);
             box-shadow: inset 4px 0 0 var(--brand-accent);
         }
 
-        /* 所有列内部使用 flex 便于垂直居中 */
         .store-list-item .col-time,
         .store-list-item .col-name,
         .store-list-item .col-phone,
@@ -171,7 +166,6 @@
             align-items: center;
         }
 
-        /* 各列具体样式 */
         .store-list-item .col-time {
             flex: 0 0 160px;
             font-size: 0.9rem;
@@ -193,7 +187,7 @@
             flex: 1;
             white-space: nowrap;
             overflow: hidden;
-            text-overflow: ellipsis;          /* 单行超出显示省略号 */
+            text-overflow: ellipsis;
             padding-right: 0.5rem;
         }
 
@@ -203,11 +197,11 @@
             gap: 0.5rem;
         }
 
-        /* ---------- 6. 操作图标按钮 ---------- */
+        /* 操作按钮 */
         .btn-action {
             width: 36px;
             height: 36px;
-            border-radius: 50%;                   /* 圆形按钮 */
+            border-radius: 50%;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -225,16 +219,14 @@
             color: var(--brand-color);
         }
 
-        /* 删除按钮的悬停状态（红色警示） */
         .btn-action.delete-btn:hover {
-            background: #fef2f2;
-            border-color: #dc2626;
-            color: #dc2626;
+            background: var(--danger-bg);
+            border-color: var(--danger-color);
+            color: var(--danger-color);
         }
 
-        /* ---------- 7. 响应式：移动端适配 ---------- */
+        /* 移动端适配 */
         @media (max-width: 768px) {
-            /* 隐藏表格头，改用卡片式展示 */
             .list-header {
                 display: none;
             }
@@ -242,12 +234,11 @@
             .store-list-item {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 0.5rem;
+                gap: 0.6rem;
                 position: relative;
-                padding: 1.2rem;
+                padding: 1rem;
             }
 
-            /* 所有列变成块级，取消固定宽度 */
             .store-list-item .col-time,
             .store-list-item .col-name,
             .store-list-item .col-phone,
@@ -257,34 +248,50 @@
                 width: 100%;
             }
 
-            /* 操作区用虚线上方分隔 */
+            .store-list-item .col-time {
+                order: 1;
+                font-size: 0.75rem;
+                color: var(--brand-accent);
+                font-weight: 500;
+                border-bottom: 1px dashed var(--border-subtle);
+                padding-bottom: 0.4rem;
+                margin-bottom: 0.2rem;
+            }
+
+            .store-list-item .col-name {
+                order: 2;
+            }
+            .store-list-item .col-phone {
+                order: 3;
+            }
+            .store-list-item .col-remark {
+                order: 4;
+            }
             .store-list-item .col-actions {
+                order: 5;
                 justify-content: flex-start;
                 padding-top: 0.5rem;
                 border-top: 1px dashed var(--border-subtle);
                 margin-top: 0.3rem;
             }
 
-            /* 通过 data-mobile-label 属性在卡片右上角显示标签（如"时间"） */
+            /* 移除原来的绝对定位伪元素，改为直接显示在 col-time 中 */
             .store-list-item::before {
-                content: attr(data-mobile-label);
-                position: absolute;
-                top: 0.5rem;
-                right: 1rem;
-                font-size: 0.7rem;
-                color: var(--text-secondary);
-                font-weight: 600;
-                letter-spacing: 0.03em;
+                display: none;
             }
 
-            /* 筛选卡片纵向排列 */
             .filter-card {
                 flex-direction: column;
                 align-items: stretch;
             }
+
+            .btn-add-record {
+                max-width: 100%;
+                justify-content: center;
+            }
         }
 
-        /* ---------- 8. 空状态 & 加载动画 ---------- */
+        /* 空状态 & 加载 */
         .empty-state {
             text-align: center;
             padding: 3rem 1rem;
@@ -299,13 +306,19 @@
             font-size: 2.5rem;
             display: block;
             margin-bottom: 0.8rem;
-            color: #cbd5e1;               /* 浅灰图标，可考虑设为变量 */
+            color: var(--empty-icon);
         }
 
         .loading-spinner {
             display: flex;
             justify-content: center;
             padding: 2rem;
+        }
+
+        /* 关键词输入框校验样式 */
+        .is-invalid {
+            border-color: var(--danger-color) !important;
+            box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25);
         }
     </style>
 {% endblock %}
@@ -332,13 +345,14 @@
                         <i class="bi bi-search"></i> 查询
                     </button>
                 </div>
+                <div class="invalid-feedback" style="display: none;">请输入搜索关键词</div>
             </div>
             <div class="filter-group">
                 <label><i class="bi bi-calendar-range"></i> 时间范围</label>
                 <div class="input-group input-group-sm">
                     <span class="input-group-text">从</span>
                     <input autocomplete="off" class="form-control" id="timeS" type="datetime-local"
-                           value="2024-01-01T00:00" max="{{ timeE }}" min="2010-01-01T00:00">
+                           value="{{ default_time_start }}" max="{{ timeE }}" min="2010-01-01T00:00">
                     <span class="input-group-text">至</span>
                     <input autocomplete="off" class="form-control" id="timeE" type="datetime-local"
                            value="{{ timeE }}" max="{{ timeE }}" min="2010-01-01T00:00">
@@ -371,7 +385,44 @@
 
 {% block javascript %}
     <script>
-        // ---------- API 端点配置（统一管理，兼容多模块）----------
+        // ==================== 工具函数 ====================
+        // XSS 防护：转义 HTML 特殊字符
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        // 获取 CSRF Token（Django 默认在 Cookie 中）
+        function getCSRFToken() {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, 10) === 'csrftoken=') {
+                        cookieValue = decodeURIComponent(cookie.substring(10));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // 格式化时间显示（移动端短格式）
+        function formatTimeShort(timeStr) {
+            if (!timeStr) return '';
+            // 假设后端返回 "2025-06-04 14:30:00" 或类似格式
+            const parts = timeStr.split(' ');
+            if (parts.length >= 1) return parts[0];
+            return timeStr.substring(0, 10);
+        }
+
+        // ---------- API 端点配置（统一管理）----------
         const API = {
             order: {
                 detail: "{% url 'maneu_order:detail' %}",
@@ -393,126 +444,152 @@
             }
         };
 
+        // 状态码与模块映射（适配后端现有 status 值）
+        // 注意：模块类型需要前后端对齐，以下映射基于代码中的假设：
+        // status: '5'/'0' -> guest; '1' -> store; '2' -> report; '3' -> order
+        const MODULE_MAP = {
+            detail: { '5': 'guest', '1': 'store', '2': 'report', '3': 'order' },
+            delete: { '0': 'guest', '1': 'store', '2': 'report', '3': 'order' }
+        };
+
         // ---------- DOM 缓存 ----------
         const $listContainer = $('#body');
         const $timeStart = $('#timeS');
         const $timeEnd = $('#timeE');
         const $keyword = $('#value');
+        const $searchDataBtn = $('#search_data');
+        const $searchTimeBtn = $('#search_time');
 
-        // ---------- 工具函数 ----------
+        // 请求取消控制器（用于 abort 前一个请求）
+        let currentRequest = null;
+
+        // ---------- UI 状态函数 ----------
         function showLoading() {
             $listContainer.html(`
-        <div class="loading-spinner">
-            <div class="spinner-border text-primary" role="status"></div>
-        </div>`);
+                <div class="loading-spinner">
+                    <div class="spinner-border text-primary" role="status"></div>
+                </div>
+            `);
         }
 
         function showEmptyState() {
             $listContainer.html(`
-        <div class="empty-state">
-            <i class="bi bi-inbox"></i>
-            <p>暂无订单记录</p>
-            <small>尝试调整筛选条件或新增一条订单</small>
-        </div>`);
+                <div class="empty-state">
+                    <i class="bi bi-inbox"></i>
+                    <p>暂无订单记录</p>
+                    <small>尝试调整筛选条件或新增一条订单</small>
+                </div>
+            `);
         }
 
         function showErrorState() {
             $listContainer.html(`
-        <div class="empty-state">
-            <i class="bi bi-exclamation-triangle"></i>
-            <p>加载失败，请稍后重试</p>
-        </div>`);
+                <div class="empty-state">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <p>加载失败，请稍后重试</p>
+                </div>
+            `);
         }
 
-        /**
-         * 生成单个列表项的 HTML
-         * @param {Object} item 数据对象
-         * @returns {string}
-         */
+        // 清除关键词输入框的验证样式
+        function clearKeywordInvalid() {
+            $keyword.removeClass('is-invalid');
+            $keyword.closest('.filter-group').find('.invalid-feedback').hide();
+        }
+
+        function showKeywordInvalid() {
+            $keyword.addClass('is-invalid');
+            $keyword.closest('.filter-group').find('.invalid-feedback').show();
+        }
+
+        // ---------- 生成列表项 HTML（已 XSS 防护）----------
         function createItemHTML(item) {
-            const remarkText = item.remark || '-';
-            const escapedRemark = remarkText.replace(/"/g, '&quot;');
-            // 注意：data-status 值已在原 HTML 中正确设置（数字字符串）
+            const timeRaw = item.time || '';
+            const timeShort = formatTimeShort(timeRaw);
+            const name = escapeHtml(item.name) || '-';
+            const phone = escapeHtml(item.phone) || '-';
+            const remarkRaw = item.remark || '-';
+            const remark = escapeHtml(remarkRaw);
+            const escapedRemarkAttr = remarkRaw.replace(/"/g, '&quot;');
+            const id = escapeHtml(item.id);
+            const status = escapeHtml(item.status);
+
+            // 移动端在 col-time 内显示时间（不再使用伪元素）
             return `
-        <div class="store-list-item" data-mobile-label="${item.time || ''}">
-            <div class="col-time"><i class="bi bi-clock me-2 d-md-none"></i>${item.time || '-'}</div>
-            <div class="col-name"><i class="bi bi-person me-2 d-md-none"></i>${item.name || '-'}</div>
-            <div class="col-phone"><i class="bi bi-phone me-2 d-md-none"></i>${item.phone || '-'}</div>
-            <div class="col-remark" title="${escapedRemark}">
-                <i class="bi bi-chat-left-text me-2 d-md-none"></i>${remarkText}
-            </div>
-            <div class="col-actions">
-                <button class="btn-action detail-btn" data-index_id="${item.id}" data-status="${item.status}" title="查看订单">
-                    <i class="bi bi-eye"></i>
-                </button>
-                <button class="btn-action delete-btn" data-index_id="${item.id}" data-status="${item.status}" title="删除订单">
-                    <i class="bi bi-trash3"></i>
-                </button>
-            </div>
-        </div>`;
+                <div class="store-list-item">
+                    <div class="col-time">
+                        <i class="bi bi-clock me-2 d-md-none"></i>
+                        ${escapeHtml(timeRaw) || '-'}
+                    </div>
+                    <div class="col-name">
+                        <i class="bi bi-person me-2 d-md-none"></i>
+                        ${name}
+                    </div>
+                    <div class="col-phone">
+                        <i class="bi bi-phone me-2 d-md-none"></i>
+                        ${phone}
+                    </div>
+                    <div class="col-remark" title="${escapedRemarkAttr}">
+                        <i class="bi bi-chat-left-text me-2 d-md-none"></i>
+                        ${remark}
+                    </div>
+                    <div class="col-actions">
+                        <button class="btn-action detail-btn" data-index_id="${id}" data-status="${status}" title="查看订单">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                        <button class="btn-action delete-btn" data-index_id="${id}" data-status="${status}" title="删除订单">
+                            <i class="bi bi-trash3"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
         }
 
-        /**
-         * 渲染列表
-         * @param {Array} items 数据数组
-         */
+        // 渲染列表（使用 Fragment 提高性能）
         function renderList(items) {
             $listContainer.empty();
             if (!Array.isArray(items) || items.length === 0) {
                 showEmptyState();
                 return;
             }
+            const fragment = $(document.createDocumentFragment());
             items.forEach(item => {
-                $listContainer.append(createItemHTML(item));
+                fragment.append(createItemHTML(item));
             });
+            $listContainer.append(fragment);
         }
 
-        /**
-         * 查看详情（根据 status 跳转不同模块）
-         * @param {HTMLElement} btn 触发按钮
-         */
+        // ---------- 业务操作：详情跳转 ----------
         function handleDetail(btn) {
             const indexId = btn.getAttribute('data-index_id');
             const status = btn.getAttribute('data-status');
+            const moduleKey = MODULE_MAP.detail[status];
             let detailUrl = null;
-
-            if (status === '5') {
-                detailUrl = API.guest.detail;
-            } else if (status === '1') {
-                detailUrl = API.store.detail;
-            } else if (status === '2') {
-                detailUrl = API.report.detail;
-            } else if (status === '3') {
-                detailUrl = API.order.detail;
-            }
+            if (moduleKey === 'guest') detailUrl = API.guest.detail;
+            else if (moduleKey === 'store') detailUrl = API.store.detail;
+            else if (moduleKey === 'report') detailUrl = API.report.detail;
+            else if (moduleKey === 'order') detailUrl = API.order.detail;
 
             if (detailUrl) {
                 window.location.href = detailUrl + '?index_id=' + indexId;
             } else {
                 console.warn('未知的状态值:', status);
+                alert('无法识别记录类型，无法查看详情');
             }
         }
 
-        /**
-         * 删除记录（根据 status 调用不同删除接口）
-         * @param {HTMLElement} btn 触发按钮
-         */
+        // 删除记录（改用 DELETE 方法 + CSRF token）
         function deleteRecord(btn) {
             if (!confirm("确定要删除这条订单吗？此操作不可恢复。")) return;
 
             const indexId = btn.getAttribute('data-index_id');
             const status = btn.getAttribute('data-status');
+            const moduleKey = MODULE_MAP.delete[status];
             let deleteUrl = null;
-
-            if (status === '0') {
-                deleteUrl = API.guest.delete;
-            } else if (status === '1') {
-                deleteUrl = API.store.delete;
-            } else if (status === '2') {
-                deleteUrl = API.report.delete;
-            } else if (status === '3') {
-                deleteUrl = API.order.delete;
-            }
+            if (moduleKey === 'guest') deleteUrl = API.guest.delete;
+            else if (moduleKey === 'store') deleteUrl = API.store.delete;
+            else if (moduleKey === 'report') deleteUrl = API.report.delete;
+            else if (moduleKey === 'order') deleteUrl = API.order.delete;
 
             if (!deleteUrl) {
                 alert('无效的记录类型，无法删除');
@@ -531,67 +608,89 @@
                                 transition: 'all 0.3s ease',
                                 opacity: 0,
                                 transform: 'translateX(20px)'
-                            }).delay(300).queue(function () {
-                                $(this).remove();
+                            });
+                            setTimeout(() => {
+                                $item.remove();
                                 if (!$listContainer.find('.store-list-item').length) {
                                     showEmptyState();
                                 }
-                            });
+                            }, 300);
                         }
                     } else {
                         alert(res.message || '删除失败，请稍后重试');
                     }
                 },
-                error() {
-                    alert('网络错误，请稍后重试');
+                error(xhr) {
+                    if (xhr.status === 403) {
+                        alert('CSRF 验证失败，请刷新页面后重试');
+                    } else {
+                        alert('网络错误，请稍后重试');
+                    }
                 }
             });
         }
 
-        /**
-         * 统一数据加载并渲染
-         * @param {string} url 请求地址
-         * @param {Object} params 参数
-         */
+        // ---------- 数据加载（支持 abort 前一个请求）----------
         function fetchAndRender(url, params) {
+            // 取消之前的请求
+            if (currentRequest && currentRequest.readyState !== 4) {
+                currentRequest.abort();
+            }
             showLoading();
-            $.get(url, params)
+            currentRequest = $.get(url, params)
                 .done(res => {
                     const data = Array.isArray(res) ? res : (res.content || []);
                     renderList(data);
                 })
-                .fail(() => showErrorState());
+                .fail(xhr => {
+                    if (xhr.statusText === 'abort') {
+                        // 主动中止，不处理错误
+                        return;
+                    }
+                    showErrorState();
+                });
         }
 
-        // ---------- 搜索触发函数 ----------
+        // 时间范围搜索
         function searchByTime() {
+            clearKeywordInvalid();
             fetchAndRender(API.guest.searchTime, {
                 timeS: $timeStart.val(),
                 timeE: $timeEnd.val()
             });
         }
 
+        // 关键词搜索
         function searchByText() {
             const keyword = $keyword.val().trim();
             if (!keyword) {
-                alert('请输入搜索关键词');
+                showKeywordInvalid();
                 return;
             }
+            clearKeywordInvalid();
             fetchAndRender(API.guest.searchData, { value: keyword });
         }
 
-        // ---------- 初始化事件绑定 ----------
+        // ---------- 初始化及事件绑定 ----------
         $(function () {
-            // 默认加载时间范围内的数据
+            // 默认加载时间范围内的数据（若后端未传递 default_time_start，前端使用30天前）
+            if (!$timeStart.val()) {
+                const thirtyDaysAgo = new Date();
+                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                $timeStart.val(thirtyDaysAgo.toISOString().slice(0, 16));
+            }
             searchByTime();
 
-            // 筛选按钮
-            $('#search_time').on('click', searchByTime);
-            $('#search_data').on('click', searchByText);
+            // 按钮事件
+            $searchTimeBtn.on('click', searchByTime);
+            $searchDataBtn.on('click', searchByText);
 
             // 回车搜索
             $keyword.on('keypress', function (e) {
-                if (e.which === 13) searchByText();
+                if (e.which === 13) {
+                    e.preventDefault();
+                    searchByText();
+                }
             });
 
             // 事件委托：查看详情
