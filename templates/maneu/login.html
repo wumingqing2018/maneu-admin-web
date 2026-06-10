@@ -1,7 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="zh-CN">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -13,17 +12,17 @@
           href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.8/cerulean/bootstrap.min.css"
           integrity="sha512-3n/Isj9MCqCc1wf/QfjLigco9sx9xr9m3TqgxstJrSxmwZ05qjl4owbfkioZ0y3w8fNWcVLnJGHfVqKF/L1Qsw=="
           referrerpolicy="no-referrer" rel="stylesheet"/>
-
+    <!-- 先加载 jQuery 和 Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.min.js"></script>
 </head>
-
 <body>
 
-<!-- 科技感背景元素 -->
+<!-- 科技感背景元素（保持原样） -->
 <div class="tech-bg"></div>
 <div class="glow-orb orb-1"></div>
 <div class="glow-orb orb-2"></div>
 
-<!-- 主要内容 -->
 <div class="main-content">
     <div class="login-card">
         <h1 class="brand-name">徕可管理系统</h1>
@@ -31,42 +30,164 @@
 
         <!-- 手机号输入 -->
         <div class="input-group-custom">
-            <input autocomplete="off" class="input-item" id="call" placeholder="手机号码" type="text">
+            <input autocomplete="off" class="input-item" id="call" placeholder="手机号码" type="tel" maxlength="11">
             <span class="msg" id="msg"></span>
         </div>
 
         <!-- 验证码输入 -->
         <div class="input-group-custom" id="password">
-            <input autocomplete="off" class="input-item" id="code" placeholder="验证码" type="text">
+            <input autocomplete="off" class="input-item" id="code" placeholder="验证码" type="text" maxlength="6">
         </div>
 
         <!-- 登录按钮（动态显示） -->
         <button class="btn-custom btn-disabled" id="login-hold" style="display: none;">请输入验证码后再登录</button>
-        <button class="btn-custom btn-gold" id="login-btn">登录</button>
+        <button class="btn-custom btn-gold" id="login-btn" style="display: none;">登录</button>
 
         <!-- 获取验证码按钮区域 -->
         <button class="btn-custom btn-outline-light" id="sendsms-btn">获取验证码</button>
-        <button class="btn-custom btn-disabled" id="wait-btn" style="display: none;">请稍后再获取验证码</button>
+        <button class="btn-custom btn-disabled" id="wait-btn" style="display: none;">60秒后可重试</button>
 
-        <!-- 返回首页链接 -->
         <a href="{% url 'index' %}" class="back-link">返回首页</a>
     </div>
 </div>
 
-<!-- 页脚备案 -->
 <footer class="footer">
     <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener">粤ICP备2023070483号</a>
 </footer>
 
 <script>
-    // 后端路由地址
-    const sendsms = "{% url 'sendsms' %}";
-    const login_verify = "{% url 'login_api' %}";
-    const maneu_index_index = "{% url 'maneu_index:index' %}";
+    // 从 Django 模板中获取 URL 和 CSRF token
+    const sendsmsUrl = "{% url 'sendsms' %}";
+    const loginApiUrl = "{% url 'login_api' %}";
+    const redirectUrl = "{% url 'maneu_index:index' %}";
+    // 获取 CSRF token（Django 默认在 cookie 中名为 csrftoken）
+    function getCsrfToken() {
+        return document.cookie.split('; ')
+            .find(row => row.startsWith('csrftoken='))
+            ?.split('=')[1];
+    }
+
+    $(document).ready(function () {
+        // 控制登录按钮显示/隐藏（验证码为空时禁用）
+        function toggleLoginButton() {
+            const code = $("#code").val().trim();
+            if (code === '') {
+                $("#login-hold").show();
+                $("#login-btn").hide();
+            } else {
+                $("#login-hold").hide();
+                $("#login-btn").show();
+            }
+        }
+
+        // 页面初始化
+        toggleLoginButton();
+        $("#code").on('input', toggleLoginButton);
+
+        // 获取验证码按钮点击事件
+        let countdown = 0;          // 倒计时秒数
+        let timer = null;           // 计时器句柄
+
+        function startCountdown(seconds) {
+            if (timer) clearInterval(timer);
+            countdown = seconds;
+            $("#sendsms-btn").hide();
+            $("#wait-btn").show();
+            $("#wait-btn").text(`${countdown}秒后可重试`);
+
+            timer = setInterval(function () {
+                countdown--;
+                if (countdown <= 0) {
+                    clearInterval(timer);
+                    $("#wait-btn").hide();
+                    $("#sendsms-btn").show();
+                } else {
+                    $("#wait-btn").text(`${countdown}秒后可重试`);
+                }
+            }, 1000);
+        }
+
+        $("#sendsms-btn").click(function () {
+            const phone = $("#call").val().trim();
+            // 前端手机号格式简单校验
+            if (!phone) {
+                $("#msg").text("请输入手机号码").css("color", "#ff6b6b");
+                return;
+            }
+            if (!/^1[3-9]\d{9}$/.test(phone)) {
+                $("#msg").text("手机号格式不正确").css("color", "#ff6b6b");
+                return;
+            }
+
+            // 禁用按钮，防止重复点击（倒计时开始前就禁用）
+            $("#sendsms-btn").prop('disabled', true);
+            $.ajax({
+                url: sendsmsUrl,
+                method: 'GET',
+                {#method: 'POST',#}
+                {#headers: {'X-CSRFToken': getCsrfToken()},#}
+                data: {call: phone},
+                success: function (res) {
+                    if (res.status === true) {
+                        $("#msg").text("验证码已发送").css("color", "#4caf50");
+                        startCountdown(60);   // 启动60秒倒计时
+                    } else {
+                        $("#msg").text(res.message || "发送失败").css("color", "#ff6b6b");
+                        $("#sendsms-btn").prop('disabled', false);
+                    }
+                },
+                error: function (xhr) {
+                    let errMsg = "网络错误，请稍后重试";
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errMsg = xhr.responseJSON.message;
+                    }
+                    $("#msg").text(errMsg).css("color", "#ff6b6b");
+                    $("#sendsms-btn").prop('disabled', false);
+                }
+            });
+        });
+
+        // 登录按钮点击事件
+        $("#login-btn").click(function () {
+            const phone = $("#call").val().trim();
+            const code = $("#code").val().trim();
+
+            if (!phone || !code) {
+                $("#msg").text("请填写手机号和验证码").css("color", "#ff6b6b");
+                return;
+            }
+            if (!/^1[3-9]\d{9}$/.test(phone)) {
+                $("#msg").text("手机号格式不正确").css("color", "#ff6b6b");
+                return;
+            }
+
+            // 登录中禁用按钮，防止重复提交
+            $("#login-btn").prop('disabled', true).text("登录中...");
+            $.ajax({
+                url: loginApiUrl,
+                method: 'GET',
+                {#method: 'POST',#}
+                {#headers: {'X-CSRFToken': getCsrfToken()},#}
+                data: {call: phone, code: code},
+                success: function (res) {
+                    if (res.status === true) {
+                        window.location.href = redirectUrl;
+                    } else {
+                        $("#msg").text(res.message || "登录失败").css("color", "#ff6b6b");
+                        $("#login-btn").prop('disabled', false).text("登录");
+                    }
+                },
+                error: function (xhr) {
+                    let errMsg = "登录请求失败";
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errMsg = xhr.responseJSON.message;
+                    }
+                    $("#msg").text(errMsg).css("color", "#ff6b6b");
+                    $("#login-btn").prop('disabled', false).text("登录");
+                }
+            });
+        });
+    });
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="{% static 'javascript/maneu/login.js' %}"></script>
 </body>
 </html>
