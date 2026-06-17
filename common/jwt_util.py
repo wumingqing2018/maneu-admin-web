@@ -14,8 +14,6 @@ def generate_access_token(user):
     """生成 Access Token"""
     payload = {
         'user_id': str(user.id),
-        'username': user.username,
-        'nickname': user.nickname,
         'type': 'access',
         'exp': datetime.utcnow() + timedelta(seconds=ACCESS_LIFETIME),
         'iat': datetime.utcnow(),
