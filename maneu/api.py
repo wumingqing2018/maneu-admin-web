@@ -30,9 +30,10 @@ def access_token(request):
     code = is_code(request.GET.get('code'))
     if call and code:
         admin_user = service.admin_login(call=call, code=code)  # 需修改 service.admin_login 去掉 mark 依赖
-        a_token = generate_access_token(admin_user)
-        r_token = generate_refresh_token(admin_user)
+        print(admin_user)
         if admin_user:
+            a_token = generate_access_token(admin_user)
+            r_token = generate_refresh_token(admin_user)
             content = {
                 'status': True,
                 'message': '100000',
