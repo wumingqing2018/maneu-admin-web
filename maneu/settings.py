@@ -23,7 +23,7 @@ See https:#docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 SECURITY WARNING: don't run with debug turned on in production!
 SECURITY WARNING: keep the secret key used in production secret!
 """
-DEBUG = True
+DEBUG = False
 SECRET_KEY = 'd&@vq_f^z79&w=nqqcm2vu#+gj8)_qdvy1t&agfxhmi74fwpr!'
 ALLOWED_HOSTS = ['*']
 
@@ -53,7 +53,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
