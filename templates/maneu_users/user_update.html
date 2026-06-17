@@ -1,0 +1,44 @@
+{% extends 'maneu/base_uesrs.html' %}
+{% load static %}
+{% block content %}
+    <div class="container yellow">
+        <div class="col-md-6 offset-md-3">
+            <form id="user_insert" method='POST' action='{% url "maneu_users:user_update" %}'>
+                {% csrf_token %}
+                <input type='text' class="form-control" name="username">
+                <input type='text' class="form-control" name="password">
+                <input type='submit' class="form-control">
+            </form>
+        </div>
+    </div>
+{% endblock %}
+{% block javascript %}
+    <script>
+        user_insert = "{% url 'maneu_users:api_user_insert' %}";
+    </script>
+    <script src="{% static 'js/common/../../static/js/maneu/windos_back.js' %}"></script>
+    <script>
+        $(document).ready(function () {
+            $("#btn-insert").click(function () {
+                $.ajax({
+                    url: user_insert,
+                    type: "POST",
+                    data: $("#user_insert").serialize(),
+                    success: function (res) {
+                        if (res.code === 0) {
+                            alert(res.msg)
+                        } else if (res.code === 1) {
+                            alert("请求错误")
+                        } else if (res.code === 2) {
+                            for (i in res.msg) {
+                                $("#" + i).append(res.msg[i])
+                            }
+                        } else if (res.code === 3) {
+                            alert(res.msg)
+                        }
+                    }
+                })
+            })
+        })
+    </script>
+{% endblock %}

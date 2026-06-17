@@ -1,0 +1,511 @@
+{% extends 'maneu/base_uesrs.html' %}
+{% load static %}
+{% block content %}
+    <div class="col-sm-12">
+        <form id="order_insert">
+            {% csrf_token %}
+            <table class="table">
+                <thead>
+                <tr>
+                    <td class="col-sm-1">
+                        <span>姓名</span>
+                    </td>
+                    <td class="col-sm-4" colspan="4">
+                        <input type="hidden" name="order" id="order">
+                        <input type="text" name="c_name" id="c_name" class="form-control">
+                        <span id="username_error"></span>
+                    </td>
+                    <td class="col-sm-1">
+                        <span>电话</span>
+                    </td>
+                    <td class="col-sm-4" colspan="4">
+                        <input type="text" name="c_phone" id="c_phone" class="form-control">
+                        <span id="phone_error"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <span>裸眼视力</span>
+                        <span>Sc</span>
+                    </td>
+                    <td>
+                        <span>矫正视力</span>
+                        <span>Cc</span>
+                    </td>
+                    <td>
+                        <span>眼轴长度</span>
+                        <span>AL</span>
+                    </td>
+                    <td>
+                        <span>角膜曲率</span>
+                        <span>AK</span>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td><span>左眼</span></td>
+                </tr>
+                <tr>
+                    <td><span>右眼</span></td>
+                </tr>
+                <tr>
+                    <td class="col-sm-1">
+                        <span>备注</span>
+                    </td>
+                    <td class="col-sm-9" colspan="9">
+                        <input type="text" name="remark" id="remark" class="form-control">
+                        <span id="remake_error"></span>
+                    </td>
+                </tr>
+                </thead>
+                <tbody id="order_content">
+                <tr id="order_banner" style="display: none">
+                    <td>
+                        <span>品牌</span>
+                    </td>
+                    <td>
+                        <span>型号</span>
+                    </td>
+                    <td>
+                        <span>INDEX</span>
+                        <span>折射</span>
+                    </td>
+                    <td>
+                        <span>Around</span>
+                        <span>方向</span>
+                    </td>
+                    <td>
+                        <span>SPH</span>
+                        <span>球镜</span>
+                    </td>
+                    <td>
+                        <span>CYL</span>
+                        <span>柱镜</span>
+                    </td>
+                    <td>
+                        <span>AX</span>
+                        <span>轴位</span>
+                    </td>
+                    <td>
+                        <span>ADD</span>
+                        <span>下加光</span>
+                    </td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr>
+                    <td class="col-sm-1">
+                        <a type="button" class="btn btn-warning col-sm-12"
+                           href="{% url 'maneu_order:order_list' %}">返回</a>
+                    </td>
+                    <td class="col-sm-10" colspan="9">
+                        <input type="button" class="btn btn-primary" id="glass_insert_show" value="添加镜片">
+                        <input type="button" class="btn btn-warning" id="glass_insert_hide" value="取消添加"
+                               style="display: none">
+                        <input class="btn btn-danger" id="insert" type="button" value="提交订单" style="display: none">
+                    </td>
+                </tr>
+                </tfoot>
+            </table>
+        </form>
+        <form id="glass_insert">
+            <table class="table" id="glass_table" style="display: none">
+                <tr>
+                    <td class="col-md-1">
+                        <span>品牌</span>
+                    </td>
+                    <td class="col-md-5" colspan="5">
+                        <input class="form-control" id="glass_brand_select" form="glass_insert" name="brand">
+                    </td>
+                    <td class="col-md-1">
+                        <span>型号</span>
+                    </td>
+                    <td class="col-md-5" colspan="5">
+                        <input class="form-control" id="glass_model_select" form="glass_insert" name="model">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-1">
+                        <span>INDEX</span>
+                        <span>折射</span>
+                    </td>
+                    <td class="col-md-1">
+                        <input class="form-control" id="glass_refraction_select" form="glass_insert" name="INDEX"
+                               list="INDEX">
+                        <datalist id="INDEX">
+                            <option>1.56</option>
+                            <option>1.60</option>
+                            <option>1.67</option>
+                            <option>1.70</option>
+                            <option>1.74</option>
+                        </datalist>
+                    </td>
+                    <td class="col-md-1">
+                        <span>Around</span>
+                        <span>方向</span>
+                    </td>
+                    <td class="col-md-1">
+                        <input class="form-control" name="Around" form="glass_insert" list="Around">
+                        <datalist id="Around">
+                            <option>L</option>
+                            <option>R</option>
+                        </datalist>
+                    </td>
+                    <td class="col-md-1">
+                        <span>SPH</span>
+                        <span>球镜</span>
+                    </td>
+                    <td class="col-md-1">
+                        <input class="form-control" id="glass_sphere_select" form="glass_insert" name="SPH" list="SPH">
+                        <datalist id="SPH">
+                            <option>-0.00</option>
+                            <option>-0.25</option>
+                            <option>-0.50</option>
+                            <option>-0.75</option>
+                            <option>-1.00</option>
+                            <option>-1.25</option>
+                            <option>-1.50</option>
+                            <option>-1.75</option>
+                            <option>-2.00</option>
+                            <option>-2.25</option>
+                            <option>-2.50</option>
+                            <option>-2.75</option>
+                            <option>-3.00</option>
+                            <option>-3.25</option>
+                            <option>-3.50</option>
+                            <option>-3.75</option>
+                            <option>-4.00</option>
+                            <option>-4.25</option>
+                            <option>-4.50</option>
+                            <option>-4.75</option>
+                            <option>-5.00</option>
+                            <option>-5.25</option>
+                            <option>-5.50</option>
+                            <option>-5.75</option>
+                            <option>-6.00</option>
+                            <option>-6.25</option>
+                            <option>-6.50</option>
+                            <option>-6.75</option>
+                            <option>-7.00</option>
+                            <option>-7.25</option>
+                            <option>-7.50</option>
+                            <option>-7.75</option>
+                            <option>-8.00</option>
+                            <option>-8.25</option>
+                            <option>-8.50</option>
+                            <option>-8.75</option>
+                            <option>-9.00</option>
+                            <option>-9.25</option>
+                            <option>-9.50</option>
+                            <option>-9.75</option>
+                            <option>-10.00</option>
+                        </datalist>
+                    </td>
+                    <td class="col-md-1">
+                        <span>CYL</span>
+                        <span>柱镜</span>
+                    </td>
+                    <td class="col-md-1">
+                        <input class="form-control" id="glass_astigmatic_select" form="glass_insert" name="CYL"
+                               list="CYL">
+                        <datalist id="CYL">
+                            <option>-0.00</option>
+                            <option>-0.25</option>
+                            <option>-0.50</option>
+                            <option>-0.75</option>
+                            <option>-1.00</option>
+                            <option>-1.25</option>
+                            <option>-1.50</option>
+                            <option>-1.75</option>
+                            <option>-2.00</option>
+                            <option>-2.25</option>
+                            <option>-2.50</option>
+                            <option>-2.75</option>
+                            <option>-3.00</option>
+                            <option>-3.25</option>
+                            <option>-3.50</option>
+                            <option>-3.75</option>
+                            <option>-4.00</option>
+                            <option>-4.25</option>
+                            <option>-4.50</option>
+                            <option>-4.75</option>
+                            <option>-5.00</option>
+                            <option>-5.25</option>
+                            <option>-5.50</option>
+                            <option>-5.75</option>
+                            <option>-6.00</option>
+                            <option>-6.25</option>
+                            <option>-6.50</option>
+                            <option>-6.75</option>
+                            <option>-7.00</option>
+                            <option>-7.25</option>
+                            <option>-7.50</option>
+                            <option>-7.75</option>
+                            <option>-8.00</option>
+                            <option>-8.25</option>
+                            <option>-8.50</option>
+                            <option>-8.75</option>
+                            <option>-9.00</option>
+                            <option>-9.25</option>
+                            <option>-9.50</option>
+                            <option>-9.75</option>
+                            <option>-10.00</option>
+                        </datalist>
+                    </td>
+                    <td class="col-md-1">
+                        <span>AX</span>
+                        <span>轴位</span>
+                    </td>
+                    <td class="col-md-1">
+                        <input class="form-control" type="text" name="AX" list="AX">
+                        <datalist id="AX">
+                            <option>0</option>
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                            <option>6</option>
+                            <option>7</option>
+                            <option>8</option>
+                            <option>9</option>
+                            <option>10</option>
+                            <option>11</option>
+                            <option>12</option>
+                            <option>13</option>
+                            <option>14</option>
+                            <option>15</option>
+                            <option>16</option>
+                            <option>17</option>
+                            <option>18</option>
+                            <option>19</option>
+                            <option>20</option>
+                            <option>21</option>
+                            <option>22</option>
+                            <option>23</option>
+                            <option>24</option>
+                            <option>25</option>
+                            <option>26</option>
+                            <option>27</option>
+                            <option>28</option>
+                            <option>29</option>
+                            <option>30</option>
+                            <option>31</option>
+                            <option>32</option>
+                            <option>33</option>
+                            <option>34</option>
+                            <option>35</option>
+                            <option>36</option>
+                            <option>37</option>
+                            <option>38</option>
+                            <option>39</option>
+                            <option>40</option>
+                            <option>41</option>
+                            <option>42</option>
+                            <option>43</option>
+                            <option>44</option>
+                            <option>45</option>
+                            <option>46</option>
+                            <option>47</option>
+                            <option>48</option>
+                            <option>49</option>
+                            <option>50</option>
+                            <option>51</option>
+                            <option>52</option>
+                            <option>53</option>
+                            <option>54</option>
+                            <option>55</option>
+                            <option>56</option>
+                            <option>57</option>
+                            <option>58</option>
+                            <option>59</option>
+                            <option>60</option>
+                            <option>61</option>
+                            <option>62</option>
+                            <option>63</option>
+                            <option>64</option>
+                            <option>65</option>
+                            <option>66</option>
+                            <option>67</option>
+                            <option>68</option>
+                            <option>69</option>
+                            <option>70</option>
+                            <option>71</option>
+                            <option>72</option>
+                            <option>73</option>
+                            <option>74</option>
+                            <option>75</option>
+                            <option>76</option>
+                            <option>77</option>
+                            <option>78</option>
+                            <option>79</option>
+                            <option>80</option>
+                            <option>81</option>
+                            <option>82</option>
+                            <option>83</option>
+                            <option>84</option>
+                            <option>85</option>
+                            <option>86</option>
+                            <option>87</option>
+                            <option>88</option>
+                            <option>89</option>
+                            <option>90</option>
+                            <option>91</option>
+                            <option>92</option>
+                            <option>93</option>
+                            <option>94</option>
+                            <option>95</option>
+                            <option>96</option>
+                            <option>97</option>
+                            <option>98</option>
+                            <option>99</option>
+                            <option>100</option>
+                            <option>101</option>
+                            <option>102</option>
+                            <option>103</option>
+                            <option>104</option>
+                            <option>105</option>
+                            <option>106</option>
+                            <option>107</option>
+                            <option>108</option>
+                            <option>109</option>
+                            <option>110</option>
+                            <option>111</option>
+                            <option>112</option>
+                            <option>113</option>
+                            <option>114</option>
+                            <option>115</option>
+                            <option>116</option>
+                            <option>117</option>
+                            <option>118</option>
+                            <option>119</option>
+                            <option>120</option>
+                            <option>121</option>
+                            <option>122</option>
+                            <option>123</option>
+                            <option>124</option>
+                            <option>125</option>
+                            <option>126</option>
+                            <option>127</option>
+                            <option>128</option>
+                            <option>129</option>
+                            <option>130</option>
+                            <option>131</option>
+                            <option>132</option>
+                            <option>133</option>
+                            <option>134</option>
+                            <option>135</option>
+                            <option>136</option>
+                            <option>137</option>
+                            <option>138</option>
+                            <option>139</option>
+                            <option>140</option>
+                            <option>141</option>
+                            <option>142</option>
+                            <option>143</option>
+                            <option>144</option>
+                            <option>145</option>
+                            <option>146</option>
+                            <option>147</option>
+                            <option>148</option>
+                            <option>149</option>
+                            <option>150</option>
+                            <option>151</option>
+                            <option>152</option>
+                            <option>153</option>
+                            <option>154</option>
+                            <option>155</option>
+                            <option>156</option>
+                            <option>157</option>
+                            <option>158</option>
+                            <option>159</option>
+                            <option>160</option>
+                            <option>161</option>
+                            <option>162</option>
+                            <option>163</option>
+                            <option>164</option>
+                            <option>165</option>
+                            <option>166</option>
+                            <option>167</option>
+                            <option>168</option>
+                            <option>169</option>
+                            <option>170</option>
+                            <option>171</option>
+                            <option>172</option>
+                            <option>173</option>
+                            <option>174</option>
+                            <option>175</option>
+                            <option>176</option>
+                            <option>177</option>
+                            <option>178</option>
+                            <option>179</option>
+                            <option>180</option>
+                        </datalist>
+                    </td>
+                    <td class="col-md-1">
+                        <span>ADD</span>
+                        <span>下加光</span>
+                    </td>
+                    <td class="col-md-1">
+                        <input class="form-control" type="text" name="Add" list="Add">
+                        <datalist id="Add">
+                            <option>+0.25</option>
+                            <option>+0.50</option>
+                            <option>+0.75</option>
+                            <option>+1.00</option>
+                            <option>+1.25</option>
+                            <option>+1.50</option>
+                            <option>+1.75</option>
+                            <option>+2.00</option>
+                            <option>+2.25</option>
+                            <option>+2.50</option>
+                            <option>+2.75</option>
+                            <option>+3.00</option>
+                            <option>+3.25</option>
+                            <option>+3.50</option>
+                            <option>+3.75</option>
+                            <option>+4.00</option>
+                            <option>+4.25</option>
+                            <option>+4.50</option>
+                            <option>+4.75</option>
+                            <option>+5.00</option>
+                        </datalist>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-1" colspan="12">
+                        <input type="button" class="col-md-12 btn btn-primary" id="glass_insert_btn" value="提交">
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+{% endblock %}
+{% block javascript %}
+    <script>
+        c_name = $("#c_name")                                       //客户姓名
+        c_phone = $("#c_phone")                                     //客户电话
+        order = [];                                                 //订单存放列表
+        framework = $("#framework");                                //仓库编号
+        framework_table = $("#framework_table");                    //添加镜框表格
+        framework_insert = $("#framework_insert");                  //添加镜框表单
+        framework_insert_btn = $("#framework_insert_btn");          //添加按钮
+        framework_insert_show = $("#framework_insert_show");        //显示镜框表格
+        framework_insert_hide = $("#framework_insert_hide");        //隐藏镜框表格
+        framework_model_select = $("#framework_model_select");      //镜框品牌选择框
+        framework_brand_select = $("#framework_brand_select");      //镜框型号选择框
+        glass_table = $("#glass_table");                            //镜片表格
+        glass_insert = $("#glass_insert");                          //镜片表单
+        glass_insert_btn = $("#glass_insert_btn");                  //镜片添加按钮
+        glass_insert_hide = $("#glass_insert_hide");                //隐藏镜片表格
+        glass_insert_show = $("#glass_insert_show");                //显示镜片表格
+    </script>
+    <script>
+        api_order_list = "{% url 'maneu_order:api_order_list' %}";
+        api_order_insert = "{% url 'maneu_order:api_order_insert' %}";
+    </script>
+    <script src="{% static 'js/maneu_order/order_insert/order_insert.js' %}">/*提交订单modules*/</script>
+    <script src="{% static 'js/maneu_order/order_insert/glass_modules.js' %}">/*添加镜片相关js模块*/</script>
+    <script src="{% static 'js/maneu_order/order_insert/framework_modules.js' %}">/*添加镜框相关js模块*/</script>
+{% endblock %}

@@ -23,7 +23,7 @@ See https:#docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 SECURITY WARNING: don't run with debug turned on in production!
 SECURITY WARNING: keep the secret key used in production secret!
 """
-DEBUG = False
+DEBUG = True
 SECRET_KEY = 'd&@vq_f^z79&w=nqqcm2vu#+gj8)_qdvy1t&agfxhmi74fwpr!'
 ALLOWED_HOSTS = ['*']
 
@@ -38,12 +38,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'maneu',
-    'maneu_admin',
-    'maneu_guest',
-    'maneu_index',
+    'maneu_alterSales',
+    'maneu_batch',
+    'maneu_class',
+    'maneu_client',
+    'maneu_datalogs',
     'maneu_order',
-    'maneu_report',
-    'maneu_store',
+    'maneu_users',
+
 ]
 
 """
@@ -53,11 +55,11 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'common.UserMiddleware.UserMiddleware',  # 用户登录校验中间件
+    'middleware.UserMiddleware.UserMiddleware',  # 用户登录校验中间件
 ]
 
 """
@@ -100,7 +102,7 @@ DATABASES = {
         'HOST': 'localhost',
         'PORT': 3306,
         'USER': 'root',
-        'PASSWORD': '214772680',
+        'PASSWORD': '',
     }
 }
 
@@ -142,29 +144,26 @@ https:#docs.djangoproject.com/en/3.0/howto/static-files/
 STATIC_URL = '/static/'
 STATIC_ROOT = "/static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+MEDIA_URL = "/excel/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "/static/excel/")
 
-# settings.py 末尾追加
-JWT_CONFIG = {
-    'SECRET_KEY': SECRET_KEY,  # 直接用 Django 的 SECRET_KEY
-    'ALGORITHM': 'HS256',
-    'ACCESS_TOKEN_LIFETIME': 3600,  # 1 小时
-    'REFRESH_TOKEN_LIFETIME': 604800,  # 7 天
-}
-#
-# CACHES = {
-#     "default": {
-#         "BACKEND": "django_redis.cache.RedisCache",
-#         "LOCATION": "redis://127.0.0.1:6379/0",  # 或 redis://:password@127.0.0.1:6379/0
-#         "OPTIONS": {
-#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-#             # "PASSWORD": "your_redis_password",           # Redis密码
-#             "SOCKET_TIMEOUT": 5,                         # 读写超时
-#             "COMPRESSOR": "django_redis.compressors.zlib.ZlibCompressor",  # 数据压缩
-#             "CONNECTION_POOL_KWARGS": {
-#                 "max_connections": 100,                  # 连接池大小
-#                 "health_check_interval": 30              # 连接健康检查
-#             }
-#         },
-#         "KEY_PREFIX": "maneu"                            # Key前缀，防冲突
-#     }
-# }
+"""
+session config
+"""
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+# Session的cookie保存在浏览器上时的key，即：session_id＝随机字符串（默认）
+SESSION_COOKIE_NAME = "sessionid"
+# Session的cookie保存的路径（默认）
+SESSION_COOKIE_PATH = "/"
+# Session的cookie保存的域名（默认）
+SESSION_COOKIE_DOMAIN = None
+# 是否Https传输cookie（默认）
+SESSION_COOKIE_SECURE = False
+# 是否Session的cookie只支持http传输（默认）
+SESSION_COOKIE_HTTPONLY = True
+# Session的cookie失效日期（2周）（默认）
+SESSION_COOKIE_AGE = 3600
+# 是否关闭浏览器使得Session过期（默认）
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+# 是否每次请求都保存Session，默认修改之后才保存（默认）
+SESSION_SAVE_EVERY_REQUEST = True

@@ -1,0 +1,99 @@
+{% extends 'maneu/base_uesrs.html' %}
+{% load static %}
+{% block content %}
+    <div class="container">
+        <table class="table">
+            <form method="post" action="{% url 'maneu_class:class_insert' %}">
+                {% csrf_token %}
+                <tr>
+                    <td class="row">
+                        <div class="col-6" style="text-align: left;height: 40px;">
+                            <h4 style="color: #FFC048; vertical-align: middle;">添加商品</h4>
+                        </div>
+                        <div class="col-6" style="text-align: right;height: 40px">
+                            <a type="button" class="btn btn-primary" href="{% url 'maneu_class:class_list' %}">返回</a>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="yellow">
+                        <div class="input-group input-group-sm mb-2">
+                            <span class="input-group-text">类型</span>
+                            <input type="hidden" id="class_name" class="form-control" value=1 name="class">
+                            <select class="form-control" id="class_name_select">
+                                <option value=1>镜片</option>
+                                <option value=2>镜框</option>
+                                <option value=3>其他</option>
+                            </select>
+                            <span id="phone_error"></span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="yellow">
+                        <div class="input-group input-group-sm mb-2">
+                            <span class="input-group-text">货名</span>
+                            <input type="text" class="form-control" name="name">
+                            <span id="phone_error"></span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="yellow">
+                        <div class="input-group input-group-sm mb-2">
+                            <span class="input-group-text">系列</span>
+                            <input type="text" class="form-control" name="series">
+                            <span id="phone_error"></span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="yellow">
+                        <div class="input-group input-group-sm mb-2">
+                            <span class="input-group-text">颜色</span>
+                            <input type="text" class="form-control" name="color">
+                            <span id="phone_error"></span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="yellow">
+                        <div class="input-group input-group-sm mb-2">
+                            <span class="input-group-text">价格</span>
+                            <input type="text" class="form-control" name="price">
+                            <span id="phone_error"></span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="yellow">
+                        <div class="input-group input-group-sm mb-2">
+                            <span class="input-group-text">备注</span>
+                            <input type="text" class="form-control" name="remark">
+                            <span id="phone_error"></span>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="yellow">
+                        <input type="submit" class="btn btn-warning" style="width: 100%;">
+                    </td>
+                </tr>
+            </form>
+        </table>
+    </div>
+{% endblock %}
+{% block javascript %}
+    <script>
+        $(document).ready(function () {
+            $('#class_name_select').change(function () {
+                $('#class_name').val($('#class_name_select').val())
+            })
+            $('#class_state_select').change(function () {
+                $('#class_state').val($('#class_state_select').val())
+            })
+
+        })
+    </script>
+{% endblock %}

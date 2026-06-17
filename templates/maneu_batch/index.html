@@ -1,0 +1,99 @@
+{% extends 'maneu/base_uesrs.html' %}
+{% load static %}
+{% block content %}
+    <div class="container">
+        <!--内容栏-->
+        <table class="table">
+            <tr>
+                <td class="col-9" colspan="3">
+                    <h5>批发订单管理系统</h5>
+                </td>
+                <td class="col-3" colspan="1">
+                    <form method="post" action="{% url 'maneu_batch:search' %}">
+                        <div class="input-group input-group-sm">
+                            {% csrf_token %}
+                            <input type="text" name="text" class="form-control" placeholder="使用手机或姓名查询">
+                            <input type="submit" class=" btn btn-primary" value="搜索">
+                        </div>
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-3">
+                    <span>客户姓名</span>
+                </td>
+                <td class="col-3">
+                    <span>客户电话</span>
+                </td>
+                <td class="col-3">
+                    <span>录入时间</span>
+                </td>
+                <td class="col-3" align="right">
+                    <form class="col-5" method='get' action="{% url 'maneu_batch:insert' %}">
+                        <div class="input-group input-group-sm">
+                            <input type='submit' class='btn btn-warning col-12' value='添加订单'>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+            {% if list %}
+                {% for foo in list %}
+                    <tr>
+                        <td class="col-1">
+                            <span>{{ foo.name }}</span>
+                        </td>
+                        <td class="col-3">
+                            <span>{{ foo.phone }}</span>
+                        </td>
+                        <td class="col-3">
+                            <span>{{ foo.time }}</span>
+                        </td>
+                        <td class="col-3" align="right">
+                            <form class="col-4" method="GET" action="{% url 'maneu_batch:detail' %}">
+                                <div class="input-group input-group-sm">
+                                    <input type="hidden" name="id" value="{{ foo.id }}">
+                                    <input type="submit" class="btn btn-primary col-12" value="查看订单">
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="4" align="center">
+                        <span>没有订单</span>
+                    </td>
+                </tr>
+            {% endif %}
+            <tr>
+                <td align="left">
+                    <form class="col-5" method="get" action="{% url 'maneu_order:index' %}">
+                        <div class="input-group input-group-sm">
+                            <input type="hidden" name="time" class="form-control" value="{{ down_day|safe }}">
+                            <input type="submit" class="btn btn-primary col-12" value="{{ down_day|safe }}">
+                        </div>
+                    </form>
+                </td>
+                <td colspan="2" align="center">
+                    <form class="col-6" method="get" action="{% url 'maneu_order:index' %}">
+                        <div class="input-group input-group-sm">
+                            <input type="date" name="time" class="form-control" value="{{ time|safe }}">
+                            <input type="submit" class="btn btn-primary" value="查询">
+                        </div>
+                    </form>
+                </td>
+                <td align="right">
+                    <form class="col-5" method="get" action="{% url 'maneu_order:index' %}">
+                        <div class="input-group input-group-sm">
+                            <input type="hidden" name="time" class="form-control" value="{{ up_day|safe }}">
+                            <input type="submit" class="btn btn-primary col-12" value="{{ up_day|safe }}">
+                        </div>
+                    </form>
+                </td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}
+{% block javascript %}
+    <script type="application/javascript" src="{% static 'js/maneu/delete.js' %}"></script>
+{% endblock %}

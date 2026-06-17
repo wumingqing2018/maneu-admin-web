@@ -1,0 +1,51 @@
+{% extends 'maneu/base_uesrs.html' %}
+{% load static %}
+{% block content %}
+    <div class="container">
+        <!--内容栏-->
+        <table class="table col-12">
+            <tr>
+                <td class="col-9" colspan="7">
+                    <h5>商品目录管理系统</h5>
+                </td>
+                <td class="col-3" align="right">
+                    <form class="col-3" method="get" action="{% url 'maneu_class:class_insert' %}">
+                        <div class="input-group input-group-sm">
+                            <input type="submit" class="btn btn-warning" value="添加商品">
+                        </div>
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <td><span>货名</span></td>
+                <td><span>型号</span></td>
+                <td><span>系列</span></td>
+                <td><span>颜色</span></td>
+                <td><span>价格</span></td>
+                <td><span>状态</span></td>
+                <td><span>时间</span></td>
+                <td><span>操作</span></td>
+            </tr>
+            {% for class in classList %}
+                <tr>
+                    <td><span>{{ class.class }}</span></td>
+                    <td><span>{{ class.name }}</span></td>
+                    <td><span>{{ class.serice }}</span></td>
+                    <td><span>{{ class.color }}</span></td>
+                    <td><span>{{ class.price }}</span></td>
+                    <td><span>{{ class.series }}</span></td>
+                    <td><span>{{ class.time }}</span></td>
+                    <td>
+                        <form method="POST" action="{% url '' %}">
+                            <div class="input-group input-group-sm">
+                                {% csrf_token %}
+                                <input type="hidden" name="id" value="{{ class.id }}">
+                                <input type="submit" class="btn btn-warning" value="删除商品">
+                            </div>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

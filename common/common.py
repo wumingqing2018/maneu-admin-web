@@ -1,57 +1,9 @@
-import os
-import random
-import secrets
+# 依赖包
+import datetime
 import time
-from pathlib import Path
+from io import BytesIO
 
-import requests
-from aliyunsdkcore.auth.credentials import AccessKeyCredential
-from aliyunsdkcore.client import AcsClient
-from aliyunsdkdysmsapi.request.v20170525.SendSmsRequest import SendSmsRequest
-
-
-# pip install aliyun-python-sdk-core aliyun-python-sdk-dysmsapi -i https://pypi.tuna.tsinghua.edu.cn/simple/
-
-
-def generate_random_32hex():
-    """生成32位随机十六进制字符串（安全加密级别）"""
-    return secrets.token_hex(16)  # 16字节=32位十六进制
-
-
-def get_miniprogram_token():
-    APPID = "wxf48b774de9be5613"
-    APPSECRET = "e07b22bd5cac3c5a74baf9e03ffc7ce1"
-    url = f"https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={APPID}&secret={APPSECRET}"
-    return requests.get(url).json()
-
-
-def get_wxacode(access_token, code="", width=430, ):
-    path = f"static/images/maneu_order/{code}.png"
-    if not Path(path).exists():
-        url = f"https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token={access_token}"
-
-        params = {
-            "scene": code[0:32],
-            "page": "pages/verify/verify",  # 小程序页面路径（可带参数）
-            "check_path": True,
-            "env_version": "trial",
-            "width": width,  # 二维码宽度（单位px）
-            "auto_color": False,  # 是否自动配色
-            "line_color": {"r": 0, "g": 0, "b": 0},  # 手动指定颜色（RGB）
-            "is_hyaline": False  # 是否透明背景
-        }
-
-        response = requests.post(url, json=params)
-        print(response)
-        # 保存为图片文件
-        if response.headers['Content-Type'] == 'image/jpeg':
-            with open(path, "wb+") as f:
-                f.write(response.content)
-                return {'code': 200, 'messages': f"小程序码已保存至: {path}"}
-        else:
-            return {'code': 501, 'messages': f"生成失败: {response.json()}"}  # 返回错误信息（如参数错误）
-    else:
-        return {'code': 502, 'messages': f"1+++小程序码已保存至: {path}"}  # 返回错误信息（如参数错误）
+import qrcode
 
 
 def current_time():
@@ -62,48 +14,79 @@ def current_time():
     return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
 
-def getip(request):
+def today():
+    """
+    返回今天日期
+    格式: Y-M-D
+    """
+    return time.strftime("%Y-%m-%d", time.localtime())
+
+
+def day():
+    """
+    返回今天日期
+    格式: Y-M-D
+    """
+    now_time = datetime.datetime.now()  # 如果数据库保存的是UTC时间,程序不会蹦但是会提示你这不是本地时间
+    return now_time.day
+
+
+def month():
+    """
+    返回今天日期
+    格式: Y-M-D
+    """
+    now_time = datetime.datetime.now()  # 如果数据库保存的是UTC时间,程序不会蹦但是会提示你这不是本地时间
+    return now_time.month
+
+
+def year():
+    """
+    返回今天日期
+    格式: Y-M-D
+    """
+    now_time = datetime.datetime.now()  # 如果数据库保存的是UTC时间,程序不会蹦但是会提示你这不是本地时间
+    return now_time.year
+
+
+def yesterday(days):
+    now = datetime.date.today()
+    timedelta = datetime.timedelta(days=days)
+    return now - timedelta
+
+
+def res():
+    """
+    约束返回json格式
+    code: 状态代码
+    date: 信息内容
+    msg: 返回信息
+    """
+    return {'code': '', 'msg': '', 'data': {}}
+
+
+def get_ip(request):
     if request.META.get('HTTP_X_FORWARDED_FOR'):
         return request.META.get("HTTP_X_FORWARDED_FOR")
     else:
         return request.META.get("REMOTE_ADDR")
 
 
-def sendsms(code, call):
-    credentials = AccessKeyCredential(os.environ['ALIBABA_CLOUD_ACCESS_KEY_ID'],
-                                      os.environ['ALIBABA_CLOUD_ACCESS_KEY_SECRET'])
+def generate_qrcode():
+    data = '我爱python'
+    img = qrcode.make(data)
 
-    request = SendSmsRequest()
-    request.set_accept_format('json')
-    request.set_SignName("爱视光学")
-    request.set_TemplateCode("SMS_485420526")
-    request.set_PhoneNumbers(call)
-    request.set_TemplateParam({'code': code})
-
-    client = AcsClient(region_id='cn-shenzhen', credential=credentials)
-    response = client.do_action_with_exception(request)
-
-    return eval(response)
+    buf = BytesIO()  # BytesIO实现了在内存中读写bytes
+    img.save(buf)
+    return buf.getvalue()
 
 
-def get_random_code():
-    code = random.randint(100000, 999999)
-    return str(code)
-
-
-def time_start():
-    return time.strftime("%Y-%m-%d 00:00:00", time.localtime())
-
-
-def time_end():
-    return time.strftime("%Y-%m-%d 23:59:59", time.localtime())
-
-
-def get_phone_number(code, data_token):
-    url = f"https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token={data_token}"
-    payload = {"code": code}
-    response = requests.post(url, json=payload).json()
-    if response['errcode'] == 0:
-        return {'status': True, 'message': response['phone_info']['phoneNumber']}
+def index_time(request):
+    if request.GET.get('time'):
+        time = request.GET.get('time')
     else:
-        return {'status': False, 'message': response['errmsg']}
+        time = today()
+    date = datetime.datetime.strptime(time, '%Y-%m-%d')
+    down_day = (date + datetime.timedelta(days=+1)).strftime("%Y-%m-%d")
+    up_day = (date + datetime.timedelta(days=-1)).strftime("%Y-%m-%d")
+    return {'list': '', 'time': time, 'up_day': up_day, 'down_day': down_day}

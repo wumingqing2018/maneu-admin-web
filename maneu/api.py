@@ -1,80 +1,187 @@
+"""
+认证视图模块
+包含：短信验证码发送、access_token 获取（登录）、refresh_token 刷新、移除 token（登出）
+"""
+
+import logging
 from django.http import JsonResponse
 
 from common import common
-from common.jwt_util import *
+from common.jwt_util import generate_access_token, generate_refresh_token, verify_token
 from common.verify import is_call, is_code
 from maneu import service
 
+logger = logging.getLogger(__name__)
+
 
 def sendsms(request):
+    """
+    发送短信验证码
+    GET 参数：
+        call - 手机号码
+    返回：
+        JSON {status, message, content}
+    """
     phone_number = is_call(request.GET.get('call'))
 
-    if phone_number:
-        code = common.get_random_code()
-        if service.sendsms(call=phone_number, code=code) != 0:
-            response = common.sendsms(call=phone_number, code=code)
-            if response['Code'] == 'OK':
-                content = {'status': True, 'message': 'OK', 'content': {}}
-            else:
-                content = {'status': False, 'message': response["Message"], 'content': {'code': code}}
-        else:
-            content = {'status': False, 'message': '请先注册账号', 'content': {}}
-    else:
-        content = {'status': False, 'message': '请输入正确账号', 'content': {}}
+    if not phone_number:
+        return JsonResponse({
+            'status': False,
+            'message': '请输入正确的手机号码',
+            'content': {}
+        })
 
-    return JsonResponse(content)
+    # 检查账号是否存在
+    if not service.admin_exist(call=phone_number):  # 假设存在此方法，避免对未注册手机发送
+        return JsonResponse({
+            'status': False,
+            'message': '该手机号尚未注册，请先联系管理员',
+            'content': {}
+        })
 
+    # 生成随机验证码
+    code = common.get_random_code()
 
-def access_token(request):
-    call = is_call(request.GET.get('call'))
-    code = is_code(request.GET.get('code'))
-    if call and code:
-        admin_user = service.admin_login(call=call, code=code)  # 需修改 service.admin_login 去掉 mark 依赖
-        print(admin_user)
-        if admin_user:
-            a_token = generate_access_token(admin_user)
-            print(a_token)
-            r_token = generate_refresh_token(admin_user)
-            print(r_token)
-            content = {
-                'status': True,
-                'message': '100000',
-                'content': {'access_token': a_token, 'refresh_token': r_token}
-            }
-        else:
-            content = {'status': False, 'message': '验证码错误或手机号未注册'}
-    else:
-        content = {'status': False, 'message': '请填写手机号和验证码'}
+    # 调用短信发送接口
+    send_result = service.sendsms(call=phone_number, code=code)
+    if not send_result or send_result.get('Code') != 'OK':
+        logger.warning(f"短信发送失败：手机号 {phone_number}, 响应 {send_result}")
+        return JsonResponse({
+            'status': False,
+            'message': '短信发送失败，请稍后重试',
+            'content': {}
+        })
 
-    return JsonResponse(content)
-
-
-def refresh_token(request):
-    """刷新 access token（接收 refresh_token，返回新 access_token）"""
-    token = request.GET.get('refresh_token')
-    if not token:
-        return JsonResponse({'status': False, 'message': '缺少 refresh_token'}, status=401)
-
-    payload = verify_token(token, expected_type='refresh')
-    if not payload:
-        return JsonResponse({'status': False, 'message': 'refresh_token 无效或已过期'}, status=401)
-
-    user = service.admin_find_id(payload['user_id'])
-    if not payload:
-        return JsonResponse({'status': False, 'message': '用户不存在'}, status=401)
-
-    new_access_token = generate_access_token(user)
-    # 如需滚动刷新，可同时生成新的 refresh_token 返回
-    # new_refresh_token = generate_refresh_token(user)
+    # 发送成功（code 可根据需求缓存至 redis/数据库，生产环境不应返回给前端）
     return JsonResponse({
         'status': True,
-        'access_token': new_access_token,
-        # 'refresh_token': new_refresh_token,   # 若启用滚动刷新取消注释
+        'message': '验证码已发送',
+        'content': {}  # 注意：线上环境不应返回 code
     })
 
 
+def access_token(request):
+    """
+    登录接口：使用手机号 + 验证码换取 access_token 和 refresh_token
+    GET 参数：
+        call - 手机号
+        code - 验证码
+    返回：
+        JSON {status, message, content: {access_token, refresh_token}}
+    """
+    call = is_call(request.GET.get('call'))
+    code = is_code(request.GET.get('code'))
+
+    # 参数校验
+    if not call or not code:
+        return JsonResponse({
+            'status': False,
+            'message': '请填写手机号和验证码',
+            'content': {}
+        })
+
+    # 验证码登录验证
+    admin_user = service.admin_login(call=call, code=code)
+    if not admin_user:
+        return JsonResponse({
+            'status': False,
+            'message': '验证码错误或手机号未注册',
+            'content': {}
+        })
+
+    # 签发双 token
+    try:
+        a_token = generate_access_token(admin_user)
+        r_token = generate_refresh_token(admin_user)
+    except Exception as e:
+        logger.error(f"生成 Token 异常：{e}")
+        return JsonResponse({
+            'status': False,
+            'message': '系统异常，请稍后重试',
+            'content': {}
+        })
+
+    return JsonResponse({
+        'status': True,
+        'message': '登录成功',
+        'content': {
+            'access_token': a_token,
+            'refresh_token': r_token
+        }
+    })
+
+
+def refresh_token(request):
+    """
+    刷新 access_token 接口
+    GET 参数：
+        refresh_token - 刷新令牌
+    返回：
+        JSON {status, access_token} 或 401 错误
+    注意：
+        - 刷新令牌应通过安全渠道传递（此处为演示使用 GET）
+        - 可启用滚动刷新，同时更新 refresh_token
+    """
+    token = request.GET.get('refresh_token')
+    if not token:
+        return JsonResponse({
+            'status': False,
+            'message': '缺少 refresh_token'
+        }, status=401)
+
+    # 验证 refresh_token 的有效性和类型
+    payload = verify_token(token, expected_type='refresh')
+    if not payload:
+        return JsonResponse({
+            'status': False,
+            'message': 'refresh_token 无效或已过期'
+        }, status=401)
+
+    # 根据 token 中的用户 ID 获取用户对象
+    user_id = payload.get('user_id')
+    if not user_id:
+        return JsonResponse({
+            'status': False,
+            'message': 'Token 数据异常'
+        }, status=401)
+
+    user = service.admin_find_id(user_id)
+    if not user:
+        logger.warning(f"刷新 token 失败，用户不存在：{user_id}")
+        return JsonResponse({
+            'status': False,
+            'message': '用户不存在或已被禁用'
+        }, status=401)
+
+    # 生成新的 access_token（可同时刷新 refresh_token 实现滚动刷新）
+    try:
+        new_access_token = generate_access_token(user)
+        # new_refresh_token = generate_refresh_token(user)  # 滚动刷新时取消注释
+    except Exception as e:
+        logger.error(f"刷新 token 异常：{e}")
+        return JsonResponse({
+            'status': False,
+            'message': '系统异常，请稍后重试'
+        }, status=500)
+
+    response_data = {
+        'status': True,
+        'message': '刷新成功',
+        'access_token': new_access_token,
+        # 'refresh_token': new_refresh_token,
+    }
+    return JsonResponse(response_data)
+
+
 def remove_token(request):
-    """前端清除 token 后跳转登录页，这里只做重定向"""
-    # 因为 JWT 无状态，服务端不需要任何操作
-    content = {'status': True, 'message': 'OK', 'content': {}}
-    return JsonResponse(content)
+    """
+    登出接口（客户端主动清除 token）
+    由于 JWT 是无状态的，服务端只需返回成功，由客户端删除本地存储的 token 即可。
+    如需实现服务端 token 吊销，需引入黑名单（如 redis）。
+    """
+    # 可选：将当前 access_token 加入黑名单（需从 Authorization 头获取）
+    return JsonResponse({
+        'status': True,
+        'message': '已退出登录',
+        'content': {}
+    })

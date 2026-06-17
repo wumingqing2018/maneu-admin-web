@@ -1,58 +1,39 @@
+{% extends 'maneu/base_all.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="zh-CN">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>徕可 · 官方授权正品</title>
-    <link rel="icon" href="{% static 'images/maneu/logo.svg' %}">
-    <!-- Bootstrap 5 + Bootswatch Cerulean -->
-    <link crossorigin="anonymous"
-          href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.8/cerulean/bootstrap.min.css"
-          integrity="sha512-3n/Isj9MCqCc1wf/QfjLigco9sx9xr9m3TqgxstJrSxmwZ05qjl4owbfkioZ0y3w8fNWcVLnJGHfVqKF/L1Qsw=="
-          referrerpolicy="no-referrer" rel="stylesheet"/>
+{% block css %}
     <link rel="stylesheet" href="{% static 'css/maneu/index.css' %}">
-</head>
-
-<body>
-
-<!-- 科技感背景元素 -->
-<div class="tech-bg"></div>
-<div class="glow-orb orb-1"></div>
-<div class="glow-orb orb-2"></div>
-
-<!-- 主要内容 -->
-<div class="main-content">
-    <div class="landing-card">
-        <!-- 品牌标识 -->
-        <div class="logo-container">
-            <img src="{% static 'images/maneu/logo.svg' %}" alt="徕可" class="logo-img">
-        </div>
-        <h1 class="brand-name">徕可</h1>
-        <p class="brand-sub">Officially Licensed Products</p>
-
-        <!-- 信任徽章 —— 点击跳转至登录页，与登录页风格联动 -->
-        <a href="{% url 'login' %}" class="trust-badge" role="button">
-            <span class="trust-dot"></span>
-            官方授权 · 正品保障
-        </a>
-
-        <!-- 小程序码区域 -->
-        <div class="qr-section">
-            <img src="{% static 'images/maneu/code.jpg' %}" alt="小程序码" class="qr-img">
-            <p class="qr-hint">微信扫码查看订单</p>
-            <p class="qr-sub-hint">快速验证 · 安全可靠</p>
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="content row justify-content-center">
+            <div style="height: 25%; margin-top: 5%; text-align: center;">
+                <a href="{% url 'maneu_order:index' %}">
+                    <img src="{% static 'img/logo.svg' %}" class="col-md-2 col-6 img-responsive" alt="Cinque Terre">
+                    <h4 class="blue">徕可</h4>
+                </a>
+            </div>
+            <div style="height: 25%; text-align: center;">
+                <h4 class="blue">官方授权许可正品</h4>
+                <p class="blue">Officially licensed products</p>
+            </div>
+            <div style="height: 25%; text-align: center;">
+                <div>
+                    <p class="blue">执行标准：</p>
+                </div>
+                <div>
+                    <a class="blue" href="http://www.bz.bzko.com/bzxx/56116.html">QB/T2506-2017</a>
+                </div>
+                <div>
+                    <a class="blue" href="https://wenku.baidu.com/view/edf15852a417866fb94a8e06.html">GB10810.3-2006</a>
+                </div>
+                <div>
+                    <a class="blue"
+                       href="http://openstd.samr.gov.cn/bzgk/gb/newGbInfo?hcno=A587E31519ED1F6BFF23FC9132469137">GB/T38120-2019</a>
+                </div>
+                <div>
+                    <p class="blue">光安全要求</p>
+                </div>
+            </div>
         </div>
     </div>
-</div>
-
-<!-- 页脚备案 -->
-<footer class="footer">
-    <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener">粤ICP备2023070483号</a>
-</footer>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-</body>
-</html>
+{% endblock %}

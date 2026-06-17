@@ -1,0 +1,56 @@
+{% extends 'maneu/base_uesrs.html' %}
+{% load static %}
+{% block content %}
+    <form id="order_insert">
+        {% csrf_token %}
+        <input type="hidden" name="order" id="order">
+        <table class="table col-md-6 offset-md-3">
+            <tr>
+                <td style="width: 20%">
+                    <span>类型</span>
+                </td>
+                <td style="width: 80%">
+                    <select class="form-control" id="item-select">
+                        <option>配件</option>
+                        <option>镜框</option>
+                        <option>镜片</option>
+                    </select>
+                    <input type="hidden" name="item" id="item">
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 20%">
+                    <span>品牌</span>
+                </td>
+                <td style="width: 80%">
+                    <input type="text" name="c_name" id="c_name" class="form-control">
+                    <span id="username_error"></span>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 20%">
+                    <span>型号</span>
+                </td>
+                <td style="width: 80%">
+                    <input type="text" name="c_name" id="c_name" class="form-control">
+                    <span id="username_error"></span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <input type="button">
+                </td>
+            </tr>
+        </table>
+    </form>
+{% endblock %}
+{% block javascript %}
+    <script>
+        $(document).ready(function () {
+            $('#item-select').change(function () {
+                    $('#item').val('1')
+                }
+            )
+        })
+    </script>
+{% endblock %}
