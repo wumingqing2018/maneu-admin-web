@@ -26,8 +26,8 @@ def sendsms(request):
 
 
 def access_token(request):
-    call = is_call(request.GET.get('call'))
-    code = is_code(request.GET.get('code'))
+    call = is_call(request.POST.get('call'))
+    code = is_code(request.POST.get('code'))
     if call and code:
         admin_user = service.admin_login(call=call, code=code)  # 需修改 service.admin_login 去掉 mark 依赖
         print(admin_user)
