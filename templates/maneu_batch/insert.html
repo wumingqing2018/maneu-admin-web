@@ -1,0 +1,52 @@
+{% extends 'maneu/base_uesrs.html' %}
+{% load static %}
+{% block content %}
+    <div class="col-md-7 offset-md-3">
+        <table class="table">
+            <form id="batch_insert" enctype="multipart/form-data" method="post"
+                  action="{% url 'maneu_batch:insert' %}">
+                {% csrf_token %}
+                <tr>
+                    <td class="banner" align="right">
+                        <span>客户姓名</span>
+                    </td>
+                    <td class="content">
+                        <input type="text" name="c_name" id="name" class="form-control">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="banner">
+                        <span class='offset-md-1'>客户电话</span>
+                    </td>
+                    <td class="content">
+                        <input type="text" name="c_phone" id="phone" class="form-control">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="banner">
+                        <span class='offset-md-1'>产品信息</span>
+                    </td>
+                    <td class="content">
+                        <input type="text" name="remark" id="remark" class="form-control">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="banner">
+                        <span class='offset-md-1'>上传表格</span>
+                    </td>
+                    <td class="content">
+                        <input class="btn btn-primary col-md-12" name="excel" type="file" value="上传文件">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="banner">
+                        <a type="button" class="btn btn-warning" href="{% url 'maneu_batch:index' %}">返回列表</a>
+                    </td>
+                    <td class="content">
+                        <input class="btn btn-danger" style="width: 100%" type="submit" value="提交订单">
+                    </td>
+                </tr>
+            </form>
+        </table>
+    </div>
+{% endblock %}

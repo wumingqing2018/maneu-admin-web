@@ -1,0 +1,82 @@
+{% extends 'maneu/base_uesrs.html' %}
+{% load static %}
+
+{% block content %}
+    <!--内容栏-->
+    <table class="table">
+        <tr>
+            <td colspan="4">
+                <span>镜框信息</span>
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 25%;">
+                <span>品牌:</span>
+                <span>{{ framework.brand }}</span>
+            </td>
+            <td style="width: 25%;">
+                <span>型号:</span>
+                <span>{{ framework.model }}</span>
+            </td>
+            <td style="width: 25%;">
+                <span>时间:</span>
+                <span>{{ framework.time }}</span>
+            </td>
+            <td style="width: 25%;">
+                <span>数量:</span>
+                <span>{{ framework.count }}</span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <a href="{% url 'maneu_store:framework_list' %}" type="button" class="btn btn-primary">返回仓库</a>
+            </td>
+            <td>
+                <button class="btn btn-primary">销售记录</button>
+            </td>
+            <td>
+                <button class="btn btn-primary" id="update_show">调整数量</button>
+                <button class="btn btn-primary" id="update_hide" style="display: none">取消</button>
+            </td>
+            <td>
+                <button class="btn btn-danger" id="update_btn" style="display: none">确定</button>
+            </td>
+        </tr>
+        <tr id="update_table" style="display: none">
+            <form id="update">
+                {% csrf_token %}
+                <td colspan="3">
+                    <input type="hidden" name="store_id" value="{{ framework.store_id }}">
+                    <input type="range" name="count" class="custom-range" step="1" min="1" max="999" id="count"
+                           form="update">
+                </td>
+                <td>
+                    <span>数量:</span>
+                    <span id="count_msg">500</span>
+                </td>
+            </form>
+        </tr>
+    </table>
+{% endblock %}
+{% block js %}
+    <script src="{% static 'js/common/../../static/js/maneu/input_range.js' %}"></script>
+    <script>
+        $(document).ready(function () {
+            $('#update_show').click(function () {
+                $('#update_table').show()
+                $('#update_hide').show()
+                $('#update_show').hide()
+                $('#update_btn').show()
+            })
+            $('#update_hide').click(function () {
+                $('#update_table').hide()
+                $('#update_hide').hide()
+                $('#update_show').show()
+                $('#update_btn').hide()
+            })
+            $('#update_btn').click(function () {
+                console.log($('#update').serialize())
+            })
+        })
+    </script>
+{% endblock %}

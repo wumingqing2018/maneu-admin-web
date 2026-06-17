@@ -1,0 +1,347 @@
+{% extends 'maneu/base.html' %}
+{% load static %}
+
+{% block css %}
+    <link href="{% static 'css/maneu_guest/detail20260606.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div class="main-content-wrapper">
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="bi bi-gear-wide-connected"></i> 定制化产品详情
+            </h1>
+            <div class="d-flex gap-2 flex-wrap">
+                <button class="btn btn-outline-secondary btn-qrcode btn-action-primary" id="generateQrCode" type="button" title="下载二维码">
+                    <i class="bi bi-qr-code"></i> 二维码
+                </button>
+                <button class="btn-back" id="btn-goBack" type="button">
+                    <i class="bi bi-arrow-left"></i> 返回列表
+                </button>
+            </div>
+        </div>
+
+
+        <!-- 客户信息卡片 -->
+        <div class="section-card" id="guestSection">
+            <div class="section-title d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <span><i class="bi bi-person-vcard"></i> 客户信息<span class="status-badge status-empty ms-2" id="guestLoadStatus">加载中...</span></span>
+                <div class="d-flex gap-2">
+                    <button class="btn-toggle" id="toggleGuest" type="button">
+                        <i class="bi bi-chevron-down"></i> 详细参数
+                    </button>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-2">
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+                        <input autocomplete="off" type="datetime-local" class="form-control" id="time">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                        <input autocomplete="off" type="text" class="form-control" id="name" placeholder="客户姓名">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                        <input autocomplete="off" type="text" class="form-control" id="phone" placeholder="联系电话">
+                    </div>
+                </div>
+            </div>
+
+            <div id="guestExtra" style="display: none;">
+                <div class="row g-3 mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold text-muted">性别</label>
+                        <input autocomplete="off" type="text" class="form-control" id="sex" list="sexList" placeholder="例如：男">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold text-muted">年龄</label>
+                        <input autocomplete="off" type="text" class="form-control" id="age" placeholder="例如：28">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold text-muted">眼位</label>
+                        <input autocomplete="off" type="text" class="form-control" id="ot" list="otList" placeholder="例如：正视">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold text-muted">主视眼</label>
+                        <input autocomplete="off" type="text" class="form-control" id="em" list="emList" placeholder="左眼 / 右眼">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold text-muted">病族史</label>
+                        <input autocomplete="off" type="text" class="form-control" id="dfh" list="dfhList" placeholder="无 / 有">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-12">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-chat-left-text"></i></span>
+                        <input autocomplete="off" type="text" class="form-control" id="remark" placeholder="备注信息">
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-bar justify-content-end">
+                <button class="btn-save-guest" id="guestUpdate" type="button">
+                    <i class="bi bi-check-lg"></i> 更新客户信息
+                </button>
+            </div>
+        </div>
+
+        <!-- 底部操作栏 -->
+        <div class="action-bar justify-content-end">
+            <button class="btn btn-outline-danger btn-back-page" id="deleteOrder" type="button">
+                <i class="bi bi-trash3"></i> 删除此订单
+            </button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        // ==================== 全局配置与工具函数 ====================
+        // 订单ID（由 Django 模板注入）
+        const INDEX_ID = "{{ index_id }}";
+
+        // API 端点（与后端保持一致）
+        const GUEST_API = {
+            api_detail: "{% url 'maneu_guest:api_detail' %}",
+            api_delete: "{% url 'maneu_guest:api_delete' %}",
+            api_update: "{% url 'maneu_guest:api_update' %}",
+            api_QRcode: "{% url 'maneu_guest:api_QRcode' %}"
+        };
+
+        // 将 "YYYY-MM-DD HH:MM:SS" 或类似格式转换为 datetime-local 可识别的 "YYYY-MM-DDTHH:MM"
+        function toDatetimeLocal(value) {
+            if (!value) return '';
+            // 若已经是 datetime-local 格式则直接返回
+            if (value.includes('T')) return value.substring(0, 16);
+            // 处理 "YYYY-MM-DD HH:MM:SS" 格式
+            let parts = value.split(' ');
+            if (parts.length >= 2) {
+                return parts[0] + 'T' + parts[1].substring(0, 5);
+            }
+            return value.substring(0, 16);
+        }
+
+        // 通用错误提示（风格与订单管理页保持一致）
+        function showError(message) {
+            alert(message || '操作失败，请稍后重试');
+        }
+
+        // ==================== 防重复提交控制 ====================
+        let isSubmitting = false;
+
+        function setSubmitting(btn, state, originalText = null) {
+            isSubmitting = state;
+            if (btn) {
+                if (state) {
+                    btn.prop('disabled', true);
+                    btn.data('original-text', btn.html());
+                    btn.html('<span class="spinner-border spinner-border-sm me-1" role="status"></span> 处理中...');
+                } else {
+                    btn.prop('disabled', false);
+                    if (btn.data('original-text')) {
+                        btn.html(btn.data('original-text'));
+                    }
+                }
+            }
+        }
+
+        // ==================== 数据加载与渲染 ====================
+        // 加载状态标签控制
+        function setLoadStatus($el, status, message) {
+            $el.removeClass('status-empty status-loaded status-warning');
+            if (status === 'loading') {
+                $el.addClass('status-empty').text(message || '加载中...');
+            } else if (status === 'success') {
+                $el.addClass('status-loaded').text(message || '已加载');
+            } else if (status === 'error') {
+                $el.addClass('status-warning').text(message || '加载失败');
+            }
+        }
+
+        // 渲染客户信息
+        function renderGuestDetail(guest) {
+            if (guest?.status) {
+                const g = guest.content;
+                $('#time').val(toDatetimeLocal(g.time));
+                $('#name').val(g.name || '');
+                $('#phone').val(g.phone || '');
+                $('#sex').val(g.sex || '');
+                $('#age').val(g.age || '');
+                $('#dfh').val(g.dfh || '');
+                $('#em').val(g.em || '');
+                $('#ot').val(g.ot || '');
+                $('#remark').val(g.remark || '');
+                setLoadStatus($('#guestLoadStatus'), 'success', '已加载');
+            } else {
+                setLoadStatus($('#guestLoadStatus'), 'error', '加载失败');
+            }
+        }
+
+        // 主加载函数（带加载状态和请求取消）
+        let currentDetailRequest = null;
+        function loadDetail() {
+            if (currentDetailRequest && currentDetailRequest.readyState !== 4) {
+                currentDetailRequest.abort();
+            }
+            // 重置状态标签为“加载中”
+            setLoadStatus($('#guestLoadStatus'), 'loading', '加载中...');
+
+            currentDetailRequest = $.ajax({
+                url: GUEST_API.api_detail,
+                method: 'POST',
+                data: { index_id: INDEX_ID },
+                success: function(res) {
+                    if (!res?.status) {
+                        showError('加载详情失败：' + (res?.message || ''));
+                        setLoadStatus($('#guestLoadStatus'), 'error', '加载失败');
+                        return;
+                    }
+                    const { guest } = res.content;
+                    renderGuestDetail(guest);
+                },
+                error: function(xhr) {
+                    if (xhr.statusText === 'abort') return;
+                    showError('网络错误，无法加载定制详情');
+                    setLoadStatus($('#guestLoadStatus'), 'error', '加载失败');
+                }
+            });
+        }
+
+        // ==================== 更新操作（带防抖与刷新） ====================
+        // 通用更新方法（GET 请求，沿用后端现有风格）
+        function performUpdate(url, data, successMsg, $btn, onSuccess) {
+            if (isSubmitting) return;
+            if (!confirm('确定要更新这条记录吗？')) return;
+
+            setSubmitting($btn, true);
+            $.ajax({
+                url: url,
+                method: 'POST',
+                data: data,
+                success: function(res) {
+                    setSubmitting($btn, false);
+                    if (res && res.status) {
+                        alert(successMsg);
+                        // 更新成功后重新加载详情，保持界面最新
+                        loadDetail();
+                        if (onSuccess) onSuccess(res);
+                    } else {
+                        showError('更新失败：' + (res?.message || '未知错误'));
+                    }
+                },
+                error: function(xhr) {
+                    setSubmitting($btn, false);
+                    showError('网络错误，请稍后重试');
+                }
+            });
+        }
+
+        // 更新客户信息
+        function updateGuest() {
+            const data = {
+                index_id: INDEX_ID,
+                time: $('#time').val(),
+                name: $('#name').val(),
+                phone: $('#phone').val(),
+                age: $('#age').val(),
+                sex: $('#sex').val(),
+                dfh: $('#dfh').val(),
+                ot: $('#ot').val(),
+                em: $('#em').val(),
+                guestRemark: $('#remark').val()
+            };
+            performUpdate(GUEST_API.api_update, data, '客户信息更新成功', $('#guestUpdate'));
+        }
+
+        // ==================== 删除操作（带动画与跳转） ====================
+        function deleteOrder() {
+            if (!confirm('确定要删除这条记录吗？此操作不可恢复。')) return;
+            const $deleteBtn = $('#deleteOrder');
+            setSubmitting($deleteBtn, true);
+            $.ajax({
+                url: GUEST_API.api_delete,
+                method: 'POST',
+                data: { index_id: INDEX_ID },
+                success: function(res) {
+                    setSubmitting($deleteBtn, false);
+                    if (res?.status) {
+                        alert('删除成功');
+                        // 跳转到订单列表（根据实际 URL 调整）
+                        location.replace("{% url 'maneu_store:index' %}");
+                    } else {
+                        showError('删除失败：' + (res?.message || ''));
+                    }
+                },
+                error: function() {
+                    setSubmitting($deleteBtn, false);
+                    showError('网络错误，删除失败');
+                }
+            });
+        }
+
+        // ==================== 二维码下载 ====================
+        function downloadQRCode() {
+            $.ajax({
+                url: GUEST_API.api_QRcode,
+                method: 'POST',
+                data: { index_id: INDEX_ID },
+                xhrFields: { responseType: 'blob' },
+                success: function(blob) {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = INDEX_ID + '.png';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                },
+                error: function() {
+                    showError('二维码生成失败，请稍后重试');
+                }
+            });
+        }
+
+        // ==================== 页面初始化 ====================
+        $(function() {
+            // 折叠面板切换（与订单管理页风格一致）
+            function setupToggle(triggerId, panelId) {
+                $(triggerId).on('click', function() {
+                    const $panel = $(panelId);
+                    $panel.slideToggle(200);
+                    const $icon = $(this).find('i');
+                    $icon.toggleClass('bi-chevron-down bi-chevron-up');
+                    // 可选：更新按钮文字（保持与订单管理页类似，但原设计只有图标，所以仅图标切换即可）
+                    // 如果需要保持文字，可以取消注释：
+                    // const expanded = $panel.is(':visible');
+                    // $(this).html($icon.prop('outerHTML') + ' ' + (expanded ? '收起参数' : '展开参数'));
+                });
+            }
+            setupToggle('#toggleGuest', '#guestExtra');
+
+            // 绑定所有操作按钮
+            $('#guestUpdate').on('click', updateGuest);
+            $('#deleteOrder').on('click', deleteOrder);
+            $('#generateQrCode').on('click', downloadQRCode);
+
+            // 返回列表按钮
+            $('#btn-goBack').on('click', function(e) {
+                e.preventDefault();
+                window.history.back();
+            });
+
+            // 加载详情数据
+            loadDetail();
+        });
+    </script>
+{% endblock %}

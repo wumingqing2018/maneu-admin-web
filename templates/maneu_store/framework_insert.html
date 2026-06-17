@@ -1,0 +1,65 @@
+{% extends 'maneu/base_uesrs.html' %}
+{% load static %}
+
+{% block content %}
+    <form class="col-md-6 offset-3" method="post" action="{% url 'maneu_store:api_framework_insert' %}"
+          id="framework_insert">
+        <table class="table">
+            <tr class="yellow">
+                <td>
+                    <span>添加镜框</span>
+                </td>
+                <td>
+                    {% csrf_token %}
+                </td>
+            </tr>
+            <tr class="yellow">
+                <td style="width: 20%">
+                    <span>品牌</span>
+                </td>
+                <td>
+                    <input class="form-control" type="text" name="brand">
+                </td>
+            </tr>
+            <tr class="yellow">
+                <td>
+                    <span>型号</span>
+                </td>
+                <td>
+                    <input class="form-control" type="text" name="model">
+                </td>
+            </tr>
+            <tr class="yellow">
+                <td>
+                    <span>数量</span>
+                    <span id="count_msg">500</span>
+                </td>
+                <td>
+                    <input class="custom-range" type="range" name="count" min="1" max="999" step="1"
+                           form="framework_insert" id="count">
+                </td>
+            </tr>
+            <tr class="yellow">
+                <td>
+                    <span>备注</span>
+                </td>
+                <td>
+                    <textarea class="form-control" name="remark"></textarea>
+                </td>
+            </tr>
+
+            <tr class="yellow">
+                <td>
+                    <a href="{% url 'maneu_store:maneu_store' %}" class="btn btn-primary col-md-12  "
+                       type="button">返回</a>
+                </td>
+                <td>
+                    <input class="btn btn-warning col-md-12 " type="submit">
+                </td>
+            </tr>
+        </table>
+    </form>
+{% endblock %}
+{% block js %}
+    <script src="{% static 'js/common/../../static/js/maneu/input_range.js' %}"></script>
+{% endblock %}

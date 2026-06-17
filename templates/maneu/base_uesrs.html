@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>徕可</title>
+    <link rel="icon" href="{% static 'img/logo.svg' %}">
+    <link rel="stylesheet" href="{% static 'css/maneu/base.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 新 Bootstrap5 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/css/bootstrap.min.css">
+    <!--  popper.min.js 用于弹窗、提示、下拉菜单 -->
+    <script src="https://cdn.staticfile.org/popper.js/2.9.3/umd/popper.min.js"></script>
+    <!-- 最新的 Bootstrap5 核心 JavaScript 文件 -->
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.bundle.min.js"></script>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+</head>
+
+<body class="blue">
+<nav class="navbar navbar-expand-md bg-dark navbar-dark">
+    <!-- Brand -->
+    <a class="navbar-brand" href="{% url 'index' %}">
+        <img style="height: 30px" src="{% static 'img/logo.svg' %}">
+    </a>
+
+    <!-- Toggler/collapsibe Button -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navbar links -->
+    <div class="collapse navbar-collapse" id="collapsibleNavbar">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'maneu_datalogs:index' %}">数据可视化(开发中)</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'maneu_order:index' %}">零售管理</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'maneu_batch:index' %}">批发管理</a>
+            </li>
+            {#            <li class="nav-item">#}
+            {#                <a class="nav-link" href="{% url 'maneu_class:index' %}">商品管理</a>#}
+            {#            </li>#}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'maneu_alterSales:index' %}">售后管理</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'maneu_client:index' %}">客户管理</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-bs-toggle="dropdown">个人中心</a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'maneu_users:user_detail' %}">查看资料</a>
+                    <a class="dropdown-item" href="{% url 'maneu_users:user_updata' %}">修改资料</a>
+                    <a class="dropdown-item" href="{% url 'login' %}">退出登录</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+{% block css %}{% endblock %}
+{% block content %} {% endblock %}
+{% block javascript %}{% endblock %}
+<div class="fixed-bottom text-center">
+    <a style="color: #FCDA5E" href="https://beian.miit.gov.cn">粤ICP备2020134991号</a>
+</div>
+</body>
+</html>

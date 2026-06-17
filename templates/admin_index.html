@@ -1,0 +1,225 @@
+{% extends 'maneu/base.html' %}
+{% load static %}
+
+{% block css %}
+    <link href="{% static 'css/maneu_index/index20260606.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="main-content-wrapper">
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="bi bi-person-gear"></i> 账号管理
+            </h1>
+            <a href="#" class="btn-back" onclick="history.back(); return false;">
+                <i class="bi bi-arrow-left"></i> 返回上一页
+            </a>
+        </div>
+
+        <!-- 账号信息卡片 -->
+        <div class="form-card">
+            <div class="form-card-title">
+                <i class="bi bi-info-circle"></i> 基础数据
+            </div>
+
+            <div class="row g-2 mb-3">
+                <div class="col-md-6">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text">时间</span>
+                        <input autocomplete="off" type="datetime-local" class="form-control" id="time">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text">电话</span>
+                        <input autocomplete="off" type="text" class="form-control" id="phone" placeholder="联系电话">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-2 mb-3">
+                <div class="col-md-6">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text">店名</span>
+                        <input autocomplete="off" type="text" class="form-control" id="nickname" placeholder="店铺名称">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text">地址</span>
+                        <input autocomplete="off" type="text" class="form-control" id="location" placeholder="详细地址">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 提交按钮 -->
+        <div class="form-card text-end">
+            <button class="btn-submit" id="update" type="button">
+                <i class="bi bi-check-lg"></i> 提交数据
+            </button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        // ==================== 全局配置与工具函数 ====================
+        // API 端点（由 Django 模板反向解析）
+        const API = {
+            detail: "{% url 'maneu_admin:api_index' %}",
+            update: "{% url 'maneu_admin:api_update' %}"
+        };
+        const INDEX_ID = "{{ index_id }}";
+
+        // 获取 CSRF Token（为后续可能的 POST 请求预留，当前使用 GET）
+        function getCSRFToken() {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, 10) === 'csrftoken=') {
+                        cookieValue = decodeURIComponent(cookie.substring(10));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // 将 "YYYY-MM-DD HH:MM:SS" 转换为 datetime-local 可识别的 "YYYY-MM-DDTHH:MM"
+        function toDatetimeLocal(value) {
+            if (!value) return '';
+            if (value.includes('T')) return value.substring(0, 16);
+            const parts = value.split(' ');
+            if (parts.length >= 2) {
+                return parts[0] + 'T' + parts[1].substring(0, 5);
+            }
+            return value.substring(0, 16);
+        }
+
+        // 通用错误提示
+        function showError(message) {
+            alert(message || '操作失败，请稍后重试');
+        }
+
+        // ==================== 防重复提交控制 ====================
+        let isSubmitting = false;
+        function setSubmitting(btn, state) {
+            isSubmitting = state;
+            if (btn) {
+                if (state) {
+                    btn.prop('disabled', true);
+                    btn.data('original-text', btn.html());
+                    btn.html('<span class="spinner-border spinner-border-sm me-1" role="status"></span> 提交中...');
+                } else {
+                    btn.prop('disabled', false);
+                    if (btn.data('original-text')) {
+                        btn.html(btn.data('original-text'));
+                    }
+                }
+            }
+        }
+
+        // ==================== 表单验证 ====================
+        function validateForm() {
+            const phone = $('#phone').val().trim();
+            const nickname = $('#nickname').val().trim();
+            if (!nickname) {
+                showError('请填写店铺名称');
+                $('#nickname').focus();
+                return false;
+            }
+            if (!phone) {
+                showError('请填写联系电话');
+                $('#phone').focus();
+                return false;
+            }
+            const phoneRegex = /^1[3-9]\d{9}$|^\d{7,15}$/;
+            if (!phoneRegex.test(phone)) {
+                showError('请输入有效的联系电话');
+                $('#phone').focus();
+                return false;
+            }
+            return true;
+        }
+
+        // ==================== 加载详情 ====================
+        let currentDetailRequest = null;
+        function loadDetail() {
+            if (currentDetailRequest && currentDetailRequest.readyState !== 4) {
+                currentDetailRequest.abort();
+            }
+            currentDetailRequest = $.ajax({
+                url: API.detail,
+                method: 'GET',
+                data: { index_id: INDEX_ID },
+                success: function(res) {
+                    if (res && res.content) {
+                        const data = res.content;
+                        $('#time').val(toDatetimeLocal(data.time));
+                        $('#phone').val(data.phone || '');
+                        $('#nickname').val(data.nickname || '');
+                        $('#location').val(data.location || '');
+                        // 注意：原HTML中没有 #content 输入框，此处移除其赋值
+                    } else {
+                        showError('加载账号信息失败：' + (res?.message || ''));
+                    }
+                },
+                error: function(xhr) {
+                    if (xhr.statusText === 'abort') return;
+                    showError('网络错误，无法加载账号信息');
+                }
+            });
+        }
+
+        // ==================== 更新账号信息 ====================
+        function updateAccount() {
+            if (isSubmitting) return;
+            if (!confirm('确定要修改账号信息吗？')) return;
+            if (!validateForm()) return;
+
+            const $btn = $('#update');
+            setSubmitting($btn, true);
+
+            $.ajax({
+                url: API.update,
+                method: 'GET',
+                data: {
+                    index_id: INDEX_ID,
+                    phone: $('#phone').val().trim(),
+                    nickname: $('#nickname').val().trim(),
+                    location: $('#location').val().trim()
+                    // 移除 content 字段（原HTML中不存在该输入框）
+                },
+                success: function(res) {
+                    setSubmitting($btn, false);
+                    if (res && res.status === true) {
+                        alert('修改成功');
+                        loadDetail(); // 刷新显示最新数据
+                    } else {
+                        showError('修改失败：' + (res?.message || ''));
+                    }
+                },
+                error: function() {
+                    setSubmitting($btn, false);
+                    showError('网络错误，请稍后重试');
+                }
+            });
+        }
+
+        // ==================== 页面初始化 ====================
+        $(function() {
+            loadDetail();
+            $('#update').on('click', updateAccount);
+            // 可选：回车提交（在任意输入框按回车）
+            $('input').on('keypress', function(e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    updateAccount();
+                }
+            });
+        });
+    </script>
+{% endblock %}

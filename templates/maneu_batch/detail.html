@@ -1,0 +1,65 @@
+{% extends 'maneu/base_uesrs.html' %}
+{% load static %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/maneu_batch/batch_detail.css' %}">
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <table class="table">
+            <tr>
+                <td class="col-1" align="right">
+                    <span>客户姓名</span>
+                </td>
+                <td class="col-11">
+                    <span>{{ order.name }}</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-1" align="right">
+                    <span>客户电话</span>
+                </td>
+                <td class="col-11">
+                    <span>{{ order.phone }}</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-1" align="right">
+                    <span>购买时间</span>
+                </td>
+                <td class="col-11">
+                    <span>{{ order.time }}</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-1" align="right">
+                    <span>产品信息</span>
+                </td>
+                <td class="col-11">
+                    <span>{{ order.remark }}</span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <iframe id="content"
+                            src='http://office.yujiaojiaoyu.com/op/view.aspx?src=http://maneu.online/{{ order.order }}'></iframe>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-1" align="right">
+                    <form method="get" action="{% url 'maneu_batch:index' %}">
+                        <input class="btn btn-warning" type="submit" value="返回列表">
+                    </form>
+                </td>
+                <td class="col-11">
+                    <form method="get" action="{% url 'maneu_batch:delete' %}">
+                        <input name="id" type="hidden" value="{{ order.id }}">
+                        <input class="btn btn-danger" id="delete" type="submit" value="删除订单">
+                    </form>
+                </td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}
+{% block javascript %}
+    <script type="application/javascript" src="{% static 'js/maneu/delete.js' %}"></script>
+{% endblock %}

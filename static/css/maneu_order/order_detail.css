@@ -1,0 +1,17 @@
+span {
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+b {
+    margin-left: 10px
+}
+
+#header {
+    margin-top: 5%;
+    margin-bottom: 5%;
+}
+
+.banner {
+    background: #FFC048;
+}

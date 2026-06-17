@@ -1,0 +1,43 @@
+{% extends 'maneu/base_all.html' %}
+{% load static %}
+{% block content %}
+    <div class="text-center" id="content">
+        <div class="row justify-content-center">
+            <div class="col-md-12" style="padding: 10%">
+                <a href="{% url 'index' %}">
+                    <img src="{% static 'img/logo.svg' %}" class="img-responsive" alt="Cinque Terre">
+                    <h4 class="yellow">徕可</h4>
+                </a>
+            </div>
+            <div style="padding: 5%; text-align: center">
+                <div class="col-md-12">
+                    <form method="POST" action="{% url 'login' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <p>{{ error }}</p>
+                        </div>
+                        >
+                        <div class="form-group">
+                            {{ form.username }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.password }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.captcha }}
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" class="col-md-12 btn btn-primary" value="登录">
+                        </div>
+                        <div class="form-group">
+                            <a type="button" href="{% url '' %}">忘记密码</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-12" style="text-align: center;margin-top: 15%">
+                <a class="blue" href="https://beian.miit.gov.cn">粤ICP备2020134991号</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
