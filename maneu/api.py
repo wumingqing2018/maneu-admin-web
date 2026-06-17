@@ -29,7 +29,7 @@ def access_token(request):
     call = is_call(request.GET.get('call'))
     code = is_code(request.GET.get('code'))
     if call and code:
-        admin_user = service.admin_login(call=call, code=code, mark=None)  # 需修改 service.admin_login 去掉 mark 依赖
+        admin_user = service.admin_login(call=call, code=code)  # 需修改 service.admin_login 去掉 mark 依赖
         if admin_user:
             content = {
                 'status': True,
@@ -49,17 +49,14 @@ def refresh_token(request):
     token = request.GET.get('refresh_token')
     if not token:
         return JsonResponse({'status': False, 'message': '缺少 refresh_token'}, status=401)
-    print(token)
 
     payload = verify_token(token, expected_type='refresh')
     if not payload:
         return JsonResponse({'status': False, 'message': 'refresh_token 无效或已过期'}, status=401)
-    print(payload)
 
     user = service.admin_find_id(payload['user_id'])
     if not payload:
         return JsonResponse({'status': False, 'message': '用户不存在'}, status=401)
-    print(user)
 
     new_access_token = generate_access_token(user)
     # 如需滚动刷新，可同时生成新的 refresh_token 返回
