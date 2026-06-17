@@ -1,7 +1,7 @@
 from maneu.models import ManeuAdmin
 
 
-def get_access_token(code=''):
+def admin_find_id(code=''):
     return ManeuAdmin.objects.filter(id=code).first()
 
 

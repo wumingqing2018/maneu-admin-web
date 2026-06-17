@@ -66,114 +66,137 @@
 {% endblock %}
 
 {% block javascript %}
-    <script>
-        // ==================== 工具函数 ====================
-        // XSS 防护：转义 HTML 特殊字符
-        function escapeHtml(str) {
-            if (!str) return '';
-            return String(str).replace(/[&<>]/g, function(m) {
-                if (m === '&') return '&amp;';
-                if (m === '<') return '&lt;';
-                if (m === '>') return '&gt;';
-                return m;
-            });
-        }
+<script>
+    // ========================================================================
+    // 1. 工具函数 & 安全防护
+    // ========================================================================
 
-        // 获取 CSRF Token（Django 默认在 Cookie 中）
-        function getCSRFToken() {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, 10) === 'csrftoken=') {
-                        cookieValue = decodeURIComponent(cookie.substring(10));
-                        break;
-                    }
+    /**
+     * HTML 转义（XSS 防护）
+     */
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    /**
+     * 从 Cookie 获取 Django CSRF Token
+     */
+    function getCSRFToken() {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, 10) === 'csrftoken=') {
+                    cookieValue = decodeURIComponent(cookie.substring(10));
+                    break;
                 }
             }
-            return cookieValue;
         }
+        return cookieValue;
+    }
 
-        // 格式化时间显示（移动端短格式可选，目前保持原样）
-        function formatTimeShort(timeStr) {
-            if (!timeStr) return '';
-            // 假设后端返回 "2025-06-04 14:30:00" 或类似格式
-            const parts = timeStr.split(' ');
-            if (parts.length >= 1) return parts[0];
-            return timeStr.substring(0, 10);
-        }
+    /**
+     * 格式化时间（仅保留日期，用于展示）
+     */
+    function formatTimeShort(timeStr) {
+        if (!timeStr) return '';
+        const parts = timeStr.split(' ');
+        return parts.length >= 1 ? parts[0] : timeStr.substring(0, 10);
+    }
 
-        // ----- API 端点（由 Django 模板反向解析）-----
-        const ORDER = {
-            web_detail: "{% url 'maneu_order:detail' %}",
-            api_delete: "{% url 'maneu_order:api_delete' %}",
-            api_searchText: "{% url 'maneu_order:api_search_data' %}",
-            api_searchTime: "{% url 'maneu_order:api_search_time' %}"
-        };
+    // ========================================================================
+    // 2. 全局 AJAX 默认配置（自动携带 JWT Token 和 CSRF）
+    // ========================================================================
 
-        // ----- DOM 元素缓存 -----
-        const $listContainer = $('#body');
-        const $timeStart = $('#timeS');
-        const $timeEnd = $('#timeE');
-        const $keyword = $('#value');
-        const $searchDataBtn = $('#search_data');
-        const $searchTimeBtn = $('#search_time');
 
-        // 请求取消控制器
-        let currentRequest = null;
 
-        // ----- UI 状态函数 -----
-        function showLoading() {
-            $listContainer.html(`
+    // ========================================================================
+    // 3. API 端点（由 Django 模板反向解析）
+    // ========================================================================
+
+    const ORDER = {
+        web_detail: "{% url 'maneu_order:detail' %}",
+        api_delete: "{% url 'maneu_order:api_delete' %}",
+        api_searchText: "{% url 'maneu_order:api_search_data' %}",
+        api_searchTime: "{% url 'maneu_order:api_search_time' %}"
+    };
+
+    // ========================================================================
+    // 4. DOM 缓存 & 请求控制器
+    // ========================================================================
+
+    const $listContainer = $('#body');
+    const $timeStart = $('#timeS');
+    const $timeEnd = $('#timeE');
+    const $keyword = $('#value');
+    const $searchDataBtn = $('#search_data');
+    const $searchTimeBtn = $('#search_time');
+
+    let currentRequest = null;  // 用于取消前一个未完成的请求
+
+    // ========================================================================
+    // 5. UI 状态函数
+    // ========================================================================
+
+    function showLoading() {
+        $listContainer.html(`
             <div class="loading-spinner">
                 <div class="spinner-border text-primary" role="status"></div>
             </div>
         `);
-        }
+    }
 
-        function showEmptyState() {
-            $listContainer.html(`
+    function showEmptyState() {
+        $listContainer.html(`
             <div class="empty-state">
                 <i class="bi bi-inbox"></i>
                 <p>暂无订单记录</p>
                 <small>尝试调整筛选条件或新增一条订单</small>
             </div>
         `);
-        }
+    }
 
-        function showErrorState() {
-            $listContainer.html(`
+    function showErrorState() {
+        $listContainer.html(`
             <div class="empty-state">
                 <i class="bi bi-exclamation-triangle"></i>
                 <p>加载失败，请稍后重试</p>
             </div>
         `);
-        }
+    }
 
-        // 清除关键词输入框的验证样式
-        function clearKeywordInvalid() {
-            $keyword.removeClass('is-invalid');
-            $keyword.closest('.filter-group').find('.invalid-feedback').hide();
-        }
+    function clearKeywordInvalid() {
+        $keyword.removeClass('is-invalid');
+        $keyword.closest('.filter-group').find('.invalid-feedback').hide();
+    }
 
-        function showKeywordInvalid() {
-            $keyword.addClass('is-invalid');
-            $keyword.closest('.filter-group').find('.invalid-feedback').show();
-        }
+    function showKeywordInvalid() {
+        $keyword.addClass('is-invalid');
+        $keyword.closest('.filter-group').find('.invalid-feedback').show();
+    }
 
-        // 生成单个列表项 HTML（已 XSS 防护）
-        function createItemHTML(item) {
-            const timeRaw = item.time || '';
-            const timeDisplay = escapeHtml(timeRaw);
-            const name = escapeHtml(item.name) || '-';
-            const phone = escapeHtml(item.phone) || '-';
-            const remarkRaw = item.remark || '-';
-            const remark = escapeHtml(remarkRaw);
-            const escapedRemarkAttr = remarkRaw.replace(/"/g, '&quot;');
-            const id = escapeHtml(item.id);
+    // ========================================================================
+    // 6. 列表渲染（XSS 防护）
+    // ========================================================================
 
-            return `
+    function createItemHTML(item) {
+        const timeRaw = item.time || '';
+        const timeDisplay = escapeHtml(timeRaw);
+        const name = escapeHtml(item.name) || '-';
+        const phone = escapeHtml(item.phone) || '-';
+        const remarkRaw = item.remark || '-';
+        const remark = escapeHtml(remarkRaw);
+        const escapedRemarkAttr = remarkRaw.replace(/"/g, '&quot;');
+        const id = escapeHtml(item.id);
+
+        return `
             <div class="store-list-item">
                 <div class="col-time">
                     <i class="bi bi-clock me-2 d-md-none"></i>
@@ -201,135 +224,159 @@
                 </div>
             </div>
         `;
+    }
+
+    function renderList(items) {
+        $listContainer.empty();
+        if (!Array.isArray(items) || items.length === 0) {
+            showEmptyState();
+            return;
         }
-
-        // 渲染列表（使用 Fragment 提高性能）
-        function renderList(items) {
-            $listContainer.empty();
-            if (!Array.isArray(items) || items.length === 0) {
-                showEmptyState();
-                return;
-            }
-            const fragment = $(document.createDocumentFragment());
-            items.forEach(item => {
-                fragment.append(createItemHTML(item));
-            });
-            $listContainer.append(fragment);
-        }
-
-        // ----- 业务逻辑 -----
-        function handleDetail(btn) {
-            const indexId = btn.getAttribute('data-index_id');
-            window.location.href = ORDER.web_detail + '?index_id=' + indexId;
-        }
-
-        // 删除订单（改用 DELETE 方法 + CSRF token）
-        function deleteRecord(btn) {
-            if (!confirm("确定要删除这条订单吗？此操作不可恢复。")) return;
-            const indexId = btn.getAttribute('data-index_id');
-
-            $.ajax({
-                url: ORDER.api_delete,
-                method: 'GET',
-                data: { index_id: indexId },
-                success(res) {
-                    if (res.status === true) {
-                        const $item = $(btn).closest('.store-list-item');
-                        if ($item.length) {
-                            $item.css({
-                                transition: 'all 0.3s ease',
-                                opacity: 0,
-                                transform: 'translateX(20px)'
-                            });
-                            setTimeout(() => {
-                                $item.remove();
-                                if (!$listContainer.find('.store-list-item').length) {
-                                    showEmptyState();
-                                }
-                            }, 300);
-                        }
-                    } else {
-                        alert(res.message || '删除失败，请稍后重试');
-                    }
-                },
-                error(xhr) {
-                    if (xhr.status === 403) {
-                        alert('CSRF 验证失败，请刷新页面后重试');
-                    } else {
-                        alert('网络错误，请稍后重试');
-                    }
-                }
-            });
-        }
-
-        // 通用数据加载（支持 abort 前一个请求）
-        function fetchAndRender(url, params) {
-            if (currentRequest && currentRequest.readyState !== 4) {
-                currentRequest.abort();
-            }
-            showLoading();
-            currentRequest = $.get(url, params)
-                .done(res => {
-                    const data = Array.isArray(res) ? res : (res.content || []);
-                    renderList(data);
-                })
-                .fail(xhr => {
-                    if (xhr.statusText === 'abort') return;
-                    showErrorState();
-                });
-        }
-
-        // 搜索触发器
-        function searchByTime() {
-            clearKeywordInvalid();
-            fetchAndRender(ORDER.api_searchTime, {
-                timeS: $timeStart.val(),
-                timeE: $timeEnd.val()
-            });
-        }
-
-        function searchByText() {
-            const keyword = $keyword.val().trim();
-            if (!keyword) {
-                showKeywordInvalid();
-                return;
-            }
-            clearKeywordInvalid();
-            fetchAndRender(ORDER.api_searchText, { value: keyword });
-        }
-
-        // ----- 页面初始化 -----
-        $(function () {
-            // 若时间起始为空，默认设为30天前
-            if (!$timeStart.val()) {
-                const thirtyDaysAgo = new Date();
-                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-                $timeStart.val(thirtyDaysAgo.toISOString().slice(0, 16));
-            }
-            // 默认加载全部订单（按当前时间范围）
-            searchByTime();
-
-            // 绑定筛选按钮事件
-            $searchTimeBtn.on('click', searchByTime);
-            $searchDataBtn.on('click', searchByText);
-
-            // 支持按回车键进行关键词搜索
-            $keyword.on('keypress', function (e) {
-                if (e.which === 13) {
-                    e.preventDefault();
-                    searchByText();
-                }
-            });
-
-            // 事件委托：详情按钮
-            $listContainer.on('click', '.detail-btn', function () {
-                handleDetail(this);
-            });
-
-            // 事件委托：删除按钮
-            $listContainer.on('click', '.delete-btn', function () {
-                deleteRecord(this);
-            });
+        const fragment = $(document.createDocumentFragment());
+        items.forEach(item => {
+            fragment.append(createItemHTML(item));
         });
-    </script>
+        $listContainer.append(fragment);
+    }
+
+    // ========================================================================
+    // 7. 业务操作：详情跳转 & 删除记录
+    // ========================================================================
+
+    function handleDetail(btn) {
+        const indexId = btn.getAttribute('data-index_id');
+        window.location.href = ORDER.web_detail + '?index_id=' + indexId;
+    }
+
+    function deleteRecord(btn) {
+        if (!confirm("确定要删除这条订单吗？此操作不可恢复。")) return;
+
+        const indexId = btn.getAttribute('data-index_id');
+        $.ajax({
+            url: ORDER.api_delete,
+            method: 'POST',          // 保持后端接口不变
+            data: { index_id: indexId },
+            success: function(res) {
+                if (res.status === true) {
+                    const $item = $(btn).closest('.store-list-item');
+                    if ($item.length) {
+                        $item.css({
+                            transition: 'all 0.3s ease',
+                            opacity: 0,
+                            transform: 'translateX(20px)'
+                        });
+                        setTimeout(() => {
+                            $item.remove();
+                            if (!$listContainer.find('.store-list-item').length) {
+                                showEmptyState();
+                            }
+                        }, 300);
+                    }
+                } else {
+                    alert(res.message || '删除失败，请稍后重试');
+                }
+            },
+            error: function(xhr) {
+                if (xhr.status === 403) {
+                    alert('CSRF 验证失败，请刷新页面后重试');
+                } else {
+                    alert('网络错误，请稍后重试');
+                }
+            }
+        });
+    }
+
+    // ========================================================================
+    // 8. 数据加载
+    // ========================================================================
+
+    function fetchAndRender(url, params) {
+        // 取消前一个未完成的请求（避免数据错乱）
+        if (currentRequest && currentRequest.readyState !== 4) {
+            currentRequest.abort();
+        }
+
+        showLoading();
+
+        currentRequest = $.ajax({
+            url: url,
+            method: 'POST',
+            data: params,
+            // 无需手动设置 headers，全局 ajaxSetup 已自动添加
+            success: function(res) {
+                // 兼容两种返回格式：直接数组 或 { content: [...] }
+                const data = Array.isArray(res) ? res : (res.content || []);
+                renderList(data);
+            },
+            error: function(xhr, status) {
+                if (status === 'abort') return;
+                showErrorState();
+            }
+        });
+    }
+
+    // ========================================================================
+    // 9. 搜索函数
+    // ========================================================================
+
+    function searchByTime() {
+        clearKeywordInvalid();
+        fetchAndRender(ORDER.api_searchTime, {
+            timeS: $timeStart.val(),
+            timeE: $timeEnd.val()
+        });
+    }
+
+    function searchByText() {
+        const keyword = $keyword.val().trim();
+        if (!keyword) {
+            showKeywordInvalid();
+            return;
+        }
+        clearKeywordInvalid();
+        fetchAndRender(ORDER.api_searchText, { value: keyword });
+    }
+
+    // ========================================================================
+    // 10. 页面初始化 & 事件绑定
+    // ========================================================================
+
+    $(function() {
+        // 设置默认时间范围（30天前 ~ 当前）
+        if (!$timeStart.val()) {
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            $timeStart.val(thirtyDaysAgo.toISOString().slice(0, 16));
+        }
+        if (!$timeEnd.val()) {
+            const now = new Date();
+            $timeEnd.val(now.toISOString().slice(0, 16));
+        }
+
+        // 默认加载时间范围内的数据
+        searchByTime();
+
+        // 按钮事件绑定
+        $searchTimeBtn.on('click', searchByTime);
+        $searchDataBtn.on('click', searchByText);
+
+        // 回车键触发关键词搜索
+        $keyword.on('keypress', function(e) {
+            if (e.which === 13) {
+                e.preventDefault();
+                searchByText();
+            }
+        });
+
+        // 事件委托：查看详情
+        $listContainer.on('click', '.detail-btn', function() {
+            handleDetail(this);
+        });
+
+        // 事件委托：删除记录
+        $listContainer.on('click', '.delete-btn', function() {
+            deleteRecord(this);
+        });
+    });
+</script>
 {% endblock %}

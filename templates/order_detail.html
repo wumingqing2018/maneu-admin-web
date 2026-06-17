@@ -496,7 +496,7 @@
 
             currentDetailRequest = $.ajax({
                 url: ORDER_API.api_detail,
-                method: 'GET',
+                method: 'POST',
                 data: { index_id: index_id },
                 success: function(res) {
                     if (!res?.status) {
@@ -530,7 +530,7 @@
             setSubmitting($btn, true);
             $.ajax({
                 url: url,
-                method: 'GET',
+                method: 'POST',
                 data: data,
                 success: function(res) {
                     setSubmitting($btn, false);
@@ -618,7 +618,7 @@
             setSubmitting($deleteBtn, true);
             $.ajax({
                 url: ORDER_API.api_delete,
-                method: 'GET',
+                method: 'POST',
                 data: { index_id: index_id },
                 success: function(res) {
                     setSubmitting($deleteBtn, false);
@@ -641,7 +641,7 @@
         function downloadQRCode() {
             $.ajax({
                 url: ORDER_API.api_qrcode,
-                method: 'GET',
+                method: 'POST',
                 data: { index_id: index_id },
                 xhrFields: { responseType: 'blob' },
                 success: function(blob) {

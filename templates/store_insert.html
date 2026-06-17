@@ -248,7 +248,7 @@
 
             $.ajax({
                 url: STORE_INSERT_API,
-                method: 'GET',      // 保持与原代码一致（后端接口为 GET）
+                method: 'POST',      // 保持与原代码一致（后端接口为 GET）
                 data: requestData,
                 success: function(res) {
                     setSubmitting($submitBtn, false);

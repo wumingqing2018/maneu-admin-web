@@ -97,7 +97,7 @@
                         <i class="bi bi-pencil-square"></i> 修改资料
                     </a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item-custom text-danger" href="{% url 'logout' %}">
+                    <a class="dropdown-item-custom text-danger" href="{% url 'remove_token' %}">
                         <i class="bi bi-box-arrow-right"></i> 退出登录
                     </a>
                 </div>
@@ -159,7 +159,7 @@
     <a class="nav-link-mobile" href="{% url 'maneu_admin:index' %}" onclick="closeMobileMenu()">
         <i class="bi bi-pencil-square"></i> 修改资料
     </a>
-    <a class="nav-link-mobile" href="{% url 'logout' %}" onclick="closeMobileMenu()"
+    <a class="nav-link-mobile" href="{% url 'remove_token' %}" onclick="closeMobileMenu()"
        style="color:#dc2626;">
         <i class="bi bi-box-arrow-right"></i> 退出登录
     </a>
@@ -188,7 +188,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.min.js"></script>
 
 <!-- 项目全局自定义脚本（基础交互：下拉菜单、移动端菜单等） -->
-<script src="{% static 'javascript/maneu/base.js' %}" defer></script>
+<script src="{% static 'javascript/maneu/base.js' %}"></script>
+<script src="{% static 'javascript/maneu/jtw_util.js' %}"></script>
 
 <!-- 子页面专属 JavaScript 块，由子模板覆写 -->
 {% block javascript %}{% endblock %}

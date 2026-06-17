@@ -9,12 +9,13 @@ from django.http import JsonResponse
 
 from common.simple import extract_guest_simple_params
 from common.verify import is_uuid
+from common.jwt_util import _get_admin_id
 from maneu_guest.service import *
 from maneu_store.service import *
 
 
 def generate_qr_code(request):
-    link = 'https://maneu.online/verify_store/?index_id=' + request.GET.get('index_id')
+    link = 'https://maneu.online/verify_store/?index_id=' + request.POST.get('index_id')
 
     # 创建二维码对象
     qr = qrcode.QRCode(
@@ -38,12 +39,12 @@ def generate_qr_code(request):
 
 
 def insert(request):
-    admin_id = is_uuid(request.session.get('id'))
+    admin_id = _get_admin_id(request)
     if admin_id:
-        time = request.GET.get('time')
-        name = request.GET.get('name')
-        phone = request.GET.get('phone')
-        remark = request.GET.get('remark')
+        time = request.POST.get('time')
+        name = request.POST.get('name')
+        phone = request.POST.get('phone')
+        remark = request.POST.get('remark')
         index_id = uuid.uuid4()
 
         try:
@@ -55,7 +56,7 @@ def insert(request):
             guest = {'status': False, 'message': str(e), 'content': {}}
 
         try:
-            content = request.GET.get('storeContent')
+            content = request.POST.get('storeContent')
             data = store_insert(admin_id=admin_id, index_id=index_id, time=time, name=name, phone=phone, status=1,
                                 content=content, remark=remark).id
             store = {'status': True, 'message': '', 'content': data}
@@ -70,8 +71,8 @@ def insert(request):
 
 
 def detail(request):
-    admin_id = is_uuid(request.session.get('id'))
-    index_id = is_uuid(request.GET.get('index_id'))
+    admin_id = _get_admin_id(request)
+    index_id = is_uuid(request.POST.get('index_id'))
     if admin_id and index_id:
 
         try:
@@ -93,8 +94,8 @@ def detail(request):
 
 
 def delete(request):
-    admin_id = is_uuid(request.session.get('id'))
-    index_id = is_uuid(request.GET.get('index_id'))
+    admin_id = _get_admin_id(request)
+    index_id = is_uuid(request.POST.get('index_id'))
     if admin_id and index_id:
 
         try:
@@ -114,13 +115,13 @@ def delete(request):
 
 
 def update(request):
-    admin_id = is_uuid(request.session.get('id'))
-    index_id = is_uuid(request.GET.get('index_id'))
+    admin_id = _get_admin_id(request)
+    index_id = is_uuid(request.POST.get('index_id'))
     if admin_id and index_id:
-        print(request.GET.get('storeContent'))
+        print(request.POST.get('storeContent'))
 
         try:
-            data = store_update(admin_id=admin_id, index_id=index_id, content=request.GET.get('storeContent'))
+            data = store_update(admin_id=admin_id, index_id=index_id, content=request.POST.get('storeContent'))
             content = {'status': True, 'message': '', 'content': data}
         except Exception as e:
             content = {'status': False, 'message': str(e), 'content': {}}
@@ -132,11 +133,11 @@ def update(request):
 
 
 def search_time(request):
-    admin_id = is_uuid(request.session.get('id'))
+    admin_id = _get_admin_id(request)
     if admin_id:
 
         try:
-            data = store_search_time(admin_id=admin_id, timeS=request.GET.get('timeS'), timeE=request.GET.get('timeE'))
+            data = store_search_time(admin_id=admin_id, timeS=request.POST.get('timeS'), timeE=request.POST.get('timeE'))
             content = {'status': True, 'message': '',
                        'content': list(data.values('id', 'name', 'phone', 'time', 'remark'))}
         except Exception as e:
@@ -149,11 +150,11 @@ def search_time(request):
 
 
 def search_data(request):
-    admin_id = is_uuid(request.session.get('id'))
+    admin_id = _get_admin_id(request)
     if admin_id:
 
         try:
-            data = store_search_data(admin_id=admin_id, value=request.GET.get('value'))
+            data = store_search_data(admin_id=admin_id, value=request.POST.get('value'))
             content = {'status': True, 'message': '',
                        'content': list(data.values('id', 'name', 'phone', 'time', 'remark'))}
         except Exception as e:

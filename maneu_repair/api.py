@@ -6,20 +6,21 @@ from django.http import JsonResponse
 from common.simple import extract_guest_simple_params
 from common.verify import is_uuid
 from maneu_guest.service import *
+from common.jwt_util import _get_admin_id
 
 
 def insert(request):
-    admin_id = is_uuid(request.session.get('id'))
+    admin_id = _get_admin_id(request)
     if admin_id:
-        time = request.GET.get('time')
-        name = request.GET.get('name')
-        phone = request.GET.get('phone')
+        time = request.POST.get('time')
+        name = request.POST.get('name')
+        phone = request.POST.get('phone')
         index_id = uuid.uuid4()
 
         try:
             content = extract_guest_simple_params(request)
             guest_id = guest_insert(admin_id=admin_id, index_id=index_id, time=time, name=name, phone=phone, status=3,
-                                    content=content, remark=request.GET.get('guestRemark')).id
+                                    content=content, remark=request.POST.get('guestRemark')).id
             guest = {'status': True, 'message': guest_id, 'content': {}}
         except Exception as e:
             guest = {'status': False, 'message': str(e), 'content': {}}
@@ -31,8 +32,8 @@ def insert(request):
 
 
 def detail(request):
-    admin_id = is_uuid(request.session.get('id'))
-    index_id = is_uuid(request.GET.get('index_id'))
+    admin_id = _get_admin_id(request)
+    index_id = is_uuid(request.POST.get('index_id'))
     if admin_id and index_id:
 
         try:
@@ -48,8 +49,8 @@ def detail(request):
 
 
 def delete(request):
-    admin_id = is_uuid(request.session.get('id'))
-    index_id = is_uuid(request.GET.get('index_id'))
+    admin_id = _get_admin_id(request)
+    index_id = is_uuid(request.POST.get('index_id'))
     if admin_id and index_id:
 
         try:
@@ -65,22 +66,22 @@ def delete(request):
 
 
 def update(request):
-    admin_id = is_uuid(request.session.get('id'))
-    index_id = is_uuid(request.GET.get('index_id'))
+    admin_id = _get_admin_id(request)
+    index_id = is_uuid(request.POST.get('index_id'))
     if admin_id and index_id:
 
         try:
             data = guest_update(admin_id=admin_id,
                                 index_id=index_id,
-                                phone=request.GET.get('phone'),
-                                name=request.GET.get('name'),
-                                time=request.GET.get('time'),
-                                sex=request.GET.get('sex'),
-                                age=request.GET.get('age'),
-                                ot=request.GET.get('ot'),
-                                em=request.GET.get('em'),
-                                dfh=request.GET.get('dfh'),
-                                remark=request.GET.get('guestRemark'))
+                                phone=request.POST.get('phone'),
+                                name=request.POST.get('name'),
+                                time=request.POST.get('time'),
+                                sex=request.POST.get('sex'),
+                                age=request.POST.get('age'),
+                                ot=request.POST.get('ot'),
+                                em=request.POST.get('em'),
+                                dfh=request.POST.get('dfh'),
+                                remark=request.POST.get('guestRemark'))
             guest = {'status': True, 'message': '', 'content': data}
         except Exception as e:
             guest = {'status': False, 'message': str(e), 'content': {}}
@@ -88,10 +89,10 @@ def update(request):
         try:
             data = order_update(admin_id=admin_id,
                                 index_id=index_id,
-                                time=request.GET.get('time'),
-                                name=request.GET.get('name'),
-                                phone=request.GET.get('phone'),
-                                remark=request.GET.get('guestRemark'))
+                                time=request.POST.get('time'),
+                                name=request.POST.get('name'),
+                                phone=request.POST.get('phone'),
+                                remark=request.POST.get('guestRemark'))
 
             order = {'status': True, 'message': '', 'content': data}
         except Exception as e:
@@ -100,10 +101,10 @@ def update(request):
         try:
             data = store_update(admin_id=admin_id,
                                 index_id=index_id,
-                                time=request.GET.get('time'),
-                                name=request.GET.get('name'),
-                                phone=request.GET.get('phone'),
-                                remark=request.GET.get('guestRemark'))
+                                time=request.POST.get('time'),
+                                name=request.POST.get('name'),
+                                phone=request.POST.get('phone'),
+                                remark=request.POST.get('guestRemark'))
 
             store = {'status': True, 'message': '', 'content': data}
         except Exception as e:
@@ -112,10 +113,10 @@ def update(request):
         try:
             data = report_update(admin_id=admin_id,
                                  index_id=index_id,
-                                 time=request.GET.get('time'),
-                                 name=request.GET.get('name'),
-                                 phone=request.GET.get('phone'),
-                                 remark=request.GET.get('guestRemark'))
+                                 time=request.POST.get('time'),
+                                 name=request.POST.get('name'),
+                                 phone=request.POST.get('phone'),
+                                 remark=request.POST.get('guestRemark'))
 
             report = {'status': True, 'message': '', 'content': data}
         except Exception as e:
@@ -129,11 +130,11 @@ def update(request):
 
 
 def search_time(request):
-    admin_id = is_uuid(request.session.get('id'))
+    admin_id = _get_admin_id(request)
 
     if admin_id:
         try:
-            data = guest_search_time(admin_id, request.GET.get('timeS'), request.GET.get('timeE'))
+            data = guest_search_time(admin_id, request.POST.get('timeS'), request.POST.get('timeE'))
             content = {'status': True, 'message': admin_id,
                        'content': list(data.values('id', 'name', 'phone', 'time', 'remark'))}
         except Exception as e:
@@ -145,11 +146,11 @@ def search_time(request):
 
 
 def search_data(request):
-    admin_id = is_uuid(request.session.get('id'))
+    admin_id = _get_admin_id(request)
 
     if admin_id:
         try:
-            data = guest_search_data(admin_id, request.GET.get('value'))
+            data = guest_search_data(admin_id, request.POST.get('value'))
             content = {'status': True, 'message': admin_id,
                        'content': list(data.values('id', 'name', 'phone', 'time', 'remark'))}
         except Exception as e:

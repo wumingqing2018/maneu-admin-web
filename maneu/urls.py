@@ -7,9 +7,10 @@ from maneu.views import *
 urlpatterns = [
     path('', index, name='index'),
     path('login/', login, name='login'),
-    path('logout/', logout, name='logout'),
     path('sendsms/', sendsms, name='sendsms'),
-    path('login_api/', login_api, name='login_api'),
+    path('access_token/', access_token, name='access_token'),
+    path('remove_token/', remove_token, name='remove_token'),
+    path('refresh_token/', refresh_token, name='refresh_token'),
     path('maneu_admin/', include('maneu_admin.urls')),
     path('maneu_guest/', include('maneu_guest.urls')),
     path('maneu_index/', include('maneu_index.urls')),

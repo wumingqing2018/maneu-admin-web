@@ -9,23 +9,24 @@ from django.http import JsonResponse
 from common.simple import extract_guest_simple_params
 from common.simple import extract_report_simple_params
 from common.verify import is_uuid
+from common.jwt_util import _get_admin_id
 from maneu_guest.service import *
 from maneu_report.service import *
 
 
 def insert(request):
-    admin_id = is_uuid(request.session.get('id'))
+    admin_id = _get_admin_id(request)
     if admin_id:
 
-        time = request.GET.get('time')
-        name = request.GET.get('name')
-        phone = request.GET.get('phone')
+        time = request.POST.get('time')
+        name = request.POST.get('name')
+        phone = request.POST.get('phone')
         index_id = uuid.uuid4()
 
         try:
             content = extract_guest_simple_params(request)
             guest = guest_insert(admin_id=admin_id, index_id=index_id, time=time, name=name, phone=phone, status=2,
-                                 content=content, remark=request.GET.get('guestRemark')).id
+                                 content=content, remark=request.POST.get('guestRemark')).id
             guest_id = {'status': True, 'message': guest, 'content': {}}
         except Exception as e:
             guest_id = {'status': False, 'message': str(e), 'content': {}}
@@ -33,7 +34,7 @@ def insert(request):
         try:
             content = extract_report_simple_params(request)
             report = report_insert(admin_id=admin_id, index_id=index_id, time=time, name=name, phone=phone, status=2,
-                                   content=content, remark=request.GET.get('reportRemark')).id
+                                   content=content, remark=request.POST.get('reportRemark')).id
             report_id = {'status': True, 'message': report, 'content': {}}
         except Exception as e:
             report_id = {'status': False, 'message': str(e), 'content': {}}
@@ -47,8 +48,8 @@ def insert(request):
 
 
 def detail(request):
-    admin_id = is_uuid(request.session.get('id'))
-    index_id = is_uuid(request.GET.get('index_id'))
+    admin_id = _get_admin_id(request)
+    index_id = is_uuid(request.POST.get('index_id'))
     if admin_id and index_id:
 
         try:
@@ -72,8 +73,8 @@ def detail(request):
 
 
 def delete(request):
-    admin_id = is_uuid(request.session.get('id'))
-    index_id = is_uuid(request.GET.get('index_id'))
+    admin_id = _get_admin_id(request)
+    index_id = is_uuid(request.POST.get('index_id'))
     if admin_id and index_id:
 
         try:
@@ -97,8 +98,8 @@ def delete(request):
 
 
 def update(request):
-    admin_id = is_uuid(request.session.get('id'))
-    index_id = is_uuid(request.GET.get('index_id'))
+    admin_id = _get_admin_id(request)
+    index_id = is_uuid(request.POST.get('index_id'))
     if admin_id and index_id:
 
         try:
@@ -115,11 +116,11 @@ def update(request):
 
 
 def search_time(request):
-    admin_id = is_uuid(request.session.get('id'))
+    admin_id = _get_admin_id(request)
     if admin_id:
 
         try:
-            data = report_search_time(admin_id=admin_id, timeS=request.GET.get('timeS'), timeE=request.GET.get('timeE'))
+            data = report_search_time(admin_id=admin_id, timeS=request.POST.get('timeS'), timeE=request.POST.get('timeE'))
             content = {'status': True, 'message': '',
                        'content': list(data.values('id', 'name', 'phone', 'time', 'remark'))}
         except Exception as e:
@@ -132,11 +133,11 @@ def search_time(request):
 
 
 def search_data(request):
-    admin_id = is_uuid(request.session.get('id'))
+    admin_id = _get_admin_id(request)
     if admin_id:
 
         try:
-            data = report_search_data(admin_id=admin_id, value=request.GET.get('value'))
+            data = report_search_data(admin_id=admin_id, value=request.POST.get('value'))
             content = {'status': True, 'message': '',
                        'content': list(data.values('id', 'name', 'phone', 'time', 'remark'))}
         except Exception as e:
@@ -149,7 +150,7 @@ def search_data(request):
 
 
 def generate_qr_code(request):
-    link = 'https://maneu.online/verify_report/?index_id=' + request.GET.get('index_id')
+    link = 'https://maneu.online/verify_report/?index_id=' + request.POST.get('index_id')
 
     # 创建二维码对象
     qr = qrcode.QRCode(

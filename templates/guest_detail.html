@@ -118,22 +118,6 @@
             api_QRcode: "{% url 'maneu_guest:api_QRcode' %}"
         };
 
-        // 获取 CSRF Token（为后续可能的 POST 请求预留，当前所有更新使用 GET，但保持风格统一）
-        function getCSRFToken() {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, 10) === 'csrftoken=') {
-                        cookieValue = decodeURIComponent(cookie.substring(10));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-
         // 将 "YYYY-MM-DD HH:MM:SS" 或类似格式转换为 datetime-local 可识别的 "YYYY-MM-DDTHH:MM"
         function toDatetimeLocal(value) {
             if (!value) return '';
@@ -214,7 +198,7 @@
 
             currentDetailRequest = $.ajax({
                 url: GUEST_API.api_detail,
-                method: 'GET',
+                method: 'POST',
                 data: { index_id: INDEX_ID },
                 success: function(res) {
                     if (!res?.status) {
@@ -242,7 +226,7 @@
             setSubmitting($btn, true);
             $.ajax({
                 url: url,
-                method: 'GET',
+                method: 'POST',
                 data: data,
                 success: function(res) {
                     setSubmitting($btn, false);
@@ -286,7 +270,7 @@
             setSubmitting($deleteBtn, true);
             $.ajax({
                 url: GUEST_API.api_delete,
-                method: 'GET',
+                method: 'POST',
                 data: { index_id: INDEX_ID },
                 success: function(res) {
                     setSubmitting($deleteBtn, false);
@@ -309,7 +293,7 @@
         function downloadQRCode() {
             $.ajax({
                 url: GUEST_API.api_QRcode,
-                method: 'GET',
+                method: 'POST',
                 data: { index_id: INDEX_ID },
                 xhrFields: { responseType: 'blob' },
                 success: function(blob) {

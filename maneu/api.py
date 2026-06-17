@@ -1,11 +1,9 @@
-from uuid import uuid4
-
 from django.http import JsonResponse
 
 from common import common
-from common.verify import is_call, is_code, is_uuid
+from common.jwt_util import *
+from common.verify import is_call, is_code
 from maneu import service
-from maneu.views import login
 
 
 def sendsms(request):
@@ -16,55 +14,65 @@ def sendsms(request):
         if service.sendsms(call=phone_number, code=code) != 0:
             response = common.sendsms(call=phone_number, code=code)
             if response['Code'] == 'OK':
-                content = {'status': True, 'message': 'OK', 'data': {}}
+                content = {'status': True, 'message': 'OK', 'content': {}}
             else:
-                content = {'status': False, 'message': response["Message"], 'data': {'code': code}}
+                content = {'status': False, 'message': response["Message"], 'content': {'code': code}}
         else:
-            content = {'status': False, 'message': '请输入正确的手机号', 'data': {}}
+            content = {'status': False, 'message': '请先注册账号', 'content': {}}
     else:
-        content = {'status': False, 'message': '请输入正确的手机号', 'data': {}}
+        content = {'status': False, 'message': '请输入正确账号', 'content': {}}
 
     return JsonResponse(content)
 
 
-def login_api(request):
+def access_token(request):
     call = is_call(request.GET.get('call'))
     code = is_code(request.GET.get('code'))
-    mark = str(uuid4())
     if call and code:
-        adminUser = service.admin_login(call=call, code=code, mark=mark)
-        if adminUser != 0:
-            request.session['ip'] = common.getip(request)
-            request.session['mark'] = mark
-            content = {'status': True, 'message': '100000', 'content': {}}
+        admin_user = service.admin_login(call=call, code=code, mark=None)  # 需修改 service.admin_login 去掉 mark 依赖
+        if admin_user:
+            content = {
+                'status': True,
+                'message': '100000',
+                'content': {'access_token': generate_access_token(admin_user), 'refresh_token': generate_refresh_token(admin_user)}
+            }
         else:
-            content = {'status': False, 'message': '100002', 'content': {}}
+            content = {'status': False, 'message': '验证码错误或手机号未注册'}
     else:
-        content = {'status': False, 'message': '100001', 'content': {}}
-    print(content)
-    response = JsonResponse(content)
-    response.set_cookie(key='mark',  # cookie 名称
-                        value=mark,  # cookie 值
-                        max_age=3600,  # 过期时间（秒）
-                        path='/',  # 生效路径
-                        secure=True,  # 仅通过 HTTPS 传输
-                        httponly=True,  # 防止 JavaScript 访问
-                        samesite='Lax'  # 防止 CSRF 攻击
-                        )
-    return response
+        content = {'status': False, 'message': '请填写手机号和验证码'}
+
+    return JsonResponse(content)
 
 
-def logout(request):
-    code = is_uuid(request.session.get('id'))
+def refresh_token(request):
+    """刷新 access token（接收 refresh_token，返回新 access_token）"""
+    token = request.GET.get('refresh_token')
+    if not token:
+        return JsonResponse({'status': False, 'message': '缺少 refresh_token'}, status=401)
+    print(token)
 
-    if code:
+    payload = verify_token(token, expected_type='refresh')
+    if not payload:
+        return JsonResponse({'status': False, 'message': 'refresh_token 无效或已过期'}, status=401)
+    print(payload)
 
-        data = service.admin_logout(code)
-        if data:
-            content = {'status': True, 'message': '', 'data': {}}
-        else:
-            content = {'status': False, 'message': '123', 'data': {}}
-    else:
-        content = {'status': False, 'message': '456', 'data': {}}
+    user = service.admin_find_id(payload['user_id'])
+    if not payload:
+        return JsonResponse({'status': False, 'message': '用户不存在'}, status=401)
+    print(user)
 
-    return login(request)
+    new_access_token = generate_access_token(user)
+    # 如需滚动刷新，可同时生成新的 refresh_token 返回
+    # new_refresh_token = generate_refresh_token(user)
+    return JsonResponse({
+        'status': True,
+        'access_token': new_access_token,
+        # 'refresh_token': new_refresh_token,   # 若启用滚动刷新取消注释
+    })
+
+
+def remove_token(request):
+    """前端清除 token 后跳转登录页，这里只做重定向"""
+    # 因为 JWT 无状态，服务端不需要任何操作
+    content = {'status': True, 'message': 'OK', 'content': {}}
+    return JsonResponse(content)

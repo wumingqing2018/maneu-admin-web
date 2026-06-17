@@ -195,7 +195,7 @@
 
             $.ajax({
                 url: GUEST_INSERT_API,
-                method: 'GET',      // 保持与原代码一致（后端接口为 GET）
+                method: 'POST',
                 data: formData,
                 success: function(res) {
                     setSubmitting($submitBtn, false);

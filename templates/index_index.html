@@ -65,317 +65,522 @@
     <!-- 引入 ECharts -->
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     <script>
-        (function() {
-            // ========== 1. 安全工具函数 ==========
-            /**
-             * 安全获取数组（防止 undefined/null）
-             */
-            function safeArray(data) {
-                return Array.isArray(data) ? data : [];
+        // ========================================================================
+        // 1. 工具函数 & 安全防护
+        // ========================================================================
+
+        /**
+         * 安全获取数组（防止 undefined/null）
+         * @param {*} data - 待检查数据
+         * @returns {Array} 安全的数组
+         */
+        function safeArray(data) {
+            return Array.isArray(data) ? data : [];
+        }
+
+        /**
+         * 安全获取对象（防止 undefined/null）
+         * @param {*} data - 待检查数据
+         * @returns {Object} 安全的对象
+         */
+        function safeObject(data) {
+            return (data && typeof data === 'object') ? data : {};
+        }
+
+        /**
+         * 生成直方图数据（自动分箱，处理边界情况）
+         * @param {number[]} data - 原始数值数组
+         * @param {number} binCount - 箱子数量
+         * @returns {Object} { categories: string[], values: number[] }
+         */
+        function histogramData(data, binCount = 10) {
+            const cleanData = safeArray(data).filter(v => typeof v === 'number' && !isNaN(v));
+            if (cleanData.length === 0) {
+                return { categories: [], values: [] };
             }
-
-            /**
-             * 安全获取对象（防止 undefined/null）
-             */
-            function safeObject(data) {
-                return (data && typeof data === 'object') ? data : {};
+            const min = Math.min(...cleanData);
+            const max = Math.max(...cleanData);
+            // 处理所有值相等的情况
+            if (min === max) {
+                return {
+                    categories: [min.toFixed(1)],
+                    values: [cleanData.length]
+                };
             }
-
-            /**
-             * 生成直方图数据（自动分箱，处理边界情况）
-             * @param {number[]} data - 原始数值数组
-             * @param {number} binCount - 箱子数量
-             * @returns {Object} { categories: string[], values: number[] }
-             */
-            function histogramData(data, binCount = 10) {
-                const cleanData = safeArray(data).filter(v => typeof v === 'number' && !isNaN(v));
-                if (cleanData.length === 0) {
-                    return { categories: [], values: [] };
-                }
-                const min = Math.min(...cleanData);
-                const max = Math.max(...cleanData);
-                // 处理所有值相等的情况
-                if (min === max) {
-                    return {
-                        categories: [min.toFixed(1)],
-                        values: [cleanData.length]
-                    };
-                }
-                const step = (max - min) / binCount;
-                const bins = new Array(binCount).fill(0);
-                const categories = [];
-                for (let i = 0; i < binCount; i++) {
-                    const low = (min + i * step).toFixed(1);
-                    const high = (min + (i + 1) * step).toFixed(1);
-                    categories.push(`${low}~${high}`);
-                }
-                cleanData.forEach(v => {
-                    let idx = Math.floor((v - min) / step);
-                    if (idx >= binCount) idx = binCount - 1;
-                    bins[idx]++;
-                });
-                return { categories, values: bins };
+            const step = (max - min) / binCount;
+            const bins = new Array(binCount).fill(0);
+            const categories = [];
+            for (let i = 0; i < binCount; i++) {
+                const low = (min + i * step).toFixed(1);
+                const high = (min + (i + 1) * step).toFixed(1);
+                categories.push(`${low}~${high}`);
             }
+            cleanData.forEach(v => {
+                let idx = Math.floor((v - min) / step);
+                if (idx >= binCount) idx = binCount - 1;
+                bins[idx]++;
+            });
+            return { categories, values: bins };
+        }
 
-            /**
-             * 初始化 ECharts 图表（透明背景，带空状态）
-             * @param {string} domId - 容器元素 ID
-             * @returns {echarts.ECharts | null}
-             */
-            function initChart(domId) {
-                const el = document.getElementById(domId);
-                if (!el) return null;
-                // 如果已经初始化过，先销毁再创建（避免重复）
-                let existing = echarts.getInstanceByDom(el);
-                if (existing) existing.dispose();
-                return echarts.init(el, null, { backgroundColor: 'transparent' });
-            }
+        /**
+         * 初始化 ECharts 图表（透明背景，自动销毁旧实例）
+         * @param {string} domId - 容器元素 ID
+         * @returns {echarts.ECharts | null}
+         */
+        function initChart(domId) {
+            const el = document.getElementById(domId);
+            if (!el) return null;
+            let existing = echarts.getInstanceByDom(el);
+            if (existing) existing.dispose();
+            return echarts.init(el, null, { backgroundColor: 'transparent' });
+        }
 
-            /**
-             * 显示图表空状态
-             */
-            function showEmptyChart(chartInstance, message = '暂无数据') {
-                if (!chartInstance) return;
-                chartInstance.setOption({
-                    title: {
-                        show: true,
-                        text: message,
-                        left: 'center',
-                        top: 'center',
-                        textStyle: { color: '#94a3b8', fontSize: 14, fontWeight: 'normal' }
-                    },
-                    xAxis: { show: false },
-                    yAxis: { show: false },
-                    series: []
-                });
-            }
+        /**
+         * 显示图表空状态
+         * @param {echarts.ECharts} chartInstance - 图表实例
+         * @param {string} message - 提示信息
+         */
+        function showEmptyChart(chartInstance, message = '暂无数据') {
+            if (!chartInstance) return;
+            chartInstance.setOption({
+                title: {
+                    show: true,
+                    text: message,
+                    left: 'center',
+                    top: 'center',
+                    textStyle: { color: '#94a3b8', fontSize: 14, fontWeight: 'normal' }
+                },
+                xAxis: { show: false },
+                yAxis: { show: false },
+                series: []
+            });
+        }
 
-            // ========== 2. 从 Django 上下文获取数据（带安全处理）==========
-            const odVaCat = safeObject({{ od_va_cat|safe }});
-            const osVaCat = safeObject({{ os_va_cat|safe }});
-            const odSph = safeArray({{ od_sph|safe }});
-            const osSph = safeArray({{ os_sph|safe }});
-            const odCyl = safeArray({{ od_cyl|safe }});
-            const osCyl = safeArray({{ os_cyl|safe }});
-            const odAl = safeArray({{ od_al|safe }});
-            const osAl = safeArray({{ os_al|safe }});
-            const odAk = safeArray({{ od_ak|safe }});
-            const osAk = safeArray({{ os_ak|safe }});
+        // ========================================================================
+        // 2. 全局 AJAX 默认配置（自动携带 JWT Token 和 CSRF）
+        // ========================================================================
 
-            // ========== 3. 裸眼视力分布（左右眼对比柱状图） ==========
-            function drawVaCompareChart() {
-                const chart = initChart('va-chart');
-                if (!chart) return;
 
-                // 合并所有类别并排序（按视力值升序）
-                const allKeys = new Set([...Object.keys(odVaCat), ...Object.keys(osVaCat)]);
-                if (allKeys.size === 0) {
-                    showEmptyChart(chart, '无裸眼视力数据');
-                    return;
-                }
-                const sortedKeys = Array.from(allKeys).sort((a, b) => parseFloat(a) - parseFloat(b));
-                const odValues = sortedKeys.map(k => odVaCat[k] || 0);
-                const osValues = sortedKeys.map(k => osVaCat[k] || 0);
-
-                chart.setOption({
-                    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-                    legend: {
-                        data: ['右眼', '左眼'],
-                        top: 'bottom',
-                        textStyle: { color: '#64748b' }
-                    },
-                    grid: { containLabel: true, left: '8%', right: '5%' },
-                    xAxis: {
-                        type: 'category',
-                        data: sortedKeys,
-                        axisLabel: { color: '#64748b', rotate: sortedKeys.length > 8 ? 45 : 0, interval: 0 }
-                    },
-                    yAxis: {
-                        type: 'value',
-                        name: '人数',
-                        nameTextStyle: { color: '#64748b' }
-                    },
-                    series: [
-                        { name: '右眼', type: 'bar', data: odValues, itemStyle: { color: '#5470C6' }, barGap: '20%' },
-                        { name: '左眼', type: 'bar', data: osValues, itemStyle: { color: '#91cc75' } }
-                    ]
-                });
-            }
-
-            // ========== 4. 眼轴长度分布（直方图对比） ==========
-            function drawAlCompareHistogram() {
-                const chart = initChart('al-chart');
-                if (!chart) return;
-
-                const odHist = histogramData(odAl, 10);
-                const osHist = histogramData(osAl, 10);
-                if (odHist.categories.length === 0 && osHist.categories.length === 0) {
-                    showEmptyChart(chart, '无眼轴长度数据');
-                    return;
-                }
-                // 统一使用右眼的分箱区间（优先），若右眼无数据则用左眼
-                const categories = odHist.categories.length ? odHist.categories : osHist.categories;
-                const odValues = odHist.categories.length ? odHist.values : new Array(categories.length).fill(0);
-                const osValues = osHist.categories.length ? osHist.values : new Array(categories.length).fill(0);
-
-                chart.setOption({
-                    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-                    legend: {
-                        data: ['右眼', '左眼'],
-                        top: 'bottom',
-                        textStyle: { color: '#64748b' }
-                    },
-                    grid: { containLabel: true },
-                    xAxis: {
-                        type: 'category',
-                        data: categories,
-                        axisLabel: { color: '#64748b', rotate: categories.length > 8 ? 45 : 0, interval: 0 }
-                    },
-                    yAxis: {
-                        type: 'value',
-                        name: '人数',
-                        nameTextStyle: { color: '#64748b' }
-                    },
-                    series: [
-                        { name: '右眼', type: 'bar', data: odValues, itemStyle: { color: '#5470C6' } },
-                        { name: '左眼', type: 'bar', data: osValues, itemStyle: { color: '#91cc75' } }
-                    ]
-                });
-            }
-
-            // ========== 5. 球镜度数分布 ==========
-            function drawSphChart() {
-                const chart = initChart('sph-chart');
-                if (!chart) return;
-
-                const odHist = histogramData(odSph, 12);
-                const osHist = histogramData(osSph, 12);
-                if (odHist.categories.length === 0 && osHist.categories.length === 0) {
-                    showEmptyChart(chart, '无球镜度数数据');
-                    return;
-                }
-                const categories = odHist.categories.length ? odHist.categories : osHist.categories;
-                const odValues = odHist.categories.length ? odHist.values : new Array(categories.length).fill(0);
-                const osValues = osHist.categories.length ? osHist.values : new Array(categories.length).fill(0);
-
-                chart.setOption({
-                    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-                    legend: {
-                        data: ['右眼', '左眼'],
-                        textStyle: { color: '#64748b' }
-                    },
-                    grid: { containLabel: true },
-                    xAxis: {
-                        type: 'category',
-                        data: categories,
-                        axisLabel: { color: '#64748b', rotate: categories.length > 8 ? 45 : 0, interval: 0 }
-                    },
-                    yAxis: {
-                        type: 'value',
-                        name: '人数',
-                        nameTextStyle: { color: '#64748b' }
-                    },
-                    series: [
-                        { name: '右眼', type: 'bar', data: odValues, itemStyle: { color: '#5470C6' } },
-                        { name: '左眼', type: 'bar', data: osValues, itemStyle: { color: '#91cc75' } }
-                    ]
-                });
-            }
-
-            // ========== 6. 柱镜度数分布 ==========
-            function drawCylChart() {
-                const chart = initChart('cyl-chart');
-                if (!chart) return;
-
-                const odHist = histogramData(odCyl, 10);
-                const osHist = histogramData(osCyl, 10);
-                if (odHist.categories.length === 0 && osHist.categories.length === 0) {
-                    showEmptyChart(chart, '无柱镜度数数据');
-                    return;
-                }
-                const categories = odHist.categories.length ? odHist.categories : osHist.categories;
-                const odValues = odHist.categories.length ? odHist.values : new Array(categories.length).fill(0);
-                const osValues = osHist.categories.length ? osHist.values : new Array(categories.length).fill(0);
-
-                chart.setOption({
-                    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-                    legend: {
-                        data: ['右眼', '左眼'],
-                        textStyle: { color: '#64748b' }
-                    },
-                    grid: { containLabel: true },
-                    xAxis: {
-                        type: 'category',
-                        data: categories,
-                        axisLabel: { color: '#64748b', rotate: categories.length > 8 ? 45 : 0, interval: 0 }
-                    },
-                    yAxis: {
-                        type: 'value',
-                        name: '人数',
-                        nameTextStyle: { color: '#64748b' }
-                    },
-                    series: [
-                        { name: '右眼', type: 'bar', data: odValues, itemStyle: { color: '#5470C6' } },
-                        { name: '左眼', type: 'bar', data: osValues, itemStyle: { color: '#91cc75' } }
-                    ]
-                });
-            }
-
-            // ========== 7. 角膜曲率散点图 ==========
-            function drawAkScatterChart() {
-                const chart = initChart('ak-scatter-chart');
-                if (!chart) return;
-
-                const pairs = [];
-                const len = Math.min(odAk.length, osAk.length);
-                for (let i = 0; i < len; i++) {
-                    if (typeof odAk[i] === 'number' && typeof osAk[i] === 'number' && !isNaN(odAk[i]) && !isNaN(osAk[i])) {
-                        pairs.push([odAk[i], osAk[i]]);
+        /**
+         * 从 Cookie 中获取 Django CSRF Token（补充工具函数）
+        function getCSRFToken() {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, 10) === 'csrftoken=') {
+                        cookieValue = decodeURIComponent(cookie.substring(10));
+                        break;
                     }
                 }
-                if (pairs.length === 0) {
-                    showEmptyChart(chart, '无角膜曲率数据');
-                    return;
+            }
+            return cookieValue;
+        }
+                 $(document).ready(function() {
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    // 若请求的是刷新接口，跳过添加 Token（避免死循环）
+                    if (settings.url && settings.url.includes('/refresh_token/')) {
+                        return;
+                    }
+                    // 自动添加 JWT Access Token
+                    const token = localStorage.getItem('access_token');
+                    if (token) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+                    }
+                    // 非简单请求（非 GET/HEAD/OPTIONS/TRACE）自动添加 CSRF Token
+                    if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                        const csrfToken = getCSRFToken();
+                        if (csrfToken) {
+                            xhr.setRequestHeader('X-CSRFToken', csrfToken);
+                        }
+                    }
                 }
+            });
+        });
 
-                chart.setOption({
-                    tooltip: {
-                        trigger: 'item',
-                        formatter: params => `右眼: ${params.value[0]} D<br/>左眼: ${params.value[1]} D`
-                    },
-                    xAxis: {
-                        name: '右眼角膜曲率 (D)',
-                        nameTextStyle: { color: '#64748b' },
-                        axisLabel: { color: '#64748b' }
-                    },
-                    yAxis: {
-                        name: '左眼角膜曲率 (D)',
-                        nameTextStyle: { color: '#64748b' },
-                        axisLabel: { color: '#64748b' }
-                    },
-                    series: [{
-                        type: 'scatter',
-                        data: pairs,
-                        symbolSize: 8,
-                        itemStyle: { color: '#5470C6', opacity: 0.7 }
-                    }]
-                });
+                     */
+
+
+        // ========================================================================
+        // 3. API 端点（由 Django 模板反向解析）
+        // ========================================================================
+
+        const STATISTICS_API = "{% url 'maneu_index:api_statistics' %}";
+
+        // ========================================================================
+        // 4. DOM 缓存 & 状态容器
+        // ========================================================================
+
+        // 图表容器 ID 列表
+        const CHART_IDS = ['va-chart', 'al-chart', 'sph-chart', 'cyl-chart', 'ak-scatter-chart'];
+
+        // 用于显示全局加载/错误状态（可在页面中预留一个统一提示区域，这里直接在各图表中显示）
+        // 如果需要统一提示，可以添加一个容器，但为了简便，我们使用图表自身的空状态
+
+        // 请求取消控制器
+        let currentRequest = null;
+
+        // ========================================================================
+        // 5. UI 状态函数（针对图表容器）
+        // ========================================================================
+
+        /** 显示所有图表为“加载中”状态 */
+        function showAllChartsLoading() {
+            CHART_IDS.forEach(id => {
+                const chart = initChart(id);
+                if (chart) {
+                    chart.setOption({
+                        title: {
+                            show: true,
+                            text: '加载中...',
+                            left: 'center',
+                            top: 'center',
+                            textStyle: { color: '#94a3b8', fontSize: 14 }
+                        },
+                        series: []
+                    });
+                }
+            });
+        }
+
+        /** 显示所有图表为错误状态 */
+        function showAllChartsError(message = '数据加载失败，请稍后重试') {
+            CHART_IDS.forEach(id => {
+                const chart = initChart(id);
+                if (chart) {
+                    showEmptyChart(chart, message);
+                }
+            });
+        }
+
+        /** 显示所有图表为空状态（无数据） */
+        function showAllChartsEmpty() {
+            CHART_IDS.forEach(id => {
+                const chart = initChart(id);
+                if (chart) {
+                    showEmptyChart(chart, '暂无统计数据');
+                }
+            });
+        }
+
+        // ========================================================================
+        // 6. 图表绘制函数（接收数据参数）
+        // ========================================================================
+
+        /**
+         * 绘制裸眼视力分布柱状图
+         */
+        function drawVaCompareChart(odVaCat, osVaCat) {
+            const chart = initChart('va-chart');
+            if (!chart) return;
+
+            const allKeys = new Set([...Object.keys(odVaCat), ...Object.keys(osVaCat)]);
+            if (allKeys.size === 0) {
+                showEmptyChart(chart, '无裸眼视力数据');
+                return;
+            }
+            const sortedKeys = Array.from(allKeys).sort((a, b) => parseFloat(a) - parseFloat(b));
+            const odValues = sortedKeys.map(k => odVaCat[k] || 0);
+            const osValues = sortedKeys.map(k => osVaCat[k] || 0);
+
+            chart.setOption({
+                tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+                legend: {
+                    data: ['右眼', '左眼'],
+                    top: 'bottom',
+                    textStyle: { color: '#64748b' }
+                },
+                grid: { containLabel: true, left: '8%', right: '5%' },
+                xAxis: {
+                    type: 'category',
+                    data: sortedKeys,
+                    axisLabel: { color: '#64748b', rotate: sortedKeys.length > 8 ? 45 : 0, interval: 0 }
+                },
+                yAxis: {
+                    type: 'value',
+                    name: '人数',
+                    nameTextStyle: { color: '#64748b' }
+                },
+                series: [
+                    { name: '右眼', type: 'bar', data: odValues, itemStyle: { color: '#5470C6' }, barGap: '20%' },
+                    { name: '左眼', type: 'bar', data: osValues, itemStyle: { color: '#91cc75' } }
+                ]
+            });
+        }
+
+        /**
+         * 绘制眼轴长度分布直方图
+         */
+        function drawAlCompareHistogram(odAl, osAl) {
+            const chart = initChart('al-chart');
+            if (!chart) return;
+
+            const odHist = histogramData(odAl, 10);
+            const osHist = histogramData(osAl, 10);
+            if (odHist.categories.length === 0 && osHist.categories.length === 0) {
+                showEmptyChart(chart, '无眼轴长度数据');
+                return;
+            }
+            const categories = odHist.categories.length ? odHist.categories : osHist.categories;
+            const odValues = odHist.categories.length ? odHist.values : new Array(categories.length).fill(0);
+            const osValues = osHist.categories.length ? osHist.values : new Array(categories.length).fill(0);
+
+            chart.setOption({
+                tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+                legend: {
+                    data: ['右眼', '左眼'],
+                    top: 'bottom',
+                    textStyle: { color: '#64748b' }
+                },
+                grid: { containLabel: true },
+                xAxis: {
+                    type: 'category',
+                    data: categories,
+                    axisLabel: { color: '#64748b', rotate: categories.length > 8 ? 45 : 0, interval: 0 }
+                },
+                yAxis: {
+                    type: 'value',
+                    name: '人数',
+                    nameTextStyle: { color: '#64748b' }
+                },
+                series: [
+                    { name: '右眼', type: 'bar', data: odValues, itemStyle: { color: '#5470C6' } },
+                    { name: '左眼', type: 'bar', data: osValues, itemStyle: { color: '#91cc75' } }
+                ]
+            });
+        }
+
+        /**
+         * 绘制球镜度数分布直方图
+         */
+        function drawSphChart(odSph, osSph) {
+            const chart = initChart('sph-chart');
+            if (!chart) return;
+
+            const odHist = histogramData(odSph, 12);
+            const osHist = histogramData(osSph, 12);
+            if (odHist.categories.length === 0 && osHist.categories.length === 0) {
+                showEmptyChart(chart, '无球镜度数数据');
+                return;
+            }
+            const categories = odHist.categories.length ? odHist.categories : osHist.categories;
+            const odValues = odHist.categories.length ? odHist.values : new Array(categories.length).fill(0);
+            const osValues = osHist.categories.length ? osHist.values : new Array(categories.length).fill(0);
+
+            chart.setOption({
+                tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+                legend: {
+                    data: ['右眼', '左眼'],
+                    textStyle: { color: '#64748b' }
+                },
+                grid: { containLabel: true },
+                xAxis: {
+                    type: 'category',
+                    data: categories,
+                    axisLabel: { color: '#64748b', rotate: categories.length > 8 ? 45 : 0, interval: 0 }
+                },
+                yAxis: {
+                    type: 'value',
+                    name: '人数',
+                    nameTextStyle: { color: '#64748b' }
+                },
+                series: [
+                    { name: '右眼', type: 'bar', data: odValues, itemStyle: { color: '#5470C6' } },
+                    { name: '左眼', type: 'bar', data: osValues, itemStyle: { color: '#91cc75' } }
+                ]
+            });
+        }
+
+        /**
+         * 绘制柱镜度数分布直方图
+         */
+        function drawCylChart(odCyl, osCyl) {
+            const chart = initChart('cyl-chart');
+            if (!chart) return;
+
+            const odHist = histogramData(odCyl, 10);
+            const osHist = histogramData(osCyl, 10);
+            if (odHist.categories.length === 0 && osHist.categories.length === 0) {
+                showEmptyChart(chart, '无柱镜度数数据');
+                return;
+            }
+            const categories = odHist.categories.length ? odHist.categories : osHist.categories;
+            const odValues = odHist.categories.length ? odHist.values : new Array(categories.length).fill(0);
+            const osValues = osHist.categories.length ? osHist.values : new Array(categories.length).fill(0);
+
+            chart.setOption({
+                tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+                legend: {
+                    data: ['右眼', '左眼'],
+                    textStyle: { color: '#64748b' }
+                },
+                grid: { containLabel: true },
+                xAxis: {
+                    type: 'category',
+                    data: categories,
+                    axisLabel: { color: '#64748b', rotate: categories.length > 8 ? 45 : 0, interval: 0 }
+                },
+                yAxis: {
+                    type: 'value',
+                    name: '人数',
+                    nameTextStyle: { color: '#64748b' }
+                },
+                series: [
+                    { name: '右眼', type: 'bar', data: odValues, itemStyle: { color: '#5470C6' } },
+                    { name: '左眼', type: 'bar', data: osValues, itemStyle: { color: '#91cc75' } }
+                ]
+            });
+        }
+
+        /**
+         * 绘制角膜曲率散点图
+         */
+        function drawAkScatterChart(odAk, osAk) {
+            const chart = initChart('ak-scatter-chart');
+            if (!chart) return;
+
+            const pairs = [];
+            const len = Math.min(odAk.length, osAk.length);
+            for (let i = 0; i < len; i++) {
+                if (typeof odAk[i] === 'number' && typeof osAk[i] === 'number' && !isNaN(odAk[i]) && !isNaN(osAk[i])) {
+                    pairs.push([odAk[i], osAk[i]]);
+                }
+            }
+            if (pairs.length === 0) {
+                showEmptyChart(chart, '无角膜曲率数据');
+                return;
             }
 
-            // ========== 8. 执行所有图表绘制 ==========
-            drawVaCompareChart();
-            drawAlCompareHistogram();
-            drawSphChart();
-            drawCylChart();
-            drawAkScatterChart();
+            chart.setOption({
+                tooltip: {
+                    trigger: 'item',
+                    formatter: params => `右眼: ${params.value[0]} D<br/>左眼: ${params.value[1]} D`
+                },
+                xAxis: {
+                    name: '右眼角膜曲率 (D)',
+                    nameTextStyle: { color: '#64748b' },
+                    axisLabel: { color: '#64748b' }
+                },
+                yAxis: {
+                    name: '左眼角膜曲率 (D)',
+                    nameTextStyle: { color: '#64748b' },
+                    axisLabel: { color: '#64748b' }
+                },
+                series: [{
+                    type: 'scatter',
+                    data: pairs,
+                    symbolSize: 8,
+                    itemStyle: { color: '#5470C6', opacity: 0.7 }
+                }]
+            });
+        }
 
-            // ========== 9. 响应式缩放（防抖处理） ==========
+        // ========================================================================
+        // 7. 数据加载核心函数
+        // ========================================================================
+
+        /**
+         * 从后端获取统计数据并绘制图表
+         */
+        function fetchStatistics() {
+            // 取消前一个未完成的请求
+            if (currentRequest && currentRequest.readyState !== 4) {
+                currentRequest.abort();
+            }
+
+            // 显示加载状态
+            showAllChartsLoading();
+
+            currentRequest = $.ajax({
+                url: STATISTICS_API,
+                method: 'POST',
+                success: function(res) {
+                    if (res.status === true && res.data) {
+                        const data = res.data;
+                        // 安全解析各个字段（后端返回的 JSON 字符串，需 parse）
+                        let odVaCat = {};
+                        let osVaCat = {};
+                        let odSph = [];
+                        let osSph = [];
+                        let odCyl = [];
+                        let osCyl = [];
+                        let odAl = [];
+                        let osAl = [];
+                        let odAk = [];
+                        let osAk = [];
+
+                        try {
+                            if (data.od_va_cat) odVaCat = JSON.parse(data.od_va_cat);
+                            if (data.os_va_cat) osVaCat = JSON.parse(data.os_va_cat);
+                            if (data.od_sph) odSph = JSON.parse(data.od_sph);
+                            if (data.os_sph) osSph = JSON.parse(data.os_sph);
+                            if (data.od_cyl) odCyl = JSON.parse(data.od_cyl);
+                            if (data.os_cyl) osCyl = JSON.parse(data.os_cyl);
+                            if (data.od_al) odAl = JSON.parse(data.od_al);
+                            if (data.os_al) osAl = JSON.parse(data.os_al);
+                            if (data.od_ak) odAk = JSON.parse(data.od_ak);
+                            if (data.os_ak) osAk = JSON.parse(data.os_ak);
+                        } catch (e) {
+                            console.error('解析统计数据失败:', e);
+                            showAllChartsError('数据格式错误');
+                            return;
+                        }
+
+                        // 确保是安全的数组/对象
+                        odVaCat = safeObject(odVaCat);
+                        osVaCat = safeObject(osVaCat);
+                        odSph = safeArray(odSph);
+                        osSph = safeArray(osSph);
+                        odCyl = safeArray(odCyl);
+                        osCyl = safeArray(osCyl);
+                        odAl = safeArray(odAl);
+                        osAl = safeArray(osAl);
+                        odAk = safeArray(odAk);
+                        osAk = safeArray(osAk);
+
+                        // 绘制所有图表
+                        drawVaCompareChart(odVaCat, osVaCat);
+                        drawAlCompareHistogram(odAl, osAl);
+                        drawSphChart(odSph, osSph);
+                        drawCylChart(odCyl, osCyl);
+                        drawAkScatterChart(odAk, osAk);
+                    } else {
+                        // 接口返回失败状态
+                        const errMsg = res.message || '数据加载失败';
+                        showAllChartsError(errMsg);
+                    }
+                },
+                error: function(xhr, status) {
+                    if (status === 'abort') return;
+                    console.error('统计接口请求失败:', xhr.status, xhr.statusText);
+                    showAllChartsError('网络错误，请刷新重试');
+                }
+            });
+        }
+
+        // ========================================================================
+        // 8. 页面初始化 & 事件绑定
+        // ========================================================================
+
+        $(function() {
+            // 确保 ECharts 已加载
+            if (typeof echarts === 'undefined') {
+                console.error('ECharts 未加载，请检查网络或 CDN 地址');
+                return;
+            }
+
+            // 加载统计数据
+            fetchStatistics();
+
+            // 响应式缩放（防抖）
             let resizeTimer;
             window.addEventListener('resize', function() {
                 if (resizeTimer) clearTimeout(resizeTimer);
                 resizeTimer = setTimeout(function() {
-                    const chartIds = ['va-chart', 'al-chart', 'sph-chart', 'cyl-chart', 'ak-scatter-chart'];
-                    chartIds.forEach(id => {
+                    CHART_IDS.forEach(id => {
                         const dom = document.getElementById(id);
                         if (dom) {
                             const instance = echarts.getInstanceByDom(dom);
@@ -384,6 +589,6 @@
                     });
                 }, 150);
             });
-        })();
+        });
     </script>
 {% endblock %}

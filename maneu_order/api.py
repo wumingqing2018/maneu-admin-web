@@ -9,6 +9,7 @@ from django.http import JsonResponse
 
 from common.simple import filter_store_request_data, extract_report_simple_params, extract_guest_simple_params
 from common.verify import is_uuid
+from common.jwt_util import _get_admin_id
 from maneu_guest.service import *
 from maneu_order.service import *
 from maneu_report.service import *
@@ -16,16 +17,16 @@ from maneu_store.service import store_insert, store_delete
 
 
 def insert(request):
-    time = request.GET.get('time')
-    name = request.GET.get('name')
-    phone = request.GET.get('phone')
-    remark = request.GET.get('remark')
+    time = request.POST.get('time')
+    name = request.POST.get('name')
+    phone = request.POST.get('phone')
+    remark = request.POST.get('remark')
     index_id = uuid.uuid4()
-    admin_id = is_uuid(request.session.get('id'))
+    admin_id = _get_admin_id(request)
 
     if admin_id:
         try:
-            content = filter_store_request_data(request.GET.get('content'))
+            content = filter_store_request_data(request.POST.get('content'))
             data = order_insert(admin_id=admin_id, index_id=index_id, status=3, time=time, name=name, phone=phone,
                                 remark=remark, content=content).id
             order = {'status': True, 'message': '', 'content': data}
@@ -49,7 +50,7 @@ def insert(request):
             guest = {'status': False, 'message': str(e), 'content': {}}
 
         try:
-            content = filter_store_request_data(request.GET.get('content'))
+            content = filter_store_request_data(request.POST.get('content'))
             data = store_insert(admin_id=admin_id, index_id=index_id, status=3, time=time, name=name, phone=phone,
                                 remark=remark, content=content).id
             store = {'status': True, 'message': '', 'content': data}
@@ -65,8 +66,8 @@ def insert(request):
 
 
 def detail(request):
-    admin_id = is_uuid(request.session.get('id'))
-    index_id = is_uuid(request.GET.get('index_id'))
+    admin_id = _get_admin_id(request)
+    index_id = is_uuid(request.POST.get('index_id'))
     if admin_id and index_id:
         try:
             order = order_detail(admin_id=admin_id, index_id=index_id)
@@ -105,8 +106,8 @@ def detail(request):
 
 
 def delete(request):
-    admin_id = is_uuid(request.session.get('id'))
-    index_id = is_uuid(request.GET.get('index_id'))
+    admin_id = _get_admin_id(request)
+    index_id = is_uuid(request.POST.get('index_id'))
     if admin_id and index_id:
         try:
             content = order_delete(admin_id=admin_id, index_id=index_id)
@@ -141,13 +142,13 @@ def delete(request):
 
 
 def update(request):
-    admin_id = is_uuid(request.session.get('id'))
-    index_id = is_uuid(request.GET.get('index_id'))
+    admin_id = _get_admin_id(request)
+    index_id = is_uuid(request.POST.get('index_id'))
     if admin_id and index_id:
 
         try:
-            remark = request.GET.get('orderRemark')
-            content = filter_store_request_data(request.GET.get('content'))
+            remark = request.POST.get('orderRemark')
+            content = filter_store_request_data(request.POST.get('content'))
             data = order_update_data(admin_id=admin_id, index_id=index_id, content=content, remark=remark)
             content = {'status': True, 'message': '', 'content': data}
         except Exception as e:
@@ -160,11 +161,11 @@ def update(request):
 
 
 def search_time(request):
-    admin_id = is_uuid(request.session.get('id'))
+    admin_id = _get_admin_id(request)
     if admin_id:
 
         try:
-            data = order_search_time(admin_id=admin_id, timeS=request.GET.get('timeS'), timeE=request.GET.get('timeE'))
+            data = order_search_time(admin_id=admin_id, timeS=request.POST.get('timeS'), timeE=request.POST.get('timeE'))
             content = {'status': True, 'message': '',
                        'content': list(data.values('id', 'name', 'phone', 'time', 'remark'))}
         except Exception as e:
@@ -177,11 +178,11 @@ def search_time(request):
 
 
 def search_data(request):
-    admin_id = is_uuid(request.session.get('id'))
+    admin_id = _get_admin_id(request)
     if admin_id:
 
         try:
-            data = order_search_data(admin_id=admin_id, value=request.GET.get('value'))
+            data = order_search_data(admin_id=admin_id, value=request.POST.get('value'))
             content = {'status': True, 'message': '',
                        'content': list(data.values('id', 'name', 'phone', 'time', 'remark'))}
         except Exception as e:
@@ -194,7 +195,7 @@ def search_data(request):
 
 
 def generate_qr_code(request):
-    link = 'https://maneu.online/verify_order/?index_id=' + request.GET.get('index_id')
+    link = 'https://maneu.online/verify_order/?index_id=' + request.POST.get('index_id')
 
     # 创建二维码对象
     qr = qrcode.QRCode(

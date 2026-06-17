@@ -659,7 +659,7 @@
 
             currentDetailRequest = $.ajax({
                 url: REPORT_DETAIL_URL,
-                method: 'GET',
+                method: 'POST',
                 data: { index_id: INDEX_ID },
                 success: function(res) {
                     if (!res?.status) {
@@ -690,7 +690,7 @@
             setSubmitting($btn, true);
             $.ajax({
                 url: url,
-                method: 'GET',
+                method: 'POST',
                 data: data,
                 success: function(res) {
                     setSubmitting($btn, false);
@@ -757,7 +757,7 @@
             setSubmitting($deleteBtn, true);
             $.ajax({
                 url: REPORT_DELETE_URL,
-                method: 'GET',
+                method: 'POST',
                 data: { index_id: INDEX_ID },
                 success: function(res) {
                     setSubmitting($deleteBtn, false);
@@ -779,7 +779,7 @@
         function downloadQRCode() {
             $.ajax({
                 url: REPORT_QRCODE_URL,
-                method: 'GET',
+                method: 'POST',
                 data: { index_id: INDEX_ID },
                 xhrFields: { responseType: 'blob' },
                 success: function(blob) {
