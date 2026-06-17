@@ -111,7 +111,7 @@ function getCSRFToken() {
 }
 
 // ===== 5. 登出 =====
-$("#logoutBtn").click(function() {
+$(".logoutBtn").click(function() {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     window.location.href = '/';

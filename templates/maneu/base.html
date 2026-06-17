@@ -97,7 +97,7 @@
                         <i class="bi bi-pencil-square"></i> 修改资料
                     </a>
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item-custom text-danger" href="{% url 'remove_token' %}">
+                    <a class="dropdown-item-custom text-danger logoutBtn">
                         <i class="bi bi-box-arrow-right"></i> 退出登录
                     </a>
                 </div>
@@ -159,7 +159,7 @@
     <a class="nav-link-mobile" href="{% url 'maneu_admin:index' %}" onclick="closeMobileMenu()">
         <i class="bi bi-pencil-square"></i> 修改资料
     </a>
-    <a class="nav-link-mobile" href="{% url 'remove_token' %}" onclick="closeMobileMenu()"
+    <a class="nav-link-mobile logoutBtn"  onclick="closeMobileMenu()"
        style="color:#dc2626;">
         <i class="bi bi-box-arrow-right"></i> 退出登录
     </a>
