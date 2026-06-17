@@ -87,7 +87,8 @@ def sendsms(code, call):
 
 
 def get_random_code():
-    return random.randint(100000, 999999)
+    code = random.randint(100000, 999999)
+    return str(code)
 
 
 def time_start():

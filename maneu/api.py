@@ -30,6 +30,7 @@ def access_token(request):
     code = is_code(request.GET.get('code'))
     if call and code:
         admin_user = service.admin_login(call=call, code=code)  # 需修改 service.admin_login 去掉 mark 依赖
+        print(admin_user)
         if admin_user:
             content = {
                 'status': True,
