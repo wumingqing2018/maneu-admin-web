@@ -33,7 +33,9 @@ def access_token(request):
         print(admin_user)
         if admin_user:
             a_token = generate_access_token(admin_user)
+            print(a_token)
             r_token = generate_refresh_token(admin_user)
+            print(r_token)
             content = {
                 'status': True,
                 'message': '100000',
