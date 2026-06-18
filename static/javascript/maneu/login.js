@@ -26,7 +26,7 @@ $(document).ready(function () {
 
         $.ajax({
             url: sendsms,
-            method: 'GET',
+            method: 'POST',
             data: {call: phone},
             success: function (res) {
                 if (res.status === true) {
@@ -62,9 +62,10 @@ $(document).ready(function () {
 
         $.ajax({
             url: login_verify,
-            method: 'GET',
+            method: 'POST',
             data: {call: phone, code: code},
             success: function (res) {
+                console.log(res)
                 if (res.status === true) {
                     window.location.href = maneu_index_index;
                 } else {

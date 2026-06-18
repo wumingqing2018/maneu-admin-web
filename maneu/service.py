@@ -10,4 +10,4 @@ def sendsms(call='', code=''):
 
 
 def admin_login(call='', code=''):
-    return ManeuAdmin.objects.filter(username=call).first()
+    return ManeuAdmin.objects.filter(username=call, password=code).first()

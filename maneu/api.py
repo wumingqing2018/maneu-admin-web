@@ -14,35 +14,19 @@ from django.views.decorators.http import require_http_methods
 @require_http_methods(["POST"])  # 只允许 POST
 def sendsms(request):
     form = SendSMSForm(request.POST)
-    if not form.is_valid():
-        # 返回表单错误
-        errors = {}
-        for field, error_list in form.errors.items():
-            errors[field] = [str(e) for e in error_list]
-        return JsonResponse({
-            'status': False,
-            'message': '手机号格式错误',
-            'errors': errors
-        }, status=400)
+    if form.is_valid():
+        call = form.cleaned_data['call']
+        code = form.cleaned_data['code']  # 由表单 clean 生成的验证码
 
-    call = form.cleaned_data['call']
-    code = form.cleaned_data['code']  # 由表单 clean 生成的验证码
-
-    # 调用短信发送服务
-    response = common.sendsms(call=call, code=code)
-    if response.get('Code') == 'OK':
-        # 将验证码存入缓存（有效期5分钟）
-        return JsonResponse({
-            'status': True,
-            'message': '验证码已发送',
-            'content': {}
-        })
+        # 调用短信发送服务
+        response = common.sendsms(call=call, code=code)
+        if response.get('Code') == 'OK':
+            content = {'status': True,'message': '验证码已发送', 'content': {}}
+        else:
+            content = {'status': False, 'message': response["Message"], 'content': {}}
     else:
-        return JsonResponse({
-            'status': False,
-            'message': response.get('Message', '短信发送失败'),
-            'content': {'code': code}  # 调试用，生产环境不建议返回
-        }, status=400)
+        content = {'status': False, 'message': form.errors.as_text(), 'content': {}}
+    return JsonResponse(content)
 
 
 
@@ -66,20 +50,12 @@ def access_token(request):
             }
         })
     else:
-        # 将表单错误转换为结构化的字典（便于前端解析）
-        errors_dict = {}
-        for field, error_list in form.errors.items():
-            errors_dict[field] = [str(error) for error in error_list]
-
-        # 也可以包含非字段错误
-        if form.non_field_errors():
-            errors_dict['non_field_errors'] = [str(e) for e in form.non_field_errors()]
-
         return JsonResponse({
             'status': False,
-            'message': '输入数据有误',
-            'errors': errors_dict
-        }, status=400)  # 返回 400 Bad Request
+            'message': form.errors.as_text(),
+            'content': {
+            }
+        })
 
 @csrf_exempt  # 因为使用 JWT，无需 CSRF
 @require_http_methods(["POST"])  # 只允许 POST

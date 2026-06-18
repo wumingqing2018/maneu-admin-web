@@ -176,7 +176,7 @@
 
             $.ajax({
                 url: sendsmsUrl,
-                method: 'GET',
+                method: 'POST',
                 data: { call: phone },
                 success: function (res) {
                     if (res.status === true) {
@@ -218,7 +218,7 @@
 
             $.ajax({
                 url: loginApiUrl,
-                method: 'GET',
+                method: 'POST',
                 data: { call: phone, code: code },
                 success: function (res) {
                     if (res.status === true) {
