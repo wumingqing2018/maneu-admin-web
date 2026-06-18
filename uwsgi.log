@@ -1,0 +1,1170 @@
+*** Starting uWSGI 2.0.28 (64bit) on [Wed Jun 17 15:38:15 2026] ***
+compiled with version: 9.4.0 on 16 November 2024 15:10:03
+os: Linux-5.4.0-198-generic #218-Ubuntu SMP Fri Sep 27 20:18:53 UTC 2024
+nodename: iZwz9fl1octu157i3y0yhzZ
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /root/maneu-admin
+writing pidfile to /root/maneu-admin/uwsgi.pid
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+chdir() to /root/maneu-admin
+your processes number limit is 7158
+your memory page size is 4096 bytes
+detected max file descriptor number: 65535
+lock engine: pthread robust mutexes
+thunder lock: enabled
+uwsgi socket 0 bound to TCP address 127.0.0.1:8002 fd 3
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+Python version: 3.8.10 (default, Sep 11 2024, 16:02:53)  [GCC 9.4.0]
+Python main interpreter initialized at 0x55e82b72a310
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 486672 bytes (475 KB) for 5 cores
+*** Operational MODE: preforking ***
+WSGI app 0 (mountpoint='') ready in 1 seconds on interpreter 0x55e82b72a310 pid: 675477 (default app)
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 675477)
+spawned uWSGI worker 1 (pid: 675479, cores: 1)
+spawned uWSGI worker 2 (pid: 675480, cores: 1)
+spawned uWSGI worker 3 (pid: 675481, cores: 1)
+spawned uWSGI worker 4 (pid: 675482, cores: 1)
+spawned uWSGI worker 5 (pid: 675483, cores: 1)
+ManeuAdmin object (794ecfda-44d2-11ed-818f-00163e02ac92)
+[pid: 675479|app: 0|req: 1/1] 14.19.0.154 () {62 vars in 1138 bytes} [Wed Jun 17 15:38:19 2026] GET /access_token/?call=13640651582&code=646595 => generated 145 bytes in 407 msecs (HTTP/1.1 500) 5 headers in 154 bytes (1 switches on core 0)
+[pid: 675480|app: 0|req: 1/2] 216.73.216.143 () {36 vars in 534 bytes} [Wed Jun 17 15:38:50 2026] GET /robots.txt => generated 179 bytes in 509 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675481|app: 0|req: 1/3] 216.73.216.143 () {36 vars in 514 bytes} [Wed Jun 17 15:38:51 2026] GET / => generated 2266 bytes in 497 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+ManeuAdmin object (794ecfda-44d2-11ed-818f-00163e02ac92)
+[pid: 675482|app: 0|req: 1/4] 14.19.0.154 () {62 vars in 1138 bytes} [Wed Jun 17 15:39:14 2026] GET /access_token/?call=13640651582&code=646595 => generated 145 bytes in 420 msecs (HTTP/1.1 500) 5 headers in 154 bytes (1 switches on core 0)
+ManeuAdmin object (794ecfda-44d2-11ed-818f-00163e02ac92)
+[pid: 675483|app: 0|req: 1/5] 14.19.0.154 () {62 vars in 1138 bytes} [Wed Jun 17 15:41:08 2026] GET /access_token/?call=13640651582&code=646595 => generated 145 bytes in 434 msecs (HTTP/1.1 500) 5 headers in 154 bytes (1 switches on core 0)
+SIGINT/SIGTERM received...killing workers...
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+worker 3 buried after 1 seconds
+worker 4 buried after 1 seconds
+worker 5 buried after 1 seconds
+goodbye to uWSGI.
+VACUUM: pidfile removed.
+*** Starting uWSGI 2.0.28 (64bit) on [Wed Jun 17 15:41:44 2026] ***
+compiled with version: 9.4.0 on 16 November 2024 15:10:03
+os: Linux-5.4.0-198-generic #218-Ubuntu SMP Fri Sep 27 20:18:53 UTC 2024
+nodename: iZwz9fl1octu157i3y0yhzZ
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /root/maneu-admin
+writing pidfile to /root/maneu-admin/uwsgi.pid
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+chdir() to /root/maneu-admin
+your processes number limit is 7158
+your memory page size is 4096 bytes
+detected max file descriptor number: 65535
+lock engine: pthread robust mutexes
+thunder lock: enabled
+uwsgi socket 0 bound to TCP address 127.0.0.1:8002 fd 3
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+Python version: 3.8.10 (default, Sep 11 2024, 16:02:53)  [GCC 9.4.0]
+Python main interpreter initialized at 0x56430e96a310
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 486672 bytes (475 KB) for 5 cores
+*** Operational MODE: preforking ***
+WSGI app 0 (mountpoint='') ready in 1 seconds on interpreter 0x56430e96a310 pid: 675512 (default app)
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 675512)
+spawned uWSGI worker 1 (pid: 675514, cores: 1)
+spawned uWSGI worker 2 (pid: 675515, cores: 1)
+spawned uWSGI worker 3 (pid: 675516, cores: 1)
+spawned uWSGI worker 4 (pid: 675517, cores: 1)
+spawned uWSGI worker 5 (pid: 675518, cores: 1)
+[pid: 675514|app: 0|req: 1/1] 14.19.0.154 () {62 vars in 1138 bytes} [Wed Jun 17 15:41:48 2026] GET /access_token/?call=13640651582&code=646595 => generated 92 bytes in 359 msecs (HTTP/1.1 200) 4 headers in 127 bytes (1 switches on core 0)
+[pid: 675515|app: 0|req: 1/2] 14.19.0.154 () {58 vars in 1189 bytes} [Wed Jun 17 15:41:51 2026] GET /access_token/?call=13640651582&code=646595 => generated 92 bytes in 406 msecs (HTTP/1.1 200) 4 headers in 127 bytes (1 switches on core 0)
+[pid: 675517|app: 0|req: 1/3] 14.19.0.154 () {62 vars in 1104 bytes} [Wed Jun 17 15:41:57 2026] GET /sendsms/?call=13640651582 => generated 48 bytes in 716 msecs (HTTP/1.1 200) 4 headers in 127 bytes (1 switches on core 0)
+[pid: 675518|app: 0|req: 1/4] 14.19.0.154 () {64 vars in 1221 bytes} [Wed Jun 17 15:42:36 2026] GET /login/ => generated 9850 bytes in 392 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+Forbidden (CSRF token missing or incorrect.): /access_token/
+[pid: 675516|app: 0|req: 1/5] 14.19.0.154 () {68 vars in 1267 bytes} [Wed Jun 17 15:42:43 2026] POST /access_token/ => generated 2508 bytes in 390 msecs (HTTP/1.1 403) 4 headers in 129 bytes (1 switches on core 0)
+SIGINT/SIGTERM received...killing workers...
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+worker 3 buried after 1 seconds
+worker 4 buried after 1 seconds
+worker 5 buried after 1 seconds
+goodbye to uWSGI.
+VACUUM: pidfile removed.
+*** Starting uWSGI 2.0.28 (64bit) on [Wed Jun 17 15:44:36 2026] ***
+compiled with version: 9.4.0 on 16 November 2024 15:10:03
+os: Linux-5.4.0-198-generic #218-Ubuntu SMP Fri Sep 27 20:18:53 UTC 2024
+nodename: iZwz9fl1octu157i3y0yhzZ
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /root/maneu-admin
+writing pidfile to /root/maneu-admin/uwsgi.pid
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+chdir() to /root/maneu-admin
+your processes number limit is 7158
+your memory page size is 4096 bytes
+detected max file descriptor number: 65535
+lock engine: pthread robust mutexes
+thunder lock: enabled
+uwsgi socket 0 bound to TCP address 127.0.0.1:8002 fd 3
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+Python version: 3.8.10 (default, Sep 11 2024, 16:02:53)  [GCC 9.4.0]
+Python main interpreter initialized at 0x55aabbe34310
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 486672 bytes (475 KB) for 5 cores
+*** Operational MODE: preforking ***
+WSGI app 0 (mountpoint='') ready in 0 seconds on interpreter 0x55aabbe34310 pid: 675542 (default app)
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 675542)
+spawned uWSGI worker 1 (pid: 675544, cores: 1)
+spawned uWSGI worker 2 (pid: 675545, cores: 1)
+spawned uWSGI worker 3 (pid: 675546, cores: 1)
+spawned uWSGI worker 4 (pid: 675547, cores: 1)
+spawned uWSGI worker 5 (pid: 675548, cores: 1)
+Forbidden (CSRF token missing or incorrect.): /access_token/
+[pid: 675544|app: 0|req: 1/1] 14.19.0.154 () {68 vars in 1267 bytes} [Wed Jun 17 15:44:40 2026] POST /access_token/ => generated 2508 bytes in 343 msecs (HTTP/1.1 403) 4 headers in 129 bytes (1 switches on core 0)
+[pid: 675545|app: 0|req: 1/2] 14.19.0.154 () {64 vars in 1221 bytes} [Wed Jun 17 15:45:19 2026] GET /login/ => generated 9849 bytes in 399 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675546|app: 0|req: 1/3] 14.19.0.154 () {62 vars in 1104 bytes} [Wed Jun 17 15:45:23 2026] GET /sendsms/?call=13640651582 => generated 48 bytes in 770 msecs (HTTP/1.1 200) 4 headers in 127 bytes (1 switches on core 0)
+ManeuAdmin object (794ecfda-44d2-11ed-818f-00163e02ac92)
+Internal Server Error: /access_token/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/exception.py", line 34, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/maneu-admin/./maneu/api.py", line 45, in access_token
+    return JsonResponse(content)
+  File "/usr/local/lib/python3.8/dist-packages/django/http/response.py", line 587, in __init__
+    data = json.dumps(data, cls=encoder, **json_dumps_params)
+  File "/usr/lib/python3.8/json/__init__.py", line 234, in dumps
+    return cls(
+  File "/usr/lib/python3.8/json/encoder.py", line 199, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/usr/lib/python3.8/json/encoder.py", line 257, in iterencode
+    return _iterencode(o, 0)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/serializers/json.py", line 104, in default
+    return super().default(o)
+  File "/usr/lib/python3.8/json/encoder.py", line 179, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type bytes is not JSON serializable
+[pid: 675547|app: 0|req: 1/4] 14.19.0.154 () {62 vars in 1138 bytes} [Wed Jun 17 15:45:38 2026] GET /access_token/?call=13640651582&code=919721 => generated 13477 bytes in 435 msecs (HTTP/1.1 500) 5 headers in 172 bytes (1 switches on core 0)
+ManeuAdmin object (794ecfda-44d2-11ed-818f-00163e02ac92)
+Internal Server Error: /access_token/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/exception.py", line 34, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/maneu-admin/./maneu/api.py", line 45, in access_token
+    return JsonResponse(content)
+  File "/usr/local/lib/python3.8/dist-packages/django/http/response.py", line 587, in __init__
+    data = json.dumps(data, cls=encoder, **json_dumps_params)
+  File "/usr/lib/python3.8/json/__init__.py", line 234, in dumps
+    return cls(
+  File "/usr/lib/python3.8/json/encoder.py", line 199, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/usr/lib/python3.8/json/encoder.py", line 257, in iterencode
+    return _iterencode(o, 0)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/serializers/json.py", line 104, in default
+    return super().default(o)
+  File "/usr/lib/python3.8/json/encoder.py", line 179, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type bytes is not JSON serializable
+[pid: 675548|app: 0|req: 1/5] 14.19.0.154 () {58 vars in 1189 bytes} [Wed Jun 17 15:45:43 2026] GET /access_token/?call=13640651582&code=919721 => generated 96145 bytes in 435 msecs (HTTP/1.1 500) 5 headers in 156 bytes (1 switches on core 0)
+SIGINT/SIGTERM received...killing workers...
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+worker 3 buried after 1 seconds
+worker 4 buried after 1 seconds
+worker 5 buried after 1 seconds
+goodbye to uWSGI.
+VACUUM: pidfile removed.
+*** Starting uWSGI 2.0.28 (64bit) on [Wed Jun 17 15:48:10 2026] ***
+compiled with version: 9.4.0 on 16 November 2024 15:10:03
+os: Linux-5.4.0-198-generic #218-Ubuntu SMP Fri Sep 27 20:18:53 UTC 2024
+nodename: iZwz9fl1octu157i3y0yhzZ
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /root/maneu-admin
+writing pidfile to /root/maneu-admin/uwsgi.pid
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+chdir() to /root/maneu-admin
+your processes number limit is 7158
+your memory page size is 4096 bytes
+detected max file descriptor number: 65535
+lock engine: pthread robust mutexes
+thunder lock: enabled
+uwsgi socket 0 bound to TCP address 127.0.0.1:8002 fd 3
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+Python version: 3.8.10 (default, Sep 11 2024, 16:02:53)  [GCC 9.4.0]
+Python main interpreter initialized at 0x55928f386310
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 486672 bytes (475 KB) for 5 cores
+*** Operational MODE: preforking ***
+WSGI app 0 (mountpoint='') ready in 1 seconds on interpreter 0x55928f386310 pid: 675576 (default app)
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 675576)
+spawned uWSGI worker 1 (pid: 675578, cores: 1)
+spawned uWSGI worker 2 (pid: 675579, cores: 1)
+spawned uWSGI worker 3 (pid: 675580, cores: 1)
+spawned uWSGI worker 4 (pid: 675581, cores: 1)
+spawned uWSGI worker 5 (pid: 675582, cores: 1)
+Internal Server Error: /access_token/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/exception.py", line 34, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/maneu-admin/./maneu/api.py", line 46, in access_token
+    return JsonResponse(content)
+  File "/usr/local/lib/python3.8/dist-packages/django/http/response.py", line 587, in __init__
+    data = json.dumps(data, cls=encoder, **json_dumps_params)
+  File "/usr/lib/python3.8/json/__init__.py", line 234, in dumps
+    return cls(
+  File "/usr/lib/python3.8/json/encoder.py", line 199, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/usr/lib/python3.8/json/encoder.py", line 257, in iterencode
+    return _iterencode(o, 0)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/serializers/json.py", line 104, in default
+    return super().default(o)
+  File "/usr/lib/python3.8/json/encoder.py", line 179, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type bytes is not JSON serializable
+[pid: 675578|app: 0|req: 1/1] 14.19.0.154 () {60 vars in 1220 bytes} [Wed Jun 17 15:48:12 2026] GET /access_token/?call=13640651582&code=919721 => generated 97060 bytes in 441 msecs (HTTP/1.1 500) 5 headers in 156 bytes (1 switches on core 0)
+Internal Server Error: /access_token/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/exception.py", line 34, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/maneu-admin/./maneu/api.py", line 46, in access_token
+    return JsonResponse(content)
+  File "/usr/local/lib/python3.8/dist-packages/django/http/response.py", line 587, in __init__
+    data = json.dumps(data, cls=encoder, **json_dumps_params)
+  File "/usr/lib/python3.8/json/__init__.py", line 234, in dumps
+    return cls(
+  File "/usr/lib/python3.8/json/encoder.py", line 199, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/usr/lib/python3.8/json/encoder.py", line 257, in iterencode
+    return _iterencode(o, 0)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/serializers/json.py", line 104, in default
+    return super().default(o)
+  File "/usr/lib/python3.8/json/encoder.py", line 179, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type bytes is not JSON serializable
+[pid: 675579|app: 0|req: 1/2] 14.19.0.154 () {60 vars in 1220 bytes} [Wed Jun 17 15:48:15 2026] GET /access_token/?call=13640651582&code=919721 => generated 97060 bytes in 476 msecs (HTTP/1.1 500) 5 headers in 156 bytes (1 switches on core 0)
+Internal Server Error: /access_token/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/exception.py", line 34, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/maneu-admin/./maneu/api.py", line 46, in access_token
+    return JsonResponse(content)
+  File "/usr/local/lib/python3.8/dist-packages/django/http/response.py", line 587, in __init__
+    data = json.dumps(data, cls=encoder, **json_dumps_params)
+  File "/usr/lib/python3.8/json/__init__.py", line 234, in dumps
+    return cls(
+  File "/usr/lib/python3.8/json/encoder.py", line 199, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/usr/lib/python3.8/json/encoder.py", line 257, in iterencode
+    return _iterencode(o, 0)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/serializers/json.py", line 104, in default
+    return super().default(o)
+  File "/usr/lib/python3.8/json/encoder.py", line 179, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type bytes is not JSON serializable
+[pid: 675580|app: 0|req: 1/3] 14.19.0.154 () {62 vars in 1138 bytes} [Wed Jun 17 15:48:18 2026] GET /access_token/?call=13640651582&code=919721 => generated 13477 bytes in 395 msecs (HTTP/1.1 500) 5 headers in 172 bytes (1 switches on core 0)
+Internal Server Error: /access_token/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/exception.py", line 34, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/maneu-admin/./maneu/api.py", line 46, in access_token
+    return JsonResponse(content)
+  File "/usr/local/lib/python3.8/dist-packages/django/http/response.py", line 587, in __init__
+    data = json.dumps(data, cls=encoder, **json_dumps_params)
+  File "/usr/lib/python3.8/json/__init__.py", line 234, in dumps
+    return cls(
+  File "/usr/lib/python3.8/json/encoder.py", line 199, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/usr/lib/python3.8/json/encoder.py", line 257, in iterencode
+    return _iterencode(o, 0)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/serializers/json.py", line 104, in default
+    return super().default(o)
+  File "/usr/lib/python3.8/json/encoder.py", line 179, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type bytes is not JSON serializable
+[pid: 675581|app: 0|req: 1/4] 14.19.0.154 () {58 vars in 1189 bytes} [Wed Jun 17 15:48:22 2026] GET /access_token/?call=13640651582&code=919721 => generated 96923 bytes in 499 msecs (HTTP/1.1 500) 5 headers in 156 bytes (1 switches on core 0)
+[pid: 675582|app: 0|req: 1/5] 14.19.0.154 () {64 vars in 1221 bytes} [Wed Jun 17 15:48:47 2026] GET /login/ => generated 9849 bytes in 404 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675578|app: 0|req: 2/6] 14.19.0.154 () {60 vars in 1144 bytes} [Wed Jun 17 15:48:50 2026] GET / => generated 2266 bytes in 40 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675579|app: 0|req: 2/7] 14.19.0.154 () {60 vars in 1168 bytes} [Wed Jun 17 15:48:52 2026] GET /login/ => generated 9849 bytes in 14 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675580|app: 0|req: 2/8] 14.19.0.154 () {58 vars in 1051 bytes} [Wed Jun 17 15:48:54 2026] GET /sendsms/?call=13640651582 => generated 48 bytes in 435 msecs (HTTP/1.1 200) 4 headers in 127 bytes (1 switches on core 0)
+Internal Server Error: /access_token/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/exception.py", line 34, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/maneu-admin/./maneu/api.py", line 46, in access_token
+    return JsonResponse(content)
+  File "/usr/local/lib/python3.8/dist-packages/django/http/response.py", line 587, in __init__
+    data = json.dumps(data, cls=encoder, **json_dumps_params)
+  File "/usr/lib/python3.8/json/__init__.py", line 234, in dumps
+    return cls(
+  File "/usr/lib/python3.8/json/encoder.py", line 199, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/usr/lib/python3.8/json/encoder.py", line 257, in iterencode
+    return _iterencode(o, 0)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/serializers/json.py", line 104, in default
+    return super().default(o)
+  File "/usr/lib/python3.8/json/encoder.py", line 179, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type bytes is not JSON serializable
+[pid: 675581|app: 0|req: 2/9] 14.19.0.154 () {58 vars in 1085 bytes} [Wed Jun 17 15:49:11 2026] GET /access_token/?call=13640651582&code=817993 => generated 13420 bytes in 17 msecs (HTTP/1.1 500) 5 headers in 172 bytes (1 switches on core 0)
+[pid: 675582|app: 0|req: 2/10] 14.19.0.154 () {58 vars in 1118 bytes} [Wed Jun 17 15:49:32 2026] GET /login/ => generated 9849 bytes in 2 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+Internal Server Error: /access_token/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/exception.py", line 34, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/maneu-admin/./maneu/api.py", line 33, in access_token
+    a_token = generate_access_token(admin_user)
+  File "/root/maneu-admin/./common/jwt_util.py", line 16, in generate_access_token
+    'user_id': str(user.id),
+AttributeError: 'NoneType' object has no attribute 'id'
+[pid: 675578|app: 0|req: 3/11] 14.19.0.154 () {58 vars in 1189 bytes} [Wed Jun 17 15:49:35 2026] GET /access_token/?call=13640651582&code=919721 => generated 66205 bytes in 40 msecs (HTTP/1.1 500) 5 headers in 156 bytes (1 switches on core 0)
+Internal Server Error: /access_token/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/exception.py", line 34, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/maneu-admin/./maneu/api.py", line 33, in access_token
+    a_token = generate_access_token(admin_user)
+  File "/root/maneu-admin/./common/jwt_util.py", line 16, in generate_access_token
+    'user_id': str(user.id),
+AttributeError: 'NoneType' object has no attribute 'id'
+[pid: 675579|app: 0|req: 3/12] 14.19.0.154 () {58 vars in 1189 bytes} [Wed Jun 17 15:50:03 2026] GET /access_token/?call=13640651582&code=919721 => generated 66205 bytes in 45 msecs (HTTP/1.1 500) 5 headers in 156 bytes (1 switches on core 0)
+Internal Server Error: /access_token/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/exception.py", line 34, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/maneu-admin/./maneu/api.py", line 33, in access_token
+    a_token = generate_access_token(admin_user)
+  File "/root/maneu-admin/./common/jwt_util.py", line 16, in generate_access_token
+    'user_id': str(user.id),
+AttributeError: 'NoneType' object has no attribute 'id'
+[pid: 675580|app: 0|req: 3/13] 14.19.0.154 () {60 vars in 1220 bytes} [Wed Jun 17 15:50:10 2026] GET /access_token/?call=13640651582&code=646595 => generated 66342 bytes in 43 msecs (HTTP/1.1 500) 5 headers in 156 bytes (1 switches on core 0)
+[pid: 675581|app: 0|req: 3/14] 14.19.0.154 () {58 vars in 1106 bytes} [Wed Jun 17 15:50:15 2026] GET / => generated 2266 bytes in 15 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675582|app: 0|req: 3/15] 14.19.0.154 () {58 vars in 1106 bytes} [Wed Jun 17 15:50:22 2026] GET / => generated 2266 bytes in 3 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675578|app: 0|req: 4/16] 14.19.0.154 () {56 vars in 1017 bytes} [Wed Jun 17 15:50:29 2026] GET / => generated 2266 bytes in 2 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675579|app: 0|req: 4/17] 14.19.0.154 () {60 vars in 1144 bytes} [Wed Jun 17 15:50:38 2026] GET / => generated 2266 bytes in 2 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675580|app: 0|req: 4/18] 14.19.0.154 () {58 vars in 1106 bytes} [Wed Jun 17 15:50:38 2026] GET / => generated 2266 bytes in 16 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675581|app: 0|req: 4/19] 14.19.0.154 () {58 vars in 1048 bytes} [Wed Jun 17 15:51:01 2026] GET / => generated 2266 bytes in 3 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675582|app: 0|req: 4/20] 14.19.0.154 () {58 vars in 1048 bytes} [Wed Jun 17 15:51:03 2026] GET / => generated 2266 bytes in 2 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675578|app: 0|req: 5/21] 14.19.0.154 () {58 vars in 1048 bytes} [Wed Jun 17 15:51:03 2026] GET / => generated 2266 bytes in 3 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675579|app: 0|req: 5/22] 14.19.0.154 () {58 vars in 1055 bytes} [Wed Jun 17 15:51:13 2026] GET / => generated 2266 bytes in 2 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675580|app: 0|req: 5/23] 14.19.0.154 () {58 vars in 1079 bytes} [Wed Jun 17 15:51:15 2026] GET /login/ => generated 9849 bytes in 5 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675581|app: 0|req: 5/24] 14.19.0.154 () {56 vars in 962 bytes} [Wed Jun 17 15:51:20 2026] GET /sendsms/?call=13640651582 => generated 114 bytes in 210 msecs (HTTP/1.1 200) 4 headers in 128 bytes (1 switches on core 0)
+Internal Server Error: /access_token/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/exception.py", line 34, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/maneu-admin/./maneu/api.py", line 33, in access_token
+    a_token = generate_access_token(admin_user)
+  File "/root/maneu-admin/./common/jwt_util.py", line 16, in generate_access_token
+    'user_id': str(user.id),
+AttributeError: 'NoneType' object has no attribute 'id'
+[pid: 675582|app: 0|req: 5/25] 14.19.0.154 () {56 vars in 996 bytes} [Wed Jun 17 15:51:29 2026] GET /access_token/?call=13640651582&code=817993 => generated 12600 bytes in 47 msecs (HTTP/1.1 500) 5 headers in 172 bytes (1 switches on core 0)
+Internal Server Error: /access_token/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/exception.py", line 34, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/maneu-admin/./maneu/api.py", line 33, in access_token
+    a_token = generate_access_token(admin_user)
+  File "/root/maneu-admin/./common/jwt_util.py", line 16, in generate_access_token
+    'user_id': str(user.id),
+AttributeError: 'NoneType' object has no attribute 'id'
+[pid: 675578|app: 0|req: 6/26] 14.19.0.154 () {56 vars in 996 bytes} [Wed Jun 17 15:51:31 2026] GET /access_token/?call=13640651582&code=817993 => generated 12600 bytes in 14 msecs (HTTP/1.1 500) 5 headers in 172 bytes (1 switches on core 0)
+Internal Server Error: /access_token/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/exception.py", line 34, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/maneu-admin/./maneu/api.py", line 33, in access_token
+    a_token = generate_access_token(admin_user)
+  File "/root/maneu-admin/./common/jwt_util.py", line 16, in generate_access_token
+    'user_id': str(user.id),
+AttributeError: 'NoneType' object has no attribute 'id'
+[pid: 675579|app: 0|req: 6/27] 14.19.0.154 () {56 vars in 996 bytes} [Wed Jun 17 15:51:31 2026] GET /access_token/?call=13640651582&code=817993 => generated 12600 bytes in 15 msecs (HTTP/1.1 500) 5 headers in 172 bytes (1 switches on core 0)
+Internal Server Error: /access_token/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/exception.py", line 34, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/maneu-admin/./maneu/api.py", line 33, in access_token
+    a_token = generate_access_token(admin_user)
+  File "/root/maneu-admin/./common/jwt_util.py", line 16, in generate_access_token
+    'user_id': str(user.id),
+AttributeError: 'NoneType' object has no attribute 'id'
+[pid: 675580|app: 0|req: 6/28] 14.19.0.154 () {56 vars in 996 bytes} [Wed Jun 17 15:52:36 2026] GET /access_token/?call=13640651582&code=817993 => generated 12600 bytes in 19 msecs (HTTP/1.1 500) 5 headers in 172 bytes (1 switches on core 0)
+[pid: 675581|app: 0|req: 6/29] 14.19.0.154 () {56 vars in 962 bytes} [Wed Jun 17 15:53:07 2026] GET /sendsms/?call=13640651582 => generated 114 bytes in 213 msecs (HTTP/1.1 200) 4 headers in 128 bytes (1 switches on core 0)
+Internal Server Error: /access_token/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/exception.py", line 34, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/maneu-admin/./maneu/api.py", line 33, in access_token
+    a_token = generate_access_token(admin_user)
+  File "/root/maneu-admin/./common/jwt_util.py", line 16, in generate_access_token
+    'user_id': str(user.id),
+AttributeError: 'NoneType' object has no attribute 'id'
+[pid: 675582|app: 0|req: 6/30] 14.19.0.154 () {56 vars in 996 bytes} [Wed Jun 17 15:55:14 2026] GET /access_token/?call=13640651582&code=817993 => generated 12600 bytes in 14 msecs (HTTP/1.1 500) 5 headers in 172 bytes (1 switches on core 0)
+Internal Server Error: /access_token/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/exception.py", line 34, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/maneu-admin/./maneu/api.py", line 33, in access_token
+    a_token = generate_access_token(admin_user)
+  File "/root/maneu-admin/./common/jwt_util.py", line 16, in generate_access_token
+    'user_id': str(user.id),
+AttributeError: 'NoneType' object has no attribute 'id'
+[pid: 675578|app: 0|req: 7/31] 14.19.0.154 () {56 vars in 996 bytes} [Wed Jun 17 15:55:15 2026] GET /access_token/?call=13640651582&code=817993 => generated 12600 bytes in 16 msecs (HTTP/1.1 500) 5 headers in 172 bytes (1 switches on core 0)
+[pid: 675579|app: 0|req: 7/32] 103.196.9.195 () {42 vars in 786 bytes} [Wed Jun 17 15:55:52 2026] GET / => generated 2266 bytes in 2 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675580|app: 0|req: 7/33] 103.196.9.212 () {42 vars in 796 bytes} [Wed Jun 17 15:55:54 2026] GET / => generated 2266 bytes in 2 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675581|app: 0|req: 7/34] 103.196.9.195 () {42 vars in 802 bytes} [Wed Jun 17 15:56:01 2026] GET / => generated 2266 bytes in 3 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675582|app: 0|req: 7/35] 103.196.9.195 () {42 vars in 814 bytes} [Wed Jun 17 15:56:02 2026] GET /login/ => generated 9849 bytes in 4 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675578|app: 0|req: 8/36] 103.196.9.195 () {42 vars in 802 bytes} [Wed Jun 17 15:56:04 2026] GET / => generated 2266 bytes in 3 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+Internal Server Error: /access_token/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/exception.py", line 34, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/maneu-admin/./maneu/api.py", line 33, in access_token
+    a_token = generate_access_token(admin_user)
+  File "/root/maneu-admin/./common/jwt_util.py", line 16, in generate_access_token
+    'user_id': str(user.id),
+AttributeError: 'NoneType' object has no attribute 'id'
+[pid: 675579|app: 0|req: 8/37] 14.19.0.154 () {56 vars in 996 bytes} [Wed Jun 17 16:00:38 2026] GET /access_token/?call=13640651582&code=817993 => generated 12600 bytes in 26 msecs (HTTP/1.1 500) 5 headers in 172 bytes (1 switches on core 0)
+Internal Server Error: /access_token/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/exception.py", line 34, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/maneu-admin/./maneu/api.py", line 33, in access_token
+    a_token = generate_access_token(admin_user)
+  File "/root/maneu-admin/./common/jwt_util.py", line 16, in generate_access_token
+    'user_id': str(user.id),
+AttributeError: 'NoneType' object has no attribute 'id'
+[pid: 675580|app: 0|req: 8/38] 14.19.0.154 () {56 vars in 996 bytes} [Wed Jun 17 16:01:08 2026] GET /access_token/?call=13640651582&code=817993 => generated 12600 bytes in 23 msecs (HTTP/1.1 500) 5 headers in 172 bytes (1 switches on core 0)
+Internal Server Error: /access_token/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/exception.py", line 34, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/maneu-admin/./maneu/api.py", line 33, in access_token
+    print(admin_user)
+  File "/root/maneu-admin/./common/jwt_util.py", line 16, in generate_access_token
+    'user_id': str(user.id),
+AttributeError: 'NoneType' object has no attribute 'id'
+[pid: 675581|app: 0|req: 8/39] 14.19.0.154 () {56 vars in 996 bytes} [Wed Jun 17 16:03:05 2026] GET /access_token/?call=13640651582&code=817993 => generated 12574 bytes in 17 msecs (HTTP/1.1 500) 5 headers in 172 bytes (1 switches on core 0)
+SIGINT/SIGTERM received...killing workers...
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+worker 3 buried after 1 seconds
+worker 4 buried after 1 seconds
+worker 5 buried after 1 seconds
+goodbye to uWSGI.
+VACUUM: pidfile removed.
+*** Starting uWSGI 2.0.28 (64bit) on [Wed Jun 17 16:03:12 2026] ***
+compiled with version: 9.4.0 on 16 November 2024 15:10:03
+os: Linux-5.4.0-198-generic #218-Ubuntu SMP Fri Sep 27 20:18:53 UTC 2024
+nodename: iZwz9fl1octu157i3y0yhzZ
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /root/maneu-admin
+writing pidfile to /root/maneu-admin/uwsgi.pid
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+chdir() to /root/maneu-admin
+your processes number limit is 7158
+your memory page size is 4096 bytes
+detected max file descriptor number: 65535
+lock engine: pthread robust mutexes
+thunder lock: enabled
+uwsgi socket 0 bound to TCP address 127.0.0.1:8002 fd 3
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+Python version: 3.8.10 (default, Sep 11 2024, 16:02:53)  [GCC 9.4.0]
+Python main interpreter initialized at 0x55df91bbc310
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 486672 bytes (475 KB) for 5 cores
+*** Operational MODE: preforking ***
+WSGI app 0 (mountpoint='') ready in 1 seconds on interpreter 0x55df91bbc310 pid: 675673 (default app)
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 675673)
+spawned uWSGI worker 1 (pid: 675675, cores: 1)
+spawned uWSGI worker 2 (pid: 675676, cores: 1)
+spawned uWSGI worker 3 (pid: 675677, cores: 1)
+spawned uWSGI worker 4 (pid: 675678, cores: 1)
+spawned uWSGI worker 5 (pid: 675679, cores: 1)
+None
+[pid: 675675|app: 0|req: 1/1] 14.19.0.154 () {56 vars in 996 bytes} [Wed Jun 17 16:03:14 2026] GET /access_token/?call=13640651582&code=817993 => generated 104 bytes in 443 msecs (HTTP/1.1 200) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675676|app: 0|req: 1/2] 14.19.0.154 () {56 vars in 962 bytes} [Wed Jun 17 16:03:17 2026] GET /sendsms/?call=13640651582 => generated 48 bytes in 788 msecs (HTTP/1.1 200) 4 headers in 127 bytes (1 switches on core 0)
+ManeuAdmin object (794ecfda-44d2-11ed-818f-00163e02ac92)
+b'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiNzk0ZWNmZGEtNDRkMi0xMWVkLTgxOGYtMDAxNjNlMDJhYzkyIiwidHlwZSI6ImFjY2VzcyIsImV4cCI6MTc4MTY4NzAxMywiaWF0IjoxNzgxNjgzNDEzfQ.k3H17DzMDzdkf_id-EbDn6XfYk_gNvGfHlmx2x_UW7o'
+b'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiNzk0ZWNmZGEtNDRkMi0xMWVkLTgxOGYtMDAxNjNlMDJhYzkyIiwidHlwZSI6InJlZnJlc2giLCJleHAiOjE3ODIyODgyMTMsImlhdCI6MTc4MTY4MzQxM30.EiqvmnjTUTF_F0A8f6YsMqUuMI4TS4zYuNqMpUseRjY'
+Internal Server Error: /access_token/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/exception.py", line 34, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/maneu-admin/./maneu/api.py", line 49, in access_token
+    return JsonResponse(content)
+  File "/usr/local/lib/python3.8/dist-packages/django/http/response.py", line 587, in __init__
+    data = json.dumps(data, cls=encoder, **json_dumps_params)
+  File "/usr/lib/python3.8/json/__init__.py", line 234, in dumps
+    return cls(
+  File "/usr/lib/python3.8/json/encoder.py", line 199, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/usr/lib/python3.8/json/encoder.py", line 257, in iterencode
+    return _iterencode(o, 0)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/serializers/json.py", line 104, in default
+    return super().default(o)
+  File "/usr/lib/python3.8/json/encoder.py", line 179, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type bytes is not JSON serializable
+[pid: 675677|app: 0|req: 1/3] 14.19.0.154 () {56 vars in 996 bytes} [Wed Jun 17 16:03:32 2026] GET /access_token/?call=13640651582&code=472477 => generated 13184 bytes in 474 msecs (HTTP/1.1 500) 5 headers in 172 bytes (1 switches on core 0)
+ManeuAdmin object (794ecfda-44d2-11ed-818f-00163e02ac92)
+b'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiNzk0ZWNmZGEtNDRkMi0xMWVkLTgxOGYtMDAxNjNlMDJhYzkyIiwidHlwZSI6ImFjY2VzcyIsImV4cCI6MTc4MTY4NzEzMSwiaWF0IjoxNzgxNjgzNTMxfQ.1R9IWFohEfCIEdlzZzxs859jATdJyDTzMcgBcR1UQmo'
+b'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiNzk0ZWNmZGEtNDRkMi0xMWVkLTgxOGYtMDAxNjNlMDJhYzkyIiwidHlwZSI6InJlZnJlc2giLCJleHAiOjE3ODIyODgzMzEsImlhdCI6MTc4MTY4MzUzMX0.zVy4aqnIysRUmP2YchFEbypHv4vcxkhKrps32uUwBXM'
+Internal Server Error: /access_token/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/exception.py", line 34, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/maneu-admin/./maneu/api.py", line 49, in access_token
+    return JsonResponse(content)
+  File "/usr/local/lib/python3.8/dist-packages/django/http/response.py", line 587, in __init__
+    data = json.dumps(data, cls=encoder, **json_dumps_params)
+  File "/usr/lib/python3.8/json/__init__.py", line 234, in dumps
+    return cls(
+  File "/usr/lib/python3.8/json/encoder.py", line 199, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/usr/lib/python3.8/json/encoder.py", line 257, in iterencode
+    return _iterencode(o, 0)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/serializers/json.py", line 104, in default
+    return super().default(o)
+  File "/usr/lib/python3.8/json/encoder.py", line 179, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type bytes is not JSON serializable
+[pid: 675678|app: 0|req: 1/4] 14.19.0.154 () {56 vars in 996 bytes} [Wed Jun 17 16:05:30 2026] GET /access_token/?call=13640651582&code=472477 => generated 13184 bytes in 586 msecs (HTTP/1.1 500) 5 headers in 172 bytes (1 switches on core 0)
+ManeuAdmin object (794ecfda-44d2-11ed-818f-00163e02ac92)
+b'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiNzk0ZWNmZGEtNDRkMi0xMWVkLTgxOGYtMDAxNjNlMDJhYzkyIiwidHlwZSI6ImFjY2VzcyIsImV4cCI6MTc4MTY4NzM1NywiaWF0IjoxNzgxNjgzNzU3fQ.SNWHoOZITP7hbgvjY5tvQ91JSgdGQUOTphutGo3cO9s'
+b'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiNzk0ZWNmZGEtNDRkMi0xMWVkLTgxOGYtMDAxNjNlMDJhYzkyIiwidHlwZSI6InJlZnJlc2giLCJleHAiOjE3ODIyODg1NTcsImlhdCI6MTc4MTY4Mzc1N30.DgfixxDfRIIc9HpktHTqsI2l3JG7R-p4BWy3k7PDExA'
+Internal Server Error: /access_token/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/exception.py", line 34, in inner
+    response = get_response(request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 115, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/handlers/base.py", line 113, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/maneu-admin/./maneu/api.py", line 49, in access_token
+    return JsonResponse(content)
+  File "/usr/local/lib/python3.8/dist-packages/django/http/response.py", line 587, in __init__
+    data = json.dumps(data, cls=encoder, **json_dumps_params)
+  File "/usr/lib/python3.8/json/__init__.py", line 234, in dumps
+    return cls(
+  File "/usr/lib/python3.8/json/encoder.py", line 199, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/usr/lib/python3.8/json/encoder.py", line 257, in iterencode
+    return _iterencode(o, 0)
+  File "/usr/local/lib/python3.8/dist-packages/django/core/serializers/json.py", line 104, in default
+    return super().default(o)
+  File "/usr/lib/python3.8/json/encoder.py", line 179, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type bytes is not JSON serializable
+[pid: 675679|app: 0|req: 1/5] 14.19.0.154 () {56 vars in 1100 bytes} [Wed Jun 17 16:09:16 2026] GET /access_token/?call=13640651582&code=472477 => generated 96192 bytes in 576 msecs (HTTP/1.1 500) 5 headers in 156 bytes (1 switches on core 0)
+Not Found: /favicon.ico
+[pid: 675675|app: 0|req: 2/6] 14.19.0.154 () {54 vars in 996 bytes} [Wed Jun 17 16:09:17 2026] GET /favicon.ico => generated 3418 bytes in 9 msecs (HTTP/1.1 404) 4 headers in 129 bytes (1 switches on core 0)
+[pid: 675676|app: 0|req: 2/7] 51.254.49.98 () {38 vars in 562 bytes} [Wed Jun 17 16:13:43 2026] GET / => generated 2266 bytes in 30 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+SIGINT/SIGTERM received...killing workers...
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+worker 3 buried after 1 seconds
+worker 4 buried after 1 seconds
+worker 5 buried after 1 seconds
+goodbye to uWSGI.
+VACUUM: pidfile removed.
+*** Starting uWSGI 2.0.28 (64bit) on [Wed Jun 17 16:21:35 2026] ***
+compiled with version: 9.4.0 on 16 November 2024 15:10:03
+os: Linux-5.4.0-198-generic #218-Ubuntu SMP Fri Sep 27 20:18:53 UTC 2024
+nodename: iZwz9fl1octu157i3y0yhzZ
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /root/maneu-admin
+writing pidfile to /root/maneu-admin/uwsgi.pid
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+chdir() to /root/maneu-admin
+your processes number limit is 7158
+your memory page size is 4096 bytes
+detected max file descriptor number: 65535
+lock engine: pthread robust mutexes
+thunder lock: enabled
+uwsgi socket 0 bound to TCP address 127.0.0.1:8002 fd 3
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+Python version: 3.8.10 (default, Sep 11 2024, 16:02:53)  [GCC 9.4.0]
+Python main interpreter initialized at 0x563bbd273310
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 486672 bytes (475 KB) for 5 cores
+*** Operational MODE: preforking ***
+WSGI app 0 (mountpoint='') ready in 1 seconds on interpreter 0x563bbd273310 pid: 675862 (default app)
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 675862)
+spawned uWSGI worker 1 (pid: 675864, cores: 1)
+spawned uWSGI worker 2 (pid: 675865, cores: 1)
+spawned uWSGI worker 3 (pid: 675866, cores: 1)
+spawned uWSGI worker 4 (pid: 675867, cores: 1)
+spawned uWSGI worker 5 (pid: 675868, cores: 1)
+ManeuAdmin object (794ecfda-44d2-11ed-818f-00163e02ac92)
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNzk0ZWNmZGEtNDRkMi0xMWVkLTgxOGYtMDAxNjNlMDJhYzkyIiwidHlwZSI6ImFjY2VzcyIsImV4cCI6MTc4MTY4ODA5OCwiaWF0IjoxNzgxNjg0NDk4fQ.bpg7TrC_sjsAl5b1NNa1Ux9AFM2Cx55HYv-d9GM8Tvw
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNzk0ZWNmZGEtNDRkMi0xMWVkLTgxOGYtMDAxNjNlMDJhYzkyIiwidHlwZSI6InJlZnJlc2giLCJleHAiOjE3ODIyODkyOTgsImlhdCI6MTc4MTY4NDQ5OH0.6_0y4-2n87xJoglxBIBRbkP6378fTrGX949XEbmioOU
+[pid: 675864|app: 0|req: 1/1] 14.19.0.154 () {56 vars in 1100 bytes} [Wed Jun 17 16:21:38 2026] GET /access_token/?call=13640651582&code=472477 => generated 522 bytes in 300 msecs (HTTP/1.1 200) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675865|app: 0|req: 1/2] 14.19.0.154 () {60 vars in 1015 bytes} [Wed Jun 17 16:21:45 2026] GET /sendsms/?call=13640651582 => generated 48 bytes in 800 msecs (HTTP/1.1 200) 4 headers in 127 bytes (1 switches on core 0)
+None
+[pid: 675866|app: 0|req: 1/3] 14.19.0.154 () {60 vars in 1049 bytes} [Wed Jun 17 16:22:02 2026] GET /access_token/?call=13640651582&code=690342 => generated 104 bytes in 371 msecs (HTTP/1.1 200) 4 headers in 128 bytes (1 switches on core 0)
+ManeuAdmin object (794ecfda-44d2-11ed-818f-00163e02ac92)
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNzk0ZWNmZGEtNDRkMi0xMWVkLTgxOGYtMDAxNjNlMDJhYzkyIiwidHlwZSI6ImFjY2VzcyIsImV4cCI6MTc4MTY4ODE0MywiaWF0IjoxNzgxNjg0NTQzfQ.-mxIoKu7wsh42RQYKnYPtdKmef8mLjqABhG98bFE6oM
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNzk0ZWNmZGEtNDRkMi0xMWVkLTgxOGYtMDAxNjNlMDJhYzkyIiwidHlwZSI6InJlZnJlc2giLCJleHAiOjE3ODIyODkzNDMsImlhdCI6MTc4MTY4NDU0M30.AqYpvwcXy2AMeNzXIgclSHkoO_6M9mO9dgfeDkgP_Ts
+[pid: 675867|app: 0|req: 1/4] 14.19.0.154 () {60 vars in 1049 bytes} [Wed Jun 17 16:22:23 2026] GET /access_token/?call=13640651582&code=609342 => generated 522 bytes in 398 msecs (HTTP/1.1 200) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675868|app: 0|req: 1/5] 14.19.0.154 () {62 vars in 1150 bytes} [Wed Jun 17 16:22:23 2026] GET /maneu_index/ => generated 32303 bytes in 374 msecs (HTTP/1.1 200) 4 headers in 138 bytes (1 switches on core 0)
+Forbidden (CSRF cookie not set.): /maneu_index/api_statistics/
+[pid: 675864|app: 0|req: 2/6] 14.19.0.154 () {66 vars in 1337 bytes} [Wed Jun 17 16:22:25 2026] POST /maneu_index/api_statistics/ => generated 2815 bytes in 19 msecs (HTTP/1.1 403) 4 headers in 129 bytes (1 switches on core 0)
+[pid: 675865|app: 0|req: 2/7] 14.19.0.154 () {62 vars in 1156 bytes} [Wed Jun 17 16:23:19 2026] GET /maneu_guest/ => generated 24980 bytes in 52 msecs (HTTP/1.1 200) 4 headers in 138 bytes (1 switches on core 0)
+Forbidden (CSRF cookie not set.): /maneu_guest/api_search_time/
+[pid: 675866|app: 0|req: 2/8] 14.19.0.154 () {68 vars in 1458 bytes} [Wed Jun 17 16:23:21 2026] POST /maneu_guest/api_search_time/ => generated 2815 bytes in 17 msecs (HTTP/1.1 403) 4 headers in 129 bytes (1 switches on core 0)
+[pid: 675867|app: 0|req: 2/9] 14.19.0.154 () {62 vars in 1156 bytes} [Wed Jun 17 16:23:35 2026] GET /maneu_index/ => generated 32303 bytes in 62 msecs (HTTP/1.1 200) 4 headers in 138 bytes (1 switches on core 0)
+Forbidden (CSRF cookie not set.): /maneu_index/api_statistics/
+[pid: 675868|app: 0|req: 2/10] 14.19.0.154 () {66 vars in 1337 bytes} [Wed Jun 17 16:23:41 2026] POST /maneu_index/api_statistics/ => generated 2815 bytes in 4 msecs (HTTP/1.1 403) 4 headers in 129 bytes (1 switches on core 0)
+SIGINT/SIGTERM received...killing workers...
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+worker 3 buried after 1 seconds
+worker 4 buried after 1 seconds
+worker 5 buried after 1 seconds
+goodbye to uWSGI.
+VACUUM: pidfile removed.
+*** Starting uWSGI 2.0.28 (64bit) on [Wed Jun 17 16:24:36 2026] ***
+compiled with version: 9.4.0 on 16 November 2024 15:10:03
+os: Linux-5.4.0-198-generic #218-Ubuntu SMP Fri Sep 27 20:18:53 UTC 2024
+nodename: iZwz9fl1octu157i3y0yhzZ
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /root/maneu-admin
+writing pidfile to /root/maneu-admin/uwsgi.pid
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+chdir() to /root/maneu-admin
+your processes number limit is 7158
+your memory page size is 4096 bytes
+detected max file descriptor number: 65535
+lock engine: pthread robust mutexes
+thunder lock: enabled
+uwsgi socket 0 bound to TCP address 127.0.0.1:8002 fd 3
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+Python version: 3.8.10 (default, Sep 11 2024, 16:02:53)  [GCC 9.4.0]
+Python main interpreter initialized at 0x55df64fbd310
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 486672 bytes (475 KB) for 5 cores
+*** Operational MODE: preforking ***
+WSGI app 0 (mountpoint='') ready in 0 seconds on interpreter 0x55df64fbd310 pid: 675892 (default app)
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 675892)
+spawned uWSGI worker 1 (pid: 675894, cores: 1)
+spawned uWSGI worker 2 (pid: 675895, cores: 1)
+spawned uWSGI worker 3 (pid: 675896, cores: 1)
+spawned uWSGI worker 4 (pid: 675897, cores: 1)
+spawned uWSGI worker 5 (pid: 675898, cores: 1)
+[pid: 675894|app: 0|req: 1/1] 14.19.0.154 () {62 vars in 1156 bytes} [Wed Jun 17 16:24:38 2026] GET /maneu_index/ => generated 32303 bytes in 358 msecs (HTTP/1.1 200) 4 headers in 138 bytes (1 switches on core 0)
+[pid: 675895|app: 0|req: 1/2] 14.19.0.154 () {62 vars in 1156 bytes} [Wed Jun 17 16:24:50 2026] GET /maneu_guest/ => generated 24980 bytes in 420 msecs (HTTP/1.1 200) 4 headers in 138 bytes (1 switches on core 0)
+[pid: 675896|app: 0|req: 1/3] 14.19.0.154 () {68 vars in 1458 bytes} [Wed Jun 17 16:24:52 2026] POST /maneu_guest/api_search_time/ => generated 82 bytes in 386 msecs (HTTP/1.1 200) 4 headers in 127 bytes (1 switches on core 0)
+[pid: 675897|app: 0|req: 1/4] 14.19.0.154 () {62 vars in 1156 bytes} [Wed Jun 17 16:24:59 2026] GET /maneu_index/ => generated 32303 bytes in 569 msecs (HTTP/1.1 200) 4 headers in 138 bytes (1 switches on core 0)
+[pid: 675898|app: 0|req: 1/5] 14.19.0.154 () {66 vars in 1337 bytes} [Wed Jun 17 16:25:08 2026] POST /maneu_index/api_statistics/ => generated 1480 bytes in 451 msecs (HTTP/1.1 200) 4 headers in 129 bytes (1 switches on core 0)
+[pid: 675894|app: 0|req: 2/6] 14.19.0.154 () {62 vars in 1156 bytes} [Wed Jun 17 16:25:16 2026] GET /maneu_admin/ => generated 16734 bytes in 7 msecs (HTTP/1.1 200) 5 headers in 152 bytes (1 switches on core 0)
+[pid: 675895|app: 0|req: 2/7] 14.19.0.154 () {62 vars in 1287 bytes} [Wed Jun 17 16:25:18 2026] GET /maneu_admin/api_index/?index_id=None => generated 92 bytes in 22 msecs (HTTP/1.1 200) 4 headers in 127 bytes (1 switches on core 0)
+[pid: 675896|app: 0|req: 2/8] 157.173.126.44 () {38 vars in 527 bytes} [Wed Jun 17 16:29:54 2026] GET / => generated 2266 bytes in 18 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+SIGINT/SIGTERM received...killing workers...
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+worker 3 buried after 1 seconds
+worker 4 buried after 1 seconds
+worker 5 buried after 1 seconds
+goodbye to uWSGI.
+VACUUM: pidfile removed.
+*** Starting uWSGI 2.0.28 (64bit) on [Wed Jun 17 16:35:26 2026] ***
+compiled with version: 9.4.0 on 16 November 2024 15:10:03
+os: Linux-5.4.0-198-generic #218-Ubuntu SMP Fri Sep 27 20:18:53 UTC 2024
+nodename: iZwz9fl1octu157i3y0yhzZ
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /root/maneu-admin
+writing pidfile to /root/maneu-admin/uwsgi.pid
+detected binary path: /usr/local/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+chdir() to /root/maneu-admin
+your processes number limit is 7158
+your memory page size is 4096 bytes
+detected max file descriptor number: 65535
+lock engine: pthread robust mutexes
+thunder lock: enabled
+uwsgi socket 0 bound to TCP address 127.0.0.1:8002 fd 3
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+Python version: 3.8.10 (default, Sep 11 2024, 16:02:53)  [GCC 9.4.0]
+Python main interpreter initialized at 0x5580eabe6310
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 486672 bytes (475 KB) for 5 cores
+*** Operational MODE: preforking ***
+WSGI app 0 (mountpoint='') ready in 1 seconds on interpreter 0x5580eabe6310 pid: 675947 (default app)
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 675947)
+spawned uWSGI worker 1 (pid: 675949, cores: 1)
+spawned uWSGI worker 2 (pid: 675950, cores: 1)
+spawned uWSGI worker 3 (pid: 675951, cores: 1)
+spawned uWSGI worker 4 (pid: 675952, cores: 1)
+spawned uWSGI worker 5 (pid: 675953, cores: 1)
+[pid: 675949|app: 0|req: 1/1] 14.19.0.154 () {62 vars in 1156 bytes} [Wed Jun 17 16:35:30 2026] GET /maneu_admin/ => generated 16711 bytes in 331 msecs (HTTP/1.1 200) 5 headers in 152 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 1/2] 14.19.0.154 () {62 vars in 1287 bytes} [Wed Jun 17 16:35:32 2026] GET /maneu_admin/api_index/?index_id=None => generated 92 bytes in 374 msecs (HTTP/1.1 200) 4 headers in 127 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 1/3] 14.19.0.154 () {62 vars in 1156 bytes} [Wed Jun 17 16:35:37 2026] GET /maneu_guest/ => generated 24957 bytes in 368 msecs (HTTP/1.1 200) 4 headers in 138 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 1/4] 14.19.0.154 () {68 vars in 1458 bytes} [Wed Jun 17 16:35:40 2026] POST /maneu_guest/api_search_time/ => generated 82 bytes in 308 msecs (HTTP/1.1 200) 4 headers in 127 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 1/5] 14.19.0.154 () {62 vars in 1132 bytes} [Wed Jun 17 16:35:42 2026] GET / => generated 2266 bytes in 339 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 2/6] 14.19.0.154 () {60 vars in 1094 bytes} [Wed Jun 17 16:35:51 2026] GET /maneu_order/ => generated 21956 bytes in 7 msecs (HTTP/1.1 200) 4 headers in 138 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 2/7] 14.19.0.154 () {66 vars in 1214 bytes} [Wed Jun 17 16:35:53 2026] POST /maneu_order/api_search_time/ => generated 74 bytes in 1 msecs (HTTP/1.1 401) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 2/8] 14.19.0.154 () {60 vars in 1119 bytes} [Wed Jun 17 16:35:53 2026] GET /login/ => generated 9849 bytes in 3 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 2/9] 45.92.86.177 () {36 vars in 513 bytes} [Wed Jun 17 17:04:16 2026] GET / => generated 2266 bytes in 15 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 2/10] 216.73.216.143 () {36 vars in 534 bytes} [Wed Jun 17 17:13:12 2026] GET /robots.txt => generated 179 bytes in 4 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 3/11] 176.65.139.237 () {38 vars in 539 bytes} [Wed Jun 17 17:21:52 2026] GET /.env => generated 179 bytes in 3 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 3/12] 91.184.244.208 () {34 vars in 567 bytes} [Wed Jun 17 17:34:44 2026] GET / => generated 2266 bytes in 20 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 3/13] 91.184.244.208 () {34 vars in 567 bytes} [Wed Jun 17 17:34:45 2026] GET / => generated 2266 bytes in 2 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 3/14] 34.59.208.119 () {40 vars in 681 bytes} [Wed Jun 17 17:36:59 2026] GET //wp-includes/ID3/license.txt => generated 179 bytes in 3 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 3/15] 34.59.208.119 () {40 vars in 637 bytes} [Wed Jun 17 17:36:59 2026] GET //feed/ => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 4/16] 34.59.208.119 () {40 vars in 654 bytes} [Wed Jun 17 17:36:59 2026] GET //xmlrpc.php?rsd => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 4/17] 34.59.208.119 () {40 vars in 691 bytes} [Wed Jun 17 17:37:00 2026] GET //blog/wp-includes/wlwmanifest.xml => generated 179 bytes in 3 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 4/18] 34.59.208.119 () {40 vars in 689 bytes} [Wed Jun 17 17:37:00 2026] GET //web/wp-includes/wlwmanifest.xml => generated 179 bytes in 4 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 4/19] 34.59.208.119 () {40 vars in 701 bytes} [Wed Jun 17 17:37:00 2026] GET //wordpress/wp-includes/wlwmanifest.xml => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 4/20] 34.59.208.119 () {40 vars in 687 bytes} [Wed Jun 17 17:37:01 2026] GET //wp/wp-includes/wlwmanifest.xml => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 5/21] 34.59.208.119 () {40 vars in 691 bytes} [Wed Jun 17 17:37:01 2026] GET //2020/wp-includes/wlwmanifest.xml => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 5/22] 34.59.208.119 () {40 vars in 691 bytes} [Wed Jun 17 17:37:01 2026] GET //2019/wp-includes/wlwmanifest.xml => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 5/23] 34.59.208.119 () {40 vars in 691 bytes} [Wed Jun 17 17:37:02 2026] GET //2021/wp-includes/wlwmanifest.xml => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 5/24] 34.59.208.119 () {40 vars in 691 bytes} [Wed Jun 17 17:37:02 2026] GET //shop/wp-includes/wlwmanifest.xml => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 5/25] 34.59.208.119 () {40 vars in 689 bytes} [Wed Jun 17 17:37:02 2026] GET //wp1/wp-includes/wlwmanifest.xml => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 6/26] 34.59.208.119 () {40 vars in 691 bytes} [Wed Jun 17 17:37:02 2026] GET //test/wp-includes/wlwmanifest.xml => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 6/27] 34.59.208.119 () {40 vars in 691 bytes} [Wed Jun 17 17:37:03 2026] GET //site/wp-includes/wlwmanifest.xml => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 6/28] 34.59.208.119 () {40 vars in 689 bytes} [Wed Jun 17 17:37:03 2026] GET //cms/wp-includes/wlwmanifest.xml => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 6/29] 45.130.203.128 () {38 vars in 544 bytes} [Wed Jun 17 18:20:29 2026] GET / => generated 2266 bytes in 1 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 6/30] 185.148.0.69 () {38 vars in 541 bytes} [Wed Jun 17 18:43:17 2026] GET / => generated 2266 bytes in 1 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 7/31] 157.173.126.32 () {38 vars in 527 bytes} [Wed Jun 17 19:27:51 2026] GET / => generated 2266 bytes in 2 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 7/32] 95.111.247.129 () {38 vars in 543 bytes} [Wed Jun 17 20:26:04 2026] GET / => generated 2266 bytes in 1 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 7/33] 139.59.17.60 () {52 vars in 768 bytes} [Wed Jun 17 20:33:55 2026] GET / => generated 2266 bytes in 1 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 7/34] 91.184.244.208 () {38 vars in 575 bytes} [Wed Jun 17 20:36:21 2026] GET / => generated 2266 bytes in 1 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 7/35] 91.184.244.208 () {40 vars in 701 bytes} [Wed Jun 17 20:36:23 2026] GET / => generated 2266 bytes in 2 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 8/36] 45.92.85.94 () {36 vars in 512 bytes} [Wed Jun 17 21:03:26 2026] GET / => generated 2266 bytes in 1 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 8/37] 59.82.135.99 () {36 vars in 534 bytes} [Wed Jun 17 22:29:38 2026] GET / => generated 2266 bytes in 1 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 8/38] 59.82.135.99 () {36 vars in 532 bytes} [Wed Jun 17 22:29:38 2026] GET / => generated 2266 bytes in 1 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 8/39] 59.82.135.99 () {36 vars in 533 bytes} [Wed Jun 17 22:29:39 2026] GET / => generated 2266 bytes in 1 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 8/40] 59.82.135.212 () {36 vars in 545 bytes} [Wed Jun 17 22:29:39 2026] GET /login/ => generated 9849 bytes in 3 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 9/41] 59.82.135.212 () {36 vars in 534 bytes} [Wed Jun 17 22:29:39 2026] GET / => generated 2266 bytes in 1 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 9/42] 59.82.135.99 () {36 vars in 533 bytes} [Wed Jun 17 22:29:39 2026] GET / => generated 2266 bytes in 1 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 9/43] 113.215.188.188 () {36 vars in 537 bytes} [Wed Jun 17 23:19:29 2026] GET / => generated 2266 bytes in 2 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 9/44] 113.215.188.188 () {36 vars in 536 bytes} [Wed Jun 17 23:19:29 2026] GET / => generated 2266 bytes in 1 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 9/45] 113.215.188.188 () {36 vars in 537 bytes} [Wed Jun 17 23:19:31 2026] GET / => generated 2266 bytes in 1 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 10/46] 113.215.188.188 () {36 vars in 546 bytes} [Wed Jun 17 23:19:31 2026] GET /login/ => generated 9849 bytes in 3 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 10/47] 113.215.188.188 () {36 vars in 534 bytes} [Wed Jun 17 23:19:31 2026] GET / => generated 2266 bytes in 2 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 10/48] 113.215.188.188 () {36 vars in 537 bytes} [Wed Jun 17 23:19:31 2026] GET / => generated 2266 bytes in 1 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 10/49] 45.92.87.248 () {36 vars in 513 bytes} [Thu Jun 18 01:02:51 2026] GET / => generated 2266 bytes in 2 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 10/50] 62.113.113.43 () {34 vars in 585 bytes} [Thu Jun 18 02:35:17 2026] GET / => generated 2266 bytes in 1 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 11/51] 62.113.113.43 () {34 vars in 511 bytes} [Thu Jun 18 02:35:17 2026] GET / => generated 2266 bytes in 1 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 11/52] 141.148.153.213 () {50 vars in 824 bytes} [Thu Jun 18 03:04:31 2026] GET / => generated 2266 bytes in 2 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 11/53] 141.148.153.213 () {36 vars in 453 bytes} [Thu Jun 18 03:04:31 2026] GET /favicon.ico => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 11/54] 45.92.87.203 () {36 vars in 513 bytes} [Thu Jun 18 04:15:57 2026] GET / => generated 2266 bytes in 3 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 11/55] 45.92.86.91 () {36 vars in 512 bytes} [Thu Jun 18 05:00:39 2026] GET / => generated 2266 bytes in 2 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 12/56] 45.130.203.174 () {36 vars in 438 bytes} [Thu Jun 18 06:22:46 2026] GET /.git/HEAD => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 12/57] 176.65.139.239 () {38 vars in 531 bytes} [Thu Jun 18 08:32:54 2026] GET / => generated 2266 bytes in 2 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 12/58] 20.104.75.74 () {30 vars in 421 bytes} [Thu Jun 18 09:42:46 2026] GET /wp-content/plugins/hellopress/wp_filemanager.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 12/59] 20.104.75.74 () {30 vars in 383 bytes} [Thu Jun 18 09:42:47 2026] GET /this_is_a_new_hello_world.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 12/60] 20.104.75.74 () {30 vars in 335 bytes} [Thu Jun 18 09:42:47 2026] GET /x.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 13/61] 20.104.75.74 () {30 vars in 337 bytes} [Thu Jun 18 09:42:48 2026] GET /by.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 13/62] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:42:48 2026] GET /cxs.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 13/63] 20.104.75.74 () {30 vars in 351 bytes} [Thu Jun 18 09:42:49 2026] GET /coffexium.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 13/64] 20.104.75.74 () {30 vars in 341 bytes} [Thu Jun 18 09:42:49 2026] GET /asdf.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 13/65] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:42:50 2026] GET /red.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 14/66] 20.104.75.74 () {30 vars in 377 bytes} [Thu Jun 18 09:42:50 2026] GET /wp-includes/sodium_compat/ => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 14/67] 20.104.75.74 () {30 vars in 407 bytes} [Thu Jun 18 09:42:51 2026] GET /wp-admin/css/colors/coffee/wp-adochan.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 14/68] 20.104.75.74 () {30 vars in 359 bytes} [Thu Jun 18 09:42:51 2026] GET /wp-includes/Text/ => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 14/69] 20.104.75.74 () {30 vars in 345 bytes} [Thu Jun 18 09:42:52 2026] GET /footer.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 14/70] 20.104.75.74 () {30 vars in 363 bytes} [Thu Jun 18 09:42:52 2026] GET /wp-content/uploads/ => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 15/71] 20.104.75.74 () {30 vars in 365 bytes} [Thu Jun 18 09:42:53 2026] GET /wp-content/index.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 15/72] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:42:53 2026] GET /images/ => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 15/73] 20.104.75.74 () {30 vars in 341 bytes} [Thu Jun 18 09:42:54 2026] GET /zoro.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 15/74] 20.104.75.74 () {30 vars in 337 bytes} [Thu Jun 18 09:42:54 2026] GET /wm.php => generated 179 bytes in 4 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 15/75] 20.104.75.74 () {30 vars in 343 bytes} [Thu Jun 18 09:42:55 2026] GET /bajah.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 16/76] 20.104.75.74 () {30 vars in 345 bytes} [Thu Jun 18 09:42:56 2026] GET /cream1.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 16/77] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:42:56 2026] GET /lim.php => generated 179 bytes in 4 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 16/78] 20.104.75.74 () {30 vars in 343 bytes} [Thu Jun 18 09:42:57 2026] GET /heat3.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 16/79] 20.104.75.74 () {30 vars in 343 bytes} [Thu Jun 18 09:42:57 2026] GET /greap.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 16/80] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:42:58 2026] GET /177.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 17/81] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:42:58 2026] GET /199.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 17/82] 20.104.75.74 () {30 vars in 345 bytes} [Thu Jun 18 09:42:59 2026] GET /file52.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 17/83] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:42:59 2026] GET /122.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 17/84] 20.104.75.74 () {30 vars in 345 bytes} [Thu Jun 18 09:43:00 2026] GET /green1.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 17/85] 20.104.75.74 () {30 vars in 343 bytes} [Thu Jun 18 09:43:00 2026] GET /sukce.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 18/86] 20.104.75.74 () {30 vars in 337 bytes} [Thu Jun 18 09:43:01 2026] GET /xb.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 18/87] 20.104.75.74 () {30 vars in 347 bytes} [Thu Jun 18 09:43:01 2026] GET /biufile.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 18/88] 20.104.75.74 () {30 vars in 345 bytes} [Thu Jun 18 09:43:02 2026] GET /wpconf.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 18/89] 20.104.75.74 () {30 vars in 357 bytes} [Thu Jun 18 09:43:02 2026] GET /ultradybbuks.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 18/90] 20.104.75.74 () {30 vars in 343 bytes} [Thu Jun 18 09:43:03 2026] GET /novax.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 19/91] 20.104.75.74 () {30 vars in 343 bytes} [Thu Jun 18 09:43:03 2026] GET /mosty.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 19/92] 20.104.75.74 () {30 vars in 345 bytes} [Thu Jun 18 09:43:04 2026] GET /dejavu.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 19/93] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:43:04 2026] GET /aaf.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 19/94] 20.104.75.74 () {30 vars in 353 bytes} [Thu Jun 18 09:43:05 2026] GET /b00869ae6e.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 19/95] 20.104.75.74 () {30 vars in 341 bytes} [Thu Jun 18 09:43:05 2026] GET /term.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 20/96] 20.104.75.74 () {30 vars in 345 bytes} [Thu Jun 18 09:43:06 2026] GET /wander.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 20/97] 20.104.75.74 () {30 vars in 337 bytes} [Thu Jun 18 09:43:06 2026] GET /ha.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 20/98] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:43:07 2026] GET /hur.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 20/99] 20.104.75.74 () {30 vars in 341 bytes} [Thu Jun 18 09:43:07 2026] GET /2222.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 20/100] 20.104.75.74 () {30 vars in 347 bytes} [Thu Jun 18 09:43:08 2026] GET /h02ugyh.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 21/101] 20.104.75.74 () {30 vars in 343 bytes} [Thu Jun 18 09:43:08 2026] GET /seiso.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 21/102] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:43:09 2026] GET /155.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 21/103] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:43:09 2026] GET /ppp.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 21/104] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:43:10 2026] GET /201.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 21/105] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:43:10 2026] GET /ops.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 22/106] 20.104.75.74 () {30 vars in 343 bytes} [Thu Jun 18 09:43:11 2026] GET /samll.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 22/107] 20.104.75.74 () {30 vars in 343 bytes} [Thu Jun 18 09:43:11 2026] GET /ingfo.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 22/108] 20.104.75.74 () {30 vars in 351 bytes} [Thu Jun 18 09:43:12 2026] GET /error_log.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 22/109] 20.104.75.74 () {30 vars in 351 bytes} [Thu Jun 18 09:43:12 2026] GET /xenon1337.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 22/110] 20.104.75.74 () {30 vars in 345 bytes} [Thu Jun 18 09:43:13 2026] GET /test11.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 23/111] 20.104.75.74 () {30 vars in 343 bytes} [Thu Jun 18 09:43:13 2026] GET /koala.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 23/112] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:43:14 2026] GET /mac.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 23/113] 20.104.75.74 () {30 vars in 361 bytes} [Thu Jun 18 09:43:14 2026] GET /25d653587fdfd1.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 23/114] 20.104.75.74 () {30 vars in 345 bytes} [Thu Jun 18 09:43:15 2026] GET /wefile.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 23/115] 20.104.75.74 () {30 vars in 444 bytes} [Thu Jun 18 09:43:15 2026] GET /modules/mod_simplefileuploadv1.3/elements/filemanager.php?p= => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 24/116] 20.104.75.74 () {30 vars in 401 bytes} [Thu Jun 18 09:43:16 2026] GET /wp-includes/blocks/post-comments-form/ => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 24/117] 20.104.75.74 () {30 vars in 349 bytes} [Thu Jun 18 09:43:16 2026] GET /wp-admin/js/ => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 24/118] 20.104.75.74 () {30 vars in 371 bytes} [Thu Jun 18 09:43:17 2026] GET /wp-admin/css/colour.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 24/119] 20.104.75.74 () {30 vars in 337 bytes} [Thu Jun 18 09:43:17 2026] GET /2P.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 24/120] 20.104.75.74 () {30 vars in 343 bytes} [Thu Jun 18 09:43:18 2026] GET /tires.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 25/121] 20.104.75.74 () {30 vars in 375 bytes} [Thu Jun 18 09:43:18 2026] GET /wordpress/wp-admin/maint/ => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 25/122] 20.104.75.74 () {30 vars in 367 bytes} [Thu Jun 18 09:43:19 2026] GET /.well-known/about.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 25/123] 20.104.75.74 () {30 vars in 375 bytes} [Thu Jun 18 09:43:19 2026] GET /wp-includes/ID3/about.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 25/124] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:43:20 2026] GET /bob.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 25/125] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:43:20 2026] GET /t3s.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 26/126] 20.104.75.74 () {30 vars in 351 bytes} [Thu Jun 18 09:43:21 2026] GET /wp-admin/css/ => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 26/127] 20.104.75.74 () {30 vars in 379 bytes} [Thu Jun 18 09:43:21 2026] GET /wp-admin/css/colors/modern/ => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 26/128] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:43:22 2026] GET /uwu.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 26/129] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:43:22 2026] GET /uwa.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 26/130] 20.104.75.74 () {30 vars in 343 bytes} [Thu Jun 18 09:43:23 2026] GET /crgio.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 27/131] 20.104.75.74 () {30 vars in 347 bytes} [Thu Jun 18 09:43:23 2026] GET /geforce.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 27/132] 20.104.75.74 () {30 vars in 343 bytes} [Thu Jun 18 09:43:24 2026] GET /pucci.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 27/133] 20.104.75.74 () {30 vars in 379 bytes} [Thu Jun 18 09:43:24 2026] GET /wp-includes/blocks/details/ => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 27/134] 20.104.75.74 () {30 vars in 375 bytes} [Thu Jun 18 09:43:25 2026] GET /wp-includes/blocks/audio/ => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 27/135] 20.104.75.74 () {30 vars in 347 bytes} [Thu Jun 18 09:43:25 2026] GET /wp-temp.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 28/136] 20.104.75.74 () {30 vars in 379 bytes} [Thu Jun 18 09:43:26 2026] GET /wp-includes/blocks/buttons/ => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 28/137] 20.104.75.74 () {30 vars in 341 bytes} [Thu Jun 18 09:43:26 2026] GET /mode.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 28/138] 20.104.75.74 () {30 vars in 368 bytes} [Thu Jun 18 09:43:27 2026] GET //wp-admin/js/index.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 28/139] 20.104.75.74 () {30 vars in 337 bytes} [Thu Jun 18 09:43:27 2026] GET /dx.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 28/140] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:43:28 2026] GET /puc.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 29/141] 20.104.75.74 () {30 vars in 346 bytes} [Thu Jun 18 09:43:28 2026] GET //themes.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 29/142] 20.104.75.74 () {30 vars in 337 bytes} [Thu Jun 18 09:43:29 2026] GET /dx.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 29/143] 20.104.75.74 () {30 vars in 337 bytes} [Thu Jun 18 09:43:29 2026] GET /11.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 29/144] 20.104.75.74 () {30 vars in 335 bytes} [Thu Jun 18 09:43:30 2026] GET /p.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 29/145] 20.104.75.74 () {30 vars in 368 bytes} [Thu Jun 18 09:43:30 2026] GET //wp-includes/Requests/ => generated 179 bytes in 3 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 30/146] 20.104.75.74 () {30 vars in 343 bytes} [Thu Jun 18 09:43:31 2026] GET /bthil.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 30/147] 20.104.75.74 () {30 vars in 335 bytes} [Thu Jun 18 09:43:31 2026] GET /7.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 30/148] 20.104.75.74 () {30 vars in 335 bytes} [Thu Jun 18 09:43:32 2026] GET /8.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 30/149] 20.104.75.74 () {30 vars in 335 bytes} [Thu Jun 18 09:43:32 2026] GET /1.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 30/150] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:43:33 2026] GET /100.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 31/151] 20.104.75.74 () {30 vars in 343 bytes} [Thu Jun 18 09:43:33 2026] GET /about.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 31/152] 20.104.75.74 () {30 vars in 344 bytes} [Thu Jun 18 09:43:34 2026] GET //admin.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 31/153] 20.104.75.74 () {30 vars in 342 bytes} [Thu Jun 18 09:43:34 2026] GET //edit.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 31/154] 20.104.75.74 () {30 vars in 365 bytes} [Thu Jun 18 09:43:35 2026] GET /wp-content/admin.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 31/155] 20.104.75.74 () {30 vars in 338 bytes} [Thu Jun 18 09:43:35 2026] GET //f6.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 32/156] 20.104.75.74 () {30 vars in 345 bytes} [Thu Jun 18 09:43:36 2026] GET /inputs.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 32/157] 20.104.75.74 () {30 vars in 338 bytes} [Thu Jun 18 09:43:36 2026] GET //av.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 32/158] 20.104.75.74 () {30 vars in 372 bytes} [Thu Jun 18 09:43:37 2026] GET /classwithtostring.php?p= => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 32/159] 20.104.75.74 () {30 vars in 379 bytes} [Thu Jun 18 09:43:38 2026] GET /wp-content/themes/index.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 32/160] 20.104.75.74 () {30 vars in 347 bytes} [Thu Jun 18 09:43:38 2026] GET /wp-blog.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 33/161] 20.104.75.74 () {30 vars in 370 bytes} [Thu Jun 18 09:43:39 2026] GET //wp-includes/js/jquery/ => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 33/162] 20.104.75.74 () {30 vars in 366 bytes} [Thu Jun 18 09:43:39 2026] GET //wp-content/admin.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 33/163] 20.104.75.74 () {30 vars in 352 bytes} [Thu Jun 18 09:43:40 2026] GET //adminfuns.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 33/164] 20.104.75.74 () {30 vars in 343 bytes} [Thu Jun 18 09:43:40 2026] GET /goods.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 33/165] 20.104.75.74 () {30 vars in 347 bytes} [Thu Jun 18 09:43:41 2026] GET /ms-edit.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 34/166] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:43:41 2026] GET /222.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 34/167] 20.104.75.74 () {30 vars in 360 bytes} [Thu Jun 18 09:43:42 2026] GET //cgi-bin/index.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 34/168] 20.104.75.74 () {30 vars in 368 bytes} [Thu Jun 18 09:43:42 2026] GET //wp-includes/css/dist/ => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 34/169] 20.104.75.74 () {30 vars in 349 bytes} [Thu Jun 18 09:43:43 2026] GET /BDKR28WP.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 34/170] 20.104.75.74 () {30 vars in 360 bytes} [Thu Jun 18 09:43:43 2026] GET //wp-includes/l10n/ => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 35/171] 20.104.75.74 () {30 vars in 363 bytes} [Thu Jun 18 09:43:44 2026] GET /wp-content/uploads/ => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 35/172] 20.104.75.74 () {30 vars in 337 bytes} [Thu Jun 18 09:43:44 2026] GET /wp.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 35/173] 20.104.75.74 () {30 vars in 342 bytes} [Thu Jun 18 09:43:45 2026] GET //abcd.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 35/174] 20.104.75.74 () {30 vars in 338 bytes} [Thu Jun 18 09:43:45 2026] GET //a1.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 35/175] 20.104.75.74 () {30 vars in 401 bytes} [Thu Jun 18 09:43:46 2026] GET /wp-includes/Text/Diff/Engine/about.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 36/176] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:43:46 2026] GET /bal.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 36/177] 20.104.75.74 () {30 vars in 360 bytes} [Thu Jun 18 09:43:47 2026] GET //cgi-bin/admin.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 36/178] 20.104.75.74 () {30 vars in 347 bytes} [Thu Jun 18 09:43:47 2026] GET /gettest.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 36/179] 20.104.75.74 () {30 vars in 376 bytes} [Thu Jun 18 09:43:48 2026] GET //wp-content/BypassBest.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 36/180] 20.104.75.74 () {30 vars in 347 bytes} [Thu Jun 18 09:43:48 2026] GET /wp-content/ => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 37/181] 20.104.75.74 () {30 vars in 345 bytes} [Thu Jun 18 09:43:49 2026] GET /simple.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 37/182] 20.104.75.74 () {30 vars in 337 bytes} [Thu Jun 18 09:43:49 2026] GET /kj.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 37/183] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:43:50 2026] GET /xxx.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 37/184] 20.104.75.74 () {30 vars in 341 bytes} [Thu Jun 18 09:43:50 2026] GET /hypo.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 37/185] 20.104.75.74 () {30 vars in 375 bytes} [Thu Jun 18 09:43:51 2026] GET /wp-admin/css/colors/blue/ => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 38/186] 20.104.75.74 () {30 vars in 345 bytes} [Thu Jun 18 09:43:51 2026] GET /chosen.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 38/187] 20.104.75.74 () {30 vars in 380 bytes} [Thu Jun 18 09:43:52 2026] GET //wp-includes/block-bindings/ => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 38/188] 20.104.75.74 () {30 vars in 337 bytes} [Thu Jun 18 09:43:52 2026] GET /gg.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 38/189] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:43:53 2026] GET /als.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 38/190] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:43:53 2026] GET /pol.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 39/191] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:43:54 2026] GET /006.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 39/192] 20.104.75.74 () {30 vars in 343 bytes} [Thu Jun 18 09:43:54 2026] GET /file5.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 39/193] 20.104.75.74 () {30 vars in 355 bytes} [Thu Jun 18 09:43:55 2026] GET /4PJcpMFsD8B.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 39/194] 20.104.75.74 () {30 vars in 342 bytes} [Thu Jun 18 09:43:55 2026] GET /file.php? => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 39/195] 20.104.75.74 () {30 vars in 343 bytes} [Thu Jun 18 09:43:56 2026] GET /cfile.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 40/196] 20.104.75.74 () {30 vars in 349 bytes} [Thu Jun 18 09:43:56 2026] GET /class-wp.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 40/197] 20.104.75.74 () {30 vars in 344 bytes} [Thu Jun 18 09:43:57 2026] GET /admin.php? => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 40/198] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:43:57 2026] GET /aa2.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 40/199] 20.104.75.74 () {30 vars in 341 bytes} [Thu Jun 18 09:43:58 2026] GET /ccou.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 40/200] 20.104.75.74 () {30 vars in 337 bytes} [Thu Jun 18 09:43:58 2026] GET /dr.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 41/201] 20.104.75.74 () {30 vars in 341 bytes} [Thu Jun 18 09:43:59 2026] GET /xamp.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 41/202] 20.104.75.74 () {30 vars in 343 bytes} [Thu Jun 18 09:43:59 2026] GET /bless.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 41/203] 20.104.75.74 () {30 vars in 345 bytes} [Thu Jun 18 09:44:00 2026] GET /file46.php => generated 179 bytes in 3 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 41/204] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:44:00 2026] GET /eee.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 41/205] 20.104.75.74 () {30 vars in 345 bytes} [Thu Jun 18 09:44:01 2026] GET /file25.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 42/206] 20.104.75.74 () {30 vars in 337 bytes} [Thu Jun 18 09:44:01 2026] GET /hg.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 42/207] 20.104.75.74 () {30 vars in 345 bytes} [Thu Jun 18 09:44:02 2026] GET /file48.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 42/208] 20.104.75.74 () {30 vars in 337 bytes} [Thu Jun 18 09:44:02 2026] GET /ff.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 42/209] 20.104.75.74 () {30 vars in 345 bytes} [Thu Jun 18 09:44:03 2026] GET /file31.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 42/210] 20.104.75.74 () {30 vars in 343 bytes} [Thu Jun 18 09:44:03 2026] GET /file6.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 43/211] 20.104.75.74 () {30 vars in 337 bytes} [Thu Jun 18 09:44:04 2026] GET /a2.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 43/212] 20.104.75.74 () {30 vars in 345 bytes} [Thu Jun 18 09:44:04 2026] GET /file15.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 43/213] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:44:05 2026] GET /no1.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 43/214] 20.104.75.74 () {30 vars in 337 bytes} [Thu Jun 18 09:44:05 2026] GET /jp.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 43/215] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:44:06 2026] GET /f35.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 44/216] 20.104.75.74 () {30 vars in 347 bytes} [Thu Jun 18 09:44:06 2026] GET /wp-load.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 44/217] 20.104.75.74 () {30 vars in 342 bytes} [Thu Jun 18 09:44:07 2026] GET //xwpg.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 44/218] 20.104.75.74 () {30 vars in 364 bytes} [Thu Jun 18 09:44:07 2026] GET //wp-includes/assets/ => generated 179 bytes in 3 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 44/219] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:44:08 2026] GET /ddd.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 44/220] 20.104.75.74 () {30 vars in 381 bytes} [Thu Jun 18 09:44:08 2026] GET /wp-admin/css/colors/sunrise/ => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 45/221] 20.104.75.74 () {30 vars in 339 bytes} [Thu Jun 18 09:44:09 2026] GET /waf.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 45/222] 20.104.75.74 () {30 vars in 347 bytes} [Thu Jun 18 09:44:09 2026] GET /xstelth.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 45/223] 20.104.75.74 () {30 vars in 401 bytes} [Thu Jun 18 09:44:10 2026] GET /wp-admin/css/colors/midnight/about.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 45/224] 20.104.75.74 () {30 vars in 349 bytes} [Thu Jun 18 09:44:10 2026] GET /wp-links.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 45/225] 20.104.75.74 () {30 vars in 381 bytes} [Thu Jun 18 09:44:11 2026] GET /wp-admin/network/plugins.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 46/226] 74.248.112.30 () {30 vars in 422 bytes} [Thu Jun 18 10:10:30 2026] GET /wp-content/plugins/hellopress/wp_filemanager.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 46/227] 74.248.112.30 () {30 vars in 384 bytes} [Thu Jun 18 10:10:30 2026] GET /this_is_a_new_hello_world.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 46/228] 74.248.112.30 () {30 vars in 340 bytes} [Thu Jun 18 10:10:31 2026] GET /bhm.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 46/229] 74.248.112.30 () {30 vars in 338 bytes} [Thu Jun 18 10:10:31 2026] GET /sf.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 46/230] 74.248.112.30 () {30 vars in 350 bytes} [Thu Jun 18 10:10:32 2026] GET /wp-block.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 47/231] 74.248.112.30 () {30 vars in 346 bytes} [Thu Jun 18 10:10:33 2026] GET /wp-ver.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 47/232] 74.248.112.30 () {30 vars in 342 bytes} [Thu Jun 18 10:10:33 2026] GET /f222.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 47/233] 74.248.112.30 () {30 vars in 344 bytes} [Thu Jun 18 10:10:34 2026] GET /cilng.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 47/234] 74.248.112.30 () {30 vars in 346 bytes} [Thu Jun 18 10:10:34 2026] GET /rithin.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 47/235] 74.248.112.30 () {30 vars in 342 bytes} [Thu Jun 18 10:10:35 2026] GET /dass.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 48/236] 74.248.112.30 () {30 vars in 340 bytes} [Thu Jun 18 10:10:35 2026] GET /haz.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 48/237] 74.248.112.30 () {30 vars in 338 bytes} [Thu Jun 18 10:10:36 2026] GET /h2.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 48/238] 74.248.112.30 () {30 vars in 346 bytes} [Thu Jun 18 10:10:36 2026] GET /wp-ccv.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 48/239] 74.248.112.30 () {30 vars in 352 bytes} [Thu Jun 18 10:10:37 2026] GET /class-bda.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 48/240] 74.248.112.30 () {30 vars in 350 bytes} [Thu Jun 18 10:10:37 2026] GET /wp-Blogs.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 49/241] 74.248.112.30 () {30 vars in 342 bytes} [Thu Jun 18 10:10:38 2026] GET /less.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 49/242] 74.248.112.30 () {30 vars in 342 bytes} [Thu Jun 18 10:10:38 2026] GET /ftde.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 49/243] 74.248.112.30 () {30 vars in 368 bytes} [Thu Jun 18 10:10:39 2026] GET /classwithtostring.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 49/244] 74.248.112.30 () {30 vars in 340 bytes} [Thu Jun 18 10:10:39 2026] GET /rip.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 49/245] 74.248.112.30 () {30 vars in 352 bytes} [Thu Jun 18 10:10:40 2026] GET /wp-tivate.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 50/246] 74.248.112.30 () {30 vars in 346 bytes} [Thu Jun 18 10:10:40 2026] GET /ogghjd.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 50/247] 74.248.112.30 () {30 vars in 336 bytes} [Thu Jun 18 10:10:41 2026] GET /7.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 50/248] 74.248.112.30 () {30 vars in 354 bytes} [Thu Jun 18 10:10:41 2026] GET /agieylcmwl.php => generated 179 bytes in 3 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 50/249] 74.248.112.30 () {30 vars in 352 bytes} [Thu Jun 18 10:10:42 2026] GET /balbasaur.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 50/250] 74.248.112.30 () {30 vars in 338 bytes} [Thu Jun 18 10:10:42 2026] GET /op.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 51/251] 74.248.112.30 () {30 vars in 338 bytes} [Thu Jun 18 10:10:43 2026] GET /by.php => generated 179 bytes in 7 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 51/252] 74.248.112.30 () {30 vars in 338 bytes} [Thu Jun 18 10:10:44 2026] GET /xs.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 51/253] 74.248.112.30 () {30 vars in 340 bytes} [Thu Jun 18 10:10:44 2026] GET /nxx.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 51/254] 74.248.112.30 () {30 vars in 342 bytes} [Thu Jun 18 10:10:45 2026] GET /jjhf.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 51/255] 74.248.112.30 () {30 vars in 344 bytes} [Thu Jun 18 10:10:45 2026] GET /mosty.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 52/256] 74.248.112.30 () {30 vars in 348 bytes} [Thu Jun 18 10:10:46 2026] GET /product.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 52/257] 74.248.112.30 () {30 vars in 350 bytes} [Thu Jun 18 10:10:46 2026] GET /eknmacnl.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 52/258] 74.248.112.30 () {30 vars in 358 bytes} [Thu Jun 18 10:10:47 2026] GET /wp-link-poer.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 52/259] 74.248.112.30 () {30 vars in 344 bytes} [Thu Jun 18 10:10:47 2026] GET /crgio.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 52/260] 74.248.112.30 () {30 vars in 350 bytes} [Thu Jun 18 10:10:48 2026] GET /wp-blink.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 53/261] 74.248.112.30 () {30 vars in 338 bytes} [Thu Jun 18 10:10:48 2026] GET /00.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 53/262] 74.248.112.30 () {30 vars in 340 bytes} [Thu Jun 18 10:10:49 2026] GET /cxs.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 53/263] 74.248.112.30 () {30 vars in 344 bytes} [Thu Jun 18 10:10:50 2026] GET /super.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 53/264] 74.248.112.30 () {30 vars in 340 bytes} [Thu Jun 18 10:10:50 2026] GET /sdm.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 53/265] 74.248.112.30 () {30 vars in 350 bytes} [Thu Jun 18 10:10:51 2026] GET /whs73au5.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 54/266] 74.248.112.30 () {30 vars in 352 bytes} [Thu Jun 18 10:10:51 2026] GET /wp-lvminl.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 54/267] 74.248.112.30 () {30 vars in 344 bytes} [Thu Jun 18 10:10:52 2026] GET /hoeig.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 54/268] 74.248.112.30 () {30 vars in 344 bytes} [Thu Jun 18 10:10:52 2026] GET /bajah.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 54/269] 74.248.112.30 () {30 vars in 360 bytes} [Thu Jun 18 10:10:53 2026] GET /ponxnwapemsce.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 54/270] 74.248.112.30 () {30 vars in 338 bytes} [Thu Jun 18 10:10:54 2026] GET /gk.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 55/271] 74.248.112.30 () {30 vars in 356 bytes} [Thu Jun 18 10:10:54 2026] GET /awp-careers.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 55/272] 74.248.112.30 () {30 vars in 350 bytes} [Thu Jun 18 10:10:55 2026] GET /wplogbak.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 55/273] 74.248.112.30 () {30 vars in 340 bytes} [Thu Jun 18 10:10:55 2026] GET /wee.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 55/274] 74.248.112.30 () {30 vars in 344 bytes} [Thu Jun 18 10:10:56 2026] GET /file6.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 55/275] 74.248.112.30 () {30 vars in 346 bytes} [Thu Jun 18 10:10:56 2026] GET /wplink.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 56/276] 74.248.112.30 () {30 vars in 344 bytes} [Thu Jun 18 10:10:56 2026] GET /pass4.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 56/277] 74.248.112.30 () {30 vars in 338 bytes} [Thu Jun 18 10:10:57 2026] GET /mr.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 56/278] 74.248.112.30 () {30 vars in 354 bytes} [Thu Jun 18 10:10:58 2026] GET /wp-aothait.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 56/279] 74.248.112.30 () {30 vars in 346 bytes} [Thu Jun 18 10:10:58 2026] GET /wp-the.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 56/280] 74.248.112.30 () {30 vars in 352 bytes} [Thu Jun 18 10:10:58 2026] GET /wp-sanita.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 57/281] 74.248.112.30 () {30 vars in 348 bytes} [Thu Jun 18 10:10:59 2026] GET /wp-temp.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 57/282] 74.248.112.30 () {30 vars in 358 bytes} [Thu Jun 18 10:11:00 2026] GET /wornnessesal.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 57/283] 74.248.112.30 () {30 vars in 350 bytes} [Thu Jun 18 10:11:00 2026] GET /pedodont.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 57/284] 74.248.112.30 () {30 vars in 358 bytes} [Thu Jun 18 10:11:01 2026] GET /misgrimmerly.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 57/285] 74.248.112.30 () {30 vars in 348 bytes} [Thu Jun 18 10:11:01 2026] GET /ethnogr.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 58/286] 74.248.112.30 () {30 vars in 340 bytes} [Thu Jun 18 10:11:02 2026] GET /aaf.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 58/287] 74.248.112.30 () {30 vars in 342 bytes} [Thu Jun 18 10:11:02 2026] GET /xmff.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 58/288] 74.248.112.30 () {30 vars in 346 bytes} [Thu Jun 18 10:11:03 2026] GET /green1.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 58/289] 74.248.112.30 () {30 vars in 340 bytes} [Thu Jun 18 10:11:03 2026] GET /dal.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 58/290] 74.248.112.30 () {30 vars in 348 bytes} [Thu Jun 18 10:11:04 2026] GET /wp-good.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 59/291] 74.248.112.30 () {30 vars in 338 bytes} [Thu Jun 18 10:11:06 2026] GET /vx.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 59/292] 74.248.112.30 () {30 vars in 346 bytes} [Thu Jun 18 10:11:07 2026] GET /spawns.php => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 59/293] 74.248.112.30 () {30 vars in 346 bytes} [Thu Jun 18 10:11:07 2026] GET /cream1.php => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 59/294] 113.215.189.40 () {36 vars in 536 bytes} [Thu Jun 18 11:21:45 2026] GET / => generated 2266 bytes in 2 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 59/295] 113.215.189.40 () {36 vars in 536 bytes} [Thu Jun 18 11:21:45 2026] GET / => generated 2266 bytes in 2 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 60/296] 113.215.189.36 () {36 vars in 547 bytes} [Thu Jun 18 11:28:05 2026] GET / => generated 2266 bytes in 2 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 60/297] 113.215.189.36 () {36 vars in 547 bytes} [Thu Jun 18 11:28:05 2026] GET / => generated 2266 bytes in 1 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 60/298] 113.215.189.36 () {36 vars in 559 bytes} [Thu Jun 18 11:28:06 2026] GET /login/ => generated 9849 bytes in 2 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 60/299] 113.215.189.36 () {36 vars in 547 bytes} [Thu Jun 18 11:28:06 2026] GET / => generated 2266 bytes in 1 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 60/300] 113.215.189.36 () {36 vars in 547 bytes} [Thu Jun 18 11:28:06 2026] GET / => generated 2266 bytes in 1 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 61/301] 113.215.189.36 () {36 vars in 547 bytes} [Thu Jun 18 11:28:07 2026] GET / => generated 2266 bytes in 1 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 61/302] 113.215.189.36 () {36 vars in 547 bytes} [Thu Jun 18 11:28:07 2026] GET / => generated 2266 bytes in 2 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 61/303] 113.215.189.36 () {36 vars in 547 bytes} [Thu Jun 18 11:28:07 2026] GET / => generated 2266 bytes in 1 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+None
+[pid: 675953|app: 0|req: 61/304] 14.19.42.255 () {60 vars in 1050 bytes} [Thu Jun 18 14:13:33 2026] GET /access_token/?call=13640651578&code=123123 => generated 104 bytes in 15 msecs (HTTP/1.1 200) 4 headers in 128 bytes (1 switches on core 0)
+None
+[pid: 675949|app: 0|req: 62/305] 14.19.42.255 () {60 vars in 1050 bytes} [Thu Jun 18 14:13:55 2026] GET /access_token/?call=13640651578&code=123123 => generated 104 bytes in 16 msecs (HTTP/1.1 200) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 62/306] 91.184.244.208 () {34 vars in 506 bytes} [Thu Jun 18 14:33:59 2026] GET / => generated 2266 bytes in 2 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 62/307] 91.184.244.208 () {34 vars in 550 bytes} [Thu Jun 18 14:34:00 2026] GET / => generated 2266 bytes in 1 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 61/308] 8.229.174.127 () {40 vars in 681 bytes} [Thu Jun 18 14:37:09 2026] GET //wp-includes/ID3/license.txt => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 62/309] 8.229.174.127 () {40 vars in 637 bytes} [Thu Jun 18 14:37:10 2026] GET //feed/ => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 63/310] 8.229.174.127 () {40 vars in 654 bytes} [Thu Jun 18 14:37:10 2026] GET //xmlrpc.php?rsd => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 63/311] 8.229.174.127 () {40 vars in 691 bytes} [Thu Jun 18 14:37:10 2026] GET //blog/wp-includes/wlwmanifest.xml => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 63/312] 8.229.174.127 () {40 vars in 689 bytes} [Thu Jun 18 14:37:11 2026] GET //web/wp-includes/wlwmanifest.xml => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 62/313] 8.229.174.127 () {40 vars in 701 bytes} [Thu Jun 18 14:37:11 2026] GET //wordpress/wp-includes/wlwmanifest.xml => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 63/314] 8.229.174.127 () {40 vars in 687 bytes} [Thu Jun 18 14:37:11 2026] GET //wp/wp-includes/wlwmanifest.xml => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 64/315] 8.229.174.127 () {40 vars in 691 bytes} [Thu Jun 18 14:37:11 2026] GET //2020/wp-includes/wlwmanifest.xml => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 64/316] 8.229.174.127 () {40 vars in 691 bytes} [Thu Jun 18 14:37:12 2026] GET //2019/wp-includes/wlwmanifest.xml => generated 179 bytes in 3 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 64/317] 8.229.174.127 () {40 vars in 691 bytes} [Thu Jun 18 14:37:12 2026] GET //2021/wp-includes/wlwmanifest.xml => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 63/318] 8.229.174.127 () {40 vars in 691 bytes} [Thu Jun 18 14:37:12 2026] GET //shop/wp-includes/wlwmanifest.xml => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675953|app: 0|req: 64/319] 8.229.174.127 () {40 vars in 689 bytes} [Thu Jun 18 14:37:13 2026] GET //wp1/wp-includes/wlwmanifest.xml => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675949|app: 0|req: 65/320] 8.229.174.127 () {40 vars in 691 bytes} [Thu Jun 18 14:37:13 2026] GET //test/wp-includes/wlwmanifest.xml => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675950|app: 0|req: 65/321] 8.229.174.127 () {40 vars in 691 bytes} [Thu Jun 18 14:37:13 2026] GET //site/wp-includes/wlwmanifest.xml => generated 179 bytes in 2 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675951|app: 0|req: 65/322] 8.229.174.127 () {40 vars in 689 bytes} [Thu Jun 18 14:37:13 2026] GET //cms/wp-includes/wlwmanifest.xml => generated 179 bytes in 1 msecs (HTTP/1.1 404) 4 headers in 128 bytes (1 switches on core 0)
+[pid: 675952|app: 0|req: 64/323] 14.19.42.255 () {62 vars in 1145 bytes} [Thu Jun 18 15:33:47 2026] GET /login/ => generated 9849 bytes in 4 msecs (HTTP/1.1 200) 4 headers in 137 bytes (1 switches on core 0)

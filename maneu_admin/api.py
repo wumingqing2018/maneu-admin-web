@@ -1,12 +1,11 @@
 from django.http import JsonResponse
 
-from common.jwt_util import _get_admin_id
 from common.verify import is_uuid
 from maneu_admin.service import *
-
+from common.jwt_util import _get_admin_id
 
 def index(request):
-    index_id = is_uuid(request.POST.get('index_id'))
+    index_id = is_uuid(request.GET.get('index_id'))
 
     try:
         userContent = user_detail(index_id=index_id)
@@ -25,11 +24,11 @@ def index(request):
 
 
 def update(request):
-    index_id = is_uuid(request.POST.get('index_id'))
+    index_id = is_uuid(request.GET.get('index_id'))
 
     try:
-        data = user_update(index_id=index_id, phone=request.POST.get('phone'), nickname=request.POST.get('nickname'),
-                           location=request.POST.get('location'))
+        data = user_update(index_id=index_id, phone=request.GET.get('phone'), nickname=request.GET.get('nickname'),
+                           location=request.GET.get('location'))
         content = {'status': True, 'message': '', 'content': data}
     except Exception as e:
         content = {'status': False, 'message': str(e), 'content': {}}
@@ -42,7 +41,7 @@ def search_time(request):
     if admin_id:
 
         try:
-            data = report_search_time(admin_id=admin_id, timeS=request.POST.get('timeS'), timeE=request.POST.get('timeE'))
+            data = report_search_time(admin_id=admin_id, timeS=request.GET.get('timeS'), timeE=request.GET.get('timeE'))
             content = {'status': True, 'message': '',
                        'content': list(data.values('id', 'name', 'phone', 'time', 'remark'))}
         except Exception as e:
@@ -58,7 +57,7 @@ def search_data(request):
     if admin_id:
 
         try:
-            data = report_search_data(admin_id=admin_id, value=request.POST.get('value'))
+            data = report_search_data(admin_id=admin_id, value=request.GET.get('value'))
             content = {'status': True, 'message': '',
                        'content': list(data.values('id', 'name', 'phone', 'time', 'remark'))}
         except Exception as e:

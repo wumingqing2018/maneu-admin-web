@@ -1,9 +1,8 @@
-from datetime import datetime, timedelta
-
 import jwt
+from datetime import datetime, timedelta
 from django.conf import settings
-
 from common.verify import is_uuid
+
 
 JWT_SECRET = settings.JWT_CONFIG['SECRET_KEY']
 JWT_ALGORITHM = settings.JWT_CONFIG['ALGORITHM']

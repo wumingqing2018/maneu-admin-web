@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="67f5da06-f0ac-4dde-bf0d-1ffa0d0cedbe" name="maneu">
+        <fileTransfer accessType="SFTP" host="120.77.215.125" port="22" sshConfigId="875b8974-0d4b-4907-9bf5-536a0eff70af" sshConfig="root@120.77.215.125:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" isUseRsync="true" isUseSudo="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

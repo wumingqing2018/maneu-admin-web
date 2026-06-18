@@ -30,13 +30,16 @@ def access_token(request):
     code = is_code(request.GET.get('code'))
     if call and code:
         admin_user = service.admin_login(call=call, code=code)  # 需修改 service.admin_login 去掉 mark 依赖
+        print(admin_user)
         if admin_user:
-            G_A_T = generate_access_token(admin_user)
-            G_R_T = generate_refresh_token(admin_user)
+            a_token = generate_access_token(admin_user)
+            print(a_token)
+            r_token = generate_refresh_token(admin_user)
+            print(r_token)
             content = {
                 'status': True,
                 'message': '100000',
-                'content': {'access_token': G_A_T, 'refresh_token': G_R_T}
+                'content': {'access_token': a_token, 'refresh_token': r_token}
             }
         else:
             content = {'status': False, 'message': '验证码错误或手机号未注册'}
@@ -48,7 +51,7 @@ def access_token(request):
 
 def refresh_token(request):
     """刷新 access token（接收 refresh_token，返回新 access_token）"""
-    token = request.POST.get('refresh_token')
+    token = request.GET.get('refresh_token')
     if not token:
         return JsonResponse({'status': False, 'message': '缺少 refresh_token'}, status=401)
 
@@ -72,5 +75,6 @@ def refresh_token(request):
 
 def remove_token(request):
     """前端清除 token 后跳转登录页，这里只做重定向"""
+    # 因为 JWT 无状态，服务端不需要任何操作
     content = {'status': True, 'message': 'OK', 'content': {}}
     return JsonResponse(content)
