@@ -20,11 +20,9 @@ class SendSMSForm(forms.Form):
         call = cleaned_data.get('call')
         try:
             # 生成6位随机验证码
-            code = get_random_code()  # 注意加括号
-            # 存入 cleaned_data 供视图使用
-            cleaned_data['code'] = code
-            # 注意：这里不查询用户，不更新数据库，只生成验证码
+            code = get_random_code()
             if sendsms(call, code) != 0:
+                cleaned_data['code'] = code
                 return cleaned_data
             else:
                 raise forms.ValidationError('当前账号没注册')

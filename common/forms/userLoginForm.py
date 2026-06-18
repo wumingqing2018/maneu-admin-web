@@ -32,7 +32,6 @@ class UserLoginForm(forms.Form):
         # 自定义验证：查询用户对象并存入 cleaned_data
         try:
             user = admin_login(call, code)
-            print(user)
             # 如果密码也正确，才将 user 存入（此处只做示例）
             if user is not None:
                 cleaned_data['user'] = user          # 添加自定义键
