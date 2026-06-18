@@ -38,24 +38,15 @@ def access_token(request):
     if form.is_valid():
         # 从表单获取已验证的用户对象（假设你在 form.clean() 中设置了 'user'）
         user = form.cleaned_data['user']
-        access_token = generate_access_token(user)
-        refresh_token = generate_refresh_token(user)
-
-        return JsonResponse({
-            'status': True,
-            'message': '登录成功',
-            'content': {
-                'access_token': access_token,
-                'refresh_token': refresh_token
-            }
-        })
+        a_token = generate_access_token(user)
+        r_token = generate_refresh_token(user)
+        content = {'status': True, 'message': '登录成功', 'content': {'access_token': a_token,'refresh_token': r_token}}
     else:
-        return JsonResponse({
-            'status': False,
-            'message': form.errors.as_text(),
-            'content': {
-            }
-        })
+        content = {'status': True, 'message': form.errors.as_text(), 'content': {}}
+
+    return JsonResponse(content)
+
+
 
 @csrf_exempt  # 因为使用 JWT，无需 CSRF
 @require_http_methods(["POST"])  # 只允许 POST
