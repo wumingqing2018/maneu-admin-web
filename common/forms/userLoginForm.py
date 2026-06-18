@@ -34,10 +34,11 @@ class UserLoginForm(forms.Form):
             user = admin_login(call, code)
             print(user)
             # 如果密码也正确，才将 user 存入（此处只做示例）
-            if user:
+            if user is not None:
                 cleaned_data['user'] = user          # 添加自定义键
                 return cleaned_data
             else:
                 raise forms.ValidationError('验证码错误或手机号未注册')
+
         except Exception as e:
             raise forms.ValidationError(e)

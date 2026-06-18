@@ -42,7 +42,7 @@ def access_token(request):
         r_token = generate_refresh_token(user)
         content = {'status': True, 'message': '登录成功', 'content': {'access_token': a_token,'refresh_token': r_token}}
     else:
-        content = {'status': True, 'message': form.errors.as_text(), 'content': {}}
+        content = {'status': False, 'message': form.errors.as_text(), 'content': {}}
 
     return JsonResponse(content)
 
