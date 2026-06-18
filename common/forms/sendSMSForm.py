@@ -2,7 +2,7 @@ from django import forms
 from django.core.validators import RegexValidator
 from django.forms import widgets
 from common.common import get_random_code
-
+from maneu.service import sendsms
 class SendSMSForm(forms.Form):
     call = forms.CharField(
         label="手机号",
@@ -18,11 +18,16 @@ class SendSMSForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
         call = cleaned_data.get('call')
-        if not call:
-            return cleaned_data
-        # 生成6位随机验证码
-        code = get_random_code()  # 注意加括号
-        # 存入 cleaned_data 供视图使用
-        cleaned_data['code'] = code
-        # 注意：这里不查询用户，不更新数据库，只生成验证码
-        return cleaned_data
+        try:
+            # 生成6位随机验证码
+            code = get_random_code()  # 注意加括号
+            # 存入 cleaned_data 供视图使用
+            cleaned_data['code'] = code
+            # 注意：这里不查询用户，不更新数据库，只生成验证码
+            if sendsms(call, code) != 0:
+                return cleaned_data
+            else:
+                raise forms.ValidationError('当前账号没注册')
+        except Exception as e:
+            raise forms.ValidationError(e)
+
