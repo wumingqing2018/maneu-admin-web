@@ -1,7 +1,8 @@
 import jwt
-from django.http import JsonResponse
 from django.conf import settings
+from django.http import JsonResponse
 from django.utils.deprecation import MiddlewareMixin
+
 
 class UserMiddleware(MiddlewareMixin):
     def process_request(self, request):

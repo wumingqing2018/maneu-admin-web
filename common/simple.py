@@ -1,5 +1,6 @@
 import json
-from typing import Dict, Any, List, Union
+from typing import Dict, Any, List
+
 from django.http import HttpRequest
 
 
