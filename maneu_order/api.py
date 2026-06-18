@@ -9,7 +9,7 @@ from django.http import JsonResponse
 
 from common.jwt_util import _get_admin_id
 from common.simple import filter_store_request_data, extract_report_simple_params, extract_guest_simple_params
-from common.verify import is_uuid
+from common.verify_util import is_uuid
 from maneu_guest.service import *
 from maneu_order.service import *
 from maneu_report.service import *

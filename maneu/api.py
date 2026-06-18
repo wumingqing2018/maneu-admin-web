@@ -1,51 +1,88 @@
-from django.http import JsonResponse
-
 from common import common
+from common.forms.sendSMSForm import SendSMSForm
+from common.forms.userLoginForm import UserLoginForm
+
 from common.jwt_util import *
-from common.verify import is_call, is_code
 from maneu import service
 
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
 
+
+@csrf_exempt  # 因为使用 JWT，无需 CSRF
+@require_http_methods(["POST"])  # 只允许 POST
 def sendsms(request):
-    phone_number = is_call(request.GET.get('call'))
+    form = SendSMSForm(request.POST)
+    if not form.is_valid():
+        # 返回表单错误
+        errors = {}
+        for field, error_list in form.errors.items():
+            errors[field] = [str(e) for e in error_list]
+        return JsonResponse({
+            'status': False,
+            'message': '手机号格式错误',
+            'errors': errors
+        }, status=400)
 
-    if phone_number:
-        code = common.get_random_code()
-        if service.sendsms(call=phone_number, code=code) != 0:
-            response = common.sendsms(call=phone_number, code=code)
-            if response['Code'] == 'OK':
-                content = {'status': True, 'message': 'OK', 'content': {}}
-            else:
-                content = {'status': False, 'message': response["Message"], 'content': {'code': code}}
-        else:
-            content = {'status': False, 'message': '请先注册账号', 'content': {}}
+    call = form.cleaned_data['call']
+    code = form.cleaned_data['code']  # 由表单 clean 生成的验证码
+
+    # 调用短信发送服务
+    response = common.sendsms(call=call, code=code)
+    if response.get('Code') == 'OK':
+        # 将验证码存入缓存（有效期5分钟）
+        return JsonResponse({
+            'status': True,
+            'message': '验证码已发送',
+            'content': {}
+        })
     else:
-        content = {'status': False, 'message': '请输入正确账号', 'content': {}}
+        return JsonResponse({
+            'status': False,
+            'message': response.get('Message', '短信发送失败'),
+            'content': {'code': code}  # 调试用，生产环境不建议返回
+        }, status=400)
 
-    return JsonResponse(content)
 
 
+@csrf_exempt  # 因为使用 JWT，无需 CSRF
+@require_http_methods(["POST"])  # 只允许 POST
 def access_token(request):
-    call = is_call(request.GET.get('call'))
-    code = is_code(request.GET.get('code'))
-    if call and code:
-        admin_user = service.admin_login(call=call, code=code)  # 需修改 service.admin_login 去掉 mark 依赖
-        if admin_user:
-            G_A_T = generate_access_token(admin_user)
-            G_R_T = generate_refresh_token(admin_user)
-            content = {
-                'status': True,
-                'message': '100000',
-                'content': {'access_token': G_A_T, 'refresh_token': G_R_T}
+    form = UserLoginForm(request.POST)
+
+    if form.is_valid():
+        # 从表单获取已验证的用户对象（假设你在 form.clean() 中设置了 'user'）
+        user = form.cleaned_data['user']
+        access_token = generate_access_token(user)
+        refresh_token = generate_refresh_token(user)
+
+        return JsonResponse({
+            'status': True,
+            'message': '登录成功',
+            'content': {
+                'access_token': access_token,
+                'refresh_token': refresh_token
             }
-        else:
-            content = {'status': False, 'message': '验证码错误或手机号未注册'}
+        })
     else:
-        content = {'status': False, 'message': '请填写手机号和验证码'}
+        # 将表单错误转换为结构化的字典（便于前端解析）
+        errors_dict = {}
+        for field, error_list in form.errors.items():
+            errors_dict[field] = [str(error) for error in error_list]
 
-    return JsonResponse(content)
+        # 也可以包含非字段错误
+        if form.non_field_errors():
+            errors_dict['non_field_errors'] = [str(e) for e in form.non_field_errors()]
 
+        return JsonResponse({
+            'status': False,
+            'message': '输入数据有误',
+            'errors': errors_dict
+        }, status=400)  # 返回 400 Bad Request
 
+@csrf_exempt  # 因为使用 JWT，无需 CSRF
+@require_http_methods(["POST"])  # 只允许 POST
 def refresh_token(request):
     """刷新 access token（接收 refresh_token，返回新 access_token）"""
     token = request.POST.get('refresh_token')

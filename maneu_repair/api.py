@@ -5,7 +5,7 @@ from django.http import JsonResponse
 
 from common.jwt_util import _get_admin_id
 from common.simple import extract_guest_simple_params
-from common.verify import is_uuid
+from common.verify_util import is_uuid
 from maneu_guest.service import *
 
 
