@@ -97,9 +97,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'maneu',
-        'HOST': 'localhost',
+        'HOST': '127.0.0.1',
         'PORT': 3306,
-        'USER': '127.0.0.1',
+        'USER': 'root',
         'PASSWORD': '214772680',
     }
 }
