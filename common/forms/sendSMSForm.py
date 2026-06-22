@@ -28,4 +28,3 @@ class SendSMSForm(forms.Form):
                 raise forms.ValidationError('当前账号没注册')
         except Exception as e:
             raise forms.ValidationError(e)
-

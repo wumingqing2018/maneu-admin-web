@@ -92,11 +92,7 @@ def statistics(request):
 
     # 只查询需要做统计的字段，使用 only 大幅减少内存消耗
     reports = ManeuReport.objects.filter(admin_id=admin_id).only(
-        'od_va', 'os_va',
-        'od_sph', 'os_sph',
-        'od_cyl', 'os_cyl',
-        'od_al', 'os_al',
-        'od_ak', 'os_ak'
+        'od_va', 'os_va', 'od_sph', 'os_sph','od_cyl', 'os_cyl','od_al', 'os_al', 'od_ak', 'os_ak'
     )
 
     # 初始化存放有效数值的列表
