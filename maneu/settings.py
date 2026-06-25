@@ -99,7 +99,7 @@ DATABASES = {
         'NAME': 'maneu',
         'HOST': '127.0.0.1',
         'PORT': 3306,
-        'USER': 'maneu',
+        'USER': 'root',
         'PASSWORD': '214772680',
     }
 }
@@ -147,7 +147,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 JWT_CONFIG = {
     'SECRET_KEY': SECRET_KEY,  # 直接用 Django 的 SECRET_KEY
     'ALGORITHM': 'HS256',
-    'ACCESS_TOKEN_LIFETIME': 3600,  # 1 小时
+    'ACCESS_TOKEN_LIFETIME': 300,  # 1 小时
     'REFRESH_TOKEN_LIFETIME': 604800,  # 7 天
 }
 #

@@ -37,6 +37,7 @@
         <!-- 验证码输入 -->
         <div class="input-group-custom" id="password">
             <input autocomplete="off" class="input-item" id="code" placeholder="验证码" type="text" maxlength="6">
+            <span class="msg" id="login_msg"></span>
         </div>
 
         <!-- 登录按钮（动态显示） -->
@@ -81,6 +82,9 @@
      */
     function showMessage(text, color = '#ff6b6b') {
         $('#msg').text(text).css('color', color);
+    }
+    function showLoginMessage(text, color = '#ff6b6b') {
+        $('#login_msg').text(text).css('color', color);
     }
 
     // ========================================================================
@@ -223,23 +227,17 @@
                 success: function (res) {
                     if (res.status === true) {
                         // 保存 Token 到本地存储（根据实际返回结构调整）
-                        if (res.content) {
-                            localStorage.setItem('access_token', res.content.access_token);
-                            localStorage.setItem('refresh_token', res.content.refresh_token);
-                        } else {
-                            // 兼容直接返回 access_token 的情况
-                            localStorage.setItem('access_token', res.access_token);
-                            localStorage.setItem('refresh_token', res.refresh_token);
-                        }
+                        localStorage.setItem('access_token', res.content.access_token);
+                        localStorage.setItem('refresh_token', res.content.refresh_token);
                         window.location.href = redirectUrl;   // 跳转到目标页
                     } else {
-                        showMessage(res.message || '登录失败');
+                        showLoginMessage(res.message || '登录失败');
                         $loginBtn.prop('disabled', false).text('登录');
                     }
                 },
                 error: function (xhr) {
                     const errMsg = xhr.responseJSON?.message || '登录请求失败，请稍后重试';
-                    showMessage(errMsg);
+                    showLoginMessage(errMsg);
                     $loginBtn.prop('disabled', false).text('登录');
                 }
             });

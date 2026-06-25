@@ -118,7 +118,6 @@ def update(request):
     admin_id = _get_admin_id(request)
     index_id = is_uuid(request.POST.get('index_id'))
     if admin_id and index_id:
-        print(request.POST.get('storeContent'))
 
         try:
             data = store_update(admin_id=admin_id, index_id=index_id, content=request.POST.get('storeContent'))

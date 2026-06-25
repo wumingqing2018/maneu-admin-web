@@ -37,7 +37,7 @@ class UserLoginForm(forms.Form):
                 cleaned_data['user'] = user          # 添加自定义键
                 return cleaned_data
             else:
-                raise forms.ValidationError('验证码错误或手机号未注册')
+                raise forms.ValidationError('验证码错误')
 
         except Exception as e:
             raise forms.ValidationError(e)

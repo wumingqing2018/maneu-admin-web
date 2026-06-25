@@ -162,47 +162,6 @@
         // ========================================================================
 
 
-        /**
-         * 从 Cookie 中获取 Django CSRF Token（补充工具函数）
-        function getCSRFToken() {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, 10) === 'csrftoken=') {
-                        cookieValue = decodeURIComponent(cookie.substring(10));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-                 $(document).ready(function() {
-            $.ajaxSetup({
-                beforeSend: function(xhr, settings) {
-                    // 若请求的是刷新接口，跳过添加 Token（避免死循环）
-                    if (settings.url && settings.url.includes('/refresh_token/')) {
-                        return;
-                    }
-                    // 自动添加 JWT Access Token
-                    const token = localStorage.getItem('access_token');
-                    if (token) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-                    }
-                    // 非简单请求（非 GET/HEAD/OPTIONS/TRACE）自动添加 CSRF Token
-                    if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
-                        const csrfToken = getCSRFToken();
-                        if (csrfToken) {
-                            xhr.setRequestHeader('X-CSRFToken', csrfToken);
-                        }
-                    }
-                }
-            });
-        });
-
-                     */
-
 
         // ========================================================================
         // 3. API 端点（由 Django 模板反向解析）
@@ -546,7 +505,7 @@
                         drawAlCompareHistogram(odAl, osAl);
                         drawSphChart(odSph, osSph);
                         drawCylChart(odCyl, osCyl);
-                        drawAkScatterChart(odAk, osAk);
+                        drawAkScatterChart(odAl, osAl);
                     } else {
                         // 接口返回失败状态
                         const errMsg = res.message || '数据加载失败';
