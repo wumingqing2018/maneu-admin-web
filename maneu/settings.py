@@ -24,7 +24,7 @@ SECURITY WARNING: don't run with debug turned on in production!
 SECURITY WARNING: keep the secret key used in production secret!
 """
 DEBUG = True
-SECRET_KEY = 'd&@vq_f^z79&w=nqqcm2vu#+gj8)_qdvy1t&agfxhmi74fwpr!'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 ALLOWED_HOSTS = ['*']
 
 """
@@ -99,8 +99,8 @@ DATABASES = {
         'NAME': 'maneu',
         'HOST': '127.0.0.1',
         'PORT': 3306,
-        'USER': 'root',
-        'PASSWORD': '214772680',
+        'USER': os.environ.get('MYSQL_KEY_ID'),
+        'PASSWORD': os.environ.get('MYSQL_KEY_SECRET'),
     }
 }
 

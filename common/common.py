@@ -19,8 +19,8 @@ def generate_random_32hex():
 
 
 def get_miniprogram_token():
-    APPID = "wxf48b774de9be5613"
-    APPSECRET = "e07b22bd5cac3c5a74baf9e03ffc7ce1"
+    APPID = os.environ.get('WECHAT_APP_ID')
+    APPSECRET = os.environ.get('WECHAT_APP_SECRET')
     url = f"https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={APPID}&secret={APPSECRET}"
     return requests.get(url).json()
 
@@ -70,8 +70,8 @@ def getip(request):
 
 
 def sendsms(code, call):
-    credentials = AccessKeyCredential(os.environ['ALIBABA_CLOUD_ACCESS_KEY_ID'],
-                                      os.environ['ALIBABA_CLOUD_ACCESS_KEY_SECRET'])
+    credentials = AccessKeyCredential(os.environ.get('ALIBABA_CLOUD_ACCESS_KEY_ID'),
+                                      os.environ.get('ALIBABA_CLOUD_ACCESS_KEY_SECRET'))
 
     request = SendSmsRequest()
     request.set_accept_format('json')
