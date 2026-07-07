@@ -1,6 +1,7 @@
 import os
 import random
 import secrets
+import json
 import time
 from pathlib import Path
 
@@ -69,9 +70,11 @@ def getip(request):
         return request.META.get("REMOTE_ADDR")
 
 
-def sendsms(code, call):
-    credentials = AccessKeyCredential(os.environ.get('ALIBABA_CLOUD_ACCESS_KEY_ID'), os.environ.get('ALIBABA_CLOUD_ACCESS_KEY_SECRET'))
-
+def sendsms(call, code):  # 统一参数顺序：手机号在前，验证码在后
+    credentials = AccessKeyCredential(
+        os.environ.get('ALIBABA_CLOUD_ACCESS_KEY_ID'),
+        os.environ.get('ALIBABA_CLOUD_ACCESS_KEY_SECRET')
+    )
     request = SendSmsRequest()
     request.set_accept_format('json')
     request.set_SignName("爱视光学")
@@ -82,7 +85,9 @@ def sendsms(code, call):
     client = AcsClient(region_id='cn-shenzhen', credential=credentials)
     response = client.do_action_with_exception(request)
 
-    return eval(response)
+    # 解析返回结果（bytes -> str -> dict）
+    result = json.loads(response.decode('utf-8'))
+    return result  # 返回字典，例如 {'Code': 'OK', 'Message': '...', ...}
 
 
 def get_random_code():
