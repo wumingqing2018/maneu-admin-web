@@ -23,11 +23,12 @@ def sendsms(request):
         cache.set(call, code, timeout=300)
 
         # 发送短信...（调用阿里云接口）
-        common_sendsms = common.sendsms(call, code)
-        if common_sendsms:
+        response_data = common.sendsms(call, code)  # 单个字典
+        if response_data.get('Code') == 'OK':
             return JsonResponse({'status': True, 'message': '验证码已发送', 'content': {}})
         else:
-            return JsonResponse({'status': False, 'message': msg, 'content': {}})
+            error_msg = response_data.get('Message', '发送失败')
+            return JsonResponse({'status': False, 'message': error_msg, 'content': {}})
     else:
         return JsonResponse({'status': False, 'message': form.errors.as_text(), 'content': {}})
 
