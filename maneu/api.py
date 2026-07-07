@@ -23,8 +23,8 @@ def sendsms(request):
         cache.set(call, code, timeout=300)
 
         # 发送短信...（调用阿里云接口）
-        success, msg = common.sendsms(call, code)
-        if success:
+        common_sendsms = common.sendsms(call, code)
+        if common_sendsms:
             return JsonResponse({'status': True, 'message': '验证码已发送', 'content': {}})
         else:
             return JsonResponse({'status': False, 'message': msg, 'content': {}})
