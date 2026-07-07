@@ -145,7 +145,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 # settings.py 末尾追加
 JWT_CONFIG = {
-    'SECRET_KEY': SECRET_KEY,  # 直接用 Django 的 SECRET_KEY
+    'SECRET_KEY': os.environ.get('DJANGO_SECRET_KEY'),  # 直接用 Django 的 SECRET_KEY
     'ALGORITHM': 'HS256',
     'ACCESS_TOKEN_LIFETIME': 300,  # 1 小时
     'REFRESH_TOKEN_LIFETIME': 604800,  # 7 天
