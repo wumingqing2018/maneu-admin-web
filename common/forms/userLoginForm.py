@@ -1,6 +1,7 @@
 from django import forms
 from django.core.validators import RegexValidator
 from django.forms import widgets
+from django.core.cache import cache
 
 from maneu.service import admin_login
 
@@ -31,10 +32,11 @@ class UserLoginForm(forms.Form):
         code = self.cleaned_data.get('code')
         # 自定义验证：查询用户对象并存入 cleaned_data
         try:
-            user = admin_login(call, code)
+            user = cache.get(call)
             # 如果密码也正确，才将 user 存入（此处只做示例）
-            if user is not None:
-                cleaned_data['user'] = user          # 添加自定义键
+            if code == user:
+                cleaned_data['call'] = call          # 添加自定义键
+                cleaned_data['code'] = code          # 添加自定义键
                 return cleaned_data
             else:
                 raise forms.ValidationError('验证码错误')

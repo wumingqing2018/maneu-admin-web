@@ -20,7 +20,7 @@ def sendsms(request):
         code = form.cleaned_data['code']
 
         # 存储验证码，有效期5分钟（与表单频率限制时间段不同，可取交集）
-        cache.set(f'sms_code_{call}', code, timeout=300)
+        cache.set(call, code, timeout=300)
 
         # 发送短信...（调用阿里云接口）
         success, msg = common.sendsms(call, code)
@@ -38,8 +38,8 @@ def access_token(request):
     form = UserLoginForm(request.POST)
 
     if form.is_valid():
-        # 从表单获取已验证的用户对象（假设你在 form.clean() 中设置了 'user'）
-        user = form.cleaned_data['user']
+        call = form.cleaned_data['call']
+        user = service.admin_find_phone(call)
         a_token = generate_access_token(user)
         r_token = generate_refresh_token(user)
         content = {'status': True, 'message': '登录成功', 'content': {'access_token': a_token,'refresh_token': r_token}}
