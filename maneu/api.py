@@ -8,6 +8,7 @@ from maneu import service
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from django.core.cache import cache
 
 
 @csrf_exempt  # 因为使用 JWT，无需 CSRF
@@ -16,18 +17,19 @@ def sendsms(request):
     form = SendSMSForm(request.POST)
     if form.is_valid():
         call = form.cleaned_data['call']
-        code = form.cleaned_data['code']  # 由表单 clean 生成的验证码
+        code = form.cleaned_data['code']
 
-        # 调用短信发送服务
-        response = common.sendsms(call=call, code=code)
-        if response.get('Code') == 'OK':
-            content = {'status': True,'message': '验证码已发送', 'content': {}}
+        # 存储验证码，有效期5分钟（与表单频率限制时间段不同，可取交集）
+        cache.set(f'sms_code_{call}', code, timeout=300)
+
+        # 发送短信...（调用阿里云接口）
+        success, msg = common.sendsms(call, code)
+        if success:
+            return JsonResponse({'status': True, 'message': '验证码已发送', 'content': {}})
         else:
-            content = {'status': False, 'message': response["Message"], 'content': {}}
+            return JsonResponse({'status': False, 'message': msg, 'content': {}})
     else:
-        content = {'status': False, 'message': form.errors.as_text(), 'content': {}}
-    return JsonResponse(content)
-
+        return JsonResponse({'status': False, 'message': form.errors.as_text(), 'content': {}})
 
 
 @csrf_exempt  # 因为使用 JWT，无需 CSRF

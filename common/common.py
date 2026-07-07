@@ -15,7 +15,7 @@ from aliyunsdkdysmsapi.request.v20170525.SendSmsRequest import SendSmsRequest
 
 def generate_random_32hex():
     """生成32位随机十六进制字符串（安全加密级别）"""
-    return secrets.token_hex(16)  # 16字节=32位十六进制
+    return secrets.token_hex(16)
 
 
 def get_miniprogram_token():
@@ -70,8 +70,7 @@ def getip(request):
 
 
 def sendsms(code, call):
-    credentials = AccessKeyCredential(os.environ.get('ALIBABA_CLOUD_ACCESS_KEY_ID'),
-                                      os.environ.get('ALIBABA_CLOUD_ACCESS_KEY_SECRET'))
+    credentials = AccessKeyCredential(os.environ.get('ALIBABA_CLOUD_ACCESS_KEY_ID'), os.environ.get('ALIBABA_CLOUD_ACCESS_KEY_SECRET'))
 
     request = SendSmsRequest()
     request.set_accept_format('json')

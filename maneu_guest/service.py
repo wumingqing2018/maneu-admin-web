@@ -4,9 +4,7 @@ from maneu.models import *
 
 
 def guest_insert(admin_id='', index_id='', time='', name='', phone='', status='', content='', remark=''):
-    return ManeuGuest.objects.create(admin_id=admin_id, id=index_id, name=name, phone=phone, time=time,
-                                     sex=content['sex'], age=content['age'], ot=content['ot'], em=content['em'],
-                                     dfh=content['dfh'], remark=remark, status=status)
+    return ManeuGuest.objects.create(admin_id=admin_id, id=index_id, name=name, phone=phone, time=time, sex=content['sex'], age=content['age'], ot=content['ot'], em=content['em'], dfh=content['dfh'], remark=remark, status=status)
 
 
 def guest_delete(admin_id='', index_id=''):
@@ -22,9 +20,11 @@ def guest_search_time(admin_id='', timeS='', timeE=''):
 
 
 def guest_search_data(admin_id='', value=''):
-    return ManeuGuest.objects.filter(
-        Q(name__icontains=value, admin_id=admin_id) | Q(phone__icontains=value, admin_id=admin_id)).order_by(
-        '-time').all()
+    return ManeuGuest.objects.filter(Q(name__icontains=value, admin_id=admin_id) | Q(phone__icontains=value, admin_id=admin_id)).order_by('-time').all()
+
+
+def guest_search_call(call=''):
+    return ManeuGuest.objects.filter(phone=call).first()
 
 
 def guest_update(admin_id='', index_id='', time='', name='', phone='', remark='', sex='', age="", ot='', em='', dfh=''):

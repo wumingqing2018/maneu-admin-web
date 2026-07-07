@@ -150,21 +150,21 @@ JWT_CONFIG = {
     'ACCESS_TOKEN_LIFETIME': 300,  # 1 小时
     'REFRESH_TOKEN_LIFETIME': 604800,  # 7 天
 }
-#
-# CACHES = {
-#     "default": {
-#         "BACKEND": "django_redis.cache.RedisCache",
-#         "LOCATION": "redis://127.0.0.1:6379/0",  # 或 redis://:password@127.0.0.1:6379/0
-#         "OPTIONS": {
-#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
-#             # "PASSWORD": "your_redis_password",           # Redis密码
-#             "SOCKET_TIMEOUT": 5,                         # 读写超时
-#             "COMPRESSOR": "django_redis.compressors.zlib.ZlibCompressor",  # 数据压缩
-#             "CONNECTION_POOL_KWARGS": {
-#                 "max_connections": 100,                  # 连接池大小
-#                 "health_check_interval": 30              # 连接健康检查
-#             }
-#         },
-#         "KEY_PREFIX": "maneu"                            # Key前缀，防冲突
-#     }
-# }
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/0",  # 或 redis://:password@127.0.0.1:6379/0
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            # "PASSWORD": "your_redis_password",           # Redis密码
+            "SOCKET_TIMEOUT": 5,                         # 读写超时
+            "COMPRESSOR": "django_redis.compressors.zlib.ZlibCompressor",  # 数据压缩
+            "CONNECTION_POOL_KWARGS": {
+                "max_connections": 100,                  # 连接池大小
+                "health_check_interval": 30              # 连接健康检查
+            }
+        },
+        "KEY_PREFIX": "maneu"                            # Key前缀，防冲突
+    }
+}
