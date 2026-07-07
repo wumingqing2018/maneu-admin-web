@@ -39,7 +39,7 @@ def access_token(request):
 
     if form.is_valid():
         call = form.cleaned_data['call']
-        user = service.admin_find_username(call)
+        user = service.admin_find_username(code=call)
         a_token = generate_access_token(user)
         r_token = generate_refresh_token(user)
         content = {'status': True, 'message': '登录成功', 'content': {'access_token': a_token,'refresh_token': r_token}}

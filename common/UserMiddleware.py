@@ -9,7 +9,7 @@ class UserMiddleware(MiddlewareMixin):
         if 'api' not in request.path.lower():
             return None
 
-        auth_header = request.headers.get('Authorization', '').strip()  # 关键修改
+        auth_header = request.headers.get('Authorization', '').strip()
         if not auth_header.startswith('Bearer '):
             return self._unauthorized_response('未提供有效的 Token')
 
