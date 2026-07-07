@@ -3,8 +3,6 @@ from django.core.validators import RegexValidator
 from django.forms import widgets
 from django.core.cache import cache
 
-from maneu.service import admin_login
-
 
 class UserLoginForm(forms.Form):
     call = forms.CharField(label="手机",

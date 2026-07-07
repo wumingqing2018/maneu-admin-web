@@ -4,8 +4,9 @@ from maneu.models import ManeuAdmin
 def admin_find_id(code=''):
     return ManeuAdmin.objects.filter(id=code).first()
 
-def admin_find_phone(code=''):
-    return ManeuAdmin.objects.filter(phone=code).first()
+
+def admin_find_username(code=''):
+    return ManeuAdmin.objects.filter(username=code).first()
 
 
 def sendsms(call='', code=''):
