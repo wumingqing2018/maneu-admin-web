@@ -16,78 +16,44 @@
             </a>
         </div>
 
-        <!-- 1. 客户信息卡片（可折叠详细参数） -->
+        <!-- ==================== 1. 客户信息 ==================== -->
         <div class="section-card" id="guestSection">
-            <div class="section-title d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div class="section-title">
                 <span><i class="bi bi-person-vcard"></i> 客户信息</span>
-                <div class="d-flex gap-2">
-                    <button class="btn-toggle" id="toggleGuest" type="button">
-                        <i class="bi bi-chevron-down"></i> 详细参数
-                    </button>
-                </div>
             </div>
 
-            <!-- 核心字段 -->
             <div class="row g-3 mb-2">
                 <div class="col-md-4">
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-calendar"></i></span>
-                        <input autocomplete="off" type="datetime-local" class="form-control" id="time" value="{{ time }}">
+                        <input type="text" class="form-control" id="time" value="{{ time }}" readonly placeholder="自动获取">
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-person"></i></span>
-                        <input autocomplete="off" type="text" class="form-control" id="name" placeholder="客户姓名">
+                        <input autocomplete="off" type="text" class="form-control" id="name" placeholder="客户姓名（选填）">
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-telephone"></i></span>
-                        <input autocomplete="off" type="text" class="form-control" id="phone" placeholder="联系电话">
+                        <input autocomplete="off" type="text" class="form-control" id="phone" placeholder="联系电话（选填）">
                     </div>
                 </div>
             </div>
 
-            <!-- 详细参数区域（可折叠） -->
-            <div id="guestExtra" style="display: none;">
-                <div class="row g-3 mb-3">
-                    <div class="col-md-4">
-                        <label class="form-label small fw-bold text-muted">性别</label>
-                        <input autocomplete="off" type="text" class="form-control" id="sex" list="sexList" placeholder="例如：男">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label small fw-bold text-muted">年龄</label>
-                        <input autocomplete="off" type="text" class="form-control" id="age" placeholder="例如：28">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label small fw-bold text-muted">眼位</label>
-                        <input autocomplete="off" type="text" class="form-control" id="ot" list="otList" placeholder="例如：正视">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label small fw-bold text-muted">主视眼</label>
-                        <input autocomplete="off" type="text" class="form-control" id="em" list="emList" placeholder="左眼 / 右眼">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label small fw-bold text-muted">病族史</label>
-                        <input autocomplete="off" type="text" class="form-control" id="dfh" list="dfhList" placeholder="无 / 有">
-                    </div>
-                </div>
-            </div>
-
-            <!-- 客户备注 -->
             <div class="row g-3">
                 <div class="col-12">
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-chat-left-text"></i></span>
-                        <input autocomplete="off" type="text" class="form-control" id="remark" placeholder="备注信息">
+                        <input autocomplete="off" type="text" class="form-control" id="remark" placeholder="备注信息（选填）">
                     </div>
                 </div>
             </div>
         </div>
 
-
-        <!-- 2. 产品信息卡片（12组键值对，默认展开，可折叠） -->
+        <!-- ==================== 2. 产品信息 ==================== -->
         <div class="section-card" id="storeSection">
             <div class="section-title d-flex justify-content-between align-items-center flex-wrap gap-2">
                 <span><i class="bi bi-box-seam"></i> 定制产品信息</span>
@@ -99,7 +65,6 @@
             </div>
 
             <div class="col-md-6" id="productExtra">
-                <!-- 12组键值对 -->
                 <div class="kv-row"><input type="text" class="kv-key" id="key1" placeholder="参数名" value="产品系列"><span class="kv-sep">:</span><input type="text" class="kv-val" id="val1" placeholder="参数值"></div>
                 <div class="kv-row"><input type="text" class="kv-key" id="key2" placeholder="参数名" value="产品名称"><span class="kv-sep">:</span><input type="text" class="kv-val" id="val2" placeholder="参数值"></div>
                 <div class="kv-row"><input type="text" class="kv-key" id="key3" placeholder="参数名" value="折射率"><span class="kv-sep">:</span><input type="text" class="kv-val" id="val3" placeholder="参数值"></div>
@@ -113,13 +78,12 @@
                 <div class="kv-row"><input type="text" class="kv-key" id="key11" placeholder="参数名"><span class="kv-sep">:</span><input type="text" class="kv-val" id="val11" placeholder="参数值"></div>
                 <div class="kv-row"><input type="text" class="kv-key" id="key12" placeholder="参数名"><span class="kv-sep">:</span><input type="text" class="kv-val" id="val12" placeholder="参数值"></div>
                 <small class="text-muted d-block mt-2">
-                    <i class="bi bi-info-circle"></i> 填写12组自定义产品参数，参数名不能重复，留空则不保存。
+                    <i class="bi bi-info-circle"></i> 填写自定义产品参数，参数名不能重复，留空则不保存。
                 </small>
             </div>
         </div>
 
-
-        <!-- 3. 底部操作栏 -->
+        <!-- ==================== 3. 底部操作栏 ==================== -->
         <div class="action-bar justify-content-end">
             <button class="btn btn-outline-primary btn-back-page" id="submitOrderBtn" type="button">
                 <i class="bi bi-check-lg"></i> 提交订单
@@ -128,10 +92,175 @@
     </div>
 {% endblock %}
 
+
 {% block javascript %}
     <script>
-        // API 端点（由 Django 模板反向解析）
-        const STORE_INSERT_API = "{% url 'maneu_store:api_insert' %}";
+        window.STORE_INSERT_API = "{% url 'maneu_store:api_insert' %}";
+        window.STORE_LIST_URL   = "{% url 'maneu_store:index' %}";
     </script>
-    <script src="{% static 'javascript/maneu_store/insert20260707.js' %}"></script>
+    <script>
+    (function () {
+        'use strict';
+
+        // ============================================================
+        // 工具
+        // ============================================================
+
+        function val(id) {
+            return ($('#' + id).val() || '').trim();
+        }
+
+        function getToken() {
+            return localStorage.getItem('access_token') || '';
+        }
+
+        function showError(msg) {
+            alert(msg || '操作失败，请稍后重试');
+        }
+
+        function setupToggle(btnId, panelId) {
+            var $btn = $('#' + btnId);
+            var $panel = $('#' + panelId);
+            if (!$btn.length || !$panel.length) return;
+
+            $btn.on('click', function () {
+                $panel.slideToggle(200);
+                $btn.find('i').toggleClass('bi-chevron-down bi-chevron-up');
+            });
+        }
+
+        // ============================================================
+        // 收集产品参数（12 组 key-value → JSON 字符串）
+        // ============================================================
+
+        function collectStoreContent() {
+            var keys = [];
+            var obj = {};
+
+            for (var i = 1; i <= 12; i++) {
+                var key = val('key' + i);
+                var v   = val('val' + i);
+
+                if (!key) continue;   // 空键跳过
+
+                if (keys.indexOf(key) !== -1) {
+                    showError('产品参数名「' + key + '」重复，请修改后再提交');
+                    return null;
+                }
+
+                keys.push(key);
+                obj[key] = v;
+            }
+
+            if (keys.length === 0) {
+                showError('请至少填写一组产品参数');
+                return null;
+            }
+
+            // 后端存储格式是数组，元素是 {参数名: 值}
+            return JSON.stringify([obj]);
+        }
+
+        // ============================================================
+        // 提交
+        // ============================================================
+
+        var isSubmitting = false;
+
+        function submitOrder() {
+            if (isSubmitting) return;
+
+            // 收集产品参数
+            var storeContent = collectStoreContent();
+            if (storeContent === null) return;
+
+            // 收集顶层字段（都非必填）
+            var payload = {
+                name:         val('name'),
+                phone:        val('phone'),
+                remark:       val('remark'),
+                storeContent: storeContent,
+            };
+
+            console.log('[store/insert] payload =', payload);
+
+            // 登录检查
+            var token = getToken();
+            if (!token) {
+                alert('请先登录');
+                return;
+            }
+
+            var $btn = $('#submitOrderBtn');
+            var originalText = $btn.html();
+
+            isSubmitting = true;
+            $btn.prop('disabled', true)
+                .html('<span class="spinner-border spinner-border-sm me-1"></span>提交中...');
+
+            $.ajax({
+                url: window.STORE_INSERT_API,
+                method: 'POST',
+                contentType: 'application/json',
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                },
+                data: JSON.stringify(payload),
+                dataType: 'json',
+                success: function (res) {
+                    if (res && res.status === true) {
+                        alert('提交成功');
+                        location.href = window.STORE_LIST_URL || '/';
+                    } else if (res && res.errors) {
+                        // 字段级错误展示
+                        var msgs = [];
+                        Object.keys(res.errors).forEach(function (k) {
+                            (res.errors[k] || []).forEach(function (e) {
+                                msgs.push(e.message);
+                            });
+                        });
+                        showError(msgs.length ? msgs.join('\n') : (res.message || '提交失败'));
+                    } else {
+                        showError((res && res.message) || '提交失败');
+                    }
+                },
+                error: function (xhr) {
+                    if (xhr.status === 401) {
+                        showError('登录已过期，请重新登录');
+                        return;
+                    }
+                    var msg = '网络错误，请稍后重试';
+                    try {
+                        var data = JSON.parse(xhr.responseText);
+                        msg = data.message || msg;
+                    } catch (e) {}
+                    showError(msg);
+                },
+                complete: function () {
+                    isSubmitting = false;
+                    $btn.prop('disabled', false).html(originalText);
+                },
+            });
+        }
+
+        // ============================================================
+        // 初始化
+        // ============================================================
+
+        $(function () {
+            setupToggle('toggleProduct', 'productExtra');
+
+            $('#submitOrderBtn').on('click', submitOrder);
+
+            // 回车快速提交
+            $('#guestSection input, #storeSection input').on('keypress', function (e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    submitOrder();
+                }
+            });
+        });
+
+    })();
+    </script>
 {% endblock %}

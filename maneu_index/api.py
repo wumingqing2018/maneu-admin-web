@@ -2,7 +2,7 @@ import json
 
 from django.http import JsonResponse
 
-from common.jwt_util import _get_admin_id
+from common.util_jwt import get_admin_id
 from maneu.models import ManeuReport
 
 
@@ -26,7 +26,7 @@ def search_time(request):
         "content": [{"id":, "name":, "phone":, "time":, "remark":}, ...]
     }
     """
-    admin_id = _get_admin_id(request)
+    admin_id = get_admin_id(request)
     if not admin_id:
         return JsonResponse({'status': False, 'message': '认证失败，请重新登录', 'content': []})
 
@@ -55,7 +55,7 @@ def search_data(request):
     GET参数: value  搜索关键词
     返回结构同 search_time
     """
-    admin_id = _get_admin_id(request)
+    admin_id = get_admin_id(request)
     if not admin_id:
         return JsonResponse({'status': False, 'message': '认证失败，请重新登录', 'content': []})
 
@@ -86,7 +86,7 @@ def statistics(request):
     生成验光数据统计（纯接口，供ECharts前端调用）
     返回JSON包含所有图表所需数据：视力分布、球镜柱镜列表、眼轴长度列表等
     """
-    admin_id = _get_admin_id(request)
+    admin_id = get_admin_id(request)
     if not admin_id:
         return JsonResponse({'status': False, 'message': '认证失败', 'data': {}})
 

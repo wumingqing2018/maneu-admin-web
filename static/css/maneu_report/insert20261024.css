@@ -166,4 +166,108 @@
         flex: 1 1 100%;
     }
 }
-    
+
+/* ============================================================
+   处方表格（OD/OS 并排）
+   ============================================================ */
+.rx-group-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #0071e3;
+    margin: 18px 0 10px;
+    padding-left: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.rx-group-title::before {
+    content: '';
+    width: 3px;
+    height: 14px;
+    background: #0071e3;
+    border-radius: 2px;
+}
+
+.rx-group-title:first-child {
+    margin-top: 4px;
+}
+
+.rx-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 6px;
+}
+
+.rx-table thead th {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7280;
+    padding: 6px 12px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+    letter-spacing: 0.3px;
+}
+
+.rx-table thead th:nth-child(1) {
+    width: 30%;
+}
+
+.rx-table thead th:nth-child(2),
+.rx-table thead th:nth-child(3) {
+    width: 35%;
+}
+
+.rx-table tbody td {
+    padding: 3px 8px;
+    vertical-align: middle;
+}
+
+.rx-table tbody td:first-child {
+    font-size: 14px;
+    color: #374151;
+    font-weight: 500;
+    padding-left: 12px;
+}
+
+.rx-table .form-control {
+    height: 40px;
+    font-size: 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #f9fafb;
+    transition: all .2s;
+}
+
+.rx-table .form-control:focus {
+    border-color: #0071e3;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.1);
+}
+
+.eye-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 4px;
+    letter-spacing: 0.3px;
+}
+
+.eye-badge--od {
+    background: rgba(0, 113, 227, .1);
+    color: #0071e3;
+}
+
+.eye-badge--os {
+    background: rgba(88, 86, 214, .1);
+    color: #5856d6;
+}
+
+.rx-table tbody tr:hover .form-control {
+    background: #fff;
+}
+
+#reportExtra {
+    padding-top: 8px;
+}

@@ -1,12 +1,14 @@
+{#templates/report_insert.html#}
 {% extends 'maneu/base.html' %}
 {% load static %}
 
 {% block css %}
-    <link href="{% static 'css/maneu_report/insert20260606.css' %}" rel="stylesheet">
+    <link href="{% static 'css/maneu_report/insert20261024.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
     <div class="main-content-wrapper">
+
         <!-- 顶部操作栏 -->
         <div class="page-header">
             <h1 class="page-title mb-0">
@@ -19,77 +21,44 @@
             </div>
         </div>
 
-        <!-- 1. 客户信息卡片 -->
+        <!-- ==================== 1. 客户信息卡片 ==================== -->
         <div class="section-card" id="guestSection">
-            <div class="section-title d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div class="section-title">
                 <span><i class="bi bi-person-vcard"></i> 客户信息</span>
-                <div class="d-flex gap-2">
-                    <button class="btn-toggle" id="toggleGuest" type="button">
-                        <i class="bi bi-chevron-down"></i> 详细参数
-                    </button>
-                </div>
             </div>
 
-            <!-- 核心字段 -->
             <div class="row g-3 mb-2">
                 <div class="col-md-4">
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-calendar"></i></span>
-                        <input autocomplete="off" type="datetime-local" class="form-control" id="time" value="{{ time }}">
+                        <input type="text" class="form-control" id="time" value="{{ time }}" readonly placeholder="自动获取">
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-person"></i></span>
-                        <input autocomplete="off" type="text" class="form-control" id="name" placeholder="客户姓名">
+                        <input autocomplete="off" type="text" class="form-control" id="name" placeholder="客户姓名（选填）">
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-telephone"></i></span>
-                        <input autocomplete="off" type="text" class="form-control" id="phone" placeholder="联系电话">
+                        <input autocomplete="off" type="text" class="form-control" id="phone" placeholder="联系电话（选填）">
                     </div>
                 </div>
             </div>
 
-            <!-- 详细参数（可折叠） -->
-            <div id="guestExtra" style="display: none;">
-                <div class="row g-3 mb-3">
-                    <div class="col-md-4">
-                        <label class="form-label small fw-bold text-muted">性别</label>
-                        <input autocomplete="off" type="text" class="form-control" id="sex" list="sexList" placeholder="例如：男">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label small fw-bold text-muted">年龄</label>
-                        <input autocomplete="off" type="text" class="form-control" id="age" placeholder="例如：28">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label small fw-bold text-muted">眼位</label>
-                        <input autocomplete="off" type="text" class="form-control" id="ot" list="otList" placeholder="例如：正视">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label small fw-bold text-muted">主视眼</label>
-                        <input autocomplete="off" type="text" class="form-control" id="em" list="emList" placeholder="左眼 / 右眼">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label small fw-bold text-muted">病族史</label>
-                        <input autocomplete="off" type="text" class="form-control" id="dfh" list="dfhList" placeholder="无 / 有">
-                    </div>
-                </div>
-            </div>
-
-            <!-- 客户备注 -->
             <div class="row g-3">
                 <div class="col-12">
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-chat-left-text"></i></span>
-                        <input autocomplete="off" type="text" class="form-control" id="remark" placeholder="备注信息">
+                        <input autocomplete="off" type="text" class="form-control" id="remark" placeholder="备注信息（选填）">
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 2. 验光报告卡片 -->
+        <!-- ==================== 2. 验光报告卡片 ==================== -->
         <div class="section-card" id="reportSection">
             <div class="section-title d-flex justify-content-between align-items-center flex-wrap gap-2">
                 <span><i class="bi bi-eyeglasses"></i> 验光报告</span>
@@ -100,210 +69,153 @@
                 </div>
             </div>
 
-            <!-- 方案 & 瞳距 -->
-            <div class="mb-2">
-                <div class="row g-1">
-                    <div class="col-6 col-md-3">
-                        <div class="input-group">
-                            <span class="input-group-text col-4">方案</span>
-                            <input autocomplete="off" type="text" class="form-control col-8" id="PLAN" list="PLAN1">
-                        </div>
-                    </div>
-                    <div class="col-6 col-md-3">
-                        <div class="input-group">
-                            <span class="input-group-text col-4">瞳距</span>
-                            <input autocomplete="off" type="text" class="form-control col-8" id="PD" list="PD1">
-                        </div>
-                    </div>
+            <!-- 基本信息 -->
+            <div class="row g-3 mb-2">
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted">性别</label>
+                    <input autocomplete="off" type="text" class="form-control" id="sex" list="sexList" placeholder="例如：男">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted">年龄</label>
+                    <input autocomplete="off" type="text" class="form-control" id="age" placeholder="例如：28">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted">瞳距（PD）</label>
+                    <input autocomplete="off" type="text" class="form-control" id="PD" list="PD1" placeholder="例如：62">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted">眼位</label>
+                    <input autocomplete="off" type="text" class="form-control" id="ot" list="otList" placeholder="例如：正视">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted">主视眼</label>
+                    <input autocomplete="off" type="text" class="form-control" id="em" list="emList" placeholder="左眼 / 右眼">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted">病族史</label>
+                    <input autocomplete="off" type="text" class="form-control" id="dfh" list="dfhList" placeholder="无 / 有">
                 </div>
             </div>
 
-            <!-- 可折叠详细参数（左右眼） -->
+            <!-- ==================== 可折叠详细参数 ==================== -->
             <div id="reportExtra" style="display: none;">
-                <!-- 右眼 -->
-                <div class="mb-2">
-                    <label class="form-label fw-semibold small text-muted">右眼 (OD)</label>
-                    <div class="row g-1">
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">裸眼视力</span>
-                                <input class="form-control col-8" id="OD_VA" list="VA">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">球镜</span>
-                                <input class="form-control col-8" id="OD_SPH" list="CYL&amp;SPH">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">柱镜</span>
-                                <input class="form-control col-8" id="OD_CYL" list="CYL&amp;SPH">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">轴位</span>
-                                <input class="form-control col-8" id="OD_AX" list="AX">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">棱镜</span>
-                                <input class="form-control col-8" id="OD_PR" list="PR">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">基地取向</span>
-                                <input class="form-control col-8" id="OD_FR" list="FR">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">眼轴长度</span>
-                                <input class="form-control col-8" id="OD_AL" list="AL">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">角膜曲度</span>
-                                <input class="form-control col-8" id="OD_AK" list="AK">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">前房深度</span>
-                                <input class="form-control col-8" id="OD_AD" list="AD">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">角膜厚度</span>
-                                <input class="form-control col-8" id="OD_CCT" list="CCT">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">晶体厚度</span>
-                                <input class="form-control col-8" id="OD_LT" list="LT">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">玻璃体厚度</span>
-                                <input class="form-control col-8" id="OD_VT" list="VT">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">矫正视力</span>
-                                <input class="form-control col-8" id="OD_BC" list="VA">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">下加光</span>
-                                <input class="form-control col-8" id="OD_ADD" list="ADD">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- 左眼 -->
-                <div>
-                    <label class="form-label fw-semibold small text-muted">左眼 (OS)</label>
-                    <div class="row g-1">
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">裸眼视力</span>
-                                <input class="form-control col-8" id="OS_VA" list="VA">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">球镜</span>
-                                <input class="form-control col-8" id="OS_SPH" list="CYL&amp;SPH">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">柱镜</span>
-                                <input class="form-control col-8" id="OS_CYL" list="CYL&amp;SPH">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">轴位</span>
-                                <input class="form-control col-8" id="OS_AX" list="AX">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">棱镜</span>
-                                <input class="form-control col-8" id="OS_PR" list="PR">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">基地取向</span>
-                                <input class="form-control col-8" id="OS_FR" list="FR">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">眼轴长度</span>
-                                <input class="form-control col-8" id="OS_AL" list="AL">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">角膜曲度</span>
-                                <input class="form-control col-8" id="OS_AK" list="AK">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">前房深度</span>
-                                <input class="form-control col-8" id="OS_AD" list="AD">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">角膜厚度</span>
-                                <input class="form-control col-8" id="OS_CCT" list="CCT">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">晶体厚度</span>
-                                <input class="form-control col-8" id="OS_LT" list="LT">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">玻璃体厚度</span>
-                                <input class="form-control col-8" id="OS_VT" list="VT">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">矫正视力</span>
-                                <input class="form-control col-8" id="OS_BC" list="VA">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">下加光</span>
-                                <input class="form-control col-8" id="OS_ADD" list="ADD">
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
+                <!-- ---------- 屈光处方 ---------- -->
+                <div class="rx-group-title">屈光处方</div>
+                <table class="rx-table">
+                    <thead>
+                        <tr>
+                            <th>参数</th>
+                            <th><span class="eye-badge eye-badge--od">OD</span> 右眼</th>
+                            <th><span class="eye-badge eye-badge--os">OS</span> 左眼</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>球镜（SPH）</td>
+                            <td><input class="form-control" id="OD_SPH" list="CYL_SPH" placeholder="-3.00"></td>
+                            <td><input class="form-control" id="OS_SPH" list="CYL_SPH" placeholder="-2.75"></td>
+                        </tr>
+                        <tr>
+                            <td>柱镜（CYL）</td>
+                            <td><input class="form-control" id="OD_CYL" list="CYL_SPH" placeholder="-0.50"></td>
+                            <td><input class="form-control" id="OS_CYL" list="CYL_SPH" placeholder="-0.75"></td>
+                        </tr>
+                        <tr>
+                            <td>轴位（AX）</td>
+                            <td><input class="form-control" id="OD_AX" list="AX" placeholder="180"></td>
+                            <td><input class="form-control" id="OS_AX" list="AX" placeholder="175"></td>
+                        </tr>
+                        <tr>
+                            <td>棱镜（PR）</td>
+                            <td><input class="form-control" id="OD_PR" list="PR"></td>
+                            <td><input class="form-control" id="OS_PR" list="PR"></td>
+                        </tr>
+                        <tr>
+                            <td>基底取向（FR）</td>
+                            <td><input class="form-control" id="OD_FR" list="FR"></td>
+                            <td><input class="form-control" id="OS_FR" list="FR"></td>
+                        </tr>
+                        <tr>
+                            <td>下加光（ADD）</td>
+                            <td><input class="form-control" id="OD_ADD" list="ADD"></td>
+                            <td><input class="form-control" id="OS_ADD" list="ADD"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- ---------- 视力检查 ---------- -->
+                <div class="rx-group-title">视力检查</div>
+                <table class="rx-table">
+                    <thead>
+                        <tr>
+                            <th>参数</th>
+                            <th><span class="eye-badge eye-badge--od">OD</span> 右眼</th>
+                            <th><span class="eye-badge eye-badge--os">OS</span> 左眼</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>裸眼视力（VA）</td>
+                            <td><input class="form-control" id="OD_VA" list="VA" placeholder="1.0"></td>
+                            <td><input class="form-control" id="OS_VA" list="VA" placeholder="1.0"></td>
+                        </tr>
+                        <tr>
+                            <td>矫正视力（BC）</td>
+                            <td><input class="form-control" id="OD_BC" list="VA"></td>
+                            <td><input class="form-control" id="OS_BC" list="VA"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- ---------- 眼生物测量 ---------- -->
+                <div class="rx-group-title">眼生物测量</div>
+                <table class="rx-table">
+                    <thead>
+                        <tr>
+                            <th>参数</th>
+                            <th><span class="eye-badge eye-badge--od">OD</span> 右眼</th>
+                            <th><span class="eye-badge eye-badge--os">OS</span> 左眼</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>眼轴长度（AL）</td>
+                            <td><input class="form-control" id="OD_AL" list="AL" placeholder="mm"></td>
+                            <td><input class="form-control" id="OS_AL" list="AL" placeholder="mm"></td>
+                        </tr>
+                        <tr>
+                            <td>角膜曲度（AK）</td>
+                            <td><input class="form-control" id="OD_AK" list="AK" placeholder="D"></td>
+                            <td><input class="form-control" id="OS_AK" list="AK" placeholder="D"></td>
+                        </tr>
+                        <tr>
+                            <td>前房深度（AD）</td>
+                            <td><input class="form-control" id="OD_AD" list="AD" placeholder="mm"></td>
+                            <td><input class="form-control" id="OS_AD" list="AD" placeholder="mm"></td>
+                        </tr>
+                        <tr>
+                            <td>角膜厚度（CCT）</td>
+                            <td><input class="form-control" id="OD_CCT" list="CCT" placeholder="μm"></td>
+                            <td><input class="form-control" id="OS_CCT" list="CCT" placeholder="μm"></td>
+                        </tr>
+                        <tr>
+                            <td>晶体厚度（LT）</td>
+                            <td><input class="form-control" id="OD_LT" list="LT" placeholder="mm"></td>
+                            <td><input class="form-control" id="OS_LT" list="LT" placeholder="mm"></td>
+                        </tr>
+                        <tr>
+                            <td>玻璃体厚度（VT）</td>
+                            <td><input class="form-control" id="OD_VT" list="VT" placeholder="mm"></td>
+                            <td><input class="form-control" id="OS_VT" list="VT" placeholder="mm"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
             </div>
         </div>
 
-        <!-- 3. 底部操作栏 -->
+        <!-- ==================== 3. 底部操作栏 ==================== -->
         <div class="action-bar justify-content-end">
             <button class="btn btn-outline-primary btn-back-page" id="submitReport" type="button">
                 <i class="bi bi-check-lg"></i> 提交报告
@@ -313,11 +225,189 @@
 {% endblock %}
 
 {% block javascript %}
+    <!-- 后端 URL（Django 模板渲染，无法放进静态 JS 文件） -->
     <script>
-        // ==================== 全局配置与工具函数 ====================
-        // API 端点（由 Django 模板反向解析）
-        const REPORT_INSERT_API = "{% url 'maneu_report:api_insert' %}";
-
+        window.REPORT_INSERT_API = "{% url 'maneu_report:api_insert' %}";
+        window.REPORT_LIST_URL   = "{% url 'maneu_report:index' %}";
     </script>
-    <script src="{% static 'javascript/maneu_report/insert20260707.js' %}"></script>
+
+    <!-- 页面逻辑（只有一份！） -->
+    <script>
+    /**
+     * 新增验光报告页
+     * 职责：
+     *   1. 折叠面板交互
+     *   2. 收集表单字段为扁平对象
+     *   3. 以 JSON 格式 POST 到后端
+     *   4. 防重复提交、错误提示、登录态检查
+     */
+    (function () {
+        'use strict';
+
+        // ============================================================
+        // 工具
+        // ============================================================
+
+        /**
+         * 读取指定 id 的输入值（自动 trim）
+         * @param {string} id 元素 id
+         * @returns {string}
+         */
+        function val(id) {
+            return ($('#' + id).val() || '').trim();
+        }
+
+        /**
+         * 绑定折叠面板按钮
+         * @param {string} btnId   触发按钮 id
+         * @param {string} panelId 折叠面板 id
+         */
+        function setupToggle(btnId, panelId) {
+            var $btn = $('#' + btnId);
+            var $panel = $('#' + panelId);
+
+            if (!$btn.length || !$panel.length) return;   // 元素不存在则跳过
+
+            $btn.on('click', function () {
+                $panel.slideToggle(200);
+                $btn.find('i').toggleClass('bi-chevron-down bi-chevron-up');
+            });
+        }
+
+        // ============================================================
+        // 数据收集（扁平结构，key 与后端字段一致）
+        // ============================================================
+
+        /**
+         * 从页面收集所有字段，返回扁平对象
+         * @returns {Object}
+         */
+        function collectData() {
+            return {
+                // ---------- 客户信息 ----------
+                name:   val('name'),
+                phone:  val('phone'),
+                remark: val('remark'),
+                sex:    val('sex'),
+                age:    val('age'),
+                ot:     val('ot'),
+                em:     val('em'),
+                dfh:    val('dfh'),
+
+                // ---------- 报告基本信息 ----------
+                pd:     val('PD'),
+
+                // ---------- 右眼 OD ----------
+                od_va:  val('OD_VA'),
+                od_sph: val('OD_SPH'),
+                od_cyl: val('OD_CYL'),
+                od_ax:  val('OD_AX'),
+                od_pr:  val('OD_PR'),
+                od_fr:  val('OD_FR'),
+                od_al:  val('OD_AL'),
+                od_ak:  val('OD_AK'),
+                od_ad:  val('OD_AD'),
+                od_cct: val('OD_CCT'),
+                od_lt:  val('OD_LT'),
+                od_vt:  val('OD_VT'),
+                od_bc:  val('OD_BC'),
+                od_add: val('OD_ADD'),
+
+                // ---------- 左眼 OS ----------
+                os_va:  val('OS_VA'),
+                os_sph: val('OS_SPH'),
+                os_cyl: val('OS_CYL'),
+                os_ax:  val('OS_AX'),
+                os_pr:  val('OS_PR'),
+                os_fr:  val('OS_FR'),
+                os_al:  val('OS_AL'),
+                os_ak:  val('OS_AK'),
+                os_ad:  val('OS_AD'),
+                os_cct: val('OS_CCT'),
+                os_lt:  val('OS_LT'),
+                os_vt:  val('OS_VT'),
+                os_bc:  val('OS_BC'),
+                os_add: val('OS_ADD'),
+            };
+        }
+
+        // ============================================================
+        // 提交
+        // ============================================================
+
+        var isSubmitting = false;
+
+        /**
+         * 提交表单
+         */
+        function submit() {
+            // 防重复提交
+            if (isSubmitting) return;
+
+            var payload = collectData();
+            console.log('[report/insert] payload =', payload);
+
+            // 登录态检查
+            var token = localStorage.getItem('access_token') || '';
+            if (!token) {
+                alert('请先登录');
+                return;
+            }
+
+            var $btn = $('#submitReport');
+            var originalText = $btn.html();
+
+            // 按钮 loading
+            isSubmitting = true;
+            $btn.prop('disabled', true)
+                .html('<span class="spinner-border spinner-border-sm me-1"></span>提交中...');
+
+            $.ajax({
+                url: window.REPORT_INSERT_API,
+                method: 'POST',
+                contentType: 'application/json',
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                },
+                data: JSON.stringify(payload),
+                dataType: 'json',
+                success: function (res) {
+                    if (res && res.status === true) {
+                        alert('提交成功');
+                        location.href = window.REPORT_LIST_URL || '/';
+                    } else {
+                        alert((res && res.message) || '提交失败');
+                    }
+                },
+                error: function (xhr) {
+                    var msg = '网络错误，请稍后重试';
+
+                    if (xhr.status === 401) {
+                        msg = '登录已过期，请重新登录';
+                    } else {
+                        try {
+                            var data = JSON.parse(xhr.responseText);
+                            msg = data.message || msg;
+                        } catch (e) { /* 忽略解析失败 */ }
+                    }
+
+                    alert(msg);
+                },
+                complete: function () {
+                    isSubmitting = false;
+                    $btn.prop('disabled', false).html(originalText);
+                },
+            });
+        }
+
+        // ============================================================
+        // 初始化
+        // ============================================================
+        $(function () {
+            setupToggle('toggleReport', 'reportExtra');
+            $('#submitReport').on('click', submit);
+        });
+
+    })();
+    </script>
 {% endblock %}

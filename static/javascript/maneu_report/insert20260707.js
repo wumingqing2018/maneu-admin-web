@@ -1,153 +1,176 @@
+// static/javascript/maneu_report/insert20260707.js
+// 新增验光报告：数据收集 + 提交
 
-// 通用错误提示（风格与订单管理页保持一致）
-function showError(message) {
-    alert(message || '操作失败，请稍后重试');
-}
+(function () {
+    'use strict';
 
-// ==================== 防重复提交控制 ====================
-let isSubmitting = false;
+    // ============================================================
+    // 工具
+    // ============================================================
+    function val(id) {
+        return ($('#' + id).val() || '').trim();
+    }
 
-function setSubmitting(btn, state, originalText = null) {
-    isSubmitting = state;
-    if (btn) {
-        if (state) {
-            btn.prop('disabled', true);
-            btn.data('original-text', btn.html());
-            btn.html('<span class="spinner-border spinner-border-sm me-1" role="status"></span> 提交中...');
-        } else {
-            btn.prop('disabled', false);
-            if (btn.data('original-text')) {
-                btn.html(btn.data('original-text'));
-            }
+    function setupToggle(btnId, panelId) {
+        var $btn = $('#' + btnId);
+        var $panel = $('#' + panelId);
+        $btn.on('click', function () {
+            $panel.slideToggle(200);
+            $btn.find('i').toggleClass('bi-chevron-down bi-chevron-up');
+        });
+    }
+
+    // ============================================================
+    // 数据收集：整理成对象（guest / report.od / report.os）
+    // ============================================================
+    function collectData() {
+        return {
+            guest: {
+                name:   val('name'),
+                phone:  val('phone'),
+                remark: val('remark'),
+                sex:    val('sex'),
+                age:    val('age'),
+                ot:     val('ot'),
+                em:     val('em'),
+                dfh:    val('dfh'),
+            },
+            report: {
+                plan: val('PLAN'),
+                pd:   val('PD'),
+                od: {
+                    va:  val('OD_VA'),
+                    sph: val('OD_SPH'),
+                    cyl: val('OD_CYL'),
+                    ax:  val('OD_AX'),
+                    pr:  val('OD_PR'),
+                    fr:  val('OD_FR'),
+                    al:  val('OD_AL'),
+                    ak:  val('OD_AK'),
+                    ad:  val('OD_AD'),
+                    cct: val('OD_CCT'),
+                    lt:  val('OD_LT'),
+                    vt:  val('OD_VT'),
+                    bc:  val('OD_BC'),
+                    add: val('OD_ADD'),
+                },
+                os: {
+                    va:  val('OS_VA'),
+                    sph: val('OS_SPH'),
+                    cyl: val('OS_CYL'),
+                    ax:  val('OS_AX'),
+                    pr:  val('OS_PR'),
+                    fr:  val('OS_FR'),
+                    al:  val('OS_AL'),
+                    ak:  val('OS_AK'),
+                    ad:  val('OS_AD'),
+                    cct: val('OS_CCT'),
+                    lt:  val('OS_LT'),
+                    vt:  val('OS_VT'),
+                    bc:  val('OS_BC'),
+                    add: val('OS_ADD'),
+                },
+            },
+        };
+    }
+
+    // ============================================================
+    // 分组对象 → 扁平（form-urlencoded 兼容）
+    // ============================================================
+    function flatten(data) {
+        var flat = {};
+
+        flat.name   = data.guest.name;
+        flat.phone  = data.guest.phone;
+        flat.remark = data.guest.remark;
+        flat.sex    = data.guest.sex;
+        flat.age    = data.guest.age;
+        flat.ot     = data.guest.ot;
+        flat.em     = data.guest.em;
+        flat.dfh    = data.guest.dfh;
+
+        flat.plan = data.report.plan;
+        flat.pd   = data.report.pd;
+
+        Object.keys(data.report.od).forEach(function (k) {
+            flat['od_' + k] = data.report.od[k];
+        });
+        Object.keys(data.report.os).forEach(function (k) {
+            flat['os_' + k] = data.report.os[k];
+        });
+
+        return flat;
+    }
+
+    // ============================================================
+    // 提交
+    // ============================================================
+    var isSubmitting = false;
+
+    function submit() {
+        if (isSubmitting) return;
+
+        var grouped = collectData();
+        var flat = flatten(grouped);
+
+        console.log('[report/insert] grouped =', grouped);
+        console.log('[report/insert] flat    =', flat);
+
+        var token = localStorage.getItem('access_token') || '';
+        if (!token) {
+            alert('请先登录');
+            return;
         }
+
+        var $btn = $('#submitReport');
+        var originalText = $btn.html();
+
+        isSubmitting = true;
+        $btn.prop('disabled', true)
+            .html('<span class="spinner-border spinner-border-sm me-1"></span>提交中...');
+
+        $.ajax({
+            url: window.REPORT_INSERT_API,           // ← 从 window 读（HTML 里定义的）
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + token,
+            },
+            data: flat,                              // jQuery 自动 form-urlencoded
+            dataType: 'json',
+            success: function (res) {
+                if (res && res.status === true) {
+                    alert('提交成功');
+                    location.href = window.REPORT_LIST_URL || '/';   // ← 从 window 读
+                } else {
+                    alert((res && res.message) || '提交失败');
+                }
+            },
+            error: function (xhr) {
+                var msg = '网络错误，请稍后重试';
+                if (xhr.status === 401) {
+                    msg = '登录已过期，请重新登录';
+                } else {
+                    try {
+                        var data = JSON.parse(xhr.responseText);
+                        msg = data.message || msg;
+                    } catch (e) {}
+                }
+                alert(msg);
+            },
+            complete: function () {
+                isSubmitting = false;
+                $btn.prop('disabled', false).html(originalText);
+            },
+        });
     }
-}
 
-// ==================== 表单验证 ====================
-function validateForm() {
-    const name = $('#name').val().trim();
-    const phone = $('#phone').val().trim();
-
-    if (!name) {
-        showError('请填写客户姓名');
-        $('#name').focus();
-        return false;
-    }
-    if (!phone) {
-        showError('请填写联系电话');
-        $('#phone').focus();
-        return false;
-    }
-    // 简单手机号验证（可根据需要调整）
-    const phoneRegex = /^1[3-9]\d{9}$|^\d{7,15}$/;
-    if (!phoneRegex.test(phone)) {
-        showError('请输入有效的联系电话');
-        $('#phone').focus();
-        return false;
-    }
-    return true;
-}
-
-// ==================== 提交报告（带防抖与加载状态） ====================
-function submitReport() {
-    // 防重复提交
-    if (isSubmitting) return;
-
-    // 表单验证
-    if (!validateForm()) return;
-
-    // 收集所有表单数据
-    const formData = {
-        time: $('#time').val(),
-        name: $('#name').val().trim(),
-        phone: $('#phone').val().trim(),
-        remark: $('#remark').val().trim(),
-        age: $('#age').val().trim(),
-        sex: $('#sex').val().trim(),
-        dfh: $('#dfh').val().trim(),
-        ot: $('#ot').val().trim(),
-        em: $('#em').val().trim(),
-        plan: $('#PLAN').val(),
-        pd: $('#PD').val(),
-        od_va: $('#OD_VA').val(),
-        od_sph: $('#OD_SPH').val(),
-        od_cyl: $('#OD_CYL').val(),
-        od_ax: $('#OD_AX').val(),
-        od_pr: $('#OD_PR').val(),
-        od_fr: $('#OD_FR').val(),
-        od_add: $('#OD_ADD').val(),
-        od_al: $('#OD_AL').val(),
-        od_ak: $('#OD_AK').val(),
-        od_ad: $('#OD_AD').val(),
-        od_cct: $('#OD_CCT').val(),
-        od_lt: $('#OD_LT').val(),
-        od_vt: $('#OD_VT').val(),
-        od_bc: $('#OD_BC').val(),
-        os_va: $('#OS_VA').val(),
-        os_sph: $('#OS_SPH').val(),
-        os_cyl: $('#OS_CYL').val(),
-        os_ax: $('#OS_AX').val(),
-        os_pr: $('#OS_PR').val(),
-        os_fr: $('#OS_FR').val(),
-        os_add: $('#OS_ADD').val(),
-        os_al: $('#OS_AL').val(),
-        os_ak: $('#OS_AK').val(),
-        os_ad: $('#OS_AD').val(),
-        os_cct: $('#OS_CCT').val(),
-        os_lt: $('#OS_LT').val(),
-        os_vt: $('#OS_VT').val(),
-        os_bc: $('#OS_BC').val()
-    };
-
-    const $submitBtn = $('#submitReport');
-    setSubmitting($submitBtn, true);
-
-    $.ajax({
-        url: REPORT_INSERT_API,
-        method: 'POST',
-        data: formData,
-        success: function(res) {
-            setSubmitting($submitBtn, false);
-            if (res.status === true) {
-                alert('报告提交成功');
-                // 可选：提交成功后重置表单（保留时间默认值）
-                $('#name, #phone, #remark, #age, #sex, #dfh, #ot, #em, #PLAN, #PD').val('');
-                $('#guestExtra input, #reportExtra input').val('');
-                $('#name').focus();
-            } else {
-                showError('提交失败：' + (res.message || '未知错误'));
-            }
-        },
-        error: function(xhr) {
-            setSubmitting($submitBtn, false);
-            showError('网络错误，请稍后重试');
-        }
+    // ============================================================
+    // 初始化
+    // ============================================================
+    $(function () {
+        setupToggle('toggleGuest', 'guestExtra');
+        setupToggle('toggleReport', 'reportExtra');
+        $('#submitReport').on('click', submit);
     });
-}
 
-// ==================== 折叠面板切换 ====================
-function setupToggle(triggerId, panelId) {
-    $(triggerId).on('click', function() {
-        const $panel = $(panelId);
-        $panel.slideToggle(200);
-        $(this).find('i').toggleClass('bi-chevron-down bi-chevron-up');
-    });
-}
-
-// ==================== 页面初始化 ====================
-$(function() {
-    // 初始化两个折叠面板
-    setupToggle('#toggleGuest', '#guestExtra');
-    setupToggle('#toggleReport', '#reportExtra');
-
-    // 绑定提交按钮事件
-    $('#submitReport').on('click', submitReport);
-
-    // 可选：支持按回车键快速提交（在表单输入框内按回车）
-    $('#guestSection input, #reportSection input').on('keypress', function(e) {
-        if (e.which === 13) {
-            e.preventDefault();
-            submitReport();
-        }
-    });
-});
+})();

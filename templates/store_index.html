@@ -35,10 +35,10 @@
                 <div class="input-group input-group-sm">
                     <span class="input-group-text">从</span>
                     <input autocomplete="off" class="form-control" id="timeStart" type="datetime-local"
-                           value="{{ default_time_start }}" max="{{ timeE }}" min="2010-01-01T00:00">
+                           min="2010-01-01T00:00">
                     <span class="input-group-text">至</span>
                     <input autocomplete="off" class="form-control" id="timeEnd" type="datetime-local"
-                           value="{{ timeE }}" max="{{ timeE }}" min="2010-01-01T00:00">
+                           min="2010-01-01T00:00">
                     <button class="btn btn-primary" id="searchByTime" type="button">
                         <i class="bi bi-funnel"></i> 筛选
                     </button>
@@ -68,14 +68,349 @@
 
 
 {% block javascript %}
-
     <script>
-        const STORE = {
-            web_detail: "{% url 'maneu_store:detail' %}",
-            api_delete: "{% url 'maneu_store:api_delete' %}",
+        // ========================================================================
+        // 后端 URL（Django 模板渲染）
+        // ========================================================================
+        window.STORE_URLS = {
+            web_detail:     "{% url 'maneu_store:detail' %}",
+            api_delete:     "{% url 'maneu_store:api_delete' %}",
             api_searchText: "{% url 'maneu_store:api_search_data' %}",
-            api_searchTime: "{% url 'maneu_store:api_search_time' %}"
+            api_searchTime: "{% url 'maneu_store:api_search_time' %}",
         };
     </script>
-    <script src="{% static 'javascript/maneu_store/index20260707.js' %}"></script>
+
+    <script>
+    (function () {
+        'use strict';
+
+        // ========================================================================
+        // 1. 工具函数
+        // ========================================================================
+
+        /**
+         * HTML 转义（防 XSS）
+         */
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str).replace(/[&<>"']/g, function (m) {
+                if (m === '&')  return '&amp;';
+                if (m === '<')  return '&lt;';
+                if (m === '>')  return '&gt;';
+                if (m === '"')  return '&quot;';
+                if (m === "'")  return '&#39;';
+                return m;
+            });
+        }
+
+        /**
+         * 读取 access_token
+         */
+        function getToken() {
+            return localStorage.getItem('access_token') || '';
+        }
+
+        /**
+         * Date → <input type="datetime-local"> 本地时间格式
+         * 不能用 toISOString()（UTC，差 8 小时）
+         */
+        function toLocalDatetime(date) {
+            var tzOffset = date.getTimezoneOffset() * 60000;
+            return new Date(date.getTime() - tzOffset).toISOString().slice(0, 16);
+        }
+
+        /**
+         * 后端 time 字段 → "YYYY-MM-DD HH:MM"
+         */
+        function formatTimeDisplay(timeStr) {
+            if (!timeStr) return '-';
+            return String(timeStr).replace('T', ' ').substring(0, 16);
+        }
+
+        /**
+         * 通用 JSON 请求（自动带 token）
+         */
+        function requestJSON(url, payload) {
+            return $.ajax({
+                url: url,
+                method: 'POST',
+                contentType: 'application/json',
+                headers: {
+                    'Authorization': 'Bearer ' + getToken(),
+                },
+                data: JSON.stringify(payload || {}),
+                dataType: 'json',
+            });
+        }
+
+        // ========================================================================
+        // 2. DOM 缓存
+        // ========================================================================
+        var $listContainer   = $('#listContainer');
+        var $timeStart       = $('#timeStart');
+        var $timeEnd         = $('#timeEnd');
+        var $keyword         = $('#keywordInput');
+        var $searchByTextBtn = $('#searchByText');
+        var $searchByTimeBtn = $('#searchByTime');
+
+        var currentRequest = null;
+
+        // ========================================================================
+        // 3. UI 状态
+        // ========================================================================
+
+        function showLoading() {
+            $listContainer.html(
+                '<div class="loading-spinner">' +
+                '  <div class="spinner-border text-primary" role="status"></div>' +
+                '</div>'
+            );
+        }
+
+        function showEmptyState() {
+            $listContainer.html(
+                '<div class="empty-state">' +
+                '  <i class="bi bi-inbox"></i>' +
+                '  <p>暂无定制记录</p>' +
+                '  <small>尝试调整筛选条件或新增一条记录</small>' +
+                '</div>'
+            );
+        }
+
+        function showErrorState(msg) {
+            $listContainer.html(
+                '<div class="empty-state">' +
+                '  <i class="bi bi-exclamation-triangle"></i>' +
+                '  <p>' + escapeHtml(msg || '加载失败，请稍后重试') + '</p>' +
+                '</div>'
+            );
+        }
+
+        function clearKeywordInvalid() {
+            $keyword.removeClass('is-invalid');
+            $keyword.closest('.filter-group').find('.invalid-feedback').hide();
+        }
+
+        function showKeywordInvalid() {
+            $keyword.addClass('is-invalid');
+            $keyword.closest('.filter-group').find('.invalid-feedback').show();
+        }
+
+        // ========================================================================
+        // 4. 列表渲染
+        // ========================================================================
+
+        function createItemHTML(item) {
+            var time   = formatTimeDisplay(item.time);
+            var name   = escapeHtml(item.name)   || '-';
+            var phone  = escapeHtml(item.phone)  || '-';
+            var remark = escapeHtml(item.remark) || '-';
+            var id     = escapeHtml(item.id);
+
+            return '' +
+                '<div class="store-list-item">' +
+                '  <div class="col-time">' +
+                '    <i class="bi bi-clock me-2 d-md-none"></i>' +
+                '    ' + escapeHtml(time) +
+                '  </div>' +
+                '  <div class="col-name">' +
+                '    <i class="bi bi-person me-2 d-md-none"></i>' +
+                '    ' + name +
+                '  </div>' +
+                '  <div class="col-phone">' +
+                '    <i class="bi bi-phone me-2 d-md-none"></i>' +
+                '    ' + phone +
+                '  </div>' +
+                '  <div class="col-remark" title="' + remark + '">' +
+                '    <i class="bi bi-chat-left-text me-2 d-md-none"></i>' +
+                '    ' + remark +
+                '  </div>' +
+                '  <div class="col-actions">' +
+                '    <button class="btn-action detail-btn" data-index-id="' + id + '" title="查看详情">' +
+                '      <i class="bi bi-eye"></i>' +
+                '    </button>' +
+                '    <button class="btn-action delete-btn" data-index-id="' + id + '" title="删除记录">' +
+                '      <i class="bi bi-trash3"></i>' +
+                '    </button>' +
+                '  </div>' +
+                '</div>';
+        }
+
+        function renderList(items) {
+            $listContainer.empty();
+
+            if (!Array.isArray(items) || items.length === 0) {
+                showEmptyState();
+                return;
+            }
+
+            var $frag = $(document.createDocumentFragment());
+            items.forEach(function (item) {
+                $frag.append(createItemHTML(item));
+            });
+            $listContainer.append($frag);
+        }
+
+        // ========================================================================
+        // 5. 业务操作
+        // ========================================================================
+
+        function handleDetail(btn) {
+            var indexId = btn.getAttribute('data-index-id');
+            window.location.href = window.STORE_URLS.web_detail + '?index_id=' + encodeURIComponent(indexId);
+        }
+
+        function deleteRecord(btn) {
+            if (!confirm('确定要删除这条记录吗？此操作不可恢复。')) return;
+
+            var indexId = btn.getAttribute('data-index-id');
+
+            requestJSON(window.STORE_URLS.api_delete, { index_id: indexId })
+                .done(function (res) {
+                    if (res && res.status === true) {
+                        var $item = $(btn).closest('.store-list-item');
+                        $item.css({
+                            transition: 'all 0.3s ease',
+                            opacity: 0,
+                            transform: 'translateX(20px)',
+                        });
+                        setTimeout(function () {
+                            $item.remove();
+                            if (!$listContainer.find('.store-list-item').length) {
+                                showEmptyState();
+                            }
+                        }, 300);
+                    } else {
+                        alert((res && res.message) || '删除失败，请稍后重试');
+                    }
+                })
+                .fail(function (xhr) {
+                    if (xhr.status === 401) {
+                        alert('登录已过期，请重新登录');
+                    } else {
+                        alert('网络错误，请稍后重试');
+                    }
+                });
+        }
+
+        // ========================================================================
+        // 6. 数据加载
+        // ========================================================================
+
+        function fetchAndRender(url, params) {
+            if (currentRequest && currentRequest.readyState !== 4) {
+                currentRequest.abort();
+            }
+
+            showLoading();
+
+            currentRequest = requestJSON(url, params)
+                .done(function (res) {
+                    // 后端返回 { status, message, content: [...] }
+                    var data = (res && Array.isArray(res.content)) ? res.content : [];
+                    renderList(data);
+                })
+                .fail(function (xhr, status) {
+                    if (status === 'abort') return;
+
+                    if (xhr.status === 401) {
+                        showErrorState('登录已过期，请重新登录');
+                        return;
+                    }
+
+                    var msg = '加载失败，请稍后重试';
+                    try {
+                        var data = JSON.parse(xhr.responseText);
+                        msg = data.message || msg;
+                    } catch (e) {}
+                    showErrorState(msg);
+                });
+        }
+
+        // ========================================================================
+        // 7. 搜索
+        // ========================================================================
+
+        function searchByTime() {
+            clearKeywordInvalid();
+
+            var timeS = $timeStart.val();
+            var timeE = $timeEnd.val();
+
+            if (!timeS || !timeE) {
+                alert('请选择完整的时间范围');
+                return;
+            }
+
+            if (timeS > timeE) {
+                alert('开始时间不能晚于结束时间');
+                return;
+            }
+
+            fetchAndRender(window.STORE_URLS.api_searchTime, {
+                timeS: timeS,
+                timeE: timeE,
+            });
+        }
+
+        function searchByText() {
+            var keyword = $keyword.val().trim();
+            if (!keyword) {
+                showKeywordInvalid();
+                return;
+            }
+            clearKeywordInvalid();
+            fetchAndRender(window.STORE_URLS.api_searchText, { value: keyword });
+        }
+
+        // ========================================================================
+        // 8. 初始化
+        // ========================================================================
+
+        $(function () {
+            var now = new Date();
+
+            // 结束时间：现在
+            if (!$timeEnd.val()) {
+                $timeEnd.val(toLocalDatetime(now));
+            }
+
+            // 开始时间：30 天前
+            if (!$timeStart.val()) {
+                var d30 = new Date(now.getTime());
+                d30.setDate(d30.getDate() - 30);
+                $timeStart.val(toLocalDatetime(d30));
+            }
+
+            // 限制不能选未来时间
+            var maxDatetime = toLocalDatetime(now);
+            $timeStart.attr('max', maxDatetime);
+            $timeEnd.attr('max', maxDatetime);
+
+            // 首次加载
+            searchByTime();
+
+            // 事件绑定
+            $searchByTimeBtn.on('click', searchByTime);
+            $searchByTextBtn.on('click', searchByText);
+
+            // 回车搜索
+            $keyword.on('keypress', function (e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    searchByText();
+                }
+            });
+
+            // 事件委托
+            $listContainer.on('click', '.detail-btn', function () {
+                handleDetail(this);
+            });
+            $listContainer.on('click', '.delete-btn', function () {
+                deleteRecord(this);
+            });
+        });
+
+    })();
+    </script>
 {% endblock %}

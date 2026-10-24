@@ -39,16 +39,6 @@
         <!-- 左侧主导航链接 -->
         <ul class="navbar-nav-custom">
             <li class="nav-item-custom">
-                <a class="nav-link-custom" href="{% url 'maneu_index:index' %}" title="数据可视化面板">
-                    <i class="bi bi-bar-chart-line"></i> 可视化面板
-                </a>
-            </li>
-            <li class="nav-item-custom">
-                <a class="nav-link-custom" href="{% url 'maneu_guest:index' %}" title="客户管理">
-                    <i class="bi bi-people-fill"></i> 客户管理
-                </a>
-            </li>
-            <li class="nav-item-custom">
                 <a class="nav-link-custom" href="{% url 'maneu_order:index' %}" title="订单管理">
                     <i class="bi bi-receipt"></i> 订单管理
                 </a>
@@ -133,12 +123,6 @@
     </div>
 
     <!-- 移动端导航链接（点击后自动关闭菜单） -->
-    <a class="nav-link-mobile" href="{% url 'maneu_index:index' %}" onclick="closeMobileMenu()">
-        <i class="bi bi-bar-chart-line"></i> 数据可视化
-    </a>
-    <a class="nav-link-mobile" href="{% url 'maneu_guest:index' %}" onclick="closeMobileMenu()">
-        <i class="bi bi-people-fill"></i> 客户管理
-    </a>
     <a class="nav-link-mobile" href="{% url 'maneu_order:index' %}" onclick="closeMobileMenu()">
         <i class="bi bi-receipt"></i> 订单管理
     </a>
@@ -147,10 +131,6 @@
     </a>
     <a class="nav-link-mobile" href="{% url 'maneu_store:index' %}" onclick="closeMobileMenu()">
         <i class="bi bi-gear"></i> 定制管理
-    </a>
-    <!-- 新增：维修管理移动端入口 -->
-    <a class="nav-link-mobile" href="{% url 'maneu_repair:index' %}" onclick="closeMobileMenu()">
-        <i class="bi bi-tools"></i> 维修管理
     </a>
 
     <hr style="border-color:var(--border-subtle);margin:0.5rem 0;">

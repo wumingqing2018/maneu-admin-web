@@ -1,14 +1,14 @@
 from django.shortcuts import render
 
-from common import common
+from common.util_time import time_now, time_start, time_end
 
 
 def index(request):
-    return render(request, 'store_index.html', {'timeS': common.time_start, 'timeE': common.time_end})
+    return render(request, 'store_index.html', {'timeS': time_start, 'timeE': time_end})
 
 
 def insert(request):
-    return render(request, 'store_insert.html', {'time': common.current_time()})
+    return render(request, 'store_insert.html', {'time': time_now()})
 
 
 def detail(request):

@@ -11,7 +11,7 @@
     <div class="main-content-wrapper">
         <div class="page-header">
             <h1 class="page-title">
-                <i class="bi bi-receipt"></i> 订单管理
+                <i class="bi bi-file-medical"></i> 验光报告
             </h1>
             <a href="{% url 'maneu_report:insert' %}" class="btn-add-record">
                 <i class="bi bi-plus-lg"></i> 新增记录
@@ -35,10 +35,10 @@
                 <div class="input-group input-group-sm">
                     <span class="input-group-text">从</span>
                     <input autocomplete="off" class="form-control" id="timeStart" type="datetime-local"
-                           value="{{ default_time_start }}" max="{{ timeE }}" min="2010-01-01T00:00">
+                           min="2010-01-01T00:00">
                     <span class="input-group-text">至</span>
                     <input autocomplete="off" class="form-control" id="timeEnd" type="datetime-local"
-                           value="{{ timeE }}" max="{{ timeE }}" min="2010-01-01T00:00">
+                           min="2010-01-01T00:00">
                     <button class="btn btn-primary" id="searchByTime" type="button">
                         <i class="bi bi-funnel"></i> 筛选
                     </button>
@@ -51,7 +51,7 @@
             <div class="col-time">录入时间</div>
             <div class="col-name">客户姓名</div>
             <div class="col-phone">联系电话</div>
-            <div class="col-remark">订单备注</div>
+            <div class="col-remark">报告备注</div>
             <div class="col-actions">操作</div>
         </div>
 
@@ -70,332 +70,362 @@
 {% block javascript %}
 <script>
     // ========================================================================
-    // 1. 工具函数 & 安全防护
+    // 后端 URL（Django 模板渲染）
+    // ========================================================================
+    window.REPORT_URLS = {
+        web_detail:     "{% url 'maneu_report:detail' %}",
+        api_delete:     "{% url 'maneu_report:api_delete' %}",
+        api_searchText: "{% url 'maneu_report:api_search_data' %}",
+        api_searchTime: "{% url 'maneu_report:api_search_time' %}",
+    };
+</script>
+
+<script>
+(function () {
+    'use strict';
+
+    // ========================================================================
+    // 1. 工具函数
     // ========================================================================
 
     /**
-     * HTML 转义（防止 XSS 攻击）
-     * @param {string} str - 待转义字符串
-     * @returns {string} 转义后的安全字符串
+     * HTML 转义（防 XSS）
      */
     function escapeHtml(str) {
-        if (!str) return '';
-        return String(str).replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
+        if (str === null || str === undefined) return '';
+        return String(str).replace(/[&<>"']/g, function (m) {
+            if (m === '&')  return '&amp;';
+            if (m === '<')  return '&lt;';
+            if (m === '>')  return '&gt;';
+            if (m === '"')  return '&quot;';
+            if (m === "'")  return '&#39;';
             return m;
         });
     }
 
     /**
-     * 从 Cookie 中获取 Django CSRF Token
-     * @returns {string|null} CSRF Token 或 null
+     * 读取 access_token
      */
-
+    function getToken() {
+        return localStorage.getItem('access_token') || '';
+    }
 
     /**
-     * 格式化时间（仅保留日期部分，移动端短格式）
-     * @param {string} timeStr - 原始时间字符串
-     * @returns {string} 格式化后的日期
+     * Date → <input type="datetime-local"> 需要的本地时间格式
+     * 不能用 toISOString()（那是 UTC，会差 8 小时）
+     * @param {Date} date
+     * @returns {string} 如 "2026-10-24T15:30"
      */
-    function formatTimeShort(timeStr) {
-        if (!timeStr) return '';
-        const parts = timeStr.split(' ');
-        return parts.length >= 1 ? parts[0] : timeStr.substring(0, 10);
+    function toLocalDatetime(date) {
+        var tzOffset = date.getTimezoneOffset() * 60000;
+        return new Date(date.getTime() - tzOffset).toISOString().slice(0, 16);
+    }
+
+    /**
+     * 后端返回的 time 字段格式化为 "YYYY-MM-DD HH:MM"
+     * 后端返回 ISO 格式（2026-10-24T15:30:00），或普通格式（空格分隔）
+     */
+    function formatTimeDisplay(timeStr) {
+        if (!timeStr) return '-';
+        return String(timeStr).replace('T', ' ').substring(0, 16);
+    }
+
+    /**
+     * 通用 JSON 请求封装
+     * 自动附带 Authorization: Bearer <token>
+     */
+    function requestJSON(url, payload) {
+        return $.ajax({
+            url: url,
+            method: 'POST',
+            contentType: 'application/json',
+            headers: {
+                'Authorization': 'Bearer ' + getToken(),
+            },
+            data: JSON.stringify(payload || {}),
+            dataType: 'json',
+        });
     }
 
     // ========================================================================
-    // 2. 全局 AJAX 默认配置（自动携带 JWT Token 和 CSRF）
+    // 2. DOM 缓存
     // ========================================================================
+    var $listContainer   = $('#listContainer');
+    var $timeStart       = $('#timeStart');
+    var $timeEnd         = $('#timeEnd');
+    var $keyword         = $('#keywordInput');
+    var $searchByTextBtn = $('#searchByText');
+    var $searchByTimeBtn = $('#searchByTime');
 
-
-    // ========================================================================
-    // 3. API 端点（由 Django 模板反向解析）
-    // ========================================================================
-
-    const REPORT = {
-        web_detail: "{% url 'maneu_report:detail' %}",
-        api_delete: "{% url 'maneu_report:api_delete' %}",
-        api_searchText: "{% url 'maneu_report:api_search_data' %}",
-        api_searchTime: "{% url 'maneu_report:api_search_time' %}"
-    };
+    var currentRequest = null;
 
     // ========================================================================
-    // 4. DOM 缓存 & 请求控制器
+    // 3. UI 状态
     // ========================================================================
 
-    const $listContainer = $('#listContainer');
-    const $timeStart = $('#timeStart');
-    const $timeEnd = $('#timeEnd');
-    const $keyword = $('#keywordInput');
-    const $searchByTextBtn = $('#searchByText');
-    const $searchByTimeBtn = $('#searchByTime');
-
-    let currentRequest = null;  // 用于取消前一个未完成的请求
-
-    // ========================================================================
-    // 5. UI 状态函数
-    // ========================================================================
-
-    /** 显示加载中状态 */
     function showLoading() {
-        $listContainer.html(`
-            <div class="loading-spinner">
-                <div class="spinner-border text-primary" role="status"></div>
-            </div>
-        `);
+        $listContainer.html(
+            '<div class="loading-spinner">' +
+            '  <div class="spinner-border text-primary" role="status"></div>' +
+            '</div>'
+        );
     }
 
-    /** 显示空数据状态 */
     function showEmptyState() {
-        $listContainer.html(`
-            <div class="empty-state">
-                <i class="bi bi-inbox"></i>
-                <p>暂无定制记录</p>
-                <small>尝试调整筛选条件或新增一条记录</small>
-            </div>
-        `);
+        $listContainer.html(
+            '<div class="empty-state">' +
+            '  <i class="bi bi-inbox"></i>' +
+            '  <p>暂无验光记录</p>' +
+            '  <small>尝试调整筛选条件或新增一条记录</small>' +
+            '</div>'
+        );
     }
 
-    /** 显示错误状态 */
-    function showErrorState() {
-        $listContainer.html(`
-            <div class="empty-state">
-                <i class="bi bi-exclamation-triangle"></i>
-                <p>加载失败，请稍后重试</p>
-            </div>
-        `);
+    function showErrorState(msg) {
+        $listContainer.html(
+            '<div class="empty-state">' +
+            '  <i class="bi bi-exclamation-triangle"></i>' +
+            '  <p>' + escapeHtml(msg || '加载失败，请稍后重试') + '</p>' +
+            '</div>'
+        );
     }
 
-    /** 清除关键词输入框的验证错误样式 */
     function clearKeywordInvalid() {
         $keyword.removeClass('is-invalid');
         $keyword.closest('.filter-group').find('.invalid-feedback').hide();
     }
 
-    /** 显示关键词输入框的验证错误样式 */
     function showKeywordInvalid() {
         $keyword.addClass('is-invalid');
         $keyword.closest('.filter-group').find('.invalid-feedback').show();
     }
 
     // ========================================================================
-    // 6. 列表渲染（XSS 防护）
+    // 4. 列表渲染
     // ========================================================================
 
-    /**
-     * 生成单条列表项的 HTML（已做 XSS 转义）
-     * @param {Object} item - 数据项
-     * @returns {string} 安全的 HTML 字符串
-     */
     function createItemHTML(item) {
-        const timeRaw = item.time || '';
-        const name = escapeHtml(item.name) || '-';
-        const phone = escapeHtml(item.phone) || '-';
-        const remarkRaw = item.remark || '-';
-        const remark = escapeHtml(remarkRaw);
-        const escapedRemarkAttr = remarkRaw.replace(/"/g, '&quot;');
-        const id = escapeHtml(item.id);
+        var time   = formatTimeDisplay(item.time);
+        var name   = escapeHtml(item.name)   || '-';
+        var phone  = escapeHtml(item.phone)  || '-';
+        var remark = escapeHtml(item.remark) || '-';
+        var id     = escapeHtml(item.id);
 
-        return `
-            <div class="store-list-item">
-                <div class="col-time">
-                    <i class="bi bi-clock me-2 d-md-none"></i>
-                    ${escapeHtml(timeRaw) || '-'}
-                </div>
-                <div class="col-name">
-                    <i class="bi bi-person me-2 d-md-none"></i>
-                    ${name}
-                </div>
-                <div class="col-phone">
-                    <i class="bi bi-phone me-2 d-md-none"></i>
-                    ${phone}
-                </div>
-                <div class="col-remark" title="${escapedRemarkAttr}">
-                    <i class="bi bi-chat-left-text me-2 d-md-none"></i>
-                    ${remark}
-                </div>
-                <div class="col-actions">
-                    <button class="btn-action detail-btn" data-index-id="${id}" title="查看详情">
-                        <i class="bi bi-eye"></i>
-                    </button>
-                    <button class="btn-action delete-btn" data-index-id="${id}" title="删除记录">
-                        <i class="bi bi-trash3"></i>
-                    </button>
-                </div>
-            </div>
-        `;
+        return '' +
+            '<div class="store-list-item">' +
+            '  <div class="col-time">' +
+            '    <i class="bi bi-clock me-2 d-md-none"></i>' +
+            '    ' + escapeHtml(time) +
+            '  </div>' +
+            '  <div class="col-name">' +
+            '    <i class="bi bi-person me-2 d-md-none"></i>' +
+            '    ' + name +
+            '  </div>' +
+            '  <div class="col-phone">' +
+            '    <i class="bi bi-phone me-2 d-md-none"></i>' +
+            '    ' + phone +
+            '  </div>' +
+            '  <div class="col-remark" title="' + remark + '">' +
+            '    <i class="bi bi-chat-left-text me-2 d-md-none"></i>' +
+            '    ' + remark +
+            '  </div>' +
+            '  <div class="col-actions">' +
+            '    <button class="btn-action detail-btn" data-index-id="' + id + '" title="查看详情">' +
+            '      <i class="bi bi-eye"></i>' +
+            '    </button>' +
+            '    <button class="btn-action delete-btn" data-index-id="' + id + '" title="删除记录">' +
+            '      <i class="bi bi-trash3"></i>' +
+            '    </button>' +
+            '  </div>' +
+            '</div>';
     }
 
-    /**
-     * 渲染列表（使用 DocumentFragment 提升性能）
-     * @param {Array} items - 数据数组
-     */
     function renderList(items) {
         $listContainer.empty();
+
         if (!Array.isArray(items) || items.length === 0) {
             showEmptyState();
             return;
         }
-        const fragment = $(document.createDocumentFragment());
-        items.forEach(item => {
-            fragment.append(createItemHTML(item));
+
+        var $frag = $(document.createDocumentFragment());
+        items.forEach(function (item) {
+            $frag.append(createItemHTML(item));
         });
-        $listContainer.append(fragment);
+        $listContainer.append($frag);
     }
 
     // ========================================================================
-    // 7. 业务操作：详情跳转 & 删除记录
+    // 5. 业务操作
     // ========================================================================
 
-    /** 查看详情（跳转） */
+    /**
+     * 查看详情：跳转后端 detail 页面（不是 API）
+     */
     function handleDetail(btn) {
-        const indexId = btn.getAttribute('data-index-id');
-        window.location.href = REPORT.web_detail + '?index_id=' + indexId;
+        var indexId = btn.getAttribute('data-index-id');
+        window.location.href = window.REPORT_URLS.web_detail + '?index_id=' + encodeURIComponent(indexId);
     }
 
     /**
-     * 删除记录（使用 GET 方法，保持后端接口不变）
-     * 注意：全局 ajaxSetup 已自动添加 JWT Token 和 CSRF
+     * 删除记录：POST JSON { index_id }
      */
     function deleteRecord(btn) {
-        if (!confirm("确定要删除这条记录吗？此操作不可恢复。")) return;
+        if (!confirm('确定要删除这条记录吗？此操作不可恢复。')) return;
 
-        const indexId = btn.getAttribute('data-index-id');
-        $.ajax({
-            url: REPORT.api_delete,
-            method: 'POST',
-            data: { index_id: indexId },
-            success: function(res) {
-                if (res.status === true) {
-                    const $item = $(btn).closest('.store-list-item');
-                    if ($item.length) {
-                        $item.css({
-                            transition: 'all 0.3s ease',
-                            opacity: 0,
-                            transform: 'translateX(20px)'
-                        });
-                        setTimeout(() => {
-                            $item.remove();
-                            if (!$listContainer.find('.store-list-item').length) {
-                                showEmptyState();
-                            }
-                        }, 300);
-                    }
+        var indexId = btn.getAttribute('data-index-id');
+
+        requestJSON(window.REPORT_URLS.api_delete, { index_id: indexId })
+            .done(function (res) {
+                if (res && res.status === true) {
+                    var $item = $(btn).closest('.store-list-item');
+                    $item.css({
+                        transition: 'all 0.3s ease',
+                        opacity: 0,
+                        transform: 'translateX(20px)',
+                    });
+                    setTimeout(function () {
+                        $item.remove();
+                        if (!$listContainer.find('.store-list-item').length) {
+                            showEmptyState();
+                        }
+                    }, 300);
                 } else {
-                    alert(res.message || '删除失败，请稍后重试');
+                    alert((res && res.message) || '删除失败，请稍后重试');
                 }
-            },
-            error: function(xhr) {
-                if (xhr.status === 403) {
-                    alert('CSRF 验证失败，请刷新页面后重试');
+            })
+            .fail(function (xhr) {
+                if (xhr.status === 401) {
+                    alert('登录已过期，请重新登录');
                 } else {
                     alert('网络错误，请稍后重试');
                 }
-            }
-        });
+            });
     }
 
     // ========================================================================
-    // 8. 数据加载（使用 $.ajax 替代 $.get，支持请求取消）
+    // 6. 数据加载
     // ========================================================================
 
     /**
-     * 通用数据请求函数
-     * @param {string} url      - API 地址
-     * @param {Object} params   - GET 请求的查询参数
+     * 通用请求 + 渲染
+     * @param {string} url
+     * @param {Object} params 会被 JSON.stringify
      */
     function fetchAndRender(url, params) {
-        // 取消前一个未完成的请求（避免数据错乱或重复渲染）
         if (currentRequest && currentRequest.readyState !== 4) {
             currentRequest.abort();
         }
 
         showLoading();
 
-        currentRequest = $.ajax({
-            url: url,
-            method: 'POST',
-            data: params,
-            // headers 由全局 ajaxSetup 统一添加，无需重复设置
-            success: function(res) {
-                // 兼容两种返回格式：直接数组 或 { content: [...] }
-                const data = Array.isArray(res) ? res : (res.content || []);
+        currentRequest = requestJSON(url, params)
+            .done(function (res) {
+                // 后端返回 { status, message, content: [...] }
+                var data = (res && Array.isArray(res.content)) ? res.content : [];
                 renderList(data);
-            },
-            error: function(xhr, status) {
-                // 如果是用户主动取消（abort），不做任何处理
+            })
+            .fail(function (xhr, status) {
                 if (status === 'abort') return;
-                showErrorState();
-            }
-        });
+
+                if (xhr.status === 401) {
+                    showErrorState('登录已过期，请重新登录');
+                    return;
+                }
+
+                var msg = '加载失败，请稍后重试';
+                try {
+                    var data = JSON.parse(xhr.responseText);
+                    msg = data.message || msg;
+                } catch (e) {}
+                showErrorState(msg);
+            });
     }
 
     // ========================================================================
-    // 9. 搜索函数
+    // 7. 搜索
     // ========================================================================
 
-    /** 按时间范围搜索 */
     function searchByTime() {
         clearKeywordInvalid();
-        fetchAndRender(REPORT.api_searchTime, {
-            timeS: $timeStart.val(),
-            timeE: $timeEnd.val()
+
+        var timeS = $timeStart.val();
+        var timeE = $timeEnd.val();
+
+        if (!timeS || !timeE) {
+            alert('请选择完整的时间范围');
+            return;
+        }
+
+        if (timeS > timeE) {
+            alert('开始时间不能晚于结束时间');
+            return;
+        }
+
+        fetchAndRender(window.REPORT_URLS.api_searchTime, {
+            timeS: timeS,
+            timeE: timeE,
         });
     }
 
-    /** 按关键词搜索 */
     function searchByText() {
-        const keyword = $keyword.val().trim();
+        var keyword = $keyword.val().trim();
         if (!keyword) {
             showKeywordInvalid();
             return;
         }
         clearKeywordInvalid();
-        fetchAndRender(REPORT.api_searchText, { value: keyword });
+        fetchAndRender(window.REPORT_URLS.api_searchText, { value: keyword });
     }
 
     // ========================================================================
-    // 10. 页面初始化 & 事件绑定
+    // 8. 初始化
     // ========================================================================
 
-    $(function() {
-        // 设置默认时间范围（30天前 ~ 当前时间）
-        if (!$timeStart.val()) {
-            const thirtyDaysAgo = new Date();
-            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-            $timeStart.val(thirtyDaysAgo.toISOString().slice(0, 16));
-        }
+    $(function () {
+        var now = new Date();
+
+        // 结束时间：现在
         if (!$timeEnd.val()) {
-            const now = new Date();
-            $timeEnd.val(now.toISOString().slice(0, 16));
+            $timeEnd.val(toLocalDatetime(now));
         }
 
-        // 默认加载时间范围内的数据
+        // 开始时间：30 天前
+        if (!$timeStart.val()) {
+            var d30 = new Date(now.getTime());
+            d30.setDate(d30.getDate() - 30);
+            $timeStart.val(toLocalDatetime(d30));
+        }
+
+        // 限制不能选未来时间
+        var maxDatetime = toLocalDatetime(now);
+        $timeStart.attr('max', maxDatetime);
+        $timeEnd.attr('max', maxDatetime);
+
+        // 首次加载
         searchByTime();
 
-        // 按钮事件绑定
+        // 事件绑定
         $searchByTimeBtn.on('click', searchByTime);
         $searchByTextBtn.on('click', searchByText);
 
         // 关键词输入框回车触发搜索
-        $keyword.on('keypress', function(e) {
+        $keyword.on('keypress', function (e) {
             if (e.which === 13) {
                 e.preventDefault();
                 searchByText();
             }
         });
 
-        // 事件委托：查看详情
-        $listContainer.on('click', '.detail-btn', function() {
+        // 列表项事件委托
+        $listContainer.on('click', '.detail-btn', function () {
             handleDetail(this);
         });
-
-        // 事件委托：删除记录
-        $listContainer.on('click', '.delete-btn', function() {
+        $listContainer.on('click', '.delete-btn', function () {
             deleteRecord(this);
         });
     });
+
+})();
 </script>
 {% endblock %}

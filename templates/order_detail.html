@@ -4,17 +4,173 @@
 
 {% block css %}
     <link href="{% static 'css/maneu_order/detail20260606.css' %}" rel="stylesheet">
+    <style>
+        /* ---------- 产品行 ---------- */
+        .product-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            background: #f9fafb;
+        }
+        .product-row select,
+        .product-row input {
+            height: 36px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 0 8px;
+            font-size: 14px;
+            background: #fff;
+        }
+        .product-row select:focus,
+        .product-row input:focus {
+            border-color: #0071e3;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.1);
+        }
+        .product-row .p-item-type,
+        .product-row .p-side { width: 100px; flex-shrink: 0; }
+        .product-row .p-brand,
+        .product-row .p-model,
+        .product-row .p-color,
+        .product-row .p-material { width: 110px; }
+        .product-row .p-spec { width: 150px; }
+        .product-row .p-qty { width: 70px; }
+        .product-row .p-price { width: 100px; }
+        .product-row .p-remark { flex: 1; min-width: 120px; }
+        .product-row .p-remove {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #d1d5db;
+            background: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            color: #6b7280;
+            font-size: 18px;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+        .product-row .p-remove:hover {
+            color: #ef4444;
+            border-color: #ef4444;
+        }
+
+        /* ---------- 页面头部/卡片（复用其他模块） ---------- */
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--brand-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0;
+        }
+        .page-title i {
+            font-size: 2rem;
+            color: var(--brand-accent);
+        }
+        .section-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
+            margin-bottom: 1.5rem;
+        }
+        .section-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--brand-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 2px solid var(--brand-color-pale);
+            padding-bottom: 0.6rem;
+        }
+        .section-title i {
+            font-size: 1.3rem;
+            color: var(--brand-accent);
+        }
+        .btn-back-page {
+            border-radius: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: 500;
+        }
+        .btn-qrcode {
+            background: #fff;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+        }
+        .btn-qrcode:hover {
+            background: var(--brand-color-pale);
+            border-color: var(--brand-color);
+            color: var(--brand-color);
+        }
+        .action-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+        .btn-save {
+            background: var(--brand-color);
+            border: none;
+            color: #fff;
+            font-weight: 600;
+            padding: 0.45rem 1.2rem;
+            border-radius: 2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-save:hover { opacity: 0.9; }
+        .btn-save:disabled { opacity: 0.5; cursor: not-allowed; }
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.7rem;
+            border-radius: 1rem;
+            font-weight: 600;
+        }
+        .status-loaded  { background: #d1fae5; color: #065f46; }
+        .status-empty   { background: #fef3c7; color: #92400e; }
+        .status-warning { background: #fca5a5; color: #bb2d3b; }
+        @media (max-width: 768px) {
+            .action-bar { flex-direction: column; }
+            .action-bar .btn { width: 100%; justify-content: center; }
+        }
+        @media (max-width: 576px) {
+            .section-card { padding: 1rem 0.8rem; }
+        }
+    </style>
 {% endblock %}
 
 
 {% block content %}
     <div class="main-content-wrapper">
+        <!-- ==================== 顶部 ==================== -->
         <div class="page-header">
             <h1 class="page-title">
                 <i class="bi bi-receipt"></i> 眼镜订单详情
             </h1>
             <div class="d-flex gap-2 flex-wrap">
-                <button class="btn btn-outline-secondary btn-qrcode btn-action-primary" id="generate_qr_code" type="button" title="下载二维码">
+                <button class="btn btn-outline-secondary btn-qrcode btn-back-page" id="generate_qr_code" type="button">
                     <i class="bi bi-qr-code"></i> 二维码
                 </button>
                 <a href="{% url 'maneu_order:index' %}" class="btn btn-outline-primary btn-back-page">
@@ -23,315 +179,75 @@
             </div>
         </div>
 
-        <!-- 客户信息卡片 -->
-        <div class="section-card" id="guestSection">
+        <!-- ==================== 1. 基础信息（只读 + 备注可编辑） ==================== -->
+        <div class="section-card" id="baseSection">
             <div class="section-title d-flex justify-content-between align-items-center flex-wrap gap-2">
-                <span><i class="bi bi-person-vcard"></i> 客户信息<span class="status-badge status-empty ms-2" id="guestLoadStatus">加载中...</span></span>
-                <div class="d-flex gap-2">
-                    <button class="btn-toggle" id="toggleGuest" type="button">
-                        <i class="bi bi-chevron-down"></i> 详细参数
-                    </button>
-                </div>
+                <span>
+                    <i class="bi bi-person-vcard"></i> 基础信息
+                    <span class="status-badge status-empty ms-2" id="loadStatus">加载中...</span>
+                </span>
             </div>
 
             <div class="row g-3 mb-2">
                 <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted">录入时间</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-calendar"></i></span>
-                        <input autocomplete="off" type="datetime-local" class="form-control" id="time">
+                        <input type="text" class="form-control" id="time" readonly>
                     </div>
                 </div>
                 <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted">客户姓名</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-person"></i></span>
-                        <input autocomplete="off" type="text" class="form-control" id="name" placeholder="客户姓名">
+                        <input type="text" class="form-control" id="name" readonly placeholder="（空）">
                     </div>
                 </div>
                 <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted">联系电话</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-telephone"></i></span>
-                        <input autocomplete="off" type="text" class="form-control" id="phone" placeholder="联系电话">
+                        <input type="text" class="form-control" id="phone" readonly placeholder="（空）">
                     </div>
                 </div>
-            </div>
-
-            <div id="guestExtra" style="display: none;">
-                <div class="row g-3 mb-3">
-                    <div class="col-md-4">
-                        <label class="form-label small fw-bold text-muted">性别</label>
-                        <input autocomplete="off" type="text" class="form-control" id="sex" list="sexList" placeholder="例如：男">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label small fw-bold text-muted">年龄</label>
-                        <input autocomplete="off" type="text" class="form-control" id="age" placeholder="例如：28">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label small fw-bold text-muted">眼位</label>
-                        <input autocomplete="off" type="text" class="form-control" id="ot" list="otList" placeholder="例如：正视">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label small fw-bold text-muted">主视眼</label>
-                        <input autocomplete="off" type="text" class="form-control" id="em" list="emList" placeholder="左眼 / 右眼">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label small fw-bold text-muted">病族史</label>
-                        <input autocomplete="off" type="text" class="form-control" id="dfh" list="dfhList" placeholder="无 / 有">
-                    </div>
-                </div>
-            </div>
-
-            <div class="row g-3">
                 <div class="col-12">
+                    <label class="form-label small fw-bold text-muted">备注</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-chat-left-text"></i></span>
-                        <input autocomplete="off" type="text" class="form-control" id="remark" placeholder="备注信息">
+                        <input autocomplete="off" type="text" class="form-control" id="remark" placeholder="备注信息（可编辑）">
                     </div>
                 </div>
             </div>
 
-            <div class="action-bar justify-content-end">
-                <button class="btn-save-guest" id="guestUpdate" type="button">
-                    <i class="bi bi-check-lg"></i> 更新客户信息
+            <div class="d-flex justify-content-end mt-3">
+                <button class="btn-save" id="saveBaseInfo" type="button">
+                    <i class="bi bi-check-lg"></i> 保存备注
                 </button>
             </div>
         </div>
 
-        <!-- 验光报告卡片 -->
-        <div class="section-card" id="reportSection">
-            <div class="section-title d-flex justify-content-between align-items-center flex-wrap gap-2">
-                <span><i class="bi bi-eyeglasses"></i> 验光报告<span class="status-badge status-empty ms-2" id="reportLoadStatus">加载中...</span></span>
-                <div class="d-flex gap-2">
-                    <button class="btn-toggle" id="toggleReport" type="button">
-                        <i class="bi bi-chevron-down"></i> 详细参数
-                    </button>
-                </div>
-            </div>
-
-            <div class="row g-2 mb-3">
-                <div class="col-md-4">
-                    <div class="input-group">
-                        <span class="input-group-text">方案</span>
-                        <input autocomplete="off" type="text" class="form-control" id="PLAN" list="PLAN1">
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="input-group">
-                        <span class="input-group-text">瞳距</span>
-                        <input autocomplete="off" type="text" class="form-control" id="PD" list="PD1">
-                    </div>
-                </div>
-            </div>
-
-            <div id="reportExtra" style="display: none;">
-                <div class="mb-2">
-                    <label class="form-label fw-semibold small text-muted">右眼 (OD)</label>
-                    <div class="row g-1">
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">裸眼视力</span>
-                                <input class="form-control col-8" id="OD_VA" list="VA">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">球镜</span>
-                                <input class="form-control col-8" id="OD_SPH" list="CYL&amp;SPH">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">柱镜</span>
-                                <input class="form-control col-8" id="OD_CYL" list="CYL&amp;SPH">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">轴位</span>
-                                <input class="form-control col-8" id="OD_AX" list="AX">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">棱镜</span>
-                                <input class="form-control col-8" id="OD_PR" list="PR">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">基地取向</span>
-                                <input class="form-control col-8" id="OD_FR" list="FR">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">眼轴长度</span>
-                                <input class="form-control col-8" id="OD_AL" list="AL">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">角膜曲度</span>
-                                <input class="form-control col-8" id="OD_AK" list="AK">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">前房深度</span>
-                                <input class="form-control col-8" id="OD_AD" list="AD">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">角膜厚度</span>
-                                <input class="form-control col-8" id="OD_CCT" list="CCT">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">晶体厚度</span>
-                                <input class="form-control col-8" id="OD_LT" list="LT">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">玻璃体厚度</span>
-                                <input class="form-control col-8" id="OD_VT" list="VT">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">矫正视力</span>
-                                <input class="form-control col-8" id="OD_BC" list="VA">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">下加光</span>
-                                <input class="form-control col-8" id="OD_ADD" list="ADD">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="mb-2">
-                    <label class="form-label fw-semibold small text-muted">左眼 (OS)</label>
-                    <div class="row g-1">
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">裸眼视力</span>
-                                <input class="form-control col-8" id="OS_VA" list="VA">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">球镜</span>
-                                <input class="form-control col-8" id="OS_SPH" list="CYL&amp;SPH">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">柱镜</span>
-                                <input class="form-control col-8" id="OS_CYL" list="CYL&amp;SPH">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">轴位</span>
-                                <input class="form-control col-8" id="OS_AX" list="AX">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">棱镜</span>
-                                <input class="form-control col-8" id="OS_PR" list="PR">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">基地取向</span>
-                                <input class="form-control col-8" id="OS_FR" list="FR">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">眼轴长度</span>
-                                <input class="form-control col-8" id="OS_AL" list="AL">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">角膜曲度</span>
-                                <input class="form-control col-8" id="OS_AK" list="AK">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">前房深度</span>
-                                <input class="form-control col-8" id="OS_AD" list="AD">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">角膜厚度</span>
-                                <input class="form-control col-8" id="OS_CCT" list="CCT">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">晶体厚度</span>
-                                <input class="form-control col-8" id="OS_LT" list="LT">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">玻璃体厚度</span>
-                                <input class="form-control col-8" id="OS_VT" list="VT">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">矫正视力</span>
-                                <input class="form-control col-8" id="OS_BC" list="VA">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">下加光</span>
-                                <input class="form-control col-8" id="OS_ADD" list="ADD">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-3 text-end">
-                <button class="btn-save-guest" id="reportUpdate" type="button">
-                    <i class="bi bi-check-lg"></i> 更新验光报告
-                </button>
-            </div>
-        </div>
-
-        <!-- 产品信息卡片 -->
+        <!-- ==================== 2. 产品信息 ==================== -->
         <div class="section-card" id="productSection">
-            <div class="section-title">
-                <span><i class="bi bi-box-seam"></i> 产品信息<span class="status-badge status-empty ms-2" id="storeLoadStatus">加载中...</span></span>
+            <div class="section-title d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <span>
+                    <i class="bi bi-box-seam"></i> 产品明细
+                    <span class="status-badge status-empty ms-2" id="productsLoadStatus">加载中...</span>
+                </span>
             </div>
-            {% for i in "111111" %}
-                <div class="product-row store">
-                    <input type="text" class="product-cat arg10" name="arg10" placeholder="类别">
-                    <input type="text" class="product-brand arg11" name="arg11" placeholder="品牌">
-                    <input type="text" class="product-model arg12" name="arg12" placeholder="型号">
-                    <input type="text" class="product-param arg13" name="arg13" placeholder="参数">
-                    <input type="text" class="product-price arg14" name="arg14" placeholder="价格">
-                </div>
-            {% endfor %}
-            <div class="mt-3 text-end">
-                <button class="btn-save-guest" id="orderUpdate" type="button">
-                    <i class="bi bi-check-lg"></i> 更新产品信息
+
+            <div id="productsContainer"></div>
+
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <button class="btn btn-outline-primary btn-back-page" id="addProduct" type="button">
+                    <i class="bi bi-plus-lg"></i> 添加产品
+                </button>
+                <button class="btn-save" id="saveProducts" type="button">
+                    <i class="bi bi-check-lg"></i> 保存产品
                 </button>
             </div>
         </div>
 
-        <!-- 底部操作栏 -->
+        <!-- ==================== 3. 底部 ==================== -->
         <div class="action-bar justify-content-end">
             <button class="btn btn-outline-danger btn-back-page" id="delete" type="button">
                 <i class="bi bi-trash3"></i> 删除此订单
@@ -340,347 +256,380 @@
     </div>
 {% endblock %}
 
+
 {% block javascript %}
     <script>
-        // ==================== 全局配置与工具函数 ====================
-        // 订单ID（由 Django 模板注入）
-        const index_id = "{{ index_id }}";
-
-        // API 端点（与原始后端保持一致）
-        const ORDER_API = {
-            api_detail      : "{% url 'maneu_order:api_detail' %}",
-            api_delete      : "{% url 'maneu_order:api_delete' %}",
-            api_update      : "{% url 'maneu_order:api_update' %}",
-            api_qrcode      : "{% url 'maneu_order:api_QRcode' %}"
+        window.ORDER_DETAIL_URLS = {
+            index_id:   "{{ index_id }}",
+            api_detail: "{% url 'maneu_order:api_detail' %}",
+            api_update: "{% url 'maneu_order:api_update' %}",
+            api_delete: "{% url 'maneu_order:api_delete' %}",
+            api_qrcode: "{% url 'maneu_order:api_QRcode' %}",
+            web_index:  "{% url 'maneu_order:index' %}",
         };
+    </script>
 
-        const API = {
-            guestUpdate : "{% url 'maneu_guest:api_update' %}",
-            reportUpdate: "{% url 'maneu_report:api_update' %}",
-        };
+    <script>
+    (function () {
+        'use strict';
 
-        // CSRF Token 获取（为后续可能的 POST 请求预留，当前所有更新使用 GET，但保持风格统一）
-        function getCSRFToken() {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, 10) === 'csrftoken=') {
-                        cookieValue = decodeURIComponent(cookie.substring(10));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
+        var INDEX_ID = window.ORDER_DETAIL_URLS.index_id;
+
+        // ============================================================
+        // 工具
+        // ============================================================
+
+        function getToken() {
+            return localStorage.getItem('access_token') || '';
         }
 
-        // 将 "YYYY-MM-DD HH:MM:SS" 或类似格式转换为 datetime-local 可识别的 "YYYY-MM-DDTHH:MM"
-        function toDatetimeLocal(value) {
-            if (!value) return '';
-            // 若已经是 datetime-local 格式则直接返回
-            if (value.includes('T')) return value.substring(0, 16);
-            // 处理 "YYYY-MM-DD HH:MM:SS" 格式
-            let parts = value.split(' ');
-            if (parts.length >= 2) {
-                return parts[0] + 'T' + parts[1].substring(0, 5);
-            }
-            return value.substring(0, 16);
+        function requestJSON(url, payload) {
+            return $.ajax({
+                url: url,
+                method: 'POST',
+                contentType: 'application/json',
+                headers: { 'Authorization': 'Bearer ' + getToken() },
+                data: JSON.stringify(payload || {}),
+                dataType: 'json',
+            });
         }
 
-        // 通用错误提示（风格与订单管理页保持一致）
-        function showError(message) {
-            alert(message || '操作失败，请稍后重试');
+        function escapeHtml(s) {
+            if (s === null || s === undefined) return '';
+            return String(s).replace(/[&<>"']/g, function (m) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+            });
         }
 
-        // ==================== 防重复提交控制 ====================
-        let isSubmitting = false;
-
-        function setSubmitting(btn, state, originalText = null) {
-            isSubmitting = state;
-            if (btn) {
-                if (state) {
-                    btn.prop('disabled', true);
-                    btn.data('original-text', btn.html());
-                    btn.html('<span class="spinner-border spinner-border-sm me-1" role="status"></span> 处理中...');
-                } else {
-                    btn.prop('disabled', false);
-                    if (btn.data('original-text')) {
-                        btn.html(btn.data('original-text'));
-                    }
-                }
-            }
+        function formatTimeDisplay(t) {
+            if (!t) return '';
+            return String(t).replace('T', ' ').substring(0, 16);
         }
 
-        // ==================== 数据加载与渲染 ====================
-        // 加载状态标签控制
+        function val($el) {
+            return ($el.val() || '').trim();
+        }
+
+        function numVal($el) {
+            var v = parseFloat($el.val());
+            return isNaN(v) ? 0 : v;
+        }
+
+        function intVal($el) {
+            var v = parseInt($el.val(), 10);
+            return isNaN(v) || v < 1 ? 1 : v;
+        }
+
+        function showError(msg) {
+            alert(msg || '操作失败，请稍后重试');
+        }
+
         function setLoadStatus($el, status, message) {
             $el.removeClass('status-empty status-loaded status-warning');
             if (status === 'loading') {
                 $el.addClass('status-empty').text(message || '加载中...');
             } else if (status === 'success') {
-                $el.addClass('status-loaded').text(message || '加载成功');
-            } else if (status === 'error') {
+                $el.addClass('status-loaded').text(message || '已加载');
+            } else {
                 $el.addClass('status-warning').text(message || '加载失败');
             }
         }
 
-        // 渲染客户信息
-        function renderGuestDetail(guest) {
-            if (guest?.status) {
-                const g = guest.content;
-                $('#time').val(toDatetimeLocal(g.time));
-                $('#name').val(g.name || '');
-                $('#phone').val(g.phone || '');
-                $('#sex').val(g.sex || '');
-                $('#age').val(g.age || '');
-                $('#dfh').val(g.dfh || '');
-                $('#em').val(g.em || '');
-                $('#ot').val(g.ot || '');
-                $('#remark').val(g.remark || '');
-                setLoadStatus($('#guestLoadStatus'), 'success', '已加载');
+        function setSubmitting($btn, state) {
+            if (!$btn || !$btn.length) return;
+            if (state) {
+                $btn.prop('disabled', true).data('original-text', $btn.html());
+                $btn.html('<span class="spinner-border spinner-border-sm me-1"></span>处理中...');
             } else {
-                setLoadStatus($('#guestLoadStatus'), 'error', '加载失败');
+                $btn.prop('disabled', false);
+                if ($btn.data('original-text')) $btn.html($btn.data('original-text'));
             }
         }
 
-        // 渲染验光报告
-        function renderReportDetail(report) {
-            if (report?.status) {
-                const r = report.content;
-                $('#PLAN').val(r.plan || '');
-                $('#PD').val(r.pd || '');
-                const eyes = ['OD', 'OS'];
-                const fields = ['SPH','CYL','AX','VA','BC','ADD','PR','FR','AL','AK','AD','CCT','LT','VT'];
-                eyes.forEach(function(eye) {
-                    fields.forEach(function(f) {
-                        const value = r[eye.toLowerCase() + '_' + f.toLowerCase()];
-                        $('#' + eye + '_' + f).val(value || '');
-                    });
+        // ============================================================
+        // 产品行渲染
+        // ============================================================
+
+        function createProductRow(p) {
+            p = p || {};
+            var itemType = p.item_type || 'frame';
+            var side     = p.side || '';
+
+            var sideOpts = '<option value=""' + (side === '' ? ' selected' : '') + '>不分</option>' +
+                '<option value="OD"' + (side === 'OD' ? ' selected' : '') + '>右眼</option>' +
+                '<option value="OS"' + (side === 'OS' ? ' selected' : '') + '>左眼</option>' +
+                '<option value="OU"' + (side === 'OU' ? ' selected' : '') + '>双眼</option>';
+
+            return '' +
+                '<div class="product-row">' +
+                '  <select class="p-item-type">' +
+                '    <option value="frame"'     + (itemType === 'frame'     ? ' selected' : '') + '>镜架</option>' +
+                '    <option value="lens"'      + (itemType === 'lens'      ? ' selected' : '') + '>镜片</option>' +
+                '    <option value="accessory"' + (itemType === 'accessory' ? ' selected' : '') + '>配件</option>' +
+                '    <option value="service"'   + (itemType === 'service'   ? ' selected' : '') + '>服务</option>' +
+                '  </select>' +
+                '  <select class="p-side">' + sideOpts + '</select>' +
+                '  <input class="p-brand"    placeholder="品牌" value="' + escapeHtml(p.brand)    + '">' +
+                '  <input class="p-model"    placeholder="型号" value="' + escapeHtml(p.model)    + '">' +
+                '  <input class="p-color"    placeholder="颜色" value="' + escapeHtml(p.color)    + '">' +
+                '  <input class="p-material" placeholder="材质" value="' + escapeHtml(p.material) + '">' +
+                '  <input class="p-spec"     placeholder="规格" value="' + escapeHtml(p.spec)     + '">' +
+                '  <input class="p-qty"   type="number" placeholder="数量" min="1" value="' + (p.quantity || 1) + '">' +
+                '  <input class="p-price" type="number" placeholder="单价" step="0.01" min="0" value="' + (p.unit_price || 0) + '">' +
+                '  <input class="p-remark"   placeholder="备注" value="' + escapeHtml(p.remark)   + '">' +
+                '  <button class="p-remove" type="button" title="删除此产品">×</button>' +
+                '</div>';
+        }
+
+        function renderProducts(products) {
+            var $c = $('#productsContainer').empty();
+
+            if (!Array.isArray(products) || products.length === 0) {
+                $c.append('<div class="text-muted text-center py-3">暂无产品，点击「添加产品」开始添加</div>');
+                return;
+            }
+
+            products.forEach(function (p) {
+                $c.append(createProductRow(p));
+            });
+        }
+
+        function collectProducts() {
+            var products = [];
+            $('#productsContainer .product-row').each(function () {
+                var $r = $(this);
+                products.push({
+                    item_type:  val($r.find('.p-item-type')) || 'frame',
+                    side:       val($r.find('.p-side')),
+                    brand:      val($r.find('.p-brand')),
+                    model:      val($r.find('.p-model')),
+                    color:      val($r.find('.p-color')),
+                    material:   val($r.find('.p-material')),
+                    spec:       val($r.find('.p-spec')),
+                    quantity:   intVal($r.find('.p-qty')),
+                    unit_price: numVal($r.find('.p-price')),
+                    remark:     val($r.find('.p-remark')),
                 });
-                setLoadStatus($('#reportLoadStatus'), 'success', '已加载');
-            } else {
-                setLoadStatus($('#reportLoadStatus'), 'error', '加载失败');
-            }
+            });
+            return products;
         }
 
-        // 渲染订单产品信息
-        function renderOrderDetail(order) {
-            if (order?.status && Array.isArray(order.content)) {
-                $('.product-row').each(function(i) {
-                    const p = order.content[i];
-                    if (p) {
-                        $(this).find('.arg10').val(p.arg10 || '');
-                        $(this).find('.arg11').val(p.arg11 || '');
-                        $(this).find('.arg12').val(p.arg12 || '');
-                        $(this).find('.arg13').val(p.arg13 || '');
-                        $(this).find('.arg14').val(p.arg14 || '');
-                    }
-                });
-                setLoadStatus($('#storeLoadStatus'), 'success', '已加载');
-            } else {
-                setLoadStatus($('#storeLoadStatus'), 'error', '加载失败');
-            }
-        }
+        // ============================================================
+        // 加载详情
+        // ============================================================
 
-        // 主加载函数（带加载状态）
-        let currentDetailRequest = null;
+        var currentRequest = null;
+
         function loadDetail() {
-            if (currentDetailRequest && currentDetailRequest.readyState !== 4) {
-                currentDetailRequest.abort();
+            if (currentRequest && currentRequest.readyState !== 4) {
+                currentRequest.abort();
             }
-            // 重置状态标签为“加载中”
-            setLoadStatus($('#guestLoadStatus'), 'loading', '加载中...');
-            setLoadStatus($('#reportLoadStatus'), 'loading', '加载中...');
-            setLoadStatus($('#storeLoadStatus'), 'loading', '加载中...');
 
-            currentDetailRequest = $.ajax({
-                url: ORDER_API.api_detail,
-                method: 'POST',
-                data: { index_id: index_id },
-                success: function(res) {
-                    if (!res?.status) {
-                        showError('加载详情失败：' + (res?.message || ''));
-                        setLoadStatus($('#guestLoadStatus'), 'error', '加载失败');
-                        setLoadStatus($('#reportLoadStatus'), 'error', '加载失败');
-                        setLoadStatus($('#storeLoadStatus'), 'error', '加载失败');
+            setLoadStatus($('#loadStatus'), 'loading');
+            setLoadStatus($('#productsLoadStatus'), 'loading');
+
+            currentRequest = requestJSON(window.ORDER_DETAIL_URLS.api_detail, {
+                index_id: INDEX_ID,
+            })
+                .done(function (res) {
+                    if (!res || res.status !== true) {
+                        setLoadStatus($('#loadStatus'), 'error', '加载失败');
+                        setLoadStatus($('#productsLoadStatus'), 'error', '加载失败');
                         return;
                     }
-                    const { guest, report, order } = res.content;
-                    renderGuestDetail(guest);
-                    renderReportDetail(report);
-                    renderOrderDetail(order);
-                },
-                error: function(xhr) {
-                    if (xhr.statusText === 'abort') return;
-                    showError('网络错误，无法加载订单详情');
-                    setLoadStatus($('#guestLoadStatus'), 'error', '加载失败');
-                    setLoadStatus($('#reportLoadStatus'), 'error', '加载失败');
-                    setLoadStatus($('#storeLoadStatus'), 'error', '加载失败');
-                }
-            });
-        }
 
-        // ==================== 更新操作（带防抖与刷新） ====================
-        // 通用更新方法（GET 请求，沿用后端现有风格）
-        function performUpdate(url, data, successMsg, $btn, onSuccess) {
-            if (isSubmitting) return;
-            if (!confirm('确定要更新这条记录吗？')) return;
-
-            setSubmitting($btn, true);
-            $.ajax({
-                url: url,
-                method: 'POST',
-                data: data,
-                success: function(res) {
-                    setSubmitting($btn, false);
-                    if (res && res.status) {
-                        alert(successMsg);
-                        // 更新成功后重新加载详情，保持界面最新
-                        loadDetail();
-                        if (onSuccess) onSuccess(res);
-                    } else {
-                        showError('更新失败：' + (res?.message || '未知错误'));
+                    var wrapper = res.content && res.content.order;
+                    if (!wrapper || !wrapper.ok) {
+                        setLoadStatus($('#loadStatus'), 'error', '订单不存在');
+                        setLoadStatus($('#productsLoadStatus'), 'error', '订单不存在');
+                        return;
                     }
-                },
-                error: function(xhr) {
-                    setSubmitting($btn, false);
-                    showError('网络错误，请稍后重试');
-                }
-            });
-        }
 
-        // 更新订单（产品信息）
-        function updateOrder() {
-            const productData = $('.product-row').map(function() {
-                const $row = $(this);
-                return {
-                    arg10: $row.find('.arg10').val(),
-                    arg11: $row.find('.arg11').val(),
-                    arg12: $row.find('.arg12').val(),
-                    arg13: $row.find('.arg13').val(),
-                    arg14: $row.find('.arg14').val()
-                };
-            }).get();
-            const data = {
-                index_id: index_id,
-                time: $('#time').val(),
-                orderRemark: $('#remark').val(),
-                content: JSON.stringify(productData)
-            };
-            performUpdate(ORDER_API.api_update, data, '订单信息更新成功', $('#orderUpdate'));
-        }
+                    var data = wrapper.data;
 
-        // 更新客户信息
-        function updateGuest() {
-            const data = {
-                index_id: index_id,
-                time: $('#time').val(),
-                name: $('#name').val(),
-                phone: $('#phone').val(),
-                age: $('#age').val(),
-                sex: $('#sex').val(),
-                dfh: $('#dfh').val(),
-                ot: $('#ot').val(),
-                em: $('#em').val(),
-                guestRemark: $('#remark').val()
-            };
-            performUpdate(API.guestUpdate, data, '客户信息更新成功', $('#guestUpdate'));
-        }
+                    $('#time').val(formatTimeDisplay(data.time));
+                    $('#name').val(data.name || '');
+                    $('#phone').val(data.phone || '');
+                    $('#remark').val(data.remark || '');
 
-        // 收集验光报告数据
-        function collectReportData() {
-            const data = {
-                index_id: index_id,
-                plan: $('#PLAN').val(),
-                pd: $('#PD').val()
-            };
-            const eyes = ['OD', 'OS'];
-            const fields = ['SPH','CYL','AX','VA','BC','ADD','PR','FR','AL','AK','AD','CCT','LT','VT'];
-            eyes.forEach(function(eye) {
-                fields.forEach(function(f) {
-                    data[eye.toLowerCase() + '_' + f.toLowerCase()] = $('#' + eye + '_' + f).val();
+                    renderProducts(data.products || []);
+
+                    setLoadStatus($('#loadStatus'), 'success', '已加载');
+                    setLoadStatus($('#productsLoadStatus'), 'success', '已加载');
+                })
+                .fail(function (xhr, status) {
+                    if (status === 'abort') return;
+                    if (xhr.status === 401) {
+                        setLoadStatus($('#loadStatus'), 'error', '登录已过期');
+                        setLoadStatus($('#productsLoadStatus'), 'error', '登录已过期');
+                    } else if (xhr.status === 404) {
+                        setLoadStatus($('#loadStatus'), 'error', '订单不存在');
+                        setLoadStatus($('#productsLoadStatus'), 'error', '订单不存在');
+                    } else {
+                        setLoadStatus($('#loadStatus'), 'error', '加载失败');
+                        setLoadStatus($('#productsLoadStatus'), 'error', '加载失败');
+                    }
                 });
-            });
-            return data;
         }
 
-        // 更新验光报告
-        function updateReport() {
-            const data = collectReportData();
-            performUpdate(API.reportUpdate, data, '验光报告更新成功', $('#reportUpdate'));
+        // ============================================================
+        // 更新
+        // ============================================================
+
+        function saveBaseInfo() {
+            if (!confirm('确定保存备注？')) return;
+
+            var $btn = $('#saveBaseInfo');
+            setSubmitting($btn, true);
+
+            requestJSON(window.ORDER_DETAIL_URLS.api_update, {
+                index_id: INDEX_ID,
+                remark:   val($('#remark')),
+            })
+                .done(function (res) {
+                    if (res && res.status === true) {
+                        alert('备注已保存');
+                    } else {
+                        showError((res && res.message) || '保存失败');
+                    }
+                })
+                .fail(function (xhr) {
+                    if (xhr.status === 401) showError('登录已过期，请重新登录');
+                    else showError('网络错误，请稍后重试');
+                })
+                .always(function () {
+                    setSubmitting($btn, false);
+                });
         }
 
-        // ==================== 删除操作（带动画与跳转） ====================
+        function saveProducts() {
+            var products = collectProducts();
+
+            if (products.length === 0) {
+                showError('请至少添加一条产品');
+                return;
+            }
+
+            if (!confirm('确定保存产品信息？')) return;
+
+            var $btn = $('#saveProducts');
+            setSubmitting($btn, true);
+
+            requestJSON(window.ORDER_DETAIL_URLS.api_update, {
+                index_id: INDEX_ID,
+                products: products,
+            })
+                .done(function (res) {
+                    if (res && res.status === true) {
+                        alert('产品已保存');
+                        loadDetail();
+                    } else if (res && res.errors && res.errors.products) {
+                        var msgs = res.errors.products.map(function (e) { return e.message; });
+                        showError(msgs.join('\n'));
+                    } else {
+                        showError((res && res.message) || '保存失败');
+                    }
+                })
+                .fail(function (xhr) {
+                    if (xhr.status === 401) showError('登录已过期，请重新登录');
+                    else showError('网络错误，请稍后重试');
+                })
+                .always(function () {
+                    setSubmitting($btn, false);
+                });
+        }
+
+        // ============================================================
+        // 删除
+        // ============================================================
+
         function deleteOrder() {
             if (!confirm('确定要删除这条订单吗？此操作不可恢复。')) return;
-            const $deleteBtn = $('#delete');
-            setSubmitting($deleteBtn, true);
-            $.ajax({
-                url: ORDER_API.api_delete,
-                method: 'POST',
-                data: { index_id: index_id },
-                success: function(res) {
-                    setSubmitting($deleteBtn, false);
-                    if (res?.status) {
+
+            var $btn = $('#delete');
+            setSubmitting($btn, true);
+
+            requestJSON(window.ORDER_DETAIL_URLS.api_delete, { index_id: INDEX_ID })
+                .done(function (res) {
+                    if (res && res.status === true) {
                         alert('删除成功');
-                        // 模拟淡出效果后跳转（因页面即将跳转，简单跳转即可）
-                        location.replace("{% url 'maneu_order:index' %}");
+                        location.replace(window.ORDER_DETAIL_URLS.web_index);
                     } else {
-                        showError('删除失败：' + (res?.message || ''));
+                        showError((res && res.message) || '删除失败');
                     }
-                },
-                error: function() {
-                    setSubmitting($deleteBtn, false);
-                    showError('网络错误，删除失败');
-                }
-            });
+                })
+                .fail(function (xhr) {
+                    if (xhr.status === 401) showError('登录已过期，请重新登录');
+                    else showError('网络错误，请稍后重试');
+                })
+                .always(function () {
+                    setSubmitting($btn, false);
+                });
         }
 
-        // ==================== 二维码下载 ====================
-        function downloadQRCode() {
+        // ============================================================
+        // 二维码
+        // ============================================================
+
+        function downloadQR() {
+            var $btn = $('#generate_qr_code');
+            setSubmitting($btn, true);
+
             $.ajax({
-                url: ORDER_API.api_qrcode,
+                url: window.ORDER_DETAIL_URLS.api_qrcode,
                 method: 'POST',
-                data: { index_id: index_id },
+                contentType: 'application/json',
+                headers: { 'Authorization': 'Bearer ' + getToken() },
+                data: JSON.stringify({ index_id: INDEX_ID }),
                 xhrFields: { responseType: 'blob' },
-                success: function(blob) {
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
+            })
+                .done(function (blob) {
+                    var url = URL.createObjectURL(blob);
+                    var a = document.createElement('a');
                     a.href = url;
-                    a.download = index_id + '.png';
+                    a.download = INDEX_ID + '.png';
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
                     URL.revokeObjectURL(url);
-                },
-                error: function() {
-                    showError('二维码生成失败，请稍后重试');
-                }
-            });
+                })
+                .fail(function (xhr) {
+                    if (xhr.status === 401) showError('登录已过期，请重新登录');
+                    else showError('二维码生成失败，请稍后重试');
+                })
+                .always(function () {
+                    setSubmitting($btn, false);
+                });
         }
 
-        // ==================== 页面初始化 ====================
-        $(function() {
-            // 折叠面板切换（与订单管理页风格一致）
-            function setupToggle(triggerId, panelId) {
-                $(triggerId).on('click', function() {
-                    $(panelId).slideToggle(200);
-                    $(this).find('i').toggleClass('bi-chevron-down bi-chevron-up');
-                });
-            }
-            setupToggle('#toggleGuest', '#guestExtra');
-            setupToggle('#toggleReport', '#reportExtra');
+        // ============================================================
+        // 初始化
+        // ============================================================
 
-            // 绑定所有操作按钮
-            $('#orderUpdate').on('click', updateOrder);
-            $('#guestUpdate').on('click', updateGuest);
-            $('#reportUpdate').on('click', updateReport);
+        $(function () {
+            // 添加产品
+            $('#addProduct').on('click', function () {
+                $('#productsContainer .text-muted').remove();
+                $('#productsContainer').append(createProductRow({}));
+            });
+
+            // 删除单个产品
+            $('#productsContainer').on('click', '.p-remove', function () {
+                if ($('#productsContainer .product-row').length <= 1) {
+                    showError('至少保留一条产品');
+                    return;
+                }
+                $(this).closest('.product-row').remove();
+            });
+
+            $('#saveBaseInfo').on('click', saveBaseInfo);
+            $('#saveProducts').on('click', saveProducts);
             $('#delete').on('click', deleteOrder);
-            $('#generate_qr_code').on('click', downloadQRCode);
+            $('#generate_qr_code').on('click', downloadQR);
 
-            // 加载详情数据
             loadDetail();
         });
+
+    })();
     </script>
 {% endblock %}

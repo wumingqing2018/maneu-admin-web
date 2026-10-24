@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from common.common import current_time, time_start, time_end
+from common.util_time import time_now, time_start, time_end
 
 
 def index(request):
@@ -8,7 +8,7 @@ def index(request):
 
 
 def insert(request):
-    return render(request, 'report_insert.html', {'time': current_time()})
+    return render(request, 'report_insert.html')
 
 
 def detail(request):

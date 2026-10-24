@@ -1,15 +1,221 @@
+{#templates/order_insert.html#}
 {% extends 'maneu/base.html' %}
 {% load static %}
 
 {% block css %}
-    <link href="{% static 'css/maneu_order/insert20260606.css' %}" rel="stylesheet">
+    <style>
+        /* ========== 订单新增页专属样式 ========== */
+        :root {
+            --card-hover-shadow: 0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04);
+        }
+
+        /* ========== 页面头部 ========== */
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--brand-color);
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0;
+        }
+
+        .page-title i {
+            font-size: 2rem;
+            color: var(--brand-accent);
+        }
+
+        .section-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
+            margin-bottom: 1.5rem;
+        }
+
+        .section-card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .section-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--brand-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            letter-spacing: 0.02em;
+            border-bottom: 2px solid var(--brand-color-pale);
+            padding-bottom: 0.6rem;
+        }
+
+        .section-title i {
+            font-size: 1.3rem;
+            color: var(--brand-accent);
+        }
+
+        .btn-back-page {
+            border-radius: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: 500;
+        }
+
+        .action-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .action-bar {
+                flex-direction: column;
+            }
+            .action-bar .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .section-card {
+                padding: 1rem 0.8rem;
+            }
+        }
+
+        @keyframes highlightFade {
+            0% { background-color: var(--brand-color-pale); }
+            100% { background-color: transparent; }
+        }
+
+        /* ========== 产品行 ========== */
+        .product-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #eef0f3;
+        }
+
+        .product-row:last-child {
+            border-bottom: none;
+        }
+
+        .product-row.has-error {
+            background: #fff3f3;
+        }
+
+        .product-badge {
+            display: inline-block;
+            min-width: 56px;
+            padding: 4px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 999px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .badge-frame { background: #0071E3; }
+        .badge-lens { background: #5856D6; }
+        .badge-accessory { background: #FF9500; }
+        .badge-service { background: #34C759; }
+
+        .product-row input,
+        .product-row select {
+            flex: 1 1 100px;
+            min-width: 80px;
+            max-width: 160px;
+            min-height: 38px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .product-row .product-qty { flex: 0 0 70px; }
+        .product-row .product-price { flex: 0 0 100px; }
+
+        .product-row .btn-remove-row {
+            flex: 0 0 38px;
+            width: 38px;
+            height: 38px;
+            border: 1px solid #0071E3;
+            border-radius: 2rem;
+            background: #fff;
+            color: #0071E3;
+            cursor: pointer;
+            font-size: 18px;
+            line-height: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .product-row .btn-remove-row:hover {
+            background: #0071E3;
+            color: #fff;
+        }
+
+        .add-btn-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* ============================================================
+           统一控件外观（与「返回列表」按钮一致）
+           ============================================================ */
+        .section-card .form-control,
+        .section-card .form-select,
+        .section-card .input-group-text {
+            min-height: 38px;
+            font-size: 14px;
+        }
+
+        .section-card .input-group {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .section-card .input-group-text {
+            background: #fff;
+            color: #0071E3;
+        }
+
+        /* 按钮统一高度、图标对齐；圆角交给 .btn-back-page 控制 */
+        .add-btn-group .btn,
+        .action-bar .btn {
+            min-height: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            font-size: 14px;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
     <div class="main-content-wrapper">
-        <!-- 页面标题 -->
+
+        <!-- ==================== 页面标题 ==================== -->
         <div class="page-header">
-            <h1 class="page-title">
+            <h1 class="page-title mb-0">
                 <i class="bi bi-receipt"></i> 新增产品订单
             </h1>
             <div class="d-flex gap-2 flex-wrap">
@@ -19,15 +225,10 @@
             </div>
         </div>
 
-        <!-- 1. 客户信息卡片（可折叠详细参数） -->
+        <!-- ==================== 1. 客户信息 ==================== -->
         <div class="section-card" id="guestSection">
-            <div class="section-title d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div class="section-title">
                 <span><i class="bi bi-person-vcard"></i> 客户信息</span>
-                <div class="d-flex gap-2">
-                    <button class="btn-toggle" id="toggleGuest" type="button" data-target="guestExtra">
-                        <i class="bi bi-chevron-down"></i> 详细参数
-                    </button>
-                </div>
             </div>
 
             <!-- 核心字段 -->
@@ -35,485 +236,429 @@
                 <div class="col-md-4">
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-calendar"></i></span>
-                        <input autocomplete="off" type="datetime-local" class="form-control" id="time" value="{{ time }}">
+                        <input type="datetime-local" class="form-control" id="time" value="{{ time }}">
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-person"></i></span>
-                        <input autocomplete="off" type="text" class="form-control" id="name" placeholder="客户姓名">
+                        <input autocomplete="off" type="text" class="form-control" id="name" placeholder="客户姓名" maxlength="50">
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-telephone"></i></span>
-                        <input autocomplete="off" type="text" class="form-control" id="phone" placeholder="联系电话">
+                        <input autocomplete="off" type="text" class="form-control" id="phone" placeholder="联系电话" maxlength="20">
                     </div>
                 </div>
             </div>
 
-            <!-- 详细参数区域（可折叠） -->
-            <div id="guestExtra" style="display: none;">
-                <div class="row g-3 mb-3">
-                    <div class="col-md-4">
-                        <label class="form-label small fw-bold text-muted">性别</label>
-                        <input autocomplete="off" type="text" class="form-control" id="sex" list="sexList" placeholder="例如：男">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label small fw-bold text-muted">年龄</label>
-                        <input autocomplete="off" type="text" class="form-control" id="age" placeholder="例如：28">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label small fw-bold text-muted">眼位</label>
-                        <input autocomplete="off" type="text" class="form-control" id="ot" list="otList" placeholder="例如：正视">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label small fw-bold text-muted">主视眼</label>
-                        <input autocomplete="off" type="text" class="form-control" id="em" list="emList" placeholder="左眼 / 右眼">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label small fw-bold text-muted">病族史</label>
-                        <input autocomplete="off" type="text" class="form-control" id="dfh" list="dfhList" placeholder="无 / 有">
-                    </div>
-                </div>
-            </div>
-
-            <!-- 客户备注 -->
+            <!-- 备注 -->
             <div class="row g-3">
                 <div class="col-12">
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-chat-left-text"></i></span>
-                        <input autocomplete="off" type="text" class="form-control" id="remark" placeholder="备注信息">
+                        <input autocomplete="off" type="text" class="form-control" id="remark" placeholder="备注信息" maxlength="500">
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 2. 验光报告卡片（常用参数可见，高级参数折叠） -->
-        <div class="section-card" id="reportSection">
-            <div class="section-title d-flex justify-content-between align-items-center flex-wrap gap-2">
-                <span><i class="bi bi-eyeglasses"></i> 验光报告</span>
-                <div class="d-flex gap-2">
-                    <button class="btn-toggle" id="toggleReport" type="button" data-target="reportExtra">
-                        <i class="bi bi-chevron-down"></i> 详细参数
-                    </button>
-                </div>
-            </div>
-
-            <!-- 方案 & 瞳距 -->
-            <div class="row g-2 mb-3">
-                <div class="col-md-4">
-                    <div class="input-group">
-                        <span class="input-group-text">方案</span>
-                        <input autocomplete="off" type="text" class="form-control" id="PLAN" list="PLAN1">
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="input-group">
-                        <span class="input-group-text">瞳距</span>
-                        <input autocomplete="off" type="text" class="form-control" id="PD" list="PD1">
-                    </div>
-                </div>
-            </div>
-
-            <!-- 可折叠详细参数（左右眼） -->
-            <div id="reportExtra" style="display: none;">
-                <!-- 右眼 -->
-                <div class="mb-2">
-                    <label class="form-label fw-semibold small text-muted">右眼 (OD)</label>
-                    <div class="row g-1">
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">裸眼视力</span>
-                                <input class="form-control col-8" id="OD_VA" list="VA">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">球镜</span>
-                                <input class="form-control col-8" id="OD_SPH" list="CYL&amp;SPH">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">柱镜</span>
-                                <input class="form-control col-8" id="OD_CYL" list="CYL&amp;SPH">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">轴位</span>
-                                <input class="form-control col-8" id="OD_AX" list="AX">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">棱镜</span>
-                                <input class="form-control col-8" id="OD_PR" list="PR">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">基地取向</span>
-                                <input class="form-control col-8" id="OD_FR" list="FR">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">眼轴长度</span>
-                                <input class="form-control col-8" id="OD_AL" list="AL">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">角膜曲度</span>
-                                <input class="form-control col-8" id="OD_AK" list="AK">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">前房深度</span>
-                                <input class="form-control col-8" id="OD_AD" list="AD">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">角膜厚度</span>
-                                <input class="form-control col-8" id="OD_CCT" list="CCT">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">晶体厚度</span>
-                                <input class="form-control col-8" id="OD_LT" list="LT">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">玻璃体厚度</span>
-                                <input class="form-control col-8" id="OD_VT" list="VT">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">矫正视力</span>
-                                <input class="form-control col-8" id="OD_BC" list="VA">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">下加光</span>
-                                <input class="form-control col-8" id="OD_ADD" list="ADD">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- 左眼 -->
-                <div>
-                    <label class="form-label fw-semibold small text-muted">左眼 (OS)</label>
-                    <div class="row g-1">
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">裸眼视力</span>
-                                <input class="form-control col-8" id="OS_VA" list="VA">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">球镜</span>
-                                <input class="form-control col-8" id="OS_SPH" list="CYL&amp;SPH">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">柱镜</span>
-                                <input class="form-control col-8" id="OS_CYL" list="CYL&amp;SPH">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">轴位</span>
-                                <input class="form-control col-8" id="OS_AX" list="AX">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">棱镜</span>
-                                <input class="form-control col-8" id="OS_PR" list="PR">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">基地取向</span>
-                                <input class="form-control col-8" id="OS_FR" list="FR">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">眼轴长度</span>
-                                <input class="form-control col-8" id="OS_AL" list="AL">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">角膜曲度</span>
-                                <input class="form-control col-8" id="OS_AK" list="AK">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">前房深度</span>
-                                <input class="form-control col-8" id="OS_AD" list="AD">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">角膜厚度</span>
-                                <input class="form-control col-8" id="OS_CCT" list="CCT">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">晶体厚度</span>
-                                <input class="form-control col-8" id="OS_LT" list="LT">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">玻璃体厚度</span>
-                                <input class="form-control col-8" id="OS_VT" list="VT">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">矫正视力</span>
-                                <input class="form-control col-8" id="OS_BC" list="VA">
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="input-group">
-                                <span class="input-group-text col-4">下加光</span>
-                                <input class="form-control col-8" id="OS_ADD" list="ADD">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 3. 产品信息卡片 -->
+        <!-- ==================== 3. 产品明细 ==================== -->
         <div class="section-card" id="productSection">
-            <div class="section-title">
-                <span><i class="bi bi-box-seam"></i> 产品信息</span>
+            <div class="section-title d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <span><i class="bi bi-box-seam"></i> 产品明细</span>
+                <div class="add-btn-group">
+                    <button type="button" class="btn btn-outline-primary btn-back-page" data-add-type="frame">+ 镜架</button>
+                    <button type="button" class="btn btn-outline-primary btn-back-page" data-add-type="lens">+ 镜片</button>
+                    <button type="button" class="btn btn-outline-primary btn-back-page" data-add-type="accessory">+ 配件</button>
+                    <button type="button" class="btn btn-outline-primary btn-back-page" data-add-type="service">+ 服务</button>
+                </div>
             </div>
 
-            {% for i in "111111" %}
-                <div class="product-row store">
-                    <input type="text" class="product-cat arg10" name="arg10" placeholder="类别">
-                    <input type="text" class="product-brand arg11" name="arg11" placeholder="品牌">
-                    <input type="text" class="product-model arg12" name="arg12" placeholder="型号">
-                    <input type="text" class="product-param arg13" name="arg13" placeholder="参数">
-                    <input type="text" class="product-price arg14" name="arg14" placeholder="价格">
-                </div>
-            {% endfor %}
+            <div id="productRowsContainer"></div>
+
+            <div class="empty-products text-center text-muted py-4" id="emptyProducts">
+                还没有添加产品，请点击上方按钮添加
+            </div>
+
+            <div class="text-end mt-3">
+                <strong>合计：¥<span id="totalAmount">0.00</span></strong>
+            </div>
         </div>
 
-        <!-- 4. 底部操作栏 -->
+        <!-- ==================== 4. 提交栏 ==================== -->
         <div class="action-bar justify-content-end">
-            <button class="btn btn-outline-primary btn-back-page" id="insert" type="button">
+            <button class="btn btn-outline-primary btn-back-page" id="insertBtn" type="button">
                 <i class="bi bi-check-lg"></i> 提交订单
             </button>
         </div>
     </div>
 {% endblock %}
 
+
 {% block javascript %}
     <script>
-        // ==================== 全局配置与工具函数 ====================
-        // API 端点（由 Django 模板反向解析）
+        /* ============================================================
+           全局配置
+           ============================================================ */
         const ORDER_INSERT_API = "{% url 'maneu_order:api_insert' %}";
 
-        // 获取 CSRF Token（为后续可能的 POST 请求预留，当前使用 GET，但保持风格统一）
-        function getCSRFToken() {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, 10) === 'csrftoken=') {
-                        cookieValue = decodeURIComponent(cookie.substring(10));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-
-        // 通用错误提示（风格与订单管理页保持一致）
-        function showError(message) {
-            alert(message || '操作失败，请稍后重试');
-        }
-
-        // ==================== 防重复提交控制 ====================
         let isSubmitting = false;
 
-        function setSubmitting(btn, state, originalText = null) {
+        /* ============================================================
+           工具函数
+           ============================================================ */
+        function showError(msg) {
+            alert(msg || '操作失败');
+        }
+
+        function setSubmitting(state) {
             isSubmitting = state;
-            if (btn) {
-                if (state) {
-                    btn.prop('disabled', true);
-                    btn.data('original-text', btn.html());
-                    btn.html('<span class="spinner-border spinner-border-sm me-1" role="status"></span> 提交中...');
-                } else {
-                    btn.prop('disabled', false);
-                    if (btn.data('original-text')) {
-                        btn.html(btn.data('original-text'));
-                    }
-                }
+            const $btn = $('#insertBtn');
+            if (state) {
+                $btn.prop('disabled', true).data('original-text', $btn.html());
+                $btn.html('<span class="spinner-border spinner-border-sm me-1"></span> 提交中...');
+            } else {
+                $btn.prop('disabled', false);
+                if ($btn.data('original-text')) $btn.html($btn.data('original-text'));
             }
         }
 
-        // ==================== 表单验证 ====================
-        function validateForm() {
-            const name = $('#name').val().trim();
-            const phone = $('#phone').val().trim();
+        function recalcTotal() {
+            let total = 0;
+            $('#productRowsContainer .product-row').each(function () {
+                const qty = parseFloat($(this).find('.product-qty').val()) || 0;
+                const price = parseFloat($(this).find('.product-price').val()) || 0;
+                total += qty * price;
+            });
+            $('#totalAmount').text(total.toFixed(2));
+        }
 
-            if (!name) {
-                showError('请填写客户姓名');
-                $('#name').focus();
+        function toggleEmptyTip() {
+            const hasRow = $('#productRowsContainer .product-row').length > 0;
+            $('#emptyProducts').toggle(!hasRow);
+        }
+
+        /* ============================================================
+           产品行模板
+           ============================================================ */
+        const ROW_TEMPLATES = {
+            frame: `
+    <div class="product-row" data-item-type="frame">
+      <span class="product-badge badge-frame">镜架</span>
+      <input type="text" class="form-control product-brand"   placeholder="品牌（如 雷朋）" maxlength="50">
+      <input type="text" class="form-control product-model"   placeholder="型号（如 RB2140F）" maxlength="100">
+      <input type="text" class="form-control product-color"   placeholder="颜色" maxlength="30">
+      <select class="form-select product-material">
+        <option value="">材质</option>
+        <option value="板材">板材</option>
+        <option value="纯钛">纯钛</option>
+        <option value="β钛">β钛</option>
+        <option value="TR90">TR90</option>
+        <option value="合金">合金</option>
+        <option value="醋酸纤维">醋酸纤维</option>
+      </select>
+      <select class="form-select product-frame-type">
+        <option value="">框型</option>
+        <option value="全框">全框</option>
+        <option value="半框">半框</option>
+        <option value="无框">无框</option>
+      </select>
+      <input type="text" class="form-control product-size"    placeholder="尺寸 52-18-145" maxlength="20">
+      <input type="number" class="form-control product-qty"   placeholder="数量" value="1" min="1">
+      <input type="number" class="form-control product-price" placeholder="单价" step="0.01" min="0">
+      <input type="text" class="form-control product-remark"  placeholder="备注" maxlength="200">
+      <button type="button" class="btn-remove-row" title="删除">×</button>
+    </div>
+  `,
+            lens: `
+    <div class="product-row" data-item-type="lens">
+      <span class="product-badge badge-lens">镜片</span>
+      <select class="form-select product-side">
+        <option value="OU">双眼</option>
+        <option value="OD">右眼</option>
+        <option value="OS">左眼</option>
+      </select>
+      <input type="text" class="form-control product-brand"   placeholder="品牌（如 蔡司）" maxlength="50">
+      <input type="text" class="form-control product-model"   placeholder="型号/系列" maxlength="100">
+      <input type="text" class="form-control product-spec"    placeholder="如 1.67 防蓝光" maxlength="100">
+      <input type="number" class="form-control product-qty"   placeholder="数量" value="1" min="1">
+      <input type="number" class="form-control product-price" placeholder="单价" step="0.01" min="0">
+      <input type="text" class="form-control product-remark"  placeholder="备注" maxlength="200">
+      <button type="button" class="btn-remove-row" title="删除">×</button>
+    </div>
+  `,
+            accessory: `
+    <div class="product-row" data-item-type="accessory">
+      <span class="product-badge badge-accessory">配件</span>
+      <input type="text" class="form-control product-model"   placeholder="名称（如 硬壳镜盒）" maxlength="100">
+      <input type="number" class="form-control product-qty"   placeholder="数量" value="1" min="1">
+      <input type="number" class="form-control product-price" placeholder="单价" step="0.01" min="0">
+      <input type="text" class="form-control product-remark"  placeholder="备注" maxlength="200">
+      <button type="button" class="btn-remove-row" title="删除">×</button>
+    </div>
+  `,
+            service: `
+    <div class="product-row" data-item-type="service">
+      <span class="product-badge badge-service">服务</span>
+      <input type="text" class="form-control product-model"   placeholder="名称（如 验光费）" maxlength="100">
+      <input type="number" class="form-control product-qty"   placeholder="数量" value="1" min="1">
+      <input type="number" class="form-control product-price" placeholder="单价" step="0.01" min="0">
+      <input type="text" class="form-control product-remark"  placeholder="备注" maxlength="200">
+      <button type="button" class="btn-remove-row" title="删除">×</button>
+    </div>
+  `
+        };
+
+        /* ============================================================
+           添加 / 删除产品行
+           ============================================================ */
+        function addProductRow(itemType) {
+            const tpl = ROW_TEMPLATES[itemType];
+            if (!tpl) return;
+            $('#productRowsContainer').append(tpl);
+            toggleEmptyTip();
+            recalcTotal();
+        }
+
+        function removeProductRow($row) {
+            $row.remove();
+            toggleEmptyTip();
+            recalcTotal();
+        }
+
+        /* ============================================================
+           前端校验
+           ============================================================ */
+        function validateForm() {
+            if ($('#productRowsContainer .product-row').length === 0) {
+                showError('请至少添加 1 条产品信息');
                 return false;
             }
-            if (!phone) {
-                showError('请填写联系电话');
-                $('#phone').focus();
-                return false;
-            }
-            // 简单手机号验证（可根据需要调整）
-            const phoneRegex = /^1[3-9]\d{9}$|^\d{7,15}$/;
-            if (!phoneRegex.test(phone)) {
-                showError('请输入有效的联系电话');
-                $('#phone').focus();
-                return false;
-            }
+
             return true;
         }
 
-        // ==================== 提交订单（带防抖与加载状态） ====================
-        function submitOrder() {
-            // 防重复提交
-            if (isSubmitting) return;
-
-            // 表单验证
-            if (!validateForm()) return;
-
-            // 收集产品信息
+        /* ============================================================
+           收集产品明细
+           ============================================================ */
+        function collectProducts() {
             const products = [];
-            $('.product-row').each(function() {
+            let hasError = false;
+
+            $('#productRowsContainer .product-row').each(function (idx) {
+                const $row = $(this);
+                const itemType = $row.data('item-type');
+                const brand = ($row.find('.product-brand').val() || '').trim();
+                const model = ($row.find('.product-model').val() || '').trim();
+                const qty = parseInt($row.find('.product-qty').val()) || 0;
+                const price = parseFloat($row.find('.product-price').val()) || 0;
+
+                // 全空行跳过
+                if (!brand && !model && !price) return;
+
+                // 类型专属校验
+                if (itemType === 'frame') {
+                    if (!brand) {
+                        showError(`第 ${idx + 1} 行：镜架必须填品牌`);
+                        hasError = true;
+                        return false;
+                    }
+                    if (!model) {
+                        showError(`第 ${idx + 1} 行：镜架必须填型号`);
+                        hasError = true;
+                        return false;
+                    }
+                    const color = ($row.find('.product-color').val() || '').trim();
+                    if (!color) {
+                        showError(`第 ${idx + 1} 行：镜架必须填颜色`);
+                        hasError = true;
+                        return false;
+                    }
+                }
+                if (qty < 1) {
+                    showError(`第 ${idx + 1} 行：数量必须 ≥ 1`);
+                    hasError = true;
+                    return false;
+                }
+                if (price < 0) {
+                    showError(`第 ${idx + 1} 行：单价不能为负`);
+                    hasError = true;
+                    return false;
+                }
+
+                // 拼接 spec
+                let spec = '';
+                if (itemType === 'frame') {
+                    const frameType = $row.find('.product-frame-type').val() || '';
+                    const size = ($row.find('.product-size').val() || '').trim();
+                    spec = [frameType, size].filter(Boolean).join(' ');
+                } else {
+                    spec = ($row.find('.product-spec').val() || '').trim();
+                }
+
                 products.push({
-                    arg10: $(this).find('.arg10').val(),
-                    arg11: $(this).find('.arg11').val(),
-                    arg12: $(this).find('.arg12').val(),
-                    arg13: $(this).find('.arg13').val(),
-                    arg14: $(this).find('.arg14').val()
+                    item_type: itemType,
+                    side: $row.find('.product-side').val() || '',
+                    brand: brand,
+                    model: model,
+                    color: ($row.find('.product-color').val() || '').trim(),
+                    material: $row.find('.product-material').val() || '',
+                    spec: spec,
+                    quantity: qty,
+                    unit_price: price,
+                    remark: ($row.find('.product-remark').val() || '').trim()
                 });
             });
 
-            // 构建请求参数（直接映射 ID 与后端字段）
+            return hasError ? null : products;
+        }
+
+        /* ============================================================
+           提交订单
+           ============================================================ */
+        function submitOrder() {
+            if (isSubmitting) return;
+            if (!validateForm()) return;
+
+            const products = collectProducts();
+            if (products === null) return;
+            if (products.length === 0) {
+                showError('请至少添加 1 条有效产品');
+                return;
+            }
+
             const requestData = {
-                content: JSON.stringify(products),
                 time: $('#time').val(),
                 name: $('#name').val().trim(),
                 phone: $('#phone').val().trim(),
                 remark: $('#remark').val().trim(),
-                age: $('#age').val().trim(),
-                sex: $('#sex').val().trim(),
-                dfh: $('#dfh').val().trim(),
-                ot: $('#ot').val().trim(),
-                em: $('#em').val().trim(),
-                plan: $('#PLAN').val(),
-                pd: $('#PD').val(),
-                od_va: $('#OD_VA').val(),
-                od_sph: $('#OD_SPH').val(),
-                od_cyl: $('#OD_CYL').val(),
-                od_ax: $('#OD_AX').val(),
-                od_pr: $('#OD_PR').val(),
-                od_fr: $('#OD_FR').val(),
-                od_add: $('#OD_ADD').val(),
-                od_al: $('#OD_AL').val(),
-                od_ak: $('#OD_AK').val(),
-                od_ad: $('#OD_AD').val(),
-                od_cct: $('#OD_CCT').val(),
-                od_lt: $('#OD_LT').val(),
-                od_vt: $('#OD_VT').val(),
-                od_bc: $('#OD_BC').val(),
-                os_va: $('#OS_VA').val(),
-                os_sph: $('#OS_SPH').val(),
-                os_cyl: $('#OS_CYL').val(),
-                os_ax: $('#OS_AX').val(),
-                os_pr: $('#OS_PR').val(),
-                os_fr: $('#OS_FR').val(),
-                os_add: $('#OS_ADD').val(),
-                os_al: $('#OS_AL').val(),
-                os_ak: $('#OS_AK').val(),
-                os_ad: $('#OS_AD').val(),
-                os_cct: $('#OS_CCT').val(),
-                os_lt: $('#OS_LT').val(),
-                os_vt: $('#OS_VT').val(),
-                os_bc: $('#OS_BC').val()
+                products: products
             };
 
-            const $submitBtn = $('#insert');
-            setSubmitting($submitBtn, true);
+            setSubmitting(true);
 
             $.ajax({
                 url: ORDER_INSERT_API,
                 method: 'POST',
-                data: requestData,
-                success: function(res) {
-                    setSubmitting($submitBtn, false);
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(requestData),
+                success: function (res) {
+                    setSubmitting(false);
+
                     if (res.status === true) {
-                        alert('订单提交成功');
-                        // 可选：提交成功后重置表单（保留时间默认值）
-                        $('#name, #phone, #remark, #age, #sex, #dfh, #ot, #em, #PLAN, #PD').val('');
-                        $('#guestExtra input, #reportExtra input').val('');
-                        $('.product-row input').val('');
-                        $('#name').focus();
+                        alert(`提交成功！总金额：¥${res.content.total_amount}`);
+                        resetForm();
+                    } else if (res.errors) {
+                        showFieldErrors(res.errors);
                     } else {
-                        showError('提交失败：' + (res.message || '未知错误'));
+                        showError(res.message || '提交失败');
                     }
                 },
-                error: function(xhr) {
-                    setSubmitting($submitBtn, false);
-                    showError('网络错误，请稍后重试');
+                error: function (xhr) {
+                    setSubmitting(false);
+
+                    if (xhr.status === 401) {
+                        alert('请先登录');
+                        location.href = '/login/';
+                        return;
+                    }
+
+                    try {
+                        const err = JSON.parse(xhr.responseText);
+                        if (err.errors) {
+                            showFieldErrors(err.errors);
+                            return;
+                        }
+                        showError(err.message || '网络错误');
+                    } catch (e) {
+                        showError('网络错误，请稍后重试');
+                    }
                 }
             });
         }
 
-        // ==================== 折叠面板切换 ====================
-        function setupToggle(triggerId, panelId) {
-            $(triggerId).on('click', function() {
-                const $panel = $(panelId);
-                $panel.slideToggle(200);
-                $(this).find('i').toggleClass('bi-chevron-down bi-chevron-up');
+        /* ============================================================
+           字段级错误展示
+           ============================================================ */
+        function showFieldErrors(errors) {
+            $('.field-error').remove();
+            $('#productRowsContainer .product-row').removeClass('has-error');
+
+            const fieldMap = {
+                name: '#name', phone: '#phone'
+            };
+            const allMsgs = [];
+
+            ['order', 'report', 'guest'].forEach(function (k) {
+                const fm = errors[k] || {};
+                Object.keys(fm).forEach(function (field) {
+                    const msg = (fm[field][0] && fm[field][0].message) || '格式错误';
+                    allMsgs.push(msg);
+                    const $el = $(fieldMap[field]);
+                    if ($el.length) {
+                        $el.after(`<div class="field-error">${msg}</div>`);
+                    }
+                });
             });
+
+            if (Array.isArray(errors.products)) {
+                errors.products.forEach(function (item) {
+                    const $row = $('#productRowsContainer .product-row').eq(item.index);
+                    $row.addClass('has-error');
+                    Object.keys(item.errors).forEach(function (f) {
+                        const msg = (item.errors[f][0] && item.errors[f][0].message) || '格式错误';
+                        allMsgs.push(`第 ${item.index + 1} 行：${msg}`);
+                    });
+                });
+            }
+
+            if (allMsgs.length) showError(allMsgs[0]);
         }
 
-        // ==================== 页面初始化 ====================
-        $(function() {
-            // 初始化两个折叠面板
-            setupToggle('#toggleGuest', '#guestExtra');
-            setupToggle('#toggleReport', '#reportExtra');
+        /* ============================================================
+           重置表单
+           ============================================================ */
+        function resetForm() {
+            $('#guestSection input, #guestSection select').val('');
+            $('#productRowsContainer').empty();
+            toggleEmptyTip();
+            recalcTotal();
+            $('#name').focus();
+        }
 
-            // 绑定提交按钮事件
-            $('#insert').on('click', submitOrder);
+        /* ============================================================
+           页面初始化
+           ============================================================ */
+        $(function () {
+            // 添加产品按钮
+            $('.add-btn-group button[data-add-type]').on('click', function () {
+                addProductRow($(this).data('add-type'));
+            });
 
-            // 可选：支持按回车键快速提交（在表单输入框内按回车）
-            $('#guestSection input, #reportSection input, .product-row input').on('keypress', function(e) {
+            // 删除产品行（事件委托）
+            $('#productRowsContainer').on('click', '.btn-remove-row', function () {
+                removeProductRow($(this).closest('.product-row'));
+            });
+
+            // 数量 / 单价变化自动更新合计
+            $('#productRowsContainer').on('input', '.product-qty, .product-price', recalcTotal);
+
+            // 提交按钮
+            $('#insertBtn').on('click', submitOrder);
+
+            // 回车快速提交
+            $('#guestSection input').on('keypress', function (e) {
                 if (e.which === 13) {
                     e.preventDefault();
                     submitOrder();
                 }
             });
+
+            // 初始状态
+            toggleEmptyTip();
         });
     </script>
 {% endblock %}
