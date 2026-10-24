@@ -4,7 +4,7 @@ common/util_jwt.py
 JWT 工具
 - 生成 access_token / refresh_token
 - 校验 token
-- 从 request 读取 admin_id
+- 从 request 读取 admin_id / phone
 
 约定：
     - token 均携带 iss / type / iat / exp
@@ -21,13 +21,14 @@ from common.util_verify import is_uuid
 
 
 # ============================================================
-# 配置
+# 配置（从 settings 读取，全部带兜底）
 # ============================================================
-JWT_SECRET       = settings.JWT_CONFIG['SECRET_KEY']
-JWT_ALGORITHM    = settings.JWT_CONFIG['ALGORITHM']
-JWT_ISSUER       = settings.JWT_CONFIG.get('ISSUER', 'maneu')
-ACCESS_LIFETIME  = settings.JWT_CONFIG['ACCESS_TOKEN_LIFETIME']
-REFRESH_LIFETIME = settings.JWT_CONFIG.get('REFRESH_TOKEN_LIFETIME', 60 * 60 * 24 * 7)
+JWT_CONFIG       = settings.JWT_CONFIG
+JWT_SECRET       = JWT_CONFIG.get('SECRET_KEY') or settings.SECRET_KEY or 'dev-only-fallback'
+JWT_ALGORITHM    = JWT_CONFIG.get('ALGORITHM', 'HS256')
+JWT_ISSUER       = JWT_CONFIG.get('ISSUER', 'maneu')
+ACCESS_LIFETIME  = JWT_CONFIG.get('ACCESS_TOKEN_LIFETIME', 60 * 60)
+REFRESH_LIFETIME = JWT_CONFIG.get('REFRESH_TOKEN_LIFETIME', 60 * 60 * 24 * 7)
 
 
 # ============================================================
@@ -111,3 +112,12 @@ def get_admin_id(request):
     if admin_id and is_uuid(admin_id):
         return admin_id
     return None
+
+
+def get_phone(request):
+    """
+    从 request 获取 user_phone（UserMiddleware 挂载的 request.jwt_phone）
+
+    :return: 手机号字符串或 None
+    """
+    return getattr(request, 'jwt_phone', None)

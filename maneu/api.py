@@ -1,7 +1,7 @@
 """
 maneu/api.py
 
-认证相关 API
+认证相关 API（全部 JSON）
 - 发送短信验证码
 - 短信验证码登录
 - 刷新 access_token
@@ -9,6 +9,7 @@ maneu/api.py
 - 测试接口：免密登录（仅 DEBUG + 本地 IP 可用）
 """
 
+import json
 import logging
 import random
 
@@ -38,9 +39,6 @@ SMS_LIMIT_PREFIX = 'sms:limit:'
 SMS_CODE_TTL     = 300
 SMS_LIMIT_TTL    = 60
 
-# test_login 只允许本机访问（生产环境即使误开 DEBUG 也拦住）
-TEST_LOGIN_ALLOWED_IPS = ('127.0.0.1', '::1', 'localhost')
-
 
 # ============================================================
 # 工具
@@ -60,6 +58,27 @@ def _json_ok(content=None, message='请求成功'):
     })
 
 
+def _parse_json(request):
+    """解析 JSON body，返回 (data, error_response)"""
+    try:
+        data = json.loads(request.body or '{}')
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return None, _json_error('无效的 JSON 格式')
+
+    if not isinstance(data, dict):
+        return None, _json_error('请求体必须为 JSON 对象')
+
+    return data, None
+
+
+def _get_str(data, key):
+    """从 dict 取字符串（None → ''，其它转 str 后 strip）"""
+    v = data.get(key)
+    if v is None:
+        return ''
+    return str(v).strip()
+
+
 def _client_ip(request):
     """取客户端真实 IP（兼容反向代理）"""
     xff = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -68,14 +87,31 @@ def _client_ip(request):
     return request.META.get('REMOTE_ADDR', '')
 
 
+def _is_local_ip(ip):
+    """判断是否为本地回环地址（127.0.0.0/8 或 ::1）"""
+    import ipaddress
+    try:
+        return ipaddress.ip_address(ip).is_loopback
+    except ValueError:
+        return False
+
+
 # ============================================================
 # 发送短信验证码
 # ============================================================
 @csrf_exempt
 @require_http_methods(["POST"])
 def sendsms(request):
-    """发送短信验证码（服务端生成，60 秒限流）"""
-    call = (request.POST.get('call') or '').strip()
+    """
+    发送短信验证码（服务端生成，60 秒限流）
+
+    请求 JSON：{"call": "13640651582"}
+    """
+    data, err = _parse_json(request)
+    if err:
+        return err
+
+    call = _get_str(data, 'call')
 
     if not is_call(call):
         return _json_error('请输入正确的手机号')
@@ -115,9 +151,17 @@ def sendsms(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 def access_token(request):
-    """短信验证码登录（一次性）"""
-    call = (request.POST.get('call') or '').strip()
-    code = (request.POST.get('code') or '').strip()
+    """
+    短信验证码登录（验证码一次性）
+
+    请求 JSON：{"call": "13640651582", "code": "123456"}
+    """
+    data, err = _parse_json(request)
+    if err:
+        return err
+
+    call = _get_str(data, 'call')
+    code = _get_str(data, 'code')
 
     if not is_call(call):
         return _json_error('请输入正确的手机号')
@@ -157,8 +201,16 @@ def access_token(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 def refresh_token(request):
-    """用 refresh_token 换新的 access_token"""
-    token = request.POST.get('refresh_token')
+    """
+    用 refresh_token 换新的 access_token
+
+    请求 JSON：{"refresh_token": "..."}
+    """
+    data, err = _parse_json(request)
+    if err:
+        return err
+
+    token = _get_str(data, 'refresh_token')
     if not token:
         return _json_error('缺少 refresh_token', status=401)
 
@@ -200,21 +252,23 @@ def remove_token(request):
 @require_http_methods(["POST"])
 def test_login(request):
     """
-    ⚠️ 测试接口：免密登录
+    ⚠️ 测试接口：免密登录（仅 DEBUG + 本地 IP 可用）
 
-    双重保护：
-        1. 必须 settings.DEBUG = True
-        2. 必须来自本机（127.0.0.1 / ::1）
+    请求 JSON：{"call": "13640651582"}
     """
     if not settings.DEBUG:
         return _json_error('测试接口已禁用', status=403)
 
     ip = _client_ip(request)
-    if ip not in TEST_LOGIN_ALLOWED_IPS:
+    if not _is_local_ip(ip):
         logger.warning('test_login 拒绝非本地访问 ip=%s', ip)
         return _json_error('测试接口只允许本地访问', status=403)
 
-    call = (request.POST.get('call') or '').strip()
+    data, err = _parse_json(request)
+    if err:
+        return err
+
+    call = _get_str(data, 'call')
 
     if not is_call(call):
         return _json_error('请输入正确的手机号')
