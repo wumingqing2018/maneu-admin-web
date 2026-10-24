@@ -8,65 +8,183 @@
     <title>徕可管理系统 · 登录</title>
     <link rel="icon" href="{% static 'images/maneu/logo.svg' %}">
     <link rel="stylesheet" href="{% static 'css/maneu/login.css' %}">
-    <!-- Bootstrap 5 + Bootswatch Cerulean -->
     <link crossorigin="anonymous"
           href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/5.3.8/cerulean/bootstrap.min.css"
           integrity="sha512-3n/Isj9MCqCc1wf/QfjLigco9sx9xr9m3TqgxstJrSxmwZ05qjl4owbfkioZ0y3w8fNWcVLnJGHfVqKF/L1Qsw=="
           referrerpolicy="no-referrer" rel="stylesheet"/>
-
 </head>
 
 <body>
 
-<!-- 科技感背景元素 -->
 <div class="tech-bg"></div>
 <div class="glow-orb orb-1"></div>
 <div class="glow-orb orb-2"></div>
 
-<!-- 主要内容 -->
 <div class="main-content">
     <div class="login-card">
         <h1 class="brand-name">徕可管理系统</h1>
         <p class="brand-sub">Account Login</p>
 
-        <!-- 手机号输入 -->
         <div class="input-group-custom">
             <input autocomplete="off" class="input-item" id="call" placeholder="手机号码" type="text">
             <span class="msg" id="msg"></span>
         </div>
 
-        <!-- 验证码输入 -->
         <div class="input-group-custom" id="password">
             <input autocomplete="off" class="input-item" id="code" placeholder="验证码" type="text">
         </div>
 
-        <!-- 登录按钮（动态显示） -->
         <button class="btn-custom btn-disabled" id="login-hold" style="display: none;">请输入验证码后再登录</button>
         <button class="btn-custom btn-gold" id="login-btn">登录</button>
 
-        <!-- 获取验证码按钮区域 -->
         <button class="btn-custom btn-outline-light" id="sendsms-btn">获取验证码</button>
         <button class="btn-custom btn-disabled" id="wait-btn" style="display: none;">请稍后再获取验证码</button>
 
-        <!-- 返回首页链接 -->
         <a href="{% url 'index' %}" class="back-link">← 返回首页</a>
     </div>
 </div>
 
-<!-- 页脚备案 -->
 <footer class="footer">
     <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener">粤ICP备2023070483号</a>
 </footer>
 
 <script>
-    // 后端路由地址
-    const sendsms = "{% url 'sendsms' %}";
-    const login_verify = "{% url 'login_api' %}";
-    const maneu_index_index = "{% url 'maneu_index:index' %}";
+    // ============================================================
+    // 后端 URL（Django 模板渲染）
+    // ============================================================
+    window.LOGIN_URLS = {
+        sendsms:      "{% url 'sendsms' %}",
+        access_token: "{% url 'login_api' %}",
+        index:        "{% url 'maneu_index:index' %}",
+    };
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="{% static 'js/maneu/login.js' %}"></script>
+<script>
+$(function () {
+    function setMsg(text, isError) {
+        $('#msg').text(text || '').css('color', isError ? '#ff6b6b' : '');
+    }
+
+    function toggleLoginButton() {
+        if ($('#code').val().trim() === '') {
+            $('#login-hold').show();
+            $('#login-btn').hide();
+        } else {
+            $('#login-hold').hide();
+            $('#login-btn').show();
+        }
+    }
+
+    toggleLoginButton();
+    $('#code').on('input', toggleLoginButton);
+
+    // ============================================================
+    // 发送验证码
+    // ============================================================
+    var sendingSms = false;
+
+    $('#sendsms-btn').on('click', function () {
+        if (sendingSms) return;
+
+        var phone = $('#call').val().trim();
+        if (!phone) {
+            setMsg('请输入手机号码', true);
+            return;
+        }
+
+        sendingSms = true;
+        $('#sendsms-btn').prop('disabled', true);
+
+        $.ajax({
+            url: window.LOGIN_URLS.sendsms,
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ call: phone }),
+            dataType: 'json',
+            success: function (res) {
+                if (res && res.status === true) {
+                    $('#wait-btn').show();
+                    $('#sendsms-btn').hide();
+                    setMsg('');
+
+                    setTimeout(function () {
+                        $('#wait-btn').hide();
+                        $('#sendsms-btn').show().prop('disabled', false);
+                        sendingSms = false;
+                    }, 60000);
+                } else {
+                    setMsg('发送失败：' + ((res && res.message) || '未知错误'), true);
+                    $('#sendsms-btn').prop('disabled', false);
+                    sendingSms = false;
+                }
+            },
+            error: function () {
+                setMsg('网络错误，请稍后重试', true);
+                $('#sendsms-btn').prop('disabled', false);
+                sendingSms = false;
+            }
+        });
+    });
+
+    // ============================================================
+    // 登录
+    // ============================================================
+    var logging = false;
+
+    $('#login-btn').on('click', function () {
+        if (logging) return;
+
+        var phone = $('#call').val().trim();
+        var code  = $('#code').val().trim();
+
+        if (!phone || !code) {
+            setMsg('请填写完整信息', true);
+            return;
+        }
+
+        logging = true;
+        $('#login-btn').prop('disabled', true);
+
+        $.ajax({
+            url: window.LOGIN_URLS.access_token,
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ call: phone, code: code }),
+            dataType: 'json',
+            success: function (res) {
+                if (res && res.status === true) {
+                    var data = res.content || {};
+
+                    // ⭐ 保存 token —— 后续所有业务请求都依赖这个
+                    if (data.access_token) {
+                        localStorage.setItem('access_token', data.access_token);
+                    }
+                    if (data.refresh_token) {
+                        localStorage.setItem('refresh_token', data.refresh_token);
+                    }
+
+                    window.location.href = window.LOGIN_URLS.index;
+                } else {
+                    setMsg((res && res.message) || '登录失败', true);
+                    $('#login-btn').prop('disabled', false);
+                    logging = false;
+                }
+            },
+            error: function (xhr) {
+                var msg = '登录请求失败，请检查网络';
+                if (xhr.status === 401 || xhr.status === 403) {
+                    try {
+                        var d = JSON.parse(xhr.responseText);
+                        msg = d.message || msg;
+                    } catch (e) {}
+                }
+                setMsg(msg, true);
+                $('#login-btn').prop('disabled', false);
+                logging = false;
+            }
+        });
+    });
+});
+</script>
 </body>
 </html>
