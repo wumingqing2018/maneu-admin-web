@@ -20,6 +20,12 @@
 <div class="glow-orb orb-1"></div>
 <div class="glow-orb orb-2"></div>
 
+<!-- ============ 登录状态检查遮罩 ============ -->
+<div id="auth-check">
+    <div class="spinner-border" role="status" style="color:#d4af37;width:3rem;height:3rem;"></div>
+    <p style="margin-top:14px;color:#fff;opacity:.85;">正在检查登录状态...</p>
+</div>
+
 <div class="main-content">
     <div class="login-card">
         <h1 class="brand-name">徕可管理系统</h1>
@@ -49,174 +55,6 @@
     <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener">粤ICP备2023070483号</a>
 </footer>
 
-<script>
-    // ========================================================================
-    // 1. 工具函数
-    // ========================================================================
-
-    function isValidPhone(phone) {
-        return /^1[3-9]\d{9}$/.test(phone);
-    }
-
-    function showMessage(text, color = '#ff6b6b') {
-        $('#msg').text(text).css('color', color);
-    }
-    function showLoginMessage(text, color = '#ff6b6b') {
-        $('#login_msg').text(text).css('color', color);
-    }
-
-    // ========================================================================
-    // 2. API 端点（由 Django 模板反向解析）
-    // ========================================================================
-
-    const sendsmsUrl = "{% url 'sendsms' %}";
-    const loginApiUrl = "{% url 'access_token' %}";
-    const redirectUrl = "{% url 'maneu_order:index' %}";
-
-    // ========================================================================
-    // 3. 页面初始化
-    // ========================================================================
-
-    $(document).ready(function () {
-        const $call = $('#call');
-        const $code = $('#code');
-        const $sendsmsBtn = $('#sendsms-btn');
-        const $waitBtn = $('#wait-btn');
-        const $loginHold = $('#login-hold');
-        const $loginBtn = $('#login-btn');
-
-        let countdownTimer = null;
-        let countdownSeconds = 0;
-
-        // ====================================================================
-        // 4. 登录按钮状态控制
-        // ====================================================================
-
-        function toggleLoginButton() {
-            if ($code.val().trim() === '') {
-                $loginHold.show();
-                $loginBtn.hide();
-            } else {
-                $loginHold.hide();
-                $loginBtn.show();
-            }
-        }
-
-        toggleLoginButton();
-        $code.on('input', toggleLoginButton);
-
-        // ====================================================================
-        // 5. 验证码倒计时
-        // ====================================================================
-
-        function startCountdown(seconds) {
-            if (countdownTimer) clearInterval(countdownTimer);
-            countdownSeconds = seconds;
-            $sendsmsBtn.hide();
-            $waitBtn.show().text(`${countdownSeconds}秒后可重试`);
-
-            countdownTimer = setInterval(function () {
-                countdownSeconds--;
-                if (countdownSeconds <= 0) {
-                    clearInterval(countdownTimer);
-                    $waitBtn.hide();
-                    $sendsmsBtn.show().prop('disabled', false);
-                } else {
-                    $waitBtn.text(`${countdownSeconds}秒后可重试`);
-                }
-            }, 1000);
-        }
-
-        // ====================================================================
-        // 6. 发送验证码（JSON）
-        // ====================================================================
-
-        $sendsmsBtn.on('click', function () {
-            const phone = $call.val().trim();
-
-            if (!phone) {
-                showMessage('请输入手机号码');
-                return;
-            }
-            if (!isValidPhone(phone)) {
-                showMessage('手机号格式不正确');
-                return;
-            }
-
-            $sendsmsBtn.prop('disabled', true);
-
-            $.ajax({
-                url: sendsmsUrl,
-                method: 'POST',
-                contentType: 'application/json',                 // ✅ 新增
-                data: JSON.stringify({ call: phone }),           // ✅ 改
-                dataType: 'json',
-                success: function (res) {
-                    if (res && res.status === true) {
-                        showMessage('验证码已发送', '#4caf50');
-                        startCountdown(60);
-                    } else {
-                        showMessage((res && res.message) || '发送失败');
-                        $sendsmsBtn.prop('disabled', false);
-                    }
-                },
-                error: function (xhr) {
-                    const errMsg = (xhr.responseJSON && xhr.responseJSON.message) || '网络错误，请稍后重试';
-                    showMessage(errMsg);
-                    $sendsmsBtn.prop('disabled', false);
-                }
-            });
-        });
-
-        // ====================================================================
-        // 7. 登录（JSON）
-        // ====================================================================
-
-        $loginBtn.on('click', function () {
-            const phone = $call.val().trim();
-            const code = $code.val().trim();
-
-            if (!phone || !code) {
-                showMessage('请填写手机号和验证码');
-                return;
-            }
-            if (!isValidPhone(phone)) {
-                showMessage('手机号格式不正确');
-                return;
-            }
-
-            $loginBtn.prop('disabled', true).text('登录中...');
-
-            $.ajax({
-                url: loginApiUrl,
-                method: 'POST',
-                contentType: 'application/json',                              // ✅ 新增
-                data: JSON.stringify({ call: phone, code: code }),            // ✅ 改
-                dataType: 'json',
-                success: function (res) {
-                    if (res && res.status === true) {
-                        const data = res.content || {};
-                        if (data.access_token)  localStorage.setItem('access_token',  data.access_token);
-                        if (data.refresh_token) localStorage.setItem('refresh_token', data.refresh_token);
-                        window.location.href = redirectUrl;
-                    } else {
-                        showLoginMessage((res && res.message) || '登录失败');
-                        $loginBtn.prop('disabled', false).text('登录');
-                    }
-                },
-                error: function (xhr) {
-                    let errMsg = '登录请求失败，请稍后重试';
-                    try {
-                        const d = JSON.parse(xhr.responseText);
-                        errMsg = d.message || errMsg;
-                    } catch (e) {}
-                    showLoginMessage(errMsg);
-                    $loginBtn.prop('disabled', false).text('登录');
-                }
-            });
-        });
-    });
-</script>
 </body>
 <script>
     // ========================================================================
@@ -231,4 +69,3 @@
 
 <script src="{% static 'javascript/maneu/login.js' %}"></script>
 </html>
-{#123#}
