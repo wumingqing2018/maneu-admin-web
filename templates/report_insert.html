@@ -1,301 +1,301 @@
-{#templates/report_insert.html#}
 {% extends 'maneu/base.html' %}
 {% load static %}
 
+{% comment %}
+================================================================================
+验光报告 - 新增页
+================================================================================
+功能：
+  - 填写客户信息 / 报告基础信息 / 处方明细
+  - 提交创建一条验光报告
+
+依赖：
+  - jQuery 3.x
+  - Bootstrap 5（含 Icons）
+  - base.html 中定义的 <datalist>（sexList / PD1 / CYL_SPH / AX / VA / AL / AK / AD / CCT / LT / VT / otList / emList / dfhList）
+================================================================================
+{% endcomment %}
+
+
 {% block css %}
     <style>
-    /* ========== 新增验光报告页样式 ========== */
-/* 本页专用阴影（仅卡片悬停时使用，不覆盖全局 --shadow-md） */
-:root {
-    --card-hover-shadow: 0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04);
-}
-
-/* ========== 页面头部 ========== */
-.page-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-.page-title {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: var(--brand-color);
-    letter-spacing: -0.02em;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin: 0;
-}
-
-.page-title i {
-    font-size: 2rem;
-    color: var(--brand-accent);
-}
-
-.section-card {
-    background: var(--bg-surface); /* 原 --store-surface */
-    border: 1px solid var(--border-subtle); /* 原 --store-border */
-    border-radius: var(--radius-md); /* 原 --store-radius */
-    padding: 1.5rem;
-    /* 保留原柔和阴影 */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
-    margin-bottom: 1.5rem;
-}
-
-.section-card:hover {
-    box-shadow: var(--shadow-md); /* 使用 base 的阴影，悬停稍强 */
-}
-
-.section-title {
-    font-weight: 700;
-    font-size: 1.1rem;
-    color: var(--brand-color);
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    letter-spacing: 0.02em;
-    border-bottom: 2px solid var(--brand-color-pale);
-    padding-bottom: 0.6rem;
-}
-
-.section-title i {
-    font-size: 1.3rem;
-    color: var(--brand-accent);
-}
-
-.btn-back-page {
-    border-radius: 2rem;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    font-weight: 500;
-}
-
-.action-bar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-top: 0.5rem;
-}
-
-/* 响应式调整 */
-@media (max-width: 768px) {
-    .action-bar {
-        flex-direction: column;
-    }
-
-    .action-bar .btn {
-        width: 100%;
-        justify-content: center;
-    }
-}
-
-@media (max-width: 576px) {
-    .section-card {
-        padding: 1rem 0.8rem;
-    }
-}
-
-.btn-toggle {
-    background: transparent;
-    border: 1px solid var(--border-subtle); /* 原 --store-border */
-    color: var(--text-secondary); /* 原 --store-muted */
-    font-size: 0.85rem;
-    padding: 0.35rem 0.9rem;
-    border-radius: 2rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    cursor: pointer;
-    transition: all 0.15s;
-}
-
-.btn-toggle:hover {
-    background: var(--brand-color-pale);
-    border-color: var(--brand-color);
-    color: var(--brand-color);
-}
-
-.product-row {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 0.8rem;
-}
-
-.product-row input {
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-md);
-    padding: 0.45rem 0.75rem;
-    font-size: 0.9rem;
-}
-
-.product-row input:focus {
-    border-color: var(--brand-accent);
-    box-shadow: 0 0 0 0.15rem rgba(255, 193, 7, 0.15);
-}
-
-.product-cat {
-    flex: 1;
-}
-
-.product-brand {
-    flex: 1;
-}
-
-.product-model {
-    flex: 1;
-}
-
-.product-param {
-    flex: 2.5;
-}
-
-.product-price {
-    flex: 0.8;
-}
-
-@media (max-width: 768px) {
-    .product-row {
+    /* ==========================================================================
+       页面头部
+       ========================================================================== */
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
     }
 
-    .product-cat, .product-brand, .product-model, .product-price {
-        flex: 1 1 45%;
+    .page-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--brand-color);
+        letter-spacing: -0.02em;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0;
     }
 
-    .product-param {
-        flex: 1 1 100%;
+    .page-title i {
+        font-size: 2rem;
+        color: var(--brand-accent);
     }
-}
 
-/* ============================================================
-   处方表格（OD/OS 并排）
-   ============================================================ */
-.rx-group-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: #0071e3;
-    margin: 18px 0 10px;
-    padding-left: 10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
+    /* ==========================================================================
+       卡片
+       ========================================================================== */
+    .section-card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
+        margin-bottom: 1.5rem;
+    }
 
-.rx-group-title::before {
-    content: '';
-    width: 3px;
-    height: 14px;
-    background: #0071e3;
-    border-radius: 2px;
-}
+    .section-card:hover {
+        box-shadow: var(--shadow-md);
+    }
 
-.rx-group-title:first-child {
-    margin-top: 4px;
-}
+    .section-title {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: var(--brand-color);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        letter-spacing: 0.02em;
+        border-bottom: 2px solid var(--brand-color-pale);
+        padding-bottom: 0.6rem;
+    }
 
-.rx-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0 6px;
-}
+    .section-title i {
+        font-size: 1.3rem;
+        color: var(--brand-accent);
+    }
 
-.rx-table thead th {
-    font-size: 12px;
-    font-weight: 600;
-    color: #6b7280;
-    padding: 6px 12px;
-    border-bottom: 1px solid #e5e7eb;
-    text-align: left;
-    letter-spacing: 0.3px;
-}
+    /* ==========================================================================
+       操作栏
+       ========================================================================== */
+    .action-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 0.5rem;
+    }
 
-.rx-table thead th:nth-child(1) {
-    width: 30%;
-}
+    /* ==========================================================================
+       按钮
+       ========================================================================== */
+    .btn-back {
+        background: transparent;
+        border: 1.5px solid var(--border-subtle);
+        color: var(--text-primary);
+        font-weight: 600;
+        padding: 0.55rem 1.4rem;
+        border-radius: 2rem;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        text-decoration: none;
+    }
 
-.rx-table thead th:nth-child(2),
-.rx-table thead th:nth-child(3) {
-    width: 35%;
-}
+    .btn-back:hover {
+        background: var(--brand-color-pale);
+        border-color: var(--brand-color);
+        color: var(--brand-color);
+        transform: translateY(-1px);
+    }
 
-.rx-table tbody td {
-    padding: 3px 8px;
-    vertical-align: middle;
-}
+    .btn-save {
+        background: var(--brand-color);
+        border: none;
+        color: #fff;
+        font-weight: 600;
+        padding: 0.55rem 1.3rem;
+        border-radius: 2rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
 
-.rx-table tbody td:first-child {
-    font-size: 14px;
-    color: #374151;
-    font-weight: 500;
-    padding-left: 12px;
-}
+    .btn-save:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+    }
 
-.rx-table .form-control {
-    height: 40px;
-    font-size: 14px;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    background: #f9fafb;
-    transition: all .2s;
-}
+    .btn-toggle {
+        background: transparent;
+        border: 1px solid var(--border-subtle);
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        padding: 0.35rem 0.9rem;
+        border-radius: 2rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        cursor: pointer;
+        transition: all 0.15s;
+    }
 
-.rx-table .form-control:focus {
-    border-color: #0071e3;
-    background: #fff;
-    box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.1);
-}
+    .btn-toggle:hover {
+        background: var(--brand-color-pale);
+        border-color: var(--brand-color);
+        color: var(--brand-color);
+    }
 
-.eye-badge {
-    display: inline-block;
-    padding: 2px 8px;
-    font-size: 11px;
-    font-weight: 600;
-    border-radius: 4px;
-    letter-spacing: 0.3px;
-}
+    /* ==========================================================================
+       处方表格（OD/OS 并排）
+       ========================================================================== */
+    .rx-group-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #0071e3;
+        margin: 18px 0 10px;
+        padding-left: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
 
-.eye-badge--od {
-    background: rgba(0, 113, 227, .1);
-    color: #0071e3;
-}
+    .rx-group-title::before {
+        content: '';
+        width: 3px;
+        height: 14px;
+        background: #0071e3;
+        border-radius: 2px;
+    }
 
-.eye-badge--os {
-    background: rgba(88, 86, 214, .1);
-    color: #5856d6;
-}
+    .rx-group-title:first-child {
+        margin-top: 4px;
+    }
 
-.rx-table tbody tr:hover .form-control {
-    background: #fff;
-}
+    .rx-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 6px;
+    }
 
-#reportExtra {
-    padding-top: 8px;
-}
+    .rx-table thead th {
+        font-size: 12px;
+        font-weight: 600;
+        color: #6b7280;
+        padding: 6px 12px;
+        border-bottom: 1px solid #e5e7eb;
+        text-align: left;
+        letter-spacing: 0.3px;
+    }
+
+    .rx-table thead th:nth-child(1) {
+        width: 30%;
+    }
+
+    .rx-table thead th:nth-child(2),
+    .rx-table thead th:nth-child(3) {
+        width: 35%;
+    }
+
+    .rx-table tbody td {
+        padding: 3px 8px;
+        vertical-align: middle;
+    }
+
+    .rx-table tbody td:first-child {
+        font-size: 14px;
+        color: #374151;
+        font-weight: 500;
+        padding-left: 12px;
+    }
+
+    .rx-table .form-control {
+        height: 40px;
+        font-size: 14px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        background: #f9fafb;
+        transition: all .2s;
+    }
+
+    .rx-table .form-control:focus {
+        border-color: #0071e3;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.1);
+    }
+
+    .rx-table tbody tr:hover .form-control {
+        background: #fff;
+    }
+
+    .eye-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        font-size: 11px;
+        font-weight: 600;
+        border-radius: 4px;
+        letter-spacing: 0.3px;
+    }
+
+    .eye-badge--od {
+        background: rgba(0, 113, 227, .1);
+        color: #0071e3;
+    }
+
+    .eye-badge--os {
+        background: rgba(88, 86, 214, .1);
+        color: #5856d6;
+    }
+
+    /* ==========================================================================
+       响应式
+       ========================================================================== */
+    @media (max-width: 768px) {
+        .action-bar {
+            flex-direction: column;
+        }
+
+        .action-bar button {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .section-card {
+            padding: 1rem 0.8rem;
+        }
+    }
+
+    #reportExtra {
+        padding-top: 8px;
+    }
     </style>
 {% endblock %}
 
+
 {% block content %}
     <div class="main-content-wrapper">
-
-        <!-- 顶部操作栏 -->
+        <!-- 页面标题 -->
         <div class="page-header">
-            <h1 class="page-title mb-0">
+            <h1 class="page-title">
                 <i class="bi bi-file-earmark-plus"></i> 新增验光报告
             </h1>
-            <div class="d-flex gap-2 flex-wrap">
-                <a href="{% url 'maneu_report:index' %}" class="btn btn-outline-primary btn-back-page">
-                    <i class="bi bi-arrow-left"></i> 返回列表
-                </a>
-            </div>
+            <a href="{% url 'maneu_report:index' %}" class="btn-back">
+                <i class="bi bi-arrow-left"></i> 返回列表
+            </a>
         </div>
 
-        <!-- ==================== 1. 客户信息卡片 ==================== -->
+        <!-- 客户信息 -->
         <div class="section-card" id="guestSection">
             <div class="section-title">
                 <span><i class="bi bi-person-vcard"></i> 客户信息</span>
@@ -303,27 +303,28 @@
 
             <div class="row g-3 mb-2">
                 <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted">录入时间</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-calendar"></i></span>
                         <input type="datetime-local" class="form-control" id="time">
                     </div>
                 </div>
                 <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted">客户姓名</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-person"></i></span>
                         <input autocomplete="off" type="text" class="form-control" id="name" placeholder="客户姓名（选填）">
                     </div>
                 </div>
                 <div class="col-md-4">
+                    <label class="form-label small fw-bold text-muted">联系电话</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-telephone"></i></span>
                         <input autocomplete="off" type="text" class="form-control" id="phone" placeholder="联系电话（选填）">
                     </div>
                 </div>
-            </div>
-
-            <div class="row g-3">
                 <div class="col-12">
+                    <label class="form-label small fw-bold text-muted">备注</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-chat-left-text"></i></span>
                         <input autocomplete="off" type="text" class="form-control" id="remark" placeholder="备注信息（选填）">
@@ -332,15 +333,13 @@
             </div>
         </div>
 
-        <!-- ==================== 2. 验光报告卡片 ==================== -->
+        <!-- 验光报告 -->
         <div class="section-card" id="reportSection">
-            <div class="section-title d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div class="section-title">
                 <span><i class="bi bi-eyeglasses"></i> 验光报告</span>
-                <div class="d-flex gap-2">
-                    <button class="btn-toggle" id="toggleReport" type="button">
-                        <i class="bi bi-chevron-down"></i> 详细参数
-                    </button>
-                </div>
+                <button class="btn-toggle" id="toggleReport" type="button">
+                    <i class="bi bi-chevron-down"></i> 详细参数
+                </button>
             </div>
 
             <!-- 基本信息 -->
@@ -371,10 +370,9 @@
                 </div>
             </div>
 
-            <!-- ==================== 可折叠详细参数 ==================== -->
+            <!-- 可折叠详细参数 -->
             <div id="reportExtra" style="display: none;">
-
-                <!-- ---------- 屈光处方 ---------- -->
+                <!-- 屈光处方 -->
                 <div class="rx-group-title">屈光处方</div>
                 <table class="rx-table">
                     <thead>
@@ -418,7 +416,7 @@
                     </tbody>
                 </table>
 
-                <!-- ---------- 视力检查 ---------- -->
+                <!-- 视力检查 -->
                 <div class="rx-group-title">视力检查</div>
                 <table class="rx-table">
                     <thead>
@@ -442,7 +440,7 @@
                     </tbody>
                 </table>
 
-                <!-- ---------- 眼生物测量 ---------- -->
+                <!-- 眼生物测量 -->
                 <div class="rx-group-title">眼生物测量</div>
                 <table class="rx-table">
                     <thead>
@@ -485,13 +483,12 @@
                         </tr>
                     </tbody>
                 </table>
-
             </div>
         </div>
 
-        <!-- ==================== 3. 底部操作栏 ==================== -->
+        <!-- 底部操作 -->
         <div class="action-bar justify-content-end">
-            <button class="btn btn-outline-primary btn-back-page" id="submitReport" type="button">
+            <button class="btn-save" id="submitReport" type="button">
                 <i class="bi bi-check-lg"></i> 提交报告
             </button>
         </div>
@@ -501,35 +498,105 @@
 
 {% block javascript %}
     <script>
-        window.REPORT_INSERT_API = "{% url 'maneu_report:api_insert' %}";
-        window.REPORT_LIST_URL   = "{% url 'maneu_report:index' %}";
+        // ========================================================================
+        // 后端 URL
+        // ========================================================================
+        window.REPORT_INSERT_URLS = {
+            api_insert: "{% url 'maneu_report:api_insert' %}",
+            web_index:  "{% url 'maneu_report:index' %}",
+        };
     </script>
 
     <script>
     (function () {
         'use strict';
 
-        // ============================================================
-        // 工具
-        // ============================================================
+        /** OD / OS 成对字段（顺序不敏感，集合需与 detail 页一致） */
+        var OD_OS_FIELDS = ['VA', 'SPH', 'CYL', 'AX', 'PR', 'FR', 'ADD', 'AL', 'AK', 'AD', 'CCT', 'LT', 'VT', 'BC'];
 
+        // ========================================================================
+        // 1. 工具函数
+        // ========================================================================
+
+        /**
+         * 读取输入框值并 trim
+         * @param {string} id
+         * @returns {string}
+         */
         function val(id) {
             return ($('#' + id).val() || '').trim();
         }
 
         /**
-         * 获取当前时间，格式：YYYY-MM-DDTHH:mm（datetime-local 专用）
-         * 例：2026-10-26T15:30
+         * 读取 localStorage 中的 access_token
+         * @returns {string}
          */
-        function getNowForDatetimeLocal() {
-            var d = new Date();
-            var pad = function (n) { return String(n).padStart(2, '0'); };
-            return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) +
-                   'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+        function getToken() {
+            return localStorage.getItem('access_token') || '';
         }
 
+        /**
+         * 通用 JSON POST 请求（自动带 Authorization: Bearer <token>）
+         * @param {string} url
+         * @param {Object} [payload]
+         * @returns {jqXHR}
+         */
+        function requestJSON(url, payload) {
+            return $.ajax({
+                url: url,
+                method: 'POST',
+                contentType: 'application/json',
+                headers: {
+                    'Authorization': 'Bearer ' + getToken(),
+                },
+                data: JSON.stringify(payload || {}),
+                dataType: 'json',
+            });
+        }
+
+        /**
+         * 统一错误提示
+         * @param {string} msg
+         */
+        function showError(msg) {
+            alert(msg || '操作失败，请稍后重试');
+        }
+
+        /**
+         * 提交按钮加载态切换
+         * @param {jQuery} $btn
+         * @param {boolean} state  true=提交中
+         */
+        function setSubmitting($btn, state) {
+            if (!$btn || !$btn.length) return;
+            if (state) {
+                $btn.prop('disabled', true).data('original-text', $btn.html());
+                $btn.html('<span class="spinner-border spinner-border-sm me-1"></span>处理中...');
+            } else {
+                $btn.prop('disabled', false);
+                if ($btn.data('original-text')) $btn.html($btn.data('original-text'));
+            }
+        }
+
+        /**
+         * Date → <input type="datetime-local"> 的本地时间格式
+         * 注意：不能用 toISOString()（UTC，会差 8 小时）
+         * @param {Date} date
+         * @returns {string} 如 "2026-10-26T15:30"
+         */
+        function toLocalDatetime(date) {
+            var tzOffset = date.getTimezoneOffset() * 60000;
+            return new Date(date.getTime() - tzOffset).toISOString().slice(0, 16);
+        }
+
+        /**
+         * 折叠面板：绑定切换事件
+         * 面板初始 display:none → 图标 bi-chevron-down（点击展开后变 up）
+         * @param {string} btnId
+         * @param {string} panelId
+         */
         function setupToggle(btnId, panelId) {
-            var $btn = $('#' + btnId);
+            var $btn   = $('#' + btnId);
             var $panel = $('#' + panelId);
             if (!$btn.length || !$panel.length) return;
 
@@ -539,136 +606,101 @@
             });
         }
 
-        // ============================================================
-        // 数据收集
-        // ============================================================
+        // ========================================================================
+        // 2. 数据收集
+        // ========================================================================
 
+        /**
+         * 收集表单数据（含 time）
+         * @returns {Object}
+         */
         function collectData() {
-            return {
-                // ---------- 录入时间（前端传） ----------
-                time:   $('#time').val(),      // ← "2026-10-26T15:30"
-
-                // ---------- 客户信息 ----------
+            var data = {
+                time:   $('#time').val(),
                 name:   val('name'),
                 phone:  val('phone'),
                 remark: val('remark'),
                 sex:    val('sex'),
                 age:    val('age'),
+                pd:     val('PD'),
                 ot:     val('ot'),
                 em:     val('em'),
                 dfh:    val('dfh'),
-
-                // ---------- 报告基本信息 ----------
-                pd:     val('PD'),
-
-                // ---------- 右眼 OD ----------
-                od_va:  val('OD_VA'),
-                od_sph: val('OD_SPH'),
-                od_cyl: val('OD_CYL'),
-                od_ax:  val('OD_AX'),
-                od_pr:  val('OD_PR'),
-                od_fr:  val('OD_FR'),
-                od_al:  val('OD_AL'),
-                od_ak:  val('OD_AK'),
-                od_ad:  val('OD_AD'),
-                od_cct: val('OD_CCT'),
-                od_lt:  val('OD_LT'),
-                od_vt:  val('OD_VT'),
-                od_bc:  val('OD_BC'),
-                od_add: val('OD_ADD'),
-
-                // ---------- 左眼 OS ----------
-                os_va:  val('OS_VA'),
-                os_sph: val('OS_SPH'),
-                os_cyl: val('OS_CYL'),
-                os_ax:  val('OS_AX'),
-                os_pr:  val('OS_PR'),
-                os_fr:  val('OS_FR'),
-                os_al:  val('OS_AL'),
-                os_ak:  val('OS_AK'),
-                os_ad:  val('OS_AD'),
-                os_cct: val('OS_CCT'),
-                os_lt:  val('OS_LT'),
-                os_vt:  val('OS_VT'),
-                os_bc:  val('OS_BC'),
-                os_add: val('OS_ADD'),
             };
+
+            OD_OS_FIELDS.forEach(function (f) {
+                var key = f.toLowerCase();
+                data['od_' + key] = val('OD_' + f);
+                data['os_' + key] = val('OS_' + f);
+            });
+
+            return data;
         }
 
-        // ============================================================
-        // 提交
-        // ============================================================
-
-        var isSubmitting = false;
+        // ========================================================================
+        // 3. 提交
+        // ========================================================================
 
         function submit() {
-            if (isSubmitting) return;
+            var $btn = $('#submitReport');
+            if ($btn.prop('disabled')) return;   // 防重复提交
 
             var payload = collectData();
-            console.log('[report/insert] payload =', payload);
 
-            var token = localStorage.getItem('access_token') || '';
-            if (!token) {
-                alert('请先登录');
+            if (!payload.time) {
+                showError('请选择录入时间');
                 return;
             }
 
-            var $btn = $('#submitReport');
-            var originalText = $btn.html();
+            setSubmitting($btn, true);
 
-            isSubmitting = true;
-            $btn.prop('disabled', true)
-                .html('<span class="spinner-border spinner-border-sm me-1"></span>提交中...');
-
-            $.ajax({
-                url: window.REPORT_INSERT_API,
-                method: 'POST',
-                contentType: 'application/json',
-                headers: {
-                    'Authorization': 'Bearer ' + token,
-                },
-                data: JSON.stringify(payload),
-                dataType: 'json',
-                success: function (res) {
+            requestJSON(window.REPORT_INSERT_URLS.api_insert, payload)
+                .done(function (res) {
                     if (res && res.status === true) {
                         alert('提交成功');
-                        location.href = window.REPORT_LIST_URL || '/';
+                        location.href = window.REPORT_INSERT_URLS.web_index;
+                    } else if (res && res.errors) {
+                        var msgs = [];
+                        Object.keys(res.errors).forEach(function (k) {
+                            (res.errors[k] || []).forEach(function (e) {
+                                msgs.push(e.message);
+                            });
+                        });
+                        showError(msgs.length ? msgs.join('\n') : (res.message || '提交失败'));
                     } else {
-                        alert((res && res.message) || '提交失败');
+                        showError((res && res.message) || '提交失败');
                     }
-                },
-                error: function (xhr) {
-                    var msg = '网络错误，请稍后重试';
-
+                })
+                .fail(function (xhr) {
                     if (xhr.status === 401) {
-                        msg = '登录已过期，请重新登录';
-                    } else {
-                        try {
-                            var data = JSON.parse(xhr.responseText);
-                            msg = data.message || msg;
-                        } catch (e) {}
+                        showError('登录已过期，请重新登录');
+                        return;
                     }
-
-                    alert(msg);
-                },
-                complete: function () {
-                    isSubmitting = false;
-                    $btn.prop('disabled', false).html(originalText);
-                },
-            });
+                    var msg = '网络错误，请稍后重试';
+                    try {
+                        var data = JSON.parse(xhr.responseText);
+                        msg = data.message || msg;
+                    } catch (e) {}
+                    showError(msg);
+                })
+                .always(function () {
+                    setSubmitting($btn, false);
+                });
         }
 
-        // ============================================================
-        // 初始化
-        // ============================================================
+        // ========================================================================
+        // 4. 初始化
+        // ========================================================================
+
         $(function () {
-            // 初始化当前时间 + 限制不能选未来
+            // 录入时间默认当前本地时间，且不允许选未来
             var $time = $('#time');
-            var nowStr = getNowForDatetimeLocal();
-            $time.attr('max', nowStr);   // 不能选未来
-            $time.val(nowStr);           // 默认现在
+            var nowStr = toLocalDatetime(new Date());
+            $time.attr('max', nowStr);
+            $time.val(nowStr);
 
             setupToggle('toggleReport', 'reportExtra');
+
             $('#submitReport').on('click', submit);
         });
 

@@ -1,187 +1,335 @@
 {% extends 'maneu/base.html' %}
 {% load static %}
 
+{% comment %}
+================================================================================
+产品订单 - 详情页
+================================================================================
+功能：
+  - 展示订单基础信息（时间/姓名/电话只读，备注可编辑）
+  - 产品明细：可增删改，每行可切换产品类型（镜架/镜片/配件/服务）
+  - 保存备注、保存产品、删除订单、生成二维码
+
+依赖：
+  - jQuery 3.x
+  - Bootstrap 5（含 Icons）
+  - sessionStorage.current_id：由列表页跳转前写入
+
+说明：
+  - 与 insert 页的产品行字段名一致（product-brand / product-model / ...），
+    但本页用 <select class="product-item-type"> 切换类型（编辑场景更灵活）。
+================================================================================
+{% endcomment %}
+
 
 {% block css %}
-    <link href="{% static 'css/maneu_order/detail20260606.css' %}" rel="stylesheet">
     <style>
-        /* ---------- 产品行 ---------- */
-        .product-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            align-items: center;
-            padding: 10px;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            background: #f9fafb;
-        }
-        .product-row select,
-        .product-row input {
-            height: 36px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            padding: 0 8px;
-            font-size: 14px;
-            background: #fff;
-        }
-        .product-row select:focus,
-        .product-row input:focus {
-            border-color: #0071e3;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.1);
-        }
-        .product-row .p-item-type,
-        .product-row .p-side { width: 100px; flex-shrink: 0; }
-        .product-row .p-brand,
-        .product-row .p-model,
-        .product-row .p-color,
-        .product-row .p-material { width: 110px; }
-        .product-row .p-spec { width: 150px; }
-        .product-row .p-qty { width: 70px; }
-        .product-row .p-price { width: 100px; }
-        .product-row .p-remark { flex: 1; min-width: 120px; }
-        .product-row .p-remove {
-            width: 30px;
-            height: 30px;
-            border: 1px solid #d1d5db;
-            background: #fff;
-            border-radius: 6px;
-            cursor: pointer;
-            color: #6b7280;
-            font-size: 18px;
-            line-height: 1;
-            flex-shrink: 0;
-        }
-        .product-row .p-remove:hover {
-            color: #ef4444;
-            border-color: #ef4444;
+    /* ==========================================================================
+       页面头部
+       ========================================================================== */
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .page-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--brand-color);
+        letter-spacing: -0.02em;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0;
+    }
+
+    .page-title i {
+        font-size: 2rem;
+        color: var(--brand-accent);
+    }
+
+    /* ==========================================================================
+       卡片
+       ========================================================================== */
+    .section-card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
+        margin-bottom: 1.5rem;
+    }
+
+    .section-card:hover {
+        box-shadow: var(--shadow-md);
+    }
+
+    .section-title {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: var(--brand-color);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        letter-spacing: 0.02em;
+        border-bottom: 2px solid var(--brand-color-pale);
+        padding-bottom: 0.6rem;
+    }
+
+    .section-title i {
+        font-size: 1.3rem;
+        color: var(--brand-accent);
+    }
+
+    /* ==========================================================================
+       操作栏
+       ========================================================================== */
+    .action-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 0.5rem;
+    }
+
+    /* ==========================================================================
+       按钮
+       ========================================================================== */
+    .btn-back {
+        background: transparent;
+        border: 1.5px solid var(--border-subtle);
+        color: var(--text-primary);
+        font-weight: 600;
+        padding: 0.55rem 1.4rem;
+        border-radius: 2rem;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        text-decoration: none;
+    }
+
+    .btn-back:hover {
+        background: var(--brand-color-pale);
+        border-color: var(--brand-color);
+        color: var(--brand-color);
+        transform: translateY(-1px);
+    }
+
+    .btn-save {
+        background: var(--brand-color);
+        border: none;
+        color: #fff;
+        font-weight: 600;
+        padding: 0.55rem 1.3rem;
+        border-radius: 2rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-save:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+    }
+
+    .btn-save:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .btn-delete-record {
+        background: transparent;
+        border: 1px solid #dc3545;
+        color: #dc3545;
+        font-weight: 600;
+        padding: 0.55rem 1.3rem;
+        border-radius: 2rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-delete-record:hover {
+        background: #dc3545;
+        color: #fff;
+    }
+
+    .btn-qrcode {
+        background: #fff;
+        border: 1px solid var(--border-subtle);
+        color: var(--text-secondary);
+        font-weight: 600;
+        padding: 0.55rem 1.3rem;
+        border-radius: 2rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-qrcode:hover {
+        background: var(--brand-color-pale);
+        border-color: var(--brand-color);
+        color: var(--brand-color);
+    }
+
+    .btn-add {
+        background: transparent;
+        border: 1px solid var(--border-subtle);
+        color: var(--text-secondary);
+        font-weight: 600;
+        padding: 0.5rem 1.1rem;
+        border-radius: 2rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .btn-add:hover {
+        background: var(--brand-color-pale);
+        border-color: var(--brand-color);
+        color: var(--brand-color);
+    }
+
+    /* ==========================================================================
+       产品行（与 insert 页一致）
+       ========================================================================== */
+    #productsContainer {
+        margin-top: 0.5rem;
+    }
+
+    .product-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        padding: 12px;
+        border-bottom: 1px solid #eef0f3;
+    }
+
+    .product-row:last-child {
+        border-bottom: none;
+    }
+
+    .product-row.has-error {
+        background: #fff3f3;
+    }
+
+    .product-row input,
+    .product-row select {
+        flex: 1 1 100px;
+        min-width: 80px;
+        max-width: 160px;
+        min-height: 38px;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+
+    .product-item-type { flex: 0 0 90px; }
+    .product-side      { flex: 0 0 80px; }
+    .product-qty       { flex: 0 0 70px; }
+    .product-price     { flex: 0 0 100px; }
+
+    .btn-remove-row {
+        flex: 0 0 38px;
+        width: 38px;
+        height: 38px;
+        border: 1px solid #0071E3;
+        border-radius: 2rem;
+        background: #fff;
+        color: #0071E3;
+        cursor: pointer;
+        font-size: 18px;
+        line-height: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+    }
+
+    .btn-remove-row:hover {
+        background: #0071E3;
+        color: #fff;
+    }
+
+    .empty-products {
+        text-align: center;
+        color: #6b7280;
+        padding: 1rem 0;
+        font-size: 0.9rem;
+    }
+
+    /* ==========================================================================
+       状态徽章
+       ========================================================================== */
+    .status-badge {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.7rem;
+        border-radius: 1rem;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+    }
+
+    .status-loaded  { background: #d1fae5; color: #065f46; }
+    .status-empty   { background: #fef3c7; color: #92400e; }
+    .status-warning { background: #fca5a5; color: #bb2d3b; }
+
+    /* ==========================================================================
+       响应式
+       ========================================================================== */
+    @media (max-width: 768px) {
+        .action-bar {
+            flex-direction: column;
         }
 
-        /* ---------- 页面头部/卡片（复用其他模块） ---------- */
-        .page-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
+        .action-bar button {
+            width: 100%;
+            justify-content: center;
         }
-        .page-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--brand-color);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin: 0;
-        }
-        .page-title i {
-            font-size: 2rem;
-            color: var(--brand-accent);
-        }
+    }
+
+    @media (max-width: 576px) {
         .section-card {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-md);
-            padding: 1.5rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
-            margin-bottom: 1.5rem;
+            padding: 1rem 0.8rem;
         }
-        .section-title {
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: var(--brand-color);
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            border-bottom: 2px solid var(--brand-color-pale);
-            padding-bottom: 0.6rem;
-        }
-        .section-title i {
-            font-size: 1.3rem;
-            color: var(--brand-accent);
-        }
-        .btn-back-page {
-            border-radius: 2rem;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            font-weight: 500;
-        }
-        .btn-qrcode {
-            background: #fff;
-            border: 1px solid var(--border-subtle);
-            color: var(--text-secondary);
-        }
-        .btn-qrcode:hover {
-            background: var(--brand-color-pale);
-            border-color: var(--brand-color);
-            color: var(--brand-color);
-        }
-        .action-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-            margin-top: 0.5rem;
-        }
-        .btn-save {
-            background: var(--brand-color);
-            border: none;
-            color: #fff;
-            font-weight: 600;
-            padding: 0.45rem 1.2rem;
-            border-radius: 2rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .btn-save:hover { opacity: 0.9; }
-        .btn-save:disabled { opacity: 0.5; cursor: not-allowed; }
-        .status-badge {
-            font-size: 0.75rem;
-            padding: 0.25rem 0.7rem;
-            border-radius: 1rem;
-            font-weight: 600;
-        }
-        .status-loaded  { background: #d1fae5; color: #065f46; }
-        .status-empty   { background: #fef3c7; color: #92400e; }
-        .status-warning { background: #fca5a5; color: #bb2d3b; }
-        @media (max-width: 768px) {
-            .action-bar { flex-direction: column; }
-            .action-bar .btn { width: 100%; justify-content: center; }
-        }
-        @media (max-width: 576px) {
-            .section-card { padding: 1rem 0.8rem; }
-        }
+    }
     </style>
 {% endblock %}
 
 
 {% block content %}
     <div class="main-content-wrapper">
-        <!-- ==================== 顶部 ==================== -->
+        <!-- 页面标题 -->
         <div class="page-header">
             <h1 class="page-title">
                 <i class="bi bi-receipt"></i> 眼镜订单详情
             </h1>
             <div class="d-flex gap-2 flex-wrap">
-                <button class="btn btn-outline-secondary btn-qrcode btn-back-page" id="generate_qr_code" type="button">
+                <button class="btn-qrcode" id="generateQrCode" type="button">
                     <i class="bi bi-qr-code"></i> 二维码
                 </button>
-                <a href="{% url 'maneu_order:index' %}" class="btn btn-outline-primary btn-back-page">
+                <a href="{% url 'maneu_order:index' %}" class="btn-back">
                     <i class="bi bi-arrow-left"></i> 返回列表
                 </a>
             </div>
         </div>
 
-        <!-- ==================== 1. 基础信息（只读 + 备注可编辑） ==================== -->
+        <!-- 基础信息 -->
         <div class="section-card" id="baseSection">
-            <div class="section-title d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div class="section-title">
                 <span>
                     <i class="bi bi-person-vcard"></i> 基础信息
                     <span class="status-badge status-empty ms-2" id="loadStatus">加载中...</span>
@@ -226,9 +374,9 @@
             </div>
         </div>
 
-        <!-- ==================== 2. 产品信息 ==================== -->
+        <!-- 产品明细 -->
         <div class="section-card" id="productSection">
-            <div class="section-title d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div class="section-title">
                 <span>
                     <i class="bi bi-box-seam"></i> 产品明细
                     <span class="status-badge status-empty ms-2" id="productsLoadStatus">加载中...</span>
@@ -237,8 +385,8 @@
 
             <div id="productsContainer"></div>
 
-            <div class="d-flex justify-content-between align-items-center mt-3">
-                <button class="btn btn-outline-primary btn-back-page" id="addProduct" type="button">
+            <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
+                <button class="btn-add" id="addProduct" type="button">
                     <i class="bi bi-plus-lg"></i> 添加产品
                 </button>
                 <button class="btn-save" id="saveProducts" type="button">
@@ -247,9 +395,9 @@
             </div>
         </div>
 
-        <!-- ==================== 3. 底部 ==================== -->
+        <!-- 底部操作 -->
         <div class="action-bar justify-content-end">
-            <button class="btn btn-outline-danger btn-back-page" id="delete" type="button">
+            <button class="btn-delete-record" id="deleteOrder" type="button">
                 <i class="bi bi-trash3"></i> 删除此订单
             </button>
         </div>
@@ -259,6 +407,9 @@
 
 {% block javascript %}
     <script>
+        // ========================================================================
+        // 后端 URL
+        // ========================================================================
         window.ORDER_DETAIL_URLS = {
             api_detail: "{% url 'maneu_order:api_detail' %}",
             api_update: "{% url 'maneu_order:api_update' %}",
@@ -272,57 +423,126 @@
     (function () {
         'use strict';
 
+        /** 当前记录 id（由列表页跳转前写入 sessionStorage） */
         var INDEX_ID = sessionStorage.getItem('current_id') || '';
 
-        // ============================================================
-        // 工具
-        // ============================================================
+        /** 产品类型可选项 */
+        var ITEM_TYPE_OPTIONS = [
+            { value: 'frame',     label: '镜架' },
+            { value: 'lens',      label: '镜片' },
+            { value: 'accessory', label: '配件' },
+            { value: 'service',   label: '服务' },
+        ];
 
-        function getToken() {
-            return localStorage.getItem('access_token') || '';
-        }
+        var SIDE_OPTIONS = [
+            { value: '',   label: '不分' },
+            { value: 'OD', label: '右眼' },
+            { value: 'OS', label: '左眼' },
+            { value: 'OU', label: '双眼' },
+        ];
 
-        function requestJSON(url, payload) {
-            return $.ajax({
-                url: url,
-                method: 'POST',
-                contentType: 'application/json',
-                headers: { 'Authorization': 'Bearer ' + getToken() },
-                data: JSON.stringify(payload || {}),
-                dataType: 'json',
-            });
-        }
+        // ========================================================================
+        // 1. 工具函数
+        // ========================================================================
 
-        function escapeHtml(s) {
-            if (s === null || s === undefined) return '';
-            return String(s).replace(/[&<>"']/g, function (m) {
-                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
-            });
-        }
-
-        function formatTimeDisplay(t) {
-            if (!t) return '';
-            return String(t).replace('T', ' ').substring(0, 16);
-        }
-
-        function val($el) {
+        /**
+         * 读取输入框值并 trim
+         * @param {string|jQuery} target  id 或 jQuery 对象
+         * @returns {string}
+         */
+        function val(target) {
+            var $el = (typeof target === 'string') ? $('#' + target) : target;
             return ($el.val() || '').trim();
         }
 
+        /**
+         * 读取数值，非法值返回 0
+         * @param {jQuery} $el
+         * @returns {number}
+         */
         function numVal($el) {
             var v = parseFloat($el.val());
             return isNaN(v) ? 0 : v;
         }
 
+        /**
+         * 读取正整数，非法或 <1 返回 1
+         * @param {jQuery} $el
+         * @returns {number}
+         */
         function intVal($el) {
             var v = parseInt($el.val(), 10);
-            return isNaN(v) || v < 1 ? 1 : v;
+            return (isNaN(v) || v < 1) ? 1 : v;
         }
 
+        /**
+         * 读取 localStorage 中的 access_token
+         * @returns {string}
+         */
+        function getToken() {
+            return localStorage.getItem('access_token') || '';
+        }
+
+        /**
+         * 通用 JSON POST 请求（自动带 Authorization: Bearer <token>）
+         * @param {string} url
+         * @param {Object} [payload]
+         * @returns {jqXHR}
+         */
+        function requestJSON(url, payload) {
+            return $.ajax({
+                url: url,
+                method: 'POST',
+                contentType: 'application/json',
+                headers: {
+                    'Authorization': 'Bearer ' + getToken(),
+                },
+                data: JSON.stringify(payload || {}),
+                dataType: 'json',
+            });
+        }
+
+        /**
+         * HTML 转义（防 XSS）
+         * @param {*} str
+         * @returns {string}
+         */
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str).replace(/[&<>"']/g, function (m) {
+                if (m === '&')  return '&amp;';
+                if (m === '<')  return '&lt;';
+                if (m === '>')  return '&gt;';
+                if (m === '"')  return '&quot;';
+                if (m === "'")  return '&#39;';
+                return m;
+            });
+        }
+
+        /**
+         * 后端 time 字段（ISO / 普通格式）→ "YYYY-MM-DD HH:MM"
+         * @param {string} timeStr
+         * @returns {string}
+         */
+        function formatTimeDisplay(timeStr) {
+            if (!timeStr) return '';
+            return String(timeStr).replace('T', ' ').substring(0, 16);
+        }
+
+        /**
+         * 统一错误提示
+         * @param {string} msg
+         */
         function showError(msg) {
             alert(msg || '操作失败，请稍后重试');
         }
 
+        /**
+         * 更新加载状态徽章
+         * @param {jQuery} $el
+         * @param {'loading'|'success'|'error'} status
+         * @param {string} [message]
+         */
         function setLoadStatus($el, status, message) {
             $el.removeClass('status-empty status-loaded status-warning');
             if (status === 'loading') {
@@ -334,6 +554,11 @@
             }
         }
 
+        /**
+         * 提交按钮加载态切换
+         * @param {jQuery} $btn
+         * @param {boolean} state
+         */
         function setSubmitting($btn, state) {
             if (!$btn || !$btn.length) return;
             if (state) {
@@ -345,46 +570,59 @@
             }
         }
 
-        // ============================================================
-        // 产品行渲染
-        // ============================================================
+        /**
+         * 构建 <option> 列表
+         * @param {Array} options   [{value, label}]
+         * @param {string} selected
+         * @returns {string}
+         */
+        function buildOptions(options, selected) {
+            return options.map(function (o) {
+                var sel = (o.value === selected) ? ' selected' : '';
+                return '<option value="' + escapeHtml(o.value) + '"' + sel + '>' +
+                       escapeHtml(o.label) + '</option>';
+            }).join('');
+        }
 
+        // ========================================================================
+        // 2. 产品行渲染
+        // ========================================================================
+
+        /**
+         * 单条产品 → 行 HTML
+         * @param {Object} [p]
+         * @returns {string}
+         */
         function createProductRow(p) {
             p = p || {};
             var itemType = p.item_type || 'frame';
             var side     = p.side || '';
 
-            var sideOpts = '<option value=""' + (side === '' ? ' selected' : '') + '>不分</option>' +
-                '<option value="OD"' + (side === 'OD' ? ' selected' : '') + '>右眼</option>' +
-                '<option value="OS"' + (side === 'OS' ? ' selected' : '') + '>左眼</option>' +
-                '<option value="OU"' + (side === 'OU' ? ' selected' : '') + '>双眼</option>';
-
             return '' +
                 '<div class="product-row">' +
-                '  <select class="p-item-type">' +
-                '    <option value="frame"'     + (itemType === 'frame'     ? ' selected' : '') + '>镜架</option>' +
-                '    <option value="lens"'      + (itemType === 'lens'      ? ' selected' : '') + '>镜片</option>' +
-                '    <option value="accessory"' + (itemType === 'accessory' ? ' selected' : '') + '>配件</option>' +
-                '    <option value="service"'   + (itemType === 'service'   ? ' selected' : '') + '>服务</option>' +
-                '  </select>' +
-                '  <select class="p-side">' + sideOpts + '</select>' +
-                '  <input class="p-brand"    placeholder="品牌" value="' + escapeHtml(p.brand)    + '">' +
-                '  <input class="p-model"    placeholder="型号" value="' + escapeHtml(p.model)    + '">' +
-                '  <input class="p-color"    placeholder="颜色" value="' + escapeHtml(p.color)    + '">' +
-                '  <input class="p-material" placeholder="材质" value="' + escapeHtml(p.material) + '">' +
-                '  <input class="p-spec"     placeholder="规格" value="' + escapeHtml(p.spec)     + '">' +
-                '  <input class="p-qty"   type="number" placeholder="数量" min="1" value="' + (p.quantity || 1) + '">' +
-                '  <input class="p-price" type="number" placeholder="单价" step="0.01" min="0" value="' + (p.unit_price || 0) + '">' +
-                '  <input class="p-remark"   placeholder="备注" value="' + escapeHtml(p.remark)   + '">' +
-                '  <button class="p-remove" type="button" title="删除此产品">×</button>' +
+                '  <select class="form-select product-item-type">' + buildOptions(ITEM_TYPE_OPTIONS, itemType) + '</select>' +
+                '  <select class="form-select product-side">' + buildOptions(SIDE_OPTIONS, side) + '</select>' +
+                '  <input type="text" class="form-control product-brand"    placeholder="品牌" maxlength="50"  value="' + escapeHtml(p.brand) + '">' +
+                '  <input type="text" class="form-control product-model"    placeholder="型号" maxlength="100" value="' + escapeHtml(p.model) + '">' +
+                '  <input type="text" class="form-control product-color"    placeholder="颜色" maxlength="30"  value="' + escapeHtml(p.color) + '">' +
+                '  <input type="text" class="form-control product-material" placeholder="材质" maxlength="30"  value="' + escapeHtml(p.material) + '">' +
+                '  <input type="text" class="form-control product-spec"     placeholder="规格" maxlength="100" value="' + escapeHtml(p.spec) + '">' +
+                '  <input type="number" class="form-control product-qty"    placeholder="数量" min="1" value="' + (p.quantity || 1) + '">' +
+                '  <input type="number" class="form-control product-price"  placeholder="单价" step="0.01" min="0" value="' + (p.unit_price || 0) + '">' +
+                '  <input type="text" class="form-control product-remark"   placeholder="备注" maxlength="200" value="' + escapeHtml(p.remark) + '">' +
+                '  <button type="button" class="btn-remove-row" title="删除">×</button>' +
                 '</div>';
         }
 
+        /**
+         * 渲染产品列表
+         * @param {Array} products
+         */
         function renderProducts(products) {
             var $c = $('#productsContainer').empty();
 
             if (!Array.isArray(products) || products.length === 0) {
-                $c.append('<div class="text-muted text-center py-3">暂无产品，点击「添加产品」开始添加</div>');
+                $c.append('<div class="empty-products">暂无产品，点击「添加产品」开始添加</div>');
                 return;
             }
 
@@ -393,30 +631,33 @@
             });
         }
 
+        /**
+         * 收集产品明细
+         * @returns {Array}
+         */
         function collectProducts() {
             var products = [];
             $('#productsContainer .product-row').each(function () {
                 var $r = $(this);
                 products.push({
-                    item_type:  val($r.find('.p-item-type')) || 'frame',
-                    side:       val($r.find('.p-side')),
-                    brand:      val($r.find('.p-brand')),
-                    model:      val($r.find('.p-model')),
-                    color:      val($r.find('.p-color')),
-                    material:   val($r.find('.p-material')),
-                    spec:       val($r.find('.p-spec')),
-                    quantity:   intVal($r.find('.p-qty')),
-                    unit_price: numVal($r.find('.p-price')),
-                    remark:     val($r.find('.p-remark')),
+                    item_type:  val($r.find('.product-item-type')) || 'frame',
+                    side:       val($r.find('.product-side')),
+                    brand:      val($r.find('.product-brand')),
+                    model:      val($r.find('.product-model')),
+                    color:      val($r.find('.product-color')),
+                    material:   val($r.find('.product-material')),
+                    spec:       val($r.find('.product-spec')),
+                    quantity:   intVal($r.find('.product-qty')),
+                    unit_price: numVal($r.find('.product-price')),
+                    remark:     val($r.find('.product-remark')),
                 });
             });
             return products;
         }
 
-        // ============================================================
-        // 加载详情
-        // ============================================================
-
+        // ========================================================================
+        // 3. 加载详情
+        // ========================================================================
         var currentRequest = null;
 
         function loadDetail() {
@@ -471,9 +712,9 @@
                 });
         }
 
-        // ============================================================
-        // 更新
-        // ============================================================
+        // ========================================================================
+        // 4. 保存备注
+        // ========================================================================
 
         function saveBaseInfo() {
             if (!confirm('确定保存备注？')) return;
@@ -483,7 +724,7 @@
 
             requestJSON(window.ORDER_DETAIL_URLS.api_update, {
                 index_id: INDEX_ID,
-                remark:   val($('#remark')),
+                remark:   val('remark'),
             })
                 .done(function (res) {
                     if (res && res.status === true) {
@@ -493,17 +734,23 @@
                     }
                 })
                 .fail(function (xhr) {
-                    if (xhr.status === 401) showError('登录已过期，请重新登录');
-                    else showError('网络错误，请稍后重试');
+                    if (xhr.status === 401) {
+                        showError('登录已过期，请重新登录');
+                    } else {
+                        showError('网络错误，请稍后重试');
+                    }
                 })
                 .always(function () {
                     setSubmitting($btn, false);
                 });
         }
 
+        // ========================================================================
+        // 5. 保存产品
+        // ========================================================================
+
         function saveProducts() {
             var products = collectProducts();
-
             if (products.length === 0) {
                 showError('请至少添加一条产品');
                 return;
@@ -530,22 +777,25 @@
                     }
                 })
                 .fail(function (xhr) {
-                    if (xhr.status === 401) showError('登录已过期，请重新登录');
-                    else showError('网络错误，请稍后重试');
+                    if (xhr.status === 401) {
+                        showError('登录已过期，请重新登录');
+                    } else {
+                        showError('网络错误，请稍后重试');
+                    }
                 })
                 .always(function () {
                     setSubmitting($btn, false);
                 });
         }
 
-        // ============================================================
-        // 删除
-        // ============================================================
+        // ========================================================================
+        // 6. 删除订单
+        // ========================================================================
 
         function deleteOrder() {
             if (!confirm('确定要删除这条订单吗？此操作不可恢复。')) return;
 
-            var $btn = $('#delete');
+            var $btn = $('#deleteOrder');
             setSubmitting($btn, true);
 
             requestJSON(window.ORDER_DETAIL_URLS.api_delete, { index_id: INDEX_ID })
@@ -558,20 +808,23 @@
                     }
                 })
                 .fail(function (xhr) {
-                    if (xhr.status === 401) showError('登录已过期，请重新登录');
-                    else showError('网络错误，请稍后重试');
+                    if (xhr.status === 401) {
+                        showError('登录已过期，请重新登录');
+                    } else {
+                        showError('网络错误，请稍后重试');
+                    }
                 })
                 .always(function () {
                     setSubmitting($btn, false);
                 });
         }
 
-        // ============================================================
-        // 二维码
-        // ============================================================
+        // ========================================================================
+        // 7. 二维码下载
+        // ========================================================================
 
-        function downloadQR() {
-            var $btn = $('#generate_qr_code');
+        function downloadQRCode() {
+            var $btn = $('#generateQrCode');
             setSubmitting($btn, true);
 
             $.ajax({
@@ -593,38 +846,40 @@
                     URL.revokeObjectURL(url);
                 })
                 .fail(function (xhr) {
-                    if (xhr.status === 401) showError('登录已过期，请重新登录');
-                    else showError('二维码生成失败，请稍后重试');
+                    if (xhr.status === 401) {
+                        showError('登录已过期，请重新登录');
+                    } else {
+                        showError('二维码生成失败，请稍后重试');
+                    }
                 })
                 .always(function () {
                     setSubmitting($btn, false);
                 });
         }
 
-        // ============================================================
-        // 初始化
-        // ============================================================
+        // ========================================================================
+        // 8. 初始化
+        // ========================================================================
 
         $(function () {
-            // 添加产品
+            // 添加产品（移除空提示用专用类，不误伤其他文本）
             $('#addProduct').on('click', function () {
-                $('#productsContainer .text-muted').remove();
+                $('#productsContainer .empty-products').remove();
                 $('#productsContainer').append(createProductRow({}));
             });
 
-            // 删除单个产品
-            $('#productsContainer').on('click', '.p-remove', function () {
-                if ($('#productsContainer .product-row').length <= 1) {
-                    showError('至少保留一条产品');
-                    return;
-                }
+            // 删除产品行（允许删到 0 条，保存时校验）
+            $('#productsContainer').on('click', '.btn-remove-row', function () {
                 $(this).closest('.product-row').remove();
+                if ($('#productsContainer .product-row').length === 0) {
+                    $('#productsContainer').append('<div class="empty-products">暂无产品，点击「添加产品」开始添加</div>');
+                }
             });
 
             $('#saveBaseInfo').on('click', saveBaseInfo);
             $('#saveProducts').on('click', saveProducts);
-            $('#delete').on('click', deleteOrder);
-            $('#generate_qr_code').on('click', downloadQR);
+            $('#deleteOrder').on('click', deleteOrder);
+            $('#generateQrCode').on('click', downloadQRCode);
 
             loadDetail();
         });

@@ -1,32 +1,362 @@
 {% extends 'maneu/base.html' %}
 {% load static %}
 
+{% comment %}
+================================================================================
+验光报告 - 详情页
+================================================================================
+功能：
+  - 加载并展示客户信息 / 报告基础信息 / 处方明细
+  - 保存更新、删除记录、生成并下载二维码
+
+依赖：
+  - jQuery 3.x
+  - Bootstrap 5（含 Icons）
+  - sessionStorage.current_id：由列表页跳转前写入
+================================================================================
+{% endcomment %}
+
+
 {% block css %}
-    <link href="{% static 'css/maneu_report/detail20261024.css' %}" rel="stylesheet">
+    <style>
+    /* ==========================================================================
+       页面头部
+       ========================================================================== */
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .page-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--brand-color);
+        letter-spacing: -0.02em;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0;
+    }
+
+    .page-title i {
+        font-size: 2rem;
+        color: var(--brand-accent);
+    }
+
+    /* ==========================================================================
+       卡片
+       ========================================================================== */
+    .section-card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
+        margin-bottom: 1.5rem;
+    }
+
+    .section-card:hover {
+        box-shadow: var(--shadow-md);
+    }
+
+    .section-title {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: var(--brand-color);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        letter-spacing: 0.02em;
+        border-bottom: 2px solid var(--brand-color-pale);
+        padding-bottom: 0.6rem;
+    }
+
+    .section-title i {
+        font-size: 1.3rem;
+        color: var(--brand-accent);
+    }
+
+    /* ==========================================================================
+       操作栏
+       ========================================================================== */
+    .action-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 0.5rem;
+    }
+
+    /* ==========================================================================
+       按钮
+       ========================================================================== */
+    .btn-back {
+        background: transparent;
+        border: 1.5px solid var(--border-subtle);
+        color: var(--text-primary);
+        font-weight: 600;
+        padding: 0.55rem 1.4rem;
+        border-radius: 2rem;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        text-decoration: none;
+    }
+
+    .btn-back:hover {
+        background: var(--brand-color-pale);
+        border-color: var(--brand-color);
+        color: var(--brand-color);
+        transform: translateY(-1px);
+    }
+
+    .btn-save {
+        background: var(--brand-color);
+        border: none;
+        color: #fff;
+        font-weight: 600;
+        padding: 0.55rem 1.3rem;
+        border-radius: 2rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-save:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+    }
+
+    .btn-delete-record {
+        background: transparent;
+        border: 1px solid #dc3545;
+        color: #dc3545;
+        font-weight: 600;
+        padding: 0.55rem 1.3rem;
+        border-radius: 2rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-delete-record:hover {
+        background: #dc3545;
+        color: #fff;
+    }
+
+    .btn-qrcode {
+        background: #fff;
+        border: 1px solid var(--border-subtle);
+        color: var(--text-secondary);
+        font-weight: 600;
+        padding: 0.55rem 1.3rem;
+        border-radius: 2rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-qrcode:hover {
+        background: var(--brand-color-pale);
+        border-color: var(--brand-color);
+        color: var(--brand-color);
+    }
+
+    .btn-toggle {
+        background: transparent;
+        border: 1px solid var(--border-subtle);
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        padding: 0.35rem 0.9rem;
+        border-radius: 2rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+    .btn-toggle:hover {
+        background: var(--brand-color-pale);
+        border-color: var(--brand-color);
+        color: var(--brand-color);
+    }
+
+    /* ==========================================================================
+       处方表格（OD/OS 并排）
+       ========================================================================== */
+    .rx-group-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #0071e3;
+        margin: 18px 0 10px;
+        padding-left: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .rx-group-title::before {
+        content: '';
+        width: 3px;
+        height: 14px;
+        background: #0071e3;
+        border-radius: 2px;
+    }
+
+    .rx-group-title:first-child {
+        margin-top: 4px;
+    }
+
+    .rx-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 6px;
+    }
+
+    .rx-table thead th {
+        font-size: 12px;
+        font-weight: 600;
+        color: #6b7280;
+        padding: 6px 12px;
+        border-bottom: 1px solid #e5e7eb;
+        text-align: left;
+        letter-spacing: 0.3px;
+    }
+
+    .rx-table thead th:nth-child(1) {
+        width: 30%;
+    }
+
+    .rx-table thead th:nth-child(2),
+    .rx-table thead th:nth-child(3) {
+        width: 35%;
+    }
+
+    .rx-table tbody td {
+        padding: 3px 8px;
+        vertical-align: middle;
+    }
+
+    .rx-table tbody td:first-child {
+        font-size: 14px;
+        color: #374151;
+        font-weight: 500;
+        padding-left: 12px;
+    }
+
+    .rx-table .form-control {
+        height: 40px;
+        font-size: 14px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        background: #f9fafb;
+        transition: all .2s;
+    }
+
+    .rx-table .form-control:focus {
+        border-color: #0071e3;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.1);
+    }
+
+    .rx-table tbody tr:hover .form-control {
+        background: #fff;
+    }
+
+    .eye-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        font-size: 11px;
+        font-weight: 600;
+        border-radius: 4px;
+        letter-spacing: 0.3px;
+    }
+
+    .eye-badge--od {
+        background: rgba(0, 113, 227, .1);
+        color: #0071e3;
+    }
+
+    .eye-badge--os {
+        background: rgba(88, 86, 214, .1);
+        color: #5856d6;
+    }
+
+    /* ==========================================================================
+       状态徽章
+       ========================================================================== */
+    .status-badge {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.7rem;
+        border-radius: 1rem;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+    }
+
+    .status-loaded  { background: #d1fae5; color: #065f46; }
+    .status-empty   { background: #fef3c7; color: #92400e; }
+    .status-warning { background: #fca5a5; color: #bb2d3b; }
+
+    /* ==========================================================================
+       响应式
+       ========================================================================== */
+    @media (max-width: 768px) {
+        .action-bar {
+            flex-direction: column;
+        }
+
+        .action-bar button {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .section-card {
+            padding: 1rem 0.8rem;
+        }
+    }
+
+    #reportExtra {
+        padding-top: 8px;
+    }
+    </style>
 {% endblock %}
 
 
 {% block content %}
     <div class="main-content-wrapper">
-
-        <!-- ==================== 顶部操作栏 ==================== -->
+        <!-- 页面标题 -->
         <div class="page-header">
             <h1 class="page-title">
                 <i class="bi bi-file-medical"></i> 验光报告
             </h1>
             <div class="d-flex gap-2 flex-wrap">
-                <button class="btn btn-outline-secondary btn-qrcode btn-back-page" id="reportQrcode" type="button">
+                <button class="btn-qrcode" id="reportQrcode" type="button">
                     <i class="bi bi-qr-code"></i> 二维码
                 </button>
-                <a href="{% url 'maneu_report:index' %}" class="btn btn-outline-primary btn-back-page">
+                <a href="{% url 'maneu_report:index' %}" class="btn-back">
                     <i class="bi bi-arrow-left"></i> 返回列表
                 </a>
             </div>
         </div>
 
-        <!-- ==================== 1. 客户信息卡片 ==================== -->
+        <!-- 客户信息 -->
         <div class="section-card" id="guestSection">
-            <div class="section-title d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div class="section-title">
                 <span>
                     <i class="bi bi-person-vcard"></i> 客户信息
                     <span class="status-badge status-empty ms-2" id="loadStatus">加载中...</span>
@@ -65,15 +395,13 @@
             </div>
         </div>
 
-        <!-- ==================== 2. 验光报告卡片 ==================== -->
+        <!-- 验光报告 -->
         <div class="section-card" id="reportSection">
-            <div class="section-title d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div class="section-title">
                 <span><i class="bi bi-eyeglasses"></i> 验光报告</span>
-                <div class="d-flex gap-2">
-                    <button class="btn-toggle" id="toggleReport" type="button">
-                        <i class="bi bi-chevron-down"></i> 详细参数
-                    </button>
-                </div>
+                <button class="btn-toggle" id="toggleReport" type="button">
+                    <i class="bi bi-chevron-down"></i> 详细参数
+                </button>
             </div>
 
             <!-- 基本信息 -->
@@ -104,10 +432,9 @@
                 </div>
             </div>
 
-            <!-- ==================== 可折叠处方明细 ==================== -->
+            <!-- 可折叠处方明细 -->
             <div id="reportExtra" style="display: none;">
-
-                <!-- ---------- 屈光处方 ---------- -->
+                <!-- 屈光处方 -->
                 <div class="rx-group-title">屈光处方</div>
                 <table class="rx-table">
                     <thead>
@@ -151,7 +478,7 @@
                     </tbody>
                 </table>
 
-                <!-- ---------- 视力检查 ---------- -->
+                <!-- 视力检查 -->
                 <div class="rx-group-title">视力检查</div>
                 <table class="rx-table">
                     <thead>
@@ -175,7 +502,7 @@
                     </tbody>
                 </table>
 
-                <!-- ---------- 眼生物测量 ---------- -->
+                <!-- 眼生物测量 -->
                 <div class="rx-group-title">眼生物测量</div>
                 <table class="rx-table">
                     <thead>
@@ -218,16 +545,15 @@
                         </tr>
                     </tbody>
                 </table>
-
             </div>
         </div>
 
-        <!-- ==================== 3. 底部操作栏 ==================== -->
+        <!-- 底部操作 -->
         <div class="action-bar justify-content-end">
-            <button class="btn btn-outline-danger btn-back-page" id="reportDelete" type="button">
+            <button class="btn-delete-record" id="reportDelete" type="button">
                 <i class="bi bi-trash3"></i> 删除此报告
             </button>
-            <button class="btn btn-outline-primary btn-back-page" id="reportUpdate" type="button">
+            <button class="btn-save" id="reportUpdate" type="button">
                 <i class="bi bi-check-lg"></i> 保存更新
             </button>
         </div>
@@ -237,6 +563,9 @@
 
 {% block javascript %}
     <script>
+        // ========================================================================
+        // 后端 URL
+        // ========================================================================
         window.REPORT_DETAIL_URLS = {
             api_detail: "{% url 'maneu_report:api_detail' %}",
             api_update: "{% url 'maneu_report:api_update' %}",
@@ -250,16 +579,39 @@
     (function () {
         'use strict';
 
+        /** 当前记录 id（由列表页跳转前写入 sessionStorage） */
         var INDEX_ID = sessionStorage.getItem('current_id') || '';
 
-        // ============================================================
-        // 工具
-        // ============================================================
+        /** OD / OS 成对字段（顺序不敏感，集合需与 insert 页一致） */
+        var OD_OS_FIELDS = ['VA', 'SPH', 'CYL', 'AX', 'PR', 'FR', 'ADD', 'AL', 'AK', 'AD', 'CCT', 'LT', 'VT', 'BC'];
 
+        // ========================================================================
+        // 1. 工具函数
+        // ========================================================================
+
+        /**
+         * 读取输入框值并 trim
+         * @param {string} id
+         * @returns {string}
+         */
+        function val(id) {
+            return ($('#' + id).val() || '').trim();
+        }
+
+        /**
+         * 读取 localStorage 中的 access_token
+         * @returns {string}
+         */
         function getToken() {
             return localStorage.getItem('access_token') || '';
         }
 
+        /**
+         * 通用 JSON POST 请求（自动带 Authorization: Bearer <token>）
+         * @param {string} url
+         * @param {Object} [payload]
+         * @returns {jqXHR}
+         */
         function requestJSON(url, payload) {
             return $.ajax({
                 url: url,
@@ -273,10 +625,19 @@
             });
         }
 
+        /**
+         * 统一错误提示
+         * @param {string} msg
+         */
         function showError(msg) {
             alert(msg || '操作失败，请稍后重试');
         }
 
+        /**
+         * 提交按钮加载态切换
+         * @param {jQuery} $btn
+         * @param {boolean} state  true=提交中
+         */
         function setSubmitting($btn, state) {
             if (!$btn || !$btn.length) return;
             if (state) {
@@ -288,13 +649,23 @@
             }
         }
 
+        /**
+         * 后端 time 字段（ISO / 普通格式）→ "YYYY-MM-DD HH:MM"
+         * @param {string} timeStr
+         * @returns {string}
+         */
         function formatTimeDisplay(timeStr) {
             if (!timeStr) return '';
             return String(timeStr).replace('T', ' ').substring(0, 16);
         }
 
-        function setLoadStatus(status, message) {
-            var $el = $('#loadStatus');
+        /**
+         * 更新加载状态徽章
+         * @param {jQuery} $el
+         * @param {'loading'|'success'|'error'} status
+         * @param {string} [message]
+         */
+        function setLoadStatus($el, status, message) {
             $el.removeClass('status-empty status-loaded status-warning');
             if (status === 'loading') {
                 $el.addClass('status-empty').text(message || '加载中...');
@@ -305,11 +676,14 @@
             }
         }
 
-        // ============================================================
-        // 渲染
-        // ============================================================
-        var OD_OS_FIELDS = ['SPH', 'CYL', 'AX', 'VA', 'BC', 'ADD', 'PR', 'FR', 'AL', 'AK', 'AD', 'CCT', 'LT', 'VT'];
+        // ========================================================================
+        // 2. 渲染
+        // ========================================================================
 
+        /**
+         * 把详情数据渲染到表单
+         * @param {Object} data
+         */
         function renderReport(data) {
             // 客户信息
             $('#time').val(formatTimeDisplay(data.time));
@@ -317,7 +691,7 @@
             $('#phone').val(data.phone || '');
             $('#remark').val(data.remark || '');
 
-            // 报告基本信息
+            // 报告基础信息
             $('#sex').val(data.sex || '');
             $('#age').val(data.age || '');
             $('#PD').val(data.pd || '');
@@ -325,7 +699,7 @@
             $('#em').val(data.em || '');
             $('#dfh').val(data.dfh || '');
 
-            // 处方
+            // 处方明细
             OD_OS_FIELDS.forEach(function (f) {
                 var key = f.toLowerCase();
                 $('#OD_' + f).val(data['od_' + key] || '');
@@ -333,9 +707,9 @@
             });
         }
 
-        // ============================================================
-        // 加载详情
-        // ============================================================
+        // ========================================================================
+        // 3. 加载详情
+        // ========================================================================
         var currentRequest = null;
 
         function loadDetail() {
@@ -343,66 +717,71 @@
                 currentRequest.abort();
             }
 
-            setLoadStatus('loading');
+            setLoadStatus($('#loadStatus'), 'loading');
 
             currentRequest = requestJSON(window.REPORT_DETAIL_URLS.api_detail, {
                 index_id: INDEX_ID,
             })
                 .done(function (res) {
                     if (!res || res.status !== true) {
-                        setLoadStatus('error', res && res.message ? res.message : '加载失败');
+                        setLoadStatus($('#loadStatus'), 'error', (res && res.message) || '加载失败');
                         return;
                     }
 
                     var reportWrapper = res.content && res.content.report;
                     if (!reportWrapper || !reportWrapper.ok) {
-                        setLoadStatus('error', '报告不存在');
+                        setLoadStatus($('#loadStatus'), 'error', '报告不存在');
                         return;
                     }
 
                     renderReport(reportWrapper.data || {});
-                    setLoadStatus('success', '已加载');
+                    setLoadStatus($('#loadStatus'), 'success', '已加载');
                 })
                 .fail(function (xhr, status) {
                     if (status === 'abort') return;
                     if (xhr.status === 401) {
-                        setLoadStatus('error', '登录已过期');
+                        setLoadStatus($('#loadStatus'), 'error', '登录已过期');
                     } else if (xhr.status === 404) {
-                        setLoadStatus('error', '报告不存在');
+                        setLoadStatus($('#loadStatus'), 'error', '报告不存在');
                     } else {
-                        setLoadStatus('error', '加载失败');
+                        setLoadStatus($('#loadStatus'), 'error', '加载失败');
                     }
                 });
         }
 
-        // ============================================================
-        // 收集数据（JSON 提交）
-        // ============================================================
+        // ========================================================================
+        // 4. 数据收集
+        // ========================================================================
+
+        /**
+         * 收集可更新字段（time 为 readonly，不提交）
+         * @returns {Object}
+         */
         function collectUpdateData() {
             var data = {
-                name:   ($('#name').val()   || '').trim(),
-                phone:  ($('#phone').val()  || '').trim(),
-                remark: ($('#remark').val() || '').trim(),
-                sex:    ($('#sex').val()    || '').trim(),
-                age:    ($('#age').val()    || '').trim(),
-                ot:     ($('#ot').val()     || '').trim(),
-                em:     ($('#em').val()     || '').trim(),
-                dfh:    ($('#dfh').val()    || '').trim(),
-                pd:     ($('#PD').val()     || '').trim(),
+                name:   val('name'),
+                phone:  val('phone'),
+                remark: val('remark'),
+                sex:    val('sex'),
+                age:    val('age'),
+                pd:     val('PD'),
+                ot:     val('ot'),
+                em:     val('em'),
+                dfh:    val('dfh'),
             };
 
             OD_OS_FIELDS.forEach(function (f) {
                 var key = f.toLowerCase();
-                data['od_' + key] = ($('#OD_' + f).val() || '').trim();
-                data['os_' + key] = ($('#OS_' + f).val() || '').trim();
+                data['od_' + key] = val('OD_' + f);
+                data['os_' + key] = val('OS_' + f);
             });
 
             return data;
         }
 
-        // ============================================================
-        // 更新
-        // ============================================================
+        // ========================================================================
+        // 5. 更新
+        // ========================================================================
         function updateReport() {
             if (!confirm('确定要保存更新吗？')) return;
 
@@ -440,11 +819,11 @@
                 });
         }
 
-        // ============================================================
-        // 删除
-        // ============================================================
-        function deleteReport() {
-            if (!confirm('确定要删除这条报告吗？此操作不可恢复。')) return;
+        // ========================================================================
+        // 6. 删除
+        // ========================================================================
+        function deleteRecord() {
+            if (!confirm('确定要删除这条记录吗？此操作不可恢复。')) return;
 
             var $btn = $('#reportDelete');
             setSubmitting($btn, true);
@@ -470,9 +849,9 @@
                 });
         }
 
-        // ============================================================
-        // 二维码
-        // ============================================================
+        // ========================================================================
+        // 7. 二维码下载
+        // ========================================================================
         function downloadQRCode() {
             var $btn = $('#reportQrcode');
             setSubmitting($btn, true);
@@ -507,9 +886,9 @@
                 });
         }
 
-        // ============================================================
-        // 初始化
-        // ============================================================
+        // ========================================================================
+        // 8. 初始化
+        // ========================================================================
         $(function () {
             $('#toggleReport').on('click', function () {
                 $('#reportExtra').slideToggle(200);
@@ -517,7 +896,7 @@
             });
 
             $('#reportUpdate').on('click', updateReport);
-            $('#reportDelete').on('click', deleteReport);
+            $('#reportDelete').on('click', deleteRecord);
             $('#reportQrcode').on('click', downloadQRCode);
 
             loadDetail();

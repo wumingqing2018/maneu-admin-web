@@ -1,18 +1,283 @@
 {% extends 'maneu/base.html' %}
 {% load static %}
 
+{% comment %}
+================================================================================
+定制化产品 - 详情页
+================================================================================
+功能：
+  - 加载并展示客户信息 / 产品参数
+  - 分别更新客户信息 / 产品信息
+  - 生成并下载产品二维码
+  - 删除当前记录
+
+依赖：
+  - jQuery 3.x
+  - Bootstrap 5（含 Icons）
+  - sessionStorage.current_id：由列表页跳转前写入
+================================================================================
+{% endcomment %}
+
+
 {% block css %}
-    <link href="{% static 'css/maneu_store/detail20260606.css' %}" rel="stylesheet">
+    <style>
+    /* ==========================================================================
+       页面头部
+       ========================================================================== */
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .page-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--brand-color);
+        letter-spacing: -0.02em;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0;
+    }
+
+    .page-title i {
+        font-size: 2rem;
+        color: var(--brand-accent);
+    }
+
+    /* ==========================================================================
+       卡片
+       ========================================================================== */
+    .section-card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
+        margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: var(--brand-color);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        letter-spacing: 0.02em;
+        border-bottom: 2px solid var(--brand-color-pale);
+        padding-bottom: 0.6rem;
+    }
+
+    .section-title i {
+        font-size: 1.3rem;
+        color: var(--brand-accent);
+    }
+
+    /* ==========================================================================
+       键值对行
+       ========================================================================== */
+    .kv-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .kv-row input {
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        padding: 0.45rem 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    .kv-row input:focus {
+        border-color: var(--brand-accent);
+        box-shadow: 0 0 0 0.15rem rgba(255, 193, 7, 0.15);
+    }
+
+    .kv-key {
+        flex: 1;
+    }
+
+    .kv-sep {
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+
+    .kv-val {
+        flex: 2;
+    }
+
+    /* ==========================================================================
+       操作栏
+       ========================================================================== */
+    .action-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 0.5rem;
+    }
+
+    /* ==========================================================================
+       按钮
+       ========================================================================== */
+    .btn-back {
+        background: transparent;
+        border: 1.5px solid var(--border-subtle);
+        color: var(--text-primary);
+        font-weight: 600;
+        padding: 0.55rem 1.4rem;
+        border-radius: 2rem;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        text-decoration: none;
+    }
+
+    .btn-back:hover {
+        background: var(--brand-color-pale);
+        border-color: var(--brand-color);
+        color: var(--brand-color);
+        transform: translateY(-1px);
+    }
+
+    .btn-save {
+        background: var(--brand-color);
+        border: none;
+        color: #fff;
+        font-weight: 600;
+        padding: 0.55rem 1.3rem;
+        border-radius: 2rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-save:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+    }
+
+    /* ==========================================================================
+       响应式
+       ========================================================================== */
+    @media (max-width: 768px) {
+        .kv-row {
+            flex-wrap: wrap;
+        }
+
+        .kv-key,
+        .kv-val {
+            flex: 1 1 100%;
+        }
+
+        .kv-sep {
+            display: none;
+        }
+
+        .action-bar {
+            flex-direction: column;
+        }
+
+        .action-bar button {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .section-card {
+            padding: 1rem 0.8rem;
+        }
+    }
+
+    /* ==========================================================================
+       详情页专属：二维码 / 删除 / 状态徽章
+       ========================================================================== */
+    .btn-qrcode {
+        background: #fff;
+        border: 1px solid var(--border-subtle);
+        color: var(--text-secondary);
+        font-weight: 600;
+        padding: 0.55rem 1.3rem;
+        border-radius: 2rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-qrcode:hover {
+        background: var(--brand-color-pale);
+        border-color: var(--brand-color);
+        color: var(--brand-color);
+    }
+
+    .btn-delete-record {
+        background: transparent;
+        border: 1px solid #dc3545;
+        color: #dc3545;
+        font-weight: 600;
+        padding: 0.55rem 1.3rem;
+        border-radius: 2rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-delete-record:hover {
+        background: #dc3545;
+        color: #fff;
+    }
+
+    .status-badge {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.7rem;
+        border-radius: 1rem;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+    }
+
+    .status-loaded {
+        background: #d1fae5;
+        color: #065f46;
+    }
+
+    .status-empty {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .status-warning {
+        background: #fca5a5;
+        color: #bb2d3b;
+    }
+    </style>
 {% endblock %}
+
 
 {% block content %}
     <div class="main-content-wrapper">
+        <!-- 页面标题 -->
         <div class="page-header">
             <h1 class="page-title">
                 <i class="bi bi-gear-wide-connected"></i> 定制化产品详情
             </h1>
             <div class="d-flex gap-2 flex-wrap">
-                <button class="btn btn-outline-secondary btn-qrcode btn-action-primary" id="generateQrCode" type="button">
+                <button class="btn-qrcode" id="generateQrCode" type="button">
                     <i class="bi bi-qr-code"></i> 二维码
                 </button>
                 <a href="{% url 'maneu_store:index' %}" class="btn-back">
@@ -21,9 +286,9 @@
             </div>
         </div>
 
-        <!-- ==================== 客户信息 ==================== -->
+        <!-- 客户信息 -->
         <div class="section-card" id="guestSection">
-            <div class="section-title d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div class="section-title">
                 <span>
                     <i class="bi bi-person-vcard"></i> 客户信息
                     <span class="status-badge status-empty ms-2" id="guestLoadStatus">加载中...</span>
@@ -61,11 +326,16 @@
                 </div>
             </div>
 
+            <div class="action-bar justify-content-end">
+                <button class="btn-save" id="guestUpdate" type="button">
+                    <i class="bi bi-check-lg"></i> 更新客户信息
+                </button>
+            </div>
         </div>
 
-        <!-- ==================== 产品信息 ==================== -->
+        <!-- 产品信息 -->
         <div class="section-card" id="storeSection">
-            <div class="section-title d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div class="section-title">
                 <span>
                     <i class="bi bi-box-seam"></i> 定制产品信息
                     <span class="status-badge status-empty ms-2" id="storeLoadStatus">加载中...</span>
@@ -91,15 +361,15 @@
             </div>
 
             <div class="action-bar justify-content-end">
-                <button class="btn-save-guest" id="storeUpdate" type="button">
+                <button class="btn-save" id="storeUpdate" type="button">
                     <i class="bi bi-check-lg"></i> 更新产品信息
                 </button>
             </div>
         </div>
 
-        <!-- ==================== 底部删除 ==================== -->
+        <!-- 底部删除 -->
         <div class="action-bar justify-content-end">
-            <button class="btn btn-outline-danger btn-back-page" id="deleteOrder" type="button">
+            <button class="btn-delete-record" id="deleteOrder" type="button">
                 <i class="bi bi-trash3"></i> 删除此记录
             </button>
         </div>
@@ -125,16 +395,36 @@
     (function () {
         'use strict';
 
+        /** 当前记录 id（由列表页跳转前写入 sessionStorage） */
         var INDEX_ID = sessionStorage.getItem('current_id') || '';
 
         // ========================================================================
-        // 工具
+        // 1. 工具函数
         // ========================================================================
 
+        /**
+         * 读取输入框值并 trim
+         * @param {string} id
+         * @returns {string}
+         */
+        function val(id) {
+            return ($('#' + id).val() || '').trim();
+        }
+
+        /**
+         * 读取 localStorage 中的 access_token
+         * @returns {string}
+         */
         function getToken() {
             return localStorage.getItem('access_token') || '';
         }
 
+        /**
+         * 通用 JSON POST 请求（自动带 Authorization: Bearer <token>）
+         * @param {string} url
+         * @param {Object} [payload]
+         * @returns {jqXHR}
+         */
         function requestJSON(url, payload) {
             return $.ajax({
                 url: url,
@@ -148,10 +438,19 @@
             });
         }
 
+        /**
+         * 统一错误提示
+         * @param {string} msg
+         */
         function showError(msg) {
             alert(msg || '操作失败，请稍后重试');
         }
 
+        /**
+         * 提交按钮加载态切换
+         * @param {jQuery} $btn
+         * @param {boolean} state  true=提交中
+         */
         function setSubmitting($btn, state) {
             if (!$btn || !$btn.length) return;
             if (state) {
@@ -163,11 +462,22 @@
             }
         }
 
+        /**
+         * 后端 time 字段（ISO / 普通格式）→ "YYYY-MM-DD HH:MM"
+         * @param {string} timeStr
+         * @returns {string}
+         */
         function formatTimeDisplay(timeStr) {
             if (!timeStr) return '';
             return String(timeStr).replace('T', ' ').substring(0, 16);
         }
 
+        /**
+         * 更新加载状态徽章
+         * @param {jQuery} $el
+         * @param {'loading'|'success'|'error'} status
+         * @param {string} [message]
+         */
         function setLoadStatus($el, status, message) {
             $el.removeClass('status-empty status-loaded status-warning');
             if (status === 'loading') {
@@ -180,10 +490,14 @@
         }
 
         // ========================================================================
-        // 加载详情
+        // 2. 加载详情
         // ========================================================================
         var currentRequest = null;
 
+        /**
+         * 渲染详情到表单
+         * @param {Object} data  { time, name, phone, remark, content }
+         */
         function renderDetail(data) {
             // 基础信息
             $('#time').val(formatTimeDisplay(data.time));
@@ -192,7 +506,7 @@
             $('#remark').val(data.remark || '');
             setLoadStatus($('#guestLoadStatus'), 'success', '已加载');
 
-            // 产品参数（content 是 list[dict] 或 dict）
+            // 产品参数（content 兼容 list[dict] 和 dict）
             var raw = data.content;
             var obj = {};
 
@@ -202,13 +516,13 @@
                 obj = raw;
             }
 
-            // 清空所有行
+            // 清空 12 行
             for (var i = 1; i <= 12; i++) {
                 $('#key' + i).val('');
                 $('#val' + i).val('');
             }
 
-            // 填充
+            // 按顺序填充
             var idx = 1;
             Object.keys(obj).forEach(function (key) {
                 if (idx > 12) return;
@@ -220,6 +534,9 @@
             setLoadStatus($('#storeLoadStatus'), 'success', '已加载');
         }
 
+        /**
+         * 拉取详情
+         */
         function loadDetail() {
             if (currentRequest && currentRequest.readyState !== 4) {
                 currentRequest.abort();
@@ -233,7 +550,7 @@
             })
                 .done(function (res) {
                     if (!res || res.status !== true) {
-                        setLoadStatus($('#guestLoadStatus'), 'error', res && res.message ? res.message : '加载失败');
+                        setLoadStatus($('#guestLoadStatus'), 'error', (res && res.message) || '加载失败');
                         setLoadStatus($('#storeLoadStatus'), 'error', '加载失败');
                         return;
                     }
@@ -263,17 +580,18 @@
         }
 
         // ========================================================================
-        // 更新（客户 / 产品 分开按钮）
+        // 3. 更新（客户 / 产品 分开按钮）
         // ========================================================================
 
         /**
          * 通用部分更新
-         * @param {Object} payload  待更新的字段（不含 index_id）
-         * @param {jQuery} $btn     提交按钮
-         * @param {string} successMsg
+         * @param {Object} payload      待更新的字段（不含 index_id）
+         * @param {jQuery} $btn         提交按钮
+         * @param {string} confirmMsg   确认框文案
+         * @param {string} successMsg   成功提示文案
          */
-        function doUpdate(payload, $btn, successMsg) {
-            if (!confirm('确定要更新吗？')) return;
+        function doUpdate(payload, $btn, confirmMsg, successMsg) {
+            if (!confirm(confirmMsg || '确定要更新吗？')) return;
 
             setSubmitting($btn, true);
 
@@ -308,14 +626,18 @@
                 });
         }
 
-
+        /**
+         * 收集产品参数（12 行）→ JSON 字符串
+         * 注意：detail 页允许全部清空（与 insert 页"至少一组"规则不同）
+         * @returns {string|null}  null 表示校验失败
+         */
         function collectStoreContent() {
             var keys = [];
             var obj = {};
 
             for (var i = 1; i <= 12; i++) {
-                var key = ($('#key' + i).val() || '').trim();
-                var v   = ($('#val' + i).val() || '').trim();
+                var key = val('key' + i);
+                var v   = val('val' + i);
 
                 if (!key) continue;
 
@@ -331,6 +653,21 @@
             return JSON.stringify([obj]);
         }
 
+        /** 更新客户信息 */
+        function updateGuest() {
+            doUpdate(
+                {
+                    name:   val('name'),
+                    phone:  val('phone'),
+                    remark: val('remark'),
+                },
+                $('#guestUpdate'),
+                '确定要更新客户信息吗？',
+                '客户信息更新成功'
+            );
+        }
+
+        /** 更新产品信息 */
         function updateStore() {
             var storeContent = collectStoreContent();
             if (storeContent === null) return;
@@ -338,14 +675,15 @@
             doUpdate(
                 { storeContent: storeContent },
                 $('#storeUpdate'),
+                '确定要更新产品信息吗？',
                 '产品信息更新成功'
             );
         }
 
         // ========================================================================
-        // 删除
+        // 4. 删除
         // ========================================================================
-        function deleteOrder() {
+        function deleteRecord() {
             if (!confirm('确定要删除这条记录吗？此操作不可恢复。')) return;
 
             var $btn = $('#deleteOrder');
@@ -373,7 +711,7 @@
         }
 
         // ========================================================================
-        // 二维码
+        // 5. 二维码下载
         // ========================================================================
         function downloadQRCode() {
             var $btn = $('#generateQrCode');
@@ -410,11 +748,12 @@
         }
 
         // ========================================================================
-        // 初始化
+        // 6. 初始化
         // ========================================================================
         $(function () {
+            $('#guestUpdate').on('click', updateGuest);
             $('#storeUpdate').on('click', updateStore);
-            $('#deleteOrder').on('click', deleteOrder);
+            $('#deleteOrder').on('click', deleteRecord);
             $('#generateQrCode').on('click', downloadQRCode);
 
             loadDetail();
