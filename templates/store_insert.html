@@ -208,9 +208,6 @@
                     url: window.STORE_INSERT_API,
                     method: 'POST',
                     contentType: 'application/json',
-                    headers: {
-                        'Authorization': 'Bearer ' + token,
-                    },
                     data: JSON.stringify(payload),
                     dataType: 'json',
                     success: function (res) {
