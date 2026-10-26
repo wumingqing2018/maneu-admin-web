@@ -238,7 +238,6 @@
 {% block javascript %}
     <script>
         window.REPORT_DETAIL_URLS = {
-            index_id:   "{{ index_id }}",
             api_detail: "{% url 'maneu_report:api_detail' %}",
             api_update: "{% url 'maneu_report:api_update' %}",
             api_delete: "{% url 'maneu_report:api_delete' %}",
@@ -251,7 +250,7 @@
     (function () {
         'use strict';
 
-        var INDEX_ID = window.REPORT_DETAIL_URLS.index_id;
+        var INDEX_ID = sessionStorage.getItem('current_id') || '';
 
         // ============================================================
         // 工具

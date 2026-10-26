@@ -4,7 +4,7 @@ from common.util_time import time_now, time_start, time_end
 
 
 def index(request):
-    return render(request, 'order_index.html', {'timeS': time_start, 'timeE': time_end})
+    return render(request, 'order_index.html')
 
 
 def insert(request):
@@ -12,4 +12,4 @@ def insert(request):
 
 
 def detail(request):
-    return render(request, 'order_detail.html', {'index_id': request.GET.get('index_id')})
+    return render(request, 'order_detail.html')

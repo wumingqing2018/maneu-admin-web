@@ -113,7 +113,6 @@
         // 后端 URL
         // ========================================================================
         window.STORE_DETAIL_URLS = {
-            index_id:   "{{ index_id }}",
             api_detail: "{% url 'maneu_store:api_detail' %}",
             api_update: "{% url 'maneu_store:api_update' %}",
             api_delete: "{% url 'maneu_store:api_delete' %}",
@@ -126,7 +125,7 @@
     (function () {
         'use strict';
 
-        var INDEX_ID = window.STORE_DETAIL_URLS.index_id;
+        var INDEX_ID = sessionStorage.getItem('current_id') || '';
 
         // ========================================================================
         // 工具
