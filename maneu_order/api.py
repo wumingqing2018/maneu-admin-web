@@ -203,11 +203,13 @@ def insert(request, admin_id):
     if errors:
         return _json_error('参数校验失败', status=400, errors=errors)
 
-    now = timezone.localtime().replace(microsecond=0)
     index_id = str(uuid.uuid4())
-    phone = _get_str(data, 'phone')
+
     name   = _get_str(data, 'name')
+    time = _get_str(data, 'time')
+    phone = _get_str(data, 'phone')
     remark = _get_str(data, 'remark')
+
 
     logger.info(
         'order.insert admin_id=%s index_id=%s name=%r phone=%r products=%d',
@@ -222,7 +224,7 @@ def insert(request, admin_id):
                 status=3,
                 content={
                     'name':     name,
-                    'time':     now,
+                    'time':     time,
                     'phone':    phone,
                     'remark':   remark,
                     'products': cleaned_products,

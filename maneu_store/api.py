@@ -11,7 +11,7 @@ from io import BytesIO
 
 from django.db import transaction
 from django.http import HttpResponse, JsonResponse
-from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
 
 from common.util_decorators import require_admin_id, require_index_id
 from common.util_verify import is_call
@@ -83,14 +83,10 @@ def insert(request, admin_id):
         return err
 
     index_id = str(uuid.uuid4())
-    now = timezone.localtime().replace(microsecond=0)
 
     errors = {}
 
-    # 手机号非空才校验
-    phone = _get_str(data, 'phone')
-    if phone and not is_call(phone):
-        errors['phone'] = [{'message': '请输入正确的手机号', 'code': 'invalid'}]
+
 
     # storeContent：兼容 dict / list / str
     raw_content = data.get('storeContent')
@@ -108,6 +104,8 @@ def insert(request, admin_id):
         return _json_error('参数校验失败', status=400, errors=errors)
 
     name   = _get_str(data, 'name')
+    time = _get_str(data, 'time')
+    phone = _get_str(data, 'phone')
     remark = _get_str(data, 'remark')
 
     logger.info(
@@ -122,7 +120,7 @@ def insert(request, admin_id):
                 index_id=index_id,
                 status=1,
                 content={
-                    'time':    now,
+                    'time':    time,
                     'name':    name,
                     'phone':   phone,
                     'remark':  remark,

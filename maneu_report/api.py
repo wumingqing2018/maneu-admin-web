@@ -116,21 +116,20 @@ def insert(request, admin_id):
         return err
 
     index_id = str(uuid.uuid4())
-    now = timezone.localtime().replace(microsecond=0)
 
     errors = {}
 
-    # 手机号非空才校验
+    name   = _get_str(data, 'name')
+    time = _get_str(data, 'time')
     phone = _get_str(data, 'phone')
-    if phone and not is_call(phone):
-        errors['phone'] = [{'message': '请输入正确的手机号', 'code': 'invalid'}]
+    remark = _get_str(data, 'remark')
 
     # 组装字段
     content = {
-        'time': now,
-        'name': _get_str(data, 'name'),
+        'time': time,
+        'name': name,
         'phone': phone,
-        'remark': _get_str(data, 'remark'),
+        'remark': remark,
         'sex': _get_str(data, 'sex'),  # ← 补
         'age': _get_str(data, 'age'),  # ← 补
         'ot': _get_str(data, 'ot'),  # ← 补
