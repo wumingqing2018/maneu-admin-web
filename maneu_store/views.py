@@ -8,7 +8,7 @@ def index(request):
 
 
 def insert(request):
-    return render(request, 'store_insert.html', {'time': time_now()})
+    return render(request, 'store_insert.html')
 
 
 def detail(request):

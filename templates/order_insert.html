@@ -236,7 +236,7 @@
                 <div class="col-md-4">
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-calendar"></i></span>
-                        <input type="datetime-local" class="form-control" id="time" value="{{ time }}">
+                        <input type="datetime-local" class="form-control" id="time" value="">
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -298,53 +298,65 @@
 
 
 {% block javascript %}
-    <script>
-        /* ============================================================
-           全局配置
-           ============================================================ */
-        const ORDER_INSERT_API = "{% url 'maneu_order:api_insert' %}";
+<script>
+    /* ============================================================
+       全局配置
+       ============================================================ */
+    const ORDER_INSERT_API = "{% url 'maneu_order:api_insert' %}";
+    const LOGIN_URL        = "{% url 'login' %}";
 
-        let isSubmitting = false;
+    let isSubmitting = false;
 
-        /* ============================================================
-           工具函数
-           ============================================================ */
-        function showError(msg) {
-            alert(msg || '操作失败');
+    /* ============================================================
+       工具函数
+       ============================================================ */
+    function showError(msg) {
+        alert(msg || '操作失败');
+    }
+
+    function setSubmitting(state) {
+        isSubmitting = state;
+        const $btn = $('#insertBtn');
+        if (state) {
+            $btn.prop('disabled', true).data('original-text', $btn.html());
+            $btn.html('<span class="spinner-border spinner-border-sm me-1"></span> 提交中...');
+        } else {
+            $btn.prop('disabled', false);
+            if ($btn.data('original-text')) $btn.html($btn.data('original-text'));
         }
+    }
 
-        function setSubmitting(state) {
-            isSubmitting = state;
-            const $btn = $('#insertBtn');
-            if (state) {
-                $btn.prop('disabled', true).data('original-text', $btn.html());
-                $btn.html('<span class="spinner-border spinner-border-sm me-1"></span> 提交中...');
-            } else {
-                $btn.prop('disabled', false);
-                if ($btn.data('original-text')) $btn.html($btn.data('original-text'));
-            }
-        }
+    function recalcTotal() {
+        let total = 0;
+        $('#productRowsContainer .product-row').each(function () {
+            const qty   = parseFloat($(this).find('.product-qty').val())   || 0;
+            const price = parseFloat($(this).find('.product-price').val()) || 0;
+            total += qty * price;
+        });
+        $('#totalAmount').text(total.toFixed(2));
+    }
 
-        function recalcTotal() {
-            let total = 0;
-            $('#productRowsContainer .product-row').each(function () {
-                const qty = parseFloat($(this).find('.product-qty').val()) || 0;
-                const price = parseFloat($(this).find('.product-price').val()) || 0;
-                total += qty * price;
-            });
-            $('#totalAmount').text(total.toFixed(2));
-        }
+    function toggleEmptyTip() {
+        const hasRow = $('#productRowsContainer .product-row').length > 0;
+        $('#emptyProducts').toggle(!hasRow);
+    }
 
-        function toggleEmptyTip() {
-            const hasRow = $('#productRowsContainer .product-row').length > 0;
-            $('#emptyProducts').toggle(!hasRow);
-        }
+    /**
+     * 获取当前时间，格式：YYYY-MM-DDTHH:mm（datetime-local 专用）
+     * 例：2026-10-26T15:30
+     */
+    function getNowForDatetimeLocal() {
+        const d = new Date();
+        const pad = n => String(n).padStart(2, '0');
+        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}` +
+               `T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
 
-        /* ============================================================
-           产品行模板
-           ============================================================ */
-        const ROW_TEMPLATES = {
-            frame: `
+    /* ============================================================
+       产品行模板
+       ============================================================ */
+    const ROW_TEMPLATES = {
+        frame: `
     <div class="product-row" data-item-type="frame">
       <span class="product-badge badge-frame">镜架</span>
       <input type="text" class="form-control product-brand"   placeholder="品牌（如 雷朋）" maxlength="50">
@@ -372,7 +384,7 @@
       <button type="button" class="btn-remove-row" title="删除">×</button>
     </div>
   `,
-            lens: `
+        lens: `
     <div class="product-row" data-item-type="lens">
       <span class="product-badge badge-lens">镜片</span>
       <select class="form-select product-side">
@@ -389,7 +401,7 @@
       <button type="button" class="btn-remove-row" title="删除">×</button>
     </div>
   `,
-            accessory: `
+        accessory: `
     <div class="product-row" data-item-type="accessory">
       <span class="product-badge badge-accessory">配件</span>
       <input type="text" class="form-control product-model"   placeholder="名称（如 硬壳镜盒）" maxlength="100">
@@ -399,7 +411,7 @@
       <button type="button" class="btn-remove-row" title="删除">×</button>
     </div>
   `,
-            service: `
+        service: `
     <div class="product-row" data-item-type="service">
       <span class="product-badge badge-service">服务</span>
       <input type="text" class="form-control product-model"   placeholder="名称（如 验光费）" maxlength="100">
@@ -409,256 +421,268 @@
       <button type="button" class="btn-remove-row" title="删除">×</button>
     </div>
   `
-        };
+    };
 
-        /* ============================================================
-           添加 / 删除产品行
-           ============================================================ */
-        function addProductRow(itemType) {
-            const tpl = ROW_TEMPLATES[itemType];
-            if (!tpl) return;
-            $('#productRowsContainer').append(tpl);
-            toggleEmptyTip();
-            recalcTotal();
+    /* ============================================================
+       添加 / 删除产品行
+       ============================================================ */
+    function addProductRow(itemType) {
+        const tpl = ROW_TEMPLATES[itemType];
+        if (!tpl) return;
+        $('#productRowsContainer').append(tpl);
+        toggleEmptyTip();
+        recalcTotal();
+    }
+
+    function removeProductRow($row) {
+        $row.remove();
+        toggleEmptyTip();
+        recalcTotal();
+    }
+
+    /* ============================================================
+       前端校验
+       ============================================================ */
+    function validateForm() {
+        if ($('#productRowsContainer .product-row').length === 0) {
+            showError('请至少添加 1 条产品信息');
+            return false;
         }
+        return true;
+    }
 
-        function removeProductRow($row) {
-            $row.remove();
-            toggleEmptyTip();
-            recalcTotal();
-        }
+    /* ============================================================
+       收集产品明细
+       ============================================================ */
+    function collectProducts() {
+        const products = [];
+        let hasError = false;
 
-        /* ============================================================
-           前端校验
-           ============================================================ */
-        function validateForm() {
-            if ($('#productRowsContainer .product-row').length === 0) {
-                showError('请至少添加 1 条产品信息');
+        $('#productRowsContainer .product-row').each(function (idx) {
+            const $row = $(this);
+            const itemType = $row.data('item-type');
+            const brand = ($row.find('.product-brand').val() || '').trim();
+            const model = ($row.find('.product-model').val() || '').trim();
+            const qty   = parseInt($row.find('.product-qty').val()) || 0;
+            const price = parseFloat($row.find('.product-price').val()) || 0;
+
+            // 全空行跳过
+            if (!brand && !model && !price) return;
+
+            // 类型专属校验
+            if (itemType === 'frame') {
+                if (!brand) {
+                    showError(`第 ${idx + 1} 行：镜架必须填品牌`);
+                    hasError = true;
+                    return false;
+                }
+                if (!model) {
+                    showError(`第 ${idx + 1} 行：镜架必须填型号`);
+                    hasError = true;
+                    return false;
+                }
+                const color = ($row.find('.product-color').val() || '').trim();
+                if (!color) {
+                    showError(`第 ${idx + 1} 行：镜架必须填颜色`);
+                    hasError = true;
+                    return false;
+                }
+            }
+            if (qty < 1) {
+                showError(`第 ${idx + 1} 行：数量必须 ≥ 1`);
+                hasError = true;
+                return false;
+            }
+            if (price < 0) {
+                showError(`第 ${idx + 1} 行：单价不能为负`);
+                hasError = true;
                 return false;
             }
 
-            return true;
-        }
-
-        /* ============================================================
-           收集产品明细
-           ============================================================ */
-        function collectProducts() {
-            const products = [];
-            let hasError = false;
-
-            $('#productRowsContainer .product-row').each(function (idx) {
-                const $row = $(this);
-                const itemType = $row.data('item-type');
-                const brand = ($row.find('.product-brand').val() || '').trim();
-                const model = ($row.find('.product-model').val() || '').trim();
-                const qty = parseInt($row.find('.product-qty').val()) || 0;
-                const price = parseFloat($row.find('.product-price').val()) || 0;
-
-                // 全空行跳过
-                if (!brand && !model && !price) return;
-
-                // 类型专属校验
-                if (itemType === 'frame') {
-                    if (!brand) {
-                        showError(`第 ${idx + 1} 行：镜架必须填品牌`);
-                        hasError = true;
-                        return false;
-                    }
-                    if (!model) {
-                        showError(`第 ${idx + 1} 行：镜架必须填型号`);
-                        hasError = true;
-                        return false;
-                    }
-                    const color = ($row.find('.product-color').val() || '').trim();
-                    if (!color) {
-                        showError(`第 ${idx + 1} 行：镜架必须填颜色`);
-                        hasError = true;
-                        return false;
-                    }
-                }
-                if (qty < 1) {
-                    showError(`第 ${idx + 1} 行：数量必须 ≥ 1`);
-                    hasError = true;
-                    return false;
-                }
-                if (price < 0) {
-                    showError(`第 ${idx + 1} 行：单价不能为负`);
-                    hasError = true;
-                    return false;
-                }
-
-                // 拼接 spec
-                let spec = '';
-                if (itemType === 'frame') {
-                    const frameType = $row.find('.product-frame-type').val() || '';
-                    const size = ($row.find('.product-size').val() || '').trim();
-                    spec = [frameType, size].filter(Boolean).join(' ');
-                } else {
-                    spec = ($row.find('.product-spec').val() || '').trim();
-                }
-
-                products.push({
-                    item_type: itemType,
-                    side: $row.find('.product-side').val() || '',
-                    brand: brand,
-                    model: model,
-                    color: ($row.find('.product-color').val() || '').trim(),
-                    material: $row.find('.product-material').val() || '',
-                    spec: spec,
-                    quantity: qty,
-                    unit_price: price,
-                    remark: ($row.find('.product-remark').val() || '').trim()
-                });
-            });
-
-            return hasError ? null : products;
-        }
-
-        /* ============================================================
-           提交订单
-           ============================================================ */
-        function submitOrder() {
-            if (isSubmitting) return;
-            if (!validateForm()) return;
-
-            const products = collectProducts();
-            if (products === null) return;
-            if (products.length === 0) {
-                showError('请至少添加 1 条有效产品');
-                return;
+            // 拼接 spec
+            let spec = '';
+            if (itemType === 'frame') {
+                const frameType = $row.find('.product-frame-type').val() || '';
+                const size      = ($row.find('.product-size').val() || '').trim();
+                spec = [frameType, size].filter(Boolean).join(' ');
+            } else {
+                spec = ($row.find('.product-spec').val() || '').trim();
             }
 
-            const requestData = {
-                time: $('#time').val(),
-                name: $('#name').val().trim(),
-                phone: $('#phone').val().trim(),
-                remark: $('#remark').val().trim(),
-                products: products
-            };
+            products.push({
+                item_type:  itemType,
+                side:       $row.find('.product-side').val() || '',
+                brand:      brand,
+                model:      model,
+                color:      ($row.find('.product-color').val() || '').trim(),
+                material:   $row.find('.product-material').val() || '',
+                spec:       spec,
+                quantity:   qty,
+                unit_price: price,
+                remark:     ($row.find('.product-remark').val() || '').trim()
+            });
+        });
 
-            setSubmitting(true);
+        return hasError ? null : products;
+    }
 
-            $.ajax({
-                url: ORDER_INSERT_API,
-                method: 'POST',
-                contentType: 'application/json',
-                dataType: 'json',
-                data: JSON.stringify(requestData),
-                success: function (res) {
-                    setSubmitting(false);
+    /* ============================================================
+       提交订单
+       ============================================================ */
+    function submitOrder() {
+        if (isSubmitting) return;
+        if (!validateForm()) return;
 
-                    if (res.status === true) {
-                        alert(`提交成功！总金额：¥${res.content.total_amount}`);
-                        resetForm();
-                    } else if (res.errors) {
-                        showFieldErrors(res.errors);
-                    } else {
-                        showError(res.message || '提交失败');
-                    }
-                },
-                error: function (xhr) {
-                    setSubmitting(false);
+        const products = collectProducts();
+        if (products === null) return;
+        if (products.length === 0) {
+            showError('请至少添加 1 条有效产品');
+            return;
+        }
 
-                    if (xhr.status === 401) {
-                        alert('请先登录');
-                        location.href = '/login/';
+        const requestData = {
+            time:     $('#time').val(),          // ← "2026-10-26T15:30"
+            name:     $('#name').val().trim(),
+            phone:    $('#phone').val().trim(),
+            remark:   $('#remark').val().trim(),
+            products: products
+        };
+
+        setSubmitting(true);
+
+        $.ajax({
+            url: ORDER_INSERT_API,
+            method: 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(requestData),
+            success: function (res) {
+                setSubmitting(false);
+
+                if (res && res.status === true) {
+                    const total = $('#totalAmount').text() || '0.00';
+                    alert(`提交成功！总金额：¥${total}`);
+                    resetForm();
+                } else if (res && res.errors) {
+                    showFieldErrors(res.errors);
+                } else {
+                    showError((res && res.message) || '提交失败');
+                }
+            },
+            error: function (xhr) {
+                setSubmitting(false);
+
+                if (xhr.status === 401) {
+                    alert('登录已过期，请重新登录');
+                    setTimeout(function () { location.href = LOGIN_URL; }, 500);
+                    return;
+                }
+
+                try {
+                    const err = JSON.parse(xhr.responseText);
+                    if (err.errors) {
+                        showFieldErrors(err.errors);
                         return;
                     }
-
-                    try {
-                        const err = JSON.parse(xhr.responseText);
-                        if (err.errors) {
-                            showFieldErrors(err.errors);
-                            return;
-                        }
-                        showError(err.message || '网络错误');
-                    } catch (e) {
-                        showError('网络错误，请稍后重试');
-                    }
+                    showError(err.message || '网络错误');
+                } catch (e) {
+                    showError('网络错误，请稍后重试');
                 }
-            });
-        }
-
-        /* ============================================================
-           字段级错误展示
-           ============================================================ */
-        function showFieldErrors(errors) {
-            $('.field-error').remove();
-            $('#productRowsContainer .product-row').removeClass('has-error');
-
-            const fieldMap = {
-                name: '#name', phone: '#phone'
-            };
-            const allMsgs = [];
-
-            ['order', 'report', 'guest'].forEach(function (k) {
-                const fm = errors[k] || {};
-                Object.keys(fm).forEach(function (field) {
-                    const msg = (fm[field][0] && fm[field][0].message) || '格式错误';
-                    allMsgs.push(msg);
-                    const $el = $(fieldMap[field]);
-                    if ($el.length) {
-                        $el.after(`<div class="field-error">${msg}</div>`);
-                    }
-                });
-            });
-
-            if (Array.isArray(errors.products)) {
-                errors.products.forEach(function (item) {
-                    const $row = $('#productRowsContainer .product-row').eq(item.index);
-                    $row.addClass('has-error');
-                    Object.keys(item.errors).forEach(function (f) {
-                        const msg = (item.errors[f][0] && item.errors[f][0].message) || '格式错误';
-                        allMsgs.push(`第 ${item.index + 1} 行：${msg}`);
-                    });
-                });
             }
-
-            if (allMsgs.length) showError(allMsgs[0]);
-        }
-
-        /* ============================================================
-           重置表单
-           ============================================================ */
-        function resetForm() {
-            $('#guestSection input, #guestSection select').val('');
-            $('#productRowsContainer').empty();
-            toggleEmptyTip();
-            recalcTotal();
-            $('#name').focus();
-        }
-
-        /* ============================================================
-           页面初始化
-           ============================================================ */
-        $(function () {
-            // 添加产品按钮
-            $('.add-btn-group button[data-add-type]').on('click', function () {
-                addProductRow($(this).data('add-type'));
-            });
-
-            // 删除产品行（事件委托）
-            $('#productRowsContainer').on('click', '.btn-remove-row', function () {
-                removeProductRow($(this).closest('.product-row'));
-            });
-
-            // 数量 / 单价变化自动更新合计
-            $('#productRowsContainer').on('input', '.product-qty, .product-price', recalcTotal);
-
-            // 提交按钮
-            $('#insertBtn').on('click', submitOrder);
-
-            // 回车快速提交
-            $('#guestSection input').on('keypress', function (e) {
-                if (e.which === 13) {
-                    e.preventDefault();
-                    submitOrder();
-                }
-            });
-
-            // 初始状态
-            toggleEmptyTip();
         });
-    </script>
+    }
+
+    /* ============================================================
+       字段级错误展示
+       ============================================================ */
+    function showFieldErrors(errors) {
+        $('.field-error').remove();
+        $('#productRowsContainer .product-row').removeClass('has-error');
+
+        const fieldMap = {
+            name:  '#name',
+            phone: '#phone',
+            time:  '#time',
+        };
+        const allMsgs = [];
+
+        Object.keys(errors || {}).forEach(function (field) {
+            if (field === 'products') return;
+
+            const arr = errors[field];
+            if (!Array.isArray(arr) || arr.length === 0) return;
+
+            arr.forEach(function (e) {
+                allMsgs.push(e.message || '格式错误');
+            });
+
+            const msg = (arr[0] && arr[0].message) || '格式错误';
+            const $el = $(fieldMap[field]);
+            if ($el.length) {
+                $el.after(`<div class="field-error">${msg}</div>`);
+            }
+        });
+
+        if (Array.isArray(errors.products)) {
+            errors.products.forEach(function (item) {
+                const $row = $('#productRowsContainer .product-row').eq(item.index);
+                $row.addClass('has-error');
+                allMsgs.push(item.message || `第 ${(item.index || 0) + 1} 行：格式错误`);
+            });
+        }
+
+        if (allMsgs.length) showError(allMsgs[0]);
+    }
+
+    /* ============================================================
+       重置表单
+       ============================================================ */
+    function resetForm() {
+        $('#name, #phone, #remark').val('');
+        $('#time').val(getNowForDatetimeLocal());   // 重置后重新填当前时间
+        $('#productRowsContainer').empty();
+        toggleEmptyTip();
+        recalcTotal();
+        $('#name').focus();
+    }
+
+    /* ============================================================
+       页面初始化
+       ============================================================ */
+    $(function () {
+        // 时间：默认当前，限制不能选未来
+        const $time = $('#time');
+        const nowStr = getNowForDatetimeLocal();
+        $time.attr('max', nowStr);
+        $time.val(nowStr);
+
+        // 添加产品按钮
+        $('.add-btn-group button[data-add-type]').on('click', function () {
+            addProductRow($(this).data('add-type'));
+        });
+
+        // 删除产品行（事件委托）
+        $('#productRowsContainer').on('click', '.btn-remove-row', function () {
+            removeProductRow($(this).closest('.product-row'));
+        });
+
+        // 数量 / 单价变化自动更新合计
+        $('#productRowsContainer').on('input', '.product-qty, .product-price', recalcTotal);
+
+        // 提交按钮
+        $('#insertBtn').on('click', submitOrder);
+
+        // 回车快速提交
+        $('#guestSection input').on('keypress', function (e) {
+            if (e.which === 13) {
+                e.preventDefault();
+                submitOrder();
+            }
+        });
+
+        // 初始状态
+        toggleEmptyTip();
+        recalcTotal();
+    });
+</script>
 {% endblock %}

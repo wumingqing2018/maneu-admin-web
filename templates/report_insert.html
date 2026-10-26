@@ -3,7 +3,281 @@
 {% load static %}
 
 {% block css %}
-    <link href="{% static 'css/maneu_report/insert20261024.css' %}" rel="stylesheet">
+    <style>
+    /* ========== 新增验光报告页样式 ========== */
+/* 本页专用阴影（仅卡片悬停时使用，不覆盖全局 --shadow-md） */
+:root {
+    --card-hover-shadow: 0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+/* ========== 页面头部 ========== */
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.page-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--brand-color);
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+}
+
+.page-title i {
+    font-size: 2rem;
+    color: var(--brand-accent);
+}
+
+.section-card {
+    background: var(--bg-surface); /* 原 --store-surface */
+    border: 1px solid var(--border-subtle); /* 原 --store-border */
+    border-radius: var(--radius-md); /* 原 --store-radius */
+    padding: 1.5rem;
+    /* 保留原柔和阴影 */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
+    margin-bottom: 1.5rem;
+}
+
+.section-card:hover {
+    box-shadow: var(--shadow-md); /* 使用 base 的阴影，悬停稍强 */
+}
+
+.section-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--brand-color);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    letter-spacing: 0.02em;
+    border-bottom: 2px solid var(--brand-color-pale);
+    padding-bottom: 0.6rem;
+}
+
+.section-title i {
+    font-size: 1.3rem;
+    color: var(--brand-accent);
+}
+
+.btn-back-page {
+    border-radius: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 500;
+}
+
+.action-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .action-bar {
+        flex-direction: column;
+    }
+
+    .action-bar .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .section-card {
+        padding: 1rem 0.8rem;
+    }
+}
+
+.btn-toggle {
+    background: transparent;
+    border: 1px solid var(--border-subtle); /* 原 --store-border */
+    color: var(--text-secondary); /* 原 --store-muted */
+    font-size: 0.85rem;
+    padding: 0.35rem 0.9rem;
+    border-radius: 2rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.btn-toggle:hover {
+    background: var(--brand-color-pale);
+    border-color: var(--brand-color);
+    color: var(--brand-color);
+}
+
+.product-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.8rem;
+}
+
+.product-row input {
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 0.45rem 0.75rem;
+    font-size: 0.9rem;
+}
+
+.product-row input:focus {
+    border-color: var(--brand-accent);
+    box-shadow: 0 0 0 0.15rem rgba(255, 193, 7, 0.15);
+}
+
+.product-cat {
+    flex: 1;
+}
+
+.product-brand {
+    flex: 1;
+}
+
+.product-model {
+    flex: 1;
+}
+
+.product-param {
+    flex: 2.5;
+}
+
+.product-price {
+    flex: 0.8;
+}
+
+@media (max-width: 768px) {
+    .product-row {
+        flex-wrap: wrap;
+    }
+
+    .product-cat, .product-brand, .product-model, .product-price {
+        flex: 1 1 45%;
+    }
+
+    .product-param {
+        flex: 1 1 100%;
+    }
+}
+
+/* ============================================================
+   处方表格（OD/OS 并排）
+   ============================================================ */
+.rx-group-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #0071e3;
+    margin: 18px 0 10px;
+    padding-left: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.rx-group-title::before {
+    content: '';
+    width: 3px;
+    height: 14px;
+    background: #0071e3;
+    border-radius: 2px;
+}
+
+.rx-group-title:first-child {
+    margin-top: 4px;
+}
+
+.rx-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 6px;
+}
+
+.rx-table thead th {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7280;
+    padding: 6px 12px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+    letter-spacing: 0.3px;
+}
+
+.rx-table thead th:nth-child(1) {
+    width: 30%;
+}
+
+.rx-table thead th:nth-child(2),
+.rx-table thead th:nth-child(3) {
+    width: 35%;
+}
+
+.rx-table tbody td {
+    padding: 3px 8px;
+    vertical-align: middle;
+}
+
+.rx-table tbody td:first-child {
+    font-size: 14px;
+    color: #374151;
+    font-weight: 500;
+    padding-left: 12px;
+}
+
+.rx-table .form-control {
+    height: 40px;
+    font-size: 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #f9fafb;
+    transition: all .2s;
+}
+
+.rx-table .form-control:focus {
+    border-color: #0071e3;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.1);
+}
+
+.eye-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 4px;
+    letter-spacing: 0.3px;
+}
+
+.eye-badge--od {
+    background: rgba(0, 113, 227, .1);
+    color: #0071e3;
+}
+
+.eye-badge--os {
+    background: rgba(88, 86, 214, .1);
+    color: #5856d6;
+}
+
+.rx-table tbody tr:hover .form-control {
+    background: #fff;
+}
+
+#reportExtra {
+    padding-top: 8px;
+}
+    </style>
 {% endblock %}
 
 {% block content %}
@@ -31,7 +305,7 @@
                 <div class="col-md-4">
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-calendar"></i></span>
-                        <input type="text" class="form-control" id="time" value="{{ time }}" readonly placeholder="自动获取">
+                        <input type="datetime-local" class="form-control" id="time">
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -224,23 +498,14 @@
     </div>
 {% endblock %}
 
+
 {% block javascript %}
-    <!-- 后端 URL（Django 模板渲染，无法放进静态 JS 文件） -->
     <script>
         window.REPORT_INSERT_API = "{% url 'maneu_report:api_insert' %}";
         window.REPORT_LIST_URL   = "{% url 'maneu_report:index' %}";
     </script>
 
-    <!-- 页面逻辑（只有一份！） -->
     <script>
-    /**
-     * 新增验光报告页
-     * 职责：
-     *   1. 折叠面板交互
-     *   2. 收集表单字段为扁平对象
-     *   3. 以 JSON 格式 POST 到后端
-     *   4. 防重复提交、错误提示、登录态检查
-     */
     (function () {
         'use strict';
 
@@ -248,25 +513,25 @@
         // 工具
         // ============================================================
 
-        /**
-         * 读取指定 id 的输入值（自动 trim）
-         * @param {string} id 元素 id
-         * @returns {string}
-         */
         function val(id) {
             return ($('#' + id).val() || '').trim();
         }
 
         /**
-         * 绑定折叠面板按钮
-         * @param {string} btnId   触发按钮 id
-         * @param {string} panelId 折叠面板 id
+         * 获取当前时间，格式：YYYY-MM-DDTHH:mm（datetime-local 专用）
+         * 例：2026-10-26T15:30
          */
+        function getNowForDatetimeLocal() {
+            var d = new Date();
+            var pad = function (n) { return String(n).padStart(2, '0'); };
+            return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) +
+                   'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+        }
+
         function setupToggle(btnId, panelId) {
             var $btn = $('#' + btnId);
             var $panel = $('#' + panelId);
-
-            if (!$btn.length || !$panel.length) return;   // 元素不存在则跳过
+            if (!$btn.length || !$panel.length) return;
 
             $btn.on('click', function () {
                 $panel.slideToggle(200);
@@ -275,15 +540,14 @@
         }
 
         // ============================================================
-        // 数据收集（扁平结构，key 与后端字段一致）
+        // 数据收集
         // ============================================================
 
-        /**
-         * 从页面收集所有字段，返回扁平对象
-         * @returns {Object}
-         */
         function collectData() {
             return {
+                // ---------- 录入时间（前端传） ----------
+                time:   $('#time').val(),      // ← "2026-10-26T15:30"
+
                 // ---------- 客户信息 ----------
                 name:   val('name'),
                 phone:  val('phone'),
@@ -337,17 +601,12 @@
 
         var isSubmitting = false;
 
-        /**
-         * 提交表单
-         */
         function submit() {
-            // 防重复提交
             if (isSubmitting) return;
 
             var payload = collectData();
             console.log('[report/insert] payload =', payload);
 
-            // 登录态检查
             var token = localStorage.getItem('access_token') || '';
             if (!token) {
                 alert('请先登录');
@@ -357,7 +616,6 @@
             var $btn = $('#submitReport');
             var originalText = $btn.html();
 
-            // 按钮 loading
             isSubmitting = true;
             $btn.prop('disabled', true)
                 .html('<span class="spinner-border spinner-border-sm me-1"></span>提交中...');
@@ -388,7 +646,7 @@
                         try {
                             var data = JSON.parse(xhr.responseText);
                             msg = data.message || msg;
-                        } catch (e) { /* 忽略解析失败 */ }
+                        } catch (e) {}
                     }
 
                     alert(msg);
@@ -404,6 +662,12 @@
         // 初始化
         // ============================================================
         $(function () {
+            // 初始化当前时间 + 限制不能选未来
+            var $time = $('#time');
+            var nowStr = getNowForDatetimeLocal();
+            $time.attr('max', nowStr);   // 不能选未来
+            $time.val(nowStr);           // 默认现在
+
             setupToggle('toggleReport', 'reportExtra');
             $('#submitReport').on('click', submit);
         });
