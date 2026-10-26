@@ -1,10 +1,6 @@
-/* ========== 订单新增页专属样式 ========== */
-/* 本页专用阴影（仅卡片悬停时使用，不覆盖全局 --shadow-md） */
-:root {
-    --card-hover-shadow: 0 8px 20px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.04);
-}
-
-/* ========== 页面头部 ========== */
+/* ==========================================================================
+   页面头部
+   ========================================================================== */
 .page-header {
     display: flex;
     align-items: center;
@@ -30,23 +26,20 @@
     color: var(--brand-accent);
 }
 
-
-.page-wrapper {
-    padding: 0 0.5rem;
-}
-
+/* ==========================================================================
+   卡片
+   ========================================================================== */
 .section-card {
-    background: var(--bg-surface); /* 原 --store-surface → 与 base 一致 */
-    border: 1px solid var(--border-subtle); /* 原 --store-border → 与 base 一致 */
-    border-radius: var(--radius-md); /* 原 --store-radius → 与 base 一致 */
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
     padding: 1.5rem;
-    /* 阴影需比 base 的 --shadow-md 略柔和，保留局部定义 */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
     margin-bottom: 1.5rem;
 }
 
 .section-card:hover {
-    box-shadow: var(--shadow-md); /* 悬停时与 base 统一即可 */
+    box-shadow: var(--shadow-md);
 }
 
 .section-title {
@@ -56,6 +49,7 @@
     margin-bottom: 1rem;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 0.5rem;
     letter-spacing: 0.02em;
     border-bottom: 2px solid var(--brand-color-pale);
@@ -64,17 +58,12 @@
 
 .section-title i {
     font-size: 1.3rem;
-    color: var(--brand-accent); /* 原 --store-accent 与 base 的 --brand-accent 相同 */
+    color: var(--brand-accent);
 }
 
-.btn-back-page {
-    border-radius: 2rem;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    font-weight: 500;
-}
-
+/* ==========================================================================
+   操作栏
+   ========================================================================== */
 .action-bar {
     display: flex;
     flex-wrap: wrap;
@@ -82,13 +71,199 @@
     margin-top: 0.5rem;
 }
 
-/* 响应式调整 */
+/* ==========================================================================
+   按钮
+   ========================================================================== */
+.btn-back {
+    background: transparent;
+    border: 1.5px solid var(--border-subtle);
+    color: var(--text-primary);
+    font-weight: 600;
+    padding: 0.55rem 1.4rem;
+    border-radius: 2rem;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    text-decoration: none;
+}
+
+.btn-back:hover {
+    background: var(--brand-color-pale);
+    border-color: var(--brand-color);
+    color: var(--brand-color);
+    transform: translateY(-1px);
+}
+
+.btn-save {
+    background: var(--brand-color);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    padding: 0.55rem 1.3rem;
+    border-radius: 2rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-save:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.btn-save:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn-add {
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    font-weight: 600;
+    padding: 0.5rem 1.1rem;
+    border-radius: 2rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.btn-add:hover {
+    background: var(--brand-color-pale);
+    border-color: var(--brand-color);
+    color: var(--brand-color);
+}
+
+/* ==========================================================================
+   产品行
+   ========================================================================== */
+.add-btn-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+#productRowsContainer {
+    margin-top: 0.5rem;
+}
+
+.product-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #eef0f3;
+}
+
+.product-row:last-child {
+    border-bottom: none;
+}
+
+.product-row.has-error {
+    background: #fff3f3;
+}
+
+.product-badge {
+    display: inline-block;
+    min-width: 56px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 999px;
+    text-align: center;
+    color: #fff;
+}
+
+.badge-frame {
+    background: #0071E3;
+}
+
+.badge-lens {
+    background: #5856D6;
+}
+
+.badge-accessory {
+    background: #FF9500;
+}
+
+.badge-service {
+    background: #34C759;
+}
+
+.product-row input,
+.product-row select {
+    flex: 1 1 100px;
+    min-width: 80px;
+    max-width: 160px;
+    min-height: 38px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.product-qty {
+    flex: 0 0 70px;
+}
+
+.product-price {
+    flex: 0 0 100px;
+}
+
+.btn-remove-row {
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    border: 1px solid #0071E3;
+    border-radius: 2rem;
+    background: #fff;
+    color: #0071E3;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.btn-remove-row:hover {
+    background: #0071E3;
+    color: #fff;
+}
+
+.empty-products {
+    text-align: center;
+    color: #6b7280;
+    padding: 1rem 0;
+    font-size: 0.9rem;
+}
+
+/* ==========================================================================
+   字段级错误
+   ========================================================================== */
+.field-error {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.8rem;
+    color: #dc3545;
+}
+
+/* ==========================================================================
+   响应式
+   ========================================================================== */
 @media (max-width: 768px) {
-    .action-bar {
+    .action-bar,
+    .add-btn-group {
         flex-direction: column;
     }
 
-    .action-bar .btn {
+    .action-bar button,
+    .add-btn-group button {
         width: 100%;
         justify-content: center;
     }
@@ -99,85 +274,3 @@
         padding: 1rem 0.8rem;
     }
 }
-
-@keyframes highlightFade {
-    0% {
-        background-color: var(--brand-color-pale);
-    }
-    100% {
-        background-color: transparent;
-    }
-}
-
-.btn-toggle {
-    background: transparent;
-    border: 1px solid var(--border-subtle); /* 原 --store-border */
-    color: var(--text-secondary); /* 原 --store-muted */
-    font-size: 0.85rem;
-    padding: 0.35rem 0.9rem;
-    border-radius: 2rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    cursor: pointer;
-    transition: all 0.15s;
-}
-
-.btn-toggle:hover {
-    background: var(--brand-color-pale);
-    border-color: var(--brand-color);
-    color: var(--brand-color);
-}
-
-.product-row {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 0.8rem;
-}
-
-.product-row input {
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-md);
-    padding: 0.45rem 0.75rem;
-    font-size: 0.9rem;
-}
-
-.product-row input:focus {
-    border-color: var(--brand-accent);
-    box-shadow: 0 0 0 0.15rem rgba(255, 193, 7, 0.15);
-}
-
-.product-cat {
-    flex: 1;
-}
-
-.product-brand {
-    flex: 1;
-}
-
-.product-model {
-    flex: 1;
-}
-
-.product-param {
-    flex: 2.5;
-}
-
-.product-price {
-    flex: 0.8;
-}
-
-@media (max-width: 768px) {
-    .product-row {
-        flex-wrap: wrap;
-    }
-
-    .product-cat, .product-brand, .product-model, .product-price {
-        flex: 1 1 45%;
-    }
-
-    .product-param {
-        flex: 1 1 100%;
-    }
-}
-    
