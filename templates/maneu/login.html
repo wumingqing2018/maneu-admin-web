@@ -218,5 +218,17 @@
     });
 </script>
 </body>
+<script>
+    // ========================================================================
+    // API 端点（Django 反向解析）
+    // ========================================================================
+    const sendsmsUrl  = "{% url 'sendsms' %}";
+    const loginApiUrl = "{% url 'test_login' %}";
+    const refreshUrl  = "{% url 'refresh_token' %}";
+    const redirectUrl = "{% url 'maneu_order:index' %}";
+
+</script>
+
+<script src="{% static 'javascript/maneu/login.js' %}"></script>
 </html>
 {#123#}

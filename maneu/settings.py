@@ -192,7 +192,7 @@ JWT_CONFIG = {
     'ISSUER': 'maneu',
 
     # Token 有效期（秒）
-    'ACCESS_TOKEN_LIFETIME':  60 * 60,             # 1 小时
+    'ACCESS_TOKEN_LIFETIME':  30,             # 1 小时
     'REFRESH_TOKEN_LIFETIME': 60 * 60 * 24 * 7,    # 7 天
 
     # 请求头格式：Authorization: Bearer <token>

@@ -99,176 +99,174 @@
         window.STORE_LIST_URL   = "{% url 'maneu_store:index' %}";
     </script>
     <script>
-    (function () {
-        'use strict';
+        (function () {
+            // ============================================================
+            // 工具
+            // ============================================================
 
-        // ============================================================
-        // 工具
-        // ============================================================
+            function val(id) {
+                return ($('#' + id).val() || '').trim();
+            }
 
-        function val(id) {
-            return ($('#' + id).val() || '').trim();
-        }
+            function getToken() {
+                return localStorage.getItem('access_token') || '';
+            }
 
-        function getToken() {
-            return localStorage.getItem('access_token') || '';
-        }
+            function showError(msg) {
+                alert(msg || '操作失败，请稍后重试');
+            }
 
-        function showError(msg) {
-            alert(msg || '操作失败，请稍后重试');
-        }
+            /**
+             * 获取当前时间，格式：YYYY-MM-DDTHH:mm（datetime-local 专用）
+             * 例：2026-10-26T15:30
+             */
+            function getNowForDatetimeLocal() {
+                var d = new Date();
+                var pad = function (n) { return String(n).padStart(2, '0'); };
+                return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) +
+                    'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+            }
 
-        /**
-         * 获取当前时间，格式：YYYY-MM-DDTHH:mm（datetime-local 专用）
-         * 例：2026-10-26T15:30
-         */
-        function getNowForDatetimeLocal() {
-            var d = new Date();
-            var pad = function (n) { return String(n).padStart(2, '0'); };
-            return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) +
-                   'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
-        }
+            function setupToggle(btnId, panelId) {
+                var $btn = $('#' + btnId);
+                var $panel = $('#' + panelId);
+                if (!$btn.length || !$panel.length) return;
 
-        function setupToggle(btnId, panelId) {
-            var $btn = $('#' + btnId);
-            var $panel = $('#' + panelId);
-            if (!$btn.length || !$panel.length) return;
+                $btn.on('click', function () {
+                    $panel.slideToggle(200);
+                    $btn.find('i').toggleClass('bi-chevron-down bi-chevron-up');
+                });
+            }
 
-            $btn.on('click', function () {
-                $panel.slideToggle(200);
-                $btn.find('i').toggleClass('bi-chevron-down bi-chevron-up');
-            });
-        }
+            // ============================================================
+            // 收集产品参数
+            // ============================================================
 
-        // ============================================================
-        // 收集产品参数
-        // ============================================================
+            function collectStoreContent() {
+                var keys = [];
+                var obj = {};
 
-        function collectStoreContent() {
-            var keys = [];
-            var obj = {};
+                for (var i = 1; i <= 12; i++) {
+                    var key = val('key' + i);
+                    var v   = val('val' + i);
 
-            for (var i = 1; i <= 12; i++) {
-                var key = val('key' + i);
-                var v   = val('val' + i);
+                    if (!key) continue;
 
-                if (!key) continue;
+                    if (keys.indexOf(key) !== -1) {
+                        showError('产品参数名「' + key + '」重复，请修改后再提交');
+                        return null;
+                    }
 
-                if (keys.indexOf(key) !== -1) {
-                    showError('产品参数名「' + key + '」重复，请修改后再提交');
+                    keys.push(key);
+                    obj[key] = v;
+                }
+
+                if (keys.length === 0) {
+                    showError('请至少填写一组产品参数');
                     return null;
                 }
 
-                keys.push(key);
-                obj[key] = v;
+                return JSON.stringify([obj]);
             }
 
-            if (keys.length === 0) {
-                showError('请至少填写一组产品参数');
-                return null;
-            }
+            // ============================================================
+            // 提交
+            // ============================================================
 
-            return JSON.stringify([obj]);
-        }
+            var isSubmitting = false;
 
-        // ============================================================
-        // 提交
-        // ============================================================
+            function submitOrder() {
+                if (isSubmitting) return;
 
-        var isSubmitting = false;
+                var storeContent = collectStoreContent();
+                if (storeContent === null) return;
 
-        function submitOrder() {
-            if (isSubmitting) return;
+                var payload = {
+                    time:         $('#time').val(),          // ← "2026-10-26T15:30"
+                    name:         val('name'),
+                    phone:        val('phone'),
+                    remark:       val('remark'),
+                    storeContent: storeContent,
+                };
 
-            var storeContent = collectStoreContent();
-            if (storeContent === null) return;
+                console.log('[store/insert] payload =', payload);
 
-            var payload = {
-                time:         $('#time').val(),          // ← "2026-10-26T15:30"
-                name:         val('name'),
-                phone:        val('phone'),
-                remark:       val('remark'),
-                storeContent: storeContent,
-            };
-
-            console.log('[store/insert] payload =', payload);
-
-            var token = getToken();
-            if (!token) {
-                alert('请先登录');
-                return;
-            }
-
-            var $btn = $('#submitOrderBtn');
-            var originalText = $btn.html();
-
-            isSubmitting = true;
-            $btn.prop('disabled', true)
-                .html('<span class="spinner-border spinner-border-sm me-1"></span>提交中...');
-
-            $.ajax({
-                url: window.STORE_INSERT_API,
-                method: 'POST',
-                contentType: 'application/json',
-                headers: {
-                    'Authorization': 'Bearer ' + token,
-                },
-                data: JSON.stringify(payload),
-                dataType: 'json',
-                success: function (res) {
-                    if (res && res.status === true) {
-                        alert('提交成功');
-                        location.href = window.STORE_LIST_URL || '/';
-                    } else if (res && res.errors) {
-                        var msgs = [];
-                        Object.keys(res.errors).forEach(function (k) {
-                            (res.errors[k] || []).forEach(function (e) {
-                                msgs.push(e.message);
-                            });
-                        });
-                        showError(msgs.length ? msgs.join('\n') : (res.message || '提交失败'));
-                    } else {
-                        showError((res && res.message) || '提交失败');
-                    }
-                },
-                error: function (xhr) {
-                    if (xhr.status === 401) {
-                        showError('登录已过期，请重新登录');
-                        return;
-                    }
-                    var msg = '网络错误，请稍后重试';
-                    try {
-                        var data = JSON.parse(xhr.responseText);
-                        msg = data.message || msg;
-                    } catch (e) {}
-                    showError(msg);
-                },
-                complete: function () {
-                    isSubmitting = false;
-                    $btn.prop('disabled', false).html(originalText);
-                },
-            });
-        }
-
-        // ============================================================
-        // 初始化
-        // ============================================================
-
-        $(function () {
-            $('#time').val(getNowForDatetimeLocal());
-
-            setupToggle('toggleProduct', 'productExtra');
-
-            $('#submitOrderBtn').on('click', submitOrder);
-
-            $('#guestSection input, #storeSection input').on('keypress', function (e) {
-                if (e.which === 13) {
-                    e.preventDefault();
-                    submitOrder();
+                var token = getToken();
+                if (!token) {
+                    alert('请先登录');
+                    return;
                 }
-            });
-        });
 
-    })();
+                var $btn = $('#submitOrderBtn');
+                var originalText = $btn.html();
+
+                isSubmitting = true;
+                $btn.prop('disabled', true)
+                    .html('<span class="spinner-border spinner-border-sm me-1"></span>提交中...');
+
+                $.ajax({
+                    url: window.STORE_INSERT_API,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                    },
+                    data: JSON.stringify(payload),
+                    dataType: 'json',
+                    success: function (res) {
+                        if (res && res.status === true) {
+                            alert('提交成功');
+                            location.href = window.STORE_LIST_URL || '/';
+                        } else if (res && res.errors) {
+                            var msgs = [];
+                            Object.keys(res.errors).forEach(function (k) {
+                                (res.errors[k] || []).forEach(function (e) {
+                                    msgs.push(e.message);
+                                });
+                            });
+                            showError(msgs.length ? msgs.join('\n') : (res.message || '提交失败'));
+                        } else {
+                            showError((res && res.message) || '提交失败');
+                        }
+                    },
+                    error: function (xhr) {
+                        if (xhr.status === 401) {
+                            showError('登录已过期，请重新登录');
+                            return;
+                        }
+                        var msg = '网络错误，请稍后重试';
+                        try {
+                            var data = JSON.parse(xhr.responseText);
+                            msg = data.message || msg;
+                        } catch (e) {}
+                        showError(msg);
+                    },
+                    complete: function () {
+                        isSubmitting = false;
+                        $btn.prop('disabled', false).html(originalText);
+                    },
+                });
+            }
+
+            // ============================================================
+            // 初始化
+            // ============================================================
+
+            $(function () {
+                $('#time').val(getNowForDatetimeLocal());
+
+                setupToggle('toggleProduct', 'productExtra');
+
+                $('#submitOrderBtn').on('click', submitOrder);
+
+                $('#guestSection input, #storeSection input').on('keypress', function (e) {
+                    if (e.which === 13) {
+                        e.preventDefault();
+                        submitOrder();
+                    }
+                });
+            });
+
+        })();
     </script>
 {% endblock %}
