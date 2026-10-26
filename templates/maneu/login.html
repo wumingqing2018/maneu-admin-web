@@ -57,11 +57,12 @@
 
 </body>
 <script>
+
     // ========================================================================
     // API 端点（Django 反向解析）
     // ========================================================================
     const sendsmsUrl  = "{% url 'sendsms' %}";
-    const loginApiUrl = "{% url 'test_login' %}";
+    const loginApiUrl = "{% url 'access_token' %}";
     const refreshUrl  = "{% url 'refresh_token' %}";
     const redirectUrl = "{% url 'maneu_order:index' %}";
 
