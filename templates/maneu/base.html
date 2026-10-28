@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>徕可 · 管理平台</title>
+    <title>徕可视光 · 管理平台</title>
 
     <!-- ==================== 网站图标 ==================== -->
     <!-- 使用 SVG 矢量图标，支持现代浏览器 -->
@@ -166,11 +166,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js"></script>
 <!-- Bootstrap 5.3.8 核心 JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.min.js"></script>
-
 <!-- 项目全局自定义脚本（基础交互：下拉菜单、移动端菜单等） -->
-<script src="{% static 'javascript/maneu/util_base.js' %}"></script>
 <script src="{% static 'javascript/maneu/util_jwt.js' %}"></script>
-
+<script src="{% static 'javascript/maneu/util_base.js' %}"></script>
 <!-- 子页面专属 JavaScript 块，由子模板覆写 -->
 {% block javascript %}{% endblock %}
 </body>
