@@ -228,16 +228,11 @@ def update(request, admin_id, index_id):
 
     errors = {}
 
-    # 手机号非空才校验
-    phone = _get_str(data, 'phone')
-    if phone and not is_call(phone):
-        errors['phone'] = [{'message': '请输入正确的手机号', 'code': 'invalid'}]
-
     # 只取实际提供的字段（没传的不更新）
     update_content = {}
 
     # 文本字段
-    for key in ('name', 'phone', 'remark', 'sex', 'age', 'ot', 'em', 'dfh'):
+    for key in ('name', 'time', 'phone', 'remark', 'sex', 'age', 'ot', 'em', 'dfh'):
         if key in data:
             update_content[key] = _get_str(data, key)
 

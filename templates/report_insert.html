@@ -1,30 +1,12 @@
 {% extends 'maneu/base.html' %}
 {% load static %}
 
-{% comment %}
-================================================================================
-验光报告 - 新增页
-================================================================================
-功能：
-  - 填写客户信息 / 报告基础信息 / 处方明细
-  - 提交创建一条验光报告
-
-依赖：
-  - jQuery 3.x
-  - Bootstrap 5（含 Icons）
-  - base.html 中定义的 <datalist>（sexList / PD1 / CYL_SPH / AX / VA / AL / AK / AD / CCT / LT / VT / otList / emList / dfhList）
-================================================================================
-{% endcomment %}
-
-
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/maneu_report/insert20261024.css' %}">
 {% endblock %}
 
-
 {% block content %}
     <div class="main-content-wrapper">
-        <!-- 页面标题 -->
         <div class="page-header">
             <h1 class="page-title">
                 <i class="bi bi-file-earmark-plus"></i> 新增验光报告
@@ -34,7 +16,6 @@
             </a>
         </div>
 
-        <!-- 客户信息 -->
         <div class="section-card" id="guestSection">
             <div class="section-title">
                 <span><i class="bi bi-person-vcard"></i> 客户信息</span>
@@ -72,7 +53,6 @@
             </div>
         </div>
 
-        <!-- 验光报告 -->
         <div class="section-card" id="reportSection">
             <div class="section-title">
                 <span><i class="bi bi-eyeglasses"></i> 验光报告</span>
@@ -81,7 +61,6 @@
                 </button>
             </div>
 
-            <!-- 基本信息 -->
             <div class="row g-3 mb-2">
                 <div class="col-md-4">
                     <label class="form-label small fw-bold text-muted">性别</label>
@@ -109,9 +88,7 @@
                 </div>
             </div>
 
-            <!-- 可折叠详细参数 -->
             <div id="reportExtra" style="display: none;">
-                <!-- 屈光处方 -->
                 <div class="rx-group-title">屈光处方</div>
                 <table class="rx-table">
                     <thead>
@@ -155,7 +132,6 @@
                     </tbody>
                 </table>
 
-                <!-- 视力检查 -->
                 <div class="rx-group-title">视力检查</div>
                 <table class="rx-table">
                     <thead>
@@ -179,7 +155,6 @@
                     </tbody>
                 </table>
 
-                <!-- 眼生物测量 -->
                 <div class="rx-group-title">眼生物测量</div>
                 <table class="rx-table">
                     <thead>
@@ -225,7 +200,6 @@
             </div>
         </div>
 
-        <!-- 底部操作 -->
         <div class="action-bar justify-content-end">
             <button class="btn-save" id="submitReport" type="button">
                 <i class="bi bi-check-lg"></i> 提交报告
@@ -234,213 +208,151 @@
     </div>
 {% endblock %}
 
-
 {% block javascript %}
     <script>
-        // ========================================================================
-        // 后端 URL
-        // ========================================================================
-        window.REPORT_INSERT_URLS = {
+        window.PAGE_URLS = {
             api_insert: "{% url 'maneu_report:api_insert' %}",
             web_index:  "{% url 'maneu_report:index' %}",
         };
     </script>
 
     <script>
-    (function () {
-        /** OD / OS 成对字段（顺序不敏感，集合需与 detail 页一致） */
-        var OD_OS_FIELDS = ['VA', 'SPH', 'CYL', 'AX', 'PR', 'FR', 'ADD', 'AL', 'AK', 'AD', 'CCT', 'LT', 'VT', 'BC'];
+        (function () {
+            'use strict';
 
-        // ========================================================================
-        // 1. 工具函数
-        // ========================================================================
+            // ====================================================================
+            // 1. 常量
+            // ====================================================================
 
-        /**
-         * 读取输入框值并 trim
-         * @param {string} id
-         * @returns {string}
-         */
-        function val(id) {
-            return ($('#' + id).val() || '').trim();
-        }
+            var OD_OS_FIELDS = ['VA', 'SPH', 'CYL', 'AX', 'PR', 'FR', 'ADD', 'AL', 'AK', 'AD', 'CCT', 'LT', 'VT', 'BC'];
 
-        /**
-         * 读取 localStorage 中的 access_token
-         * @returns {string}
-         */
-        function getToken() {
-            return localStorage.getItem('access_token') || '';
-        }
+            // ====================================================================
+            // 2. 工具函数
+            // ====================================================================
 
-        /**
-         * 通用 JSON POST 请求（自动带 Authorization: Bearer <token>）
-         * @param {string} url
-         * @param {Object} [payload]
-         * @returns {jqXHR}
-         */
-        function requestJSON(url, payload) {
-            return $.ajax({
-                url: url,
-                method: 'POST',
-                contentType: 'application/json',
-                headers: {
-                    'Authorization': 'Bearer ' + getToken(),
-                },
-                data: JSON.stringify(payload || {}),
-                dataType: 'json',
-            });
-        }
-
-        /**
-         * 统一错误提示
-         * @param {string} msg
-         */
-        function showError(msg) {
-            alert(msg || '操作失败，请稍后重试');
-        }
-
-        /**
-         * 提交按钮加载态切换
-         * @param {jQuery} $btn
-         * @param {boolean} state  true=提交中
-         */
-        function setSubmitting($btn, state) {
-            if (!$btn || !$btn.length) return;
-            if (state) {
-                $btn.prop('disabled', true).data('original-text', $btn.html());
-                $btn.html('<span class="spinner-border spinner-border-sm me-1"></span>处理中...');
-            } else {
-                $btn.prop('disabled', false);
-                if ($btn.data('original-text')) $btn.html($btn.data('original-text'));
-            }
-        }
-
-        /**
-         * Date → <input type="datetime-local"> 的本地时间格式
-         * 注意：不能用 toISOString()（UTC，会差 8 小时）
-         * @param {Date} date
-         * @returns {string} 如 "2026-10-26T15:30"
-         */
-        function toLocalDatetime(date) {
-            var tzOffset = date.getTimezoneOffset() * 60000;
-            return new Date(date.getTime() - tzOffset).toISOString().slice(0, 16);
-        }
-
-        /**
-         * 折叠面板：绑定切换事件
-         * 面板初始 display:none → 图标 bi-chevron-down（点击展开后变 up）
-         * @param {string} btnId
-         * @param {string} panelId
-         */
-        function setupToggle(btnId, panelId) {
-            var $btn   = $('#' + btnId);
-            var $panel = $('#' + panelId);
-            if (!$btn.length || !$panel.length) return;
-
-            $btn.on('click', function () {
-                $panel.slideToggle(200);
-                $btn.find('i').toggleClass('bi-chevron-down bi-chevron-up');
-            });
-        }
-
-        // ========================================================================
-        // 2. 数据收集
-        // ========================================================================
-
-        /**
-         * 收集表单数据（含 time）
-         * @returns {Object}
-         */
-        function collectData() {
-            var data = {
-                time:   $('#time').val(),
-                name:   val('name'),
-                phone:  val('phone'),
-                remark: val('remark'),
-                sex:    val('sex'),
-                age:    val('age'),
-                pd:     val('PD'),
-                ot:     val('ot'),
-                em:     val('em'),
-                dfh:    val('dfh'),
-            };
-
-            OD_OS_FIELDS.forEach(function (f) {
-                var key = f.toLowerCase();
-                data['od_' + key] = val('OD_' + f);
-                data['os_' + key] = val('OS_' + f);
-            });
-
-            return data;
-        }
-
-        // ========================================================================
-        // 3. 提交
-        // ========================================================================
-
-        function submit() {
-            var $btn = $('#submitReport');
-            if ($btn.prop('disabled')) return;   // 防重复提交
-
-            var payload = collectData();
-
-            if (!payload.time) {
-                showError('请选择录入时间');
-                return;
+            function val(target) {
+                var $el = (typeof target === 'string') ? $('#' + target) : target;
+                return ($el.val() || '').trim();
             }
 
-            setSubmitting($btn, true);
+            function toLocalDatetime(date) {
+                var tzOffset = date.getTimezoneOffset() * 60000;
+                return new Date(date.getTime() - tzOffset).toISOString().slice(0, 16);
+            }
 
-            requestJSON(window.REPORT_INSERT_URLS.api_insert, payload)
-                .done(function (res) {
-                    if (res && res.status === true) {
-                        alert('提交成功');
-                        location.href = window.REPORT_INSERT_URLS.web_index;
-                    } else if (res && res.errors) {
-                        var msgs = [];
-                        Object.keys(res.errors).forEach(function (k) {
-                            (res.errors[k] || []).forEach(function (e) {
-                                msgs.push(e.message);
-                            });
-                        });
-                        showError(msgs.length ? msgs.join('\n') : (res.message || '提交失败'));
-                    } else {
-                        showError((res && res.message) || '提交失败');
-                    }
-                })
-                .fail(function (xhr) {
-                    if (xhr.status === 401) {
-                        showError('登录已过期，请重新登录');
-                        return;
-                    }
-                    var msg = '网络错误，请稍后重试';
-                    try {
-                        var data = JSON.parse(xhr.responseText);
-                        msg = data.message || msg;
-                    } catch (e) {}
-                    showError(msg);
-                })
-                .always(function () {
-                    setSubmitting($btn, false);
+            function showError(msg) {
+                alert(msg || '操作失败，请稍后重试');
+            }
+
+            function setSubmitting($btn, state) {
+                if (!$btn || !$btn.length) return;
+                if (state) {
+                    $btn.prop('disabled', true).data('original-text', $btn.html());
+                    $btn.html('<span class="spinner-border spinner-border-sm me-1"></span>提交中...');
+                } else {
+                    $btn.prop('disabled', false);
+                    if ($btn.data('original-text')) $btn.html($btn.data('original-text'));
+                }
+            }
+
+            function setupToggle($btn, $panel) {
+                if (!$btn.length || !$panel.length) return;
+                $btn.on('click', function () {
+                    $panel.slideToggle(200);
+                    $btn.find('i').toggleClass('bi-chevron-down bi-chevron-up');
                 });
-        }
+            }
 
-        // ========================================================================
-        // 4. 初始化
-        // ========================================================================
+            // ====================================================================
+            // 3. 数据收集
+            // ====================================================================
 
-        $(function () {
-            // 录入时间默认当前本地时间，且不允许选未来
-            var $time = $('#time');
-            var nowStr = toLocalDatetime(new Date());
-            $time.attr('max', nowStr);
-            $time.val(nowStr);
+            function collectData() {
+                var data = {
+                    time:   $('#time').val(),
+                    name:   val('name'),
+                    phone:  val('phone'),
+                    remark: val('remark'),
+                    sex:    val('sex'),
+                    age:    val('age'),
+                    pd:     val('PD'),
+                    ot:     val('ot'),
+                    em:     val('em'),
+                    dfh:    val('dfh'),
+                };
 
-            setupToggle('toggleReport', 'reportExtra');
+                OD_OS_FIELDS.forEach(function (f) {
+                    var key = f.toLowerCase();
+                    data['od_' + key] = val('OD_' + f);
+                    data['os_' + key] = val('OS_' + f);
+                });
 
-            $('#submitReport').on('click', submit);
-        });
+                return data;
+            }
 
-    })();
+            // ====================================================================
+            // 4. 提交
+            // ====================================================================
+
+            function submit() {
+                var $btn = $('#submitReport');
+                if ($btn.prop('disabled')) return;
+
+                var payload = collectData();
+
+                if (!payload.time) {
+                    showError('请选择录入时间');
+                    return;
+                }
+
+                setSubmitting($btn, true);
+
+                window.requestJSON(window.PAGE_URLS.api_insert, payload)
+                    .done(function (res) {
+                        if (res && res.status === true) {
+                            alert('提交成功');
+                            location.href = window.PAGE_URLS.web_index;
+                        } else if (res && res.errors) {
+                            var msgs = [];
+                            Object.keys(res.errors).forEach(function (k) {
+                                (res.errors[k] || []).forEach(function (e) {
+                                    msgs.push(e.message);
+                                });
+                            });
+                            showError(msgs.length ? msgs.join('\n') : (res.message || '提交失败'));
+                        } else {
+                            showError((res && res.message) || '提交失败');
+                        }
+                    })
+                    .fail(function (xhr) {
+                        if (xhr.status === 401) return;
+                        var msg = '网络错误，请稍后重试';
+                        try {
+                            var data = JSON.parse(xhr.responseText);
+                            msg = data.message || msg;
+                        } catch (e) {}
+                        showError(msg);
+                    })
+                    .always(function () {
+                        setSubmitting($btn, false);
+                    });
+            }
+
+            // ====================================================================
+            // 5. 初始化
+            // ====================================================================
+
+            $(function () {
+                var $time = $('#time');
+                var nowStr = toLocalDatetime(new Date());
+                $time.attr('max', nowStr);
+                $time.val(nowStr);
+
+                setupToggle($('#toggleReport'), $('#reportExtra'));
+
+                $('#submitReport').on('click', submit);
+            });
+
+        })();
     </script>
 {% endblock %}

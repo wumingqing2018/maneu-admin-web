@@ -1,35 +1,13 @@
 {% extends 'maneu/base.html' %}
 {% load static %}
 
-{% comment %}
-================================================================================
-产品订单 - 详情页
-================================================================================
-功能：
-  - 展示订单基础信息（时间/姓名/电话只读，备注可编辑）
-  - 产品明细：可增删改，每行可切换产品类型（镜架/镜片/配件/服务）
-  - 保存备注、保存产品、删除订单、生成二维码
-
-依赖：
-  - jQuery 3.x
-  - Bootstrap 5（含 Icons）
-  - sessionStorage.current_id：由列表页跳转前写入
-
-说明：
-  - 与 insert 页的产品行字段名一致（product-brand / product-model / ...），
-    但本页用 <select class="product-item-type"> 切换类型（编辑场景更灵活）。
-================================================================================
-{% endcomment %}
-
-
 {% block css %}
+    <link rel="stylesheet" href="{% static 'css/maneu_order/insert20260606.css' %}">
     <link rel="stylesheet" href="{% static 'css/maneu_order/detail20260606.css' %}">
 {% endblock %}
 
-
 {% block content %}
     <div class="main-content-wrapper">
-        <!-- 页面标题 -->
         <div class="page-header">
             <h1 class="page-title">
                 <i class="bi bi-receipt"></i> 眼镜订单详情
@@ -44,7 +22,7 @@
             </div>
         </div>
 
-        <!-- 基础信息 -->
+        <!-- ==================== 1. 基础信息（与 insert 一致的布局） ==================== -->
         <div class="section-card" id="baseSection">
             <div class="section-title">
                 <span>
@@ -79,55 +57,53 @@
                     <label class="form-label small fw-bold text-muted">备注</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-chat-left-text"></i></span>
-                        <input autocomplete="off" type="text" class="form-control" id="remark" placeholder="备注信息（可编辑）">
+                        <input autocomplete="off" type="text" class="form-control" id="remark" placeholder="备注信息（可编辑）" maxlength="500">
                     </div>
                 </div>
             </div>
-
-            <div class="d-flex justify-content-end mt-3">
-                <button class="btn-save" id="saveBaseInfo" type="button">
-                    <i class="bi bi-check-lg"></i> 保存备注
-                </button>
-            </div>
         </div>
 
-        <!-- 产品明细 -->
+        <!-- ==================== 2. 产品明细（与 insert 一致的标题栏 / 空提示 / 合计） ==================== -->
         <div class="section-card" id="productSection">
             <div class="section-title">
                 <span>
                     <i class="bi bi-box-seam"></i> 产品明细
                     <span class="status-badge status-empty ms-2" id="productsLoadStatus">加载中...</span>
                 </span>
+                <div class="add-btn-group">
+                    <button type="button" class="btn-add" data-add-type="frame">+ 镜架</button>
+                    <button type="button" class="btn-add" data-add-type="lens">+ 镜片</button>
+                    <button type="button" class="btn-add" data-add-type="accessory">+ 配件</button>
+                    <button type="button" class="btn-add" data-add-type="service">+ 服务</button>
+                </div>
             </div>
 
-            <div id="productsContainer"></div>
+            <div id="productRowsContainer"></div>
 
-            <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
-                <button class="btn-add" id="addProduct" type="button">
-                    <i class="bi bi-plus-lg"></i> 添加产品
-                </button>
-                <button class="btn-save" id="saveProducts" type="button">
-                    <i class="bi bi-check-lg"></i> 保存产品
-                </button>
+            <div class="empty-products" id="emptyProducts">
+                暂无产品，点击上方按钮添加
+            </div>
+
+            <div class="text-end mt-3">
+                <strong>合计：¥<span id="totalAmount">0.00</span></strong>
             </div>
         </div>
 
-        <!-- 底部操作 -->
+        <!-- ==================== 3. 底部操作（合并保存） ==================== -->
         <div class="action-bar justify-content-end">
             <button class="btn-delete-record" id="deleteOrder" type="button">
                 <i class="bi bi-trash3"></i> 删除此订单
+            </button>
+            <button class="btn-save" id="saveAll" type="button">
+                <i class="bi bi-check-lg"></i> 保存修改
             </button>
         </div>
     </div>
 {% endblock %}
 
-
 {% block javascript %}
     <script>
-        // ========================================================================
-        // 后端 URL
-        // ========================================================================
-        window.ORDER_DETAIL_URLS = {
+        window.PAGE_URLS = {
             api_detail: "{% url 'maneu_order:api_detail' %}",
             api_update: "{% url 'maneu_order:api_update' %}",
             api_delete: "{% url 'maneu_order:api_delete' %}",
@@ -137,468 +113,577 @@
     </script>
 
     <script>
-    (function () {
-        /** 当前记录 id（由列表页跳转前写入 sessionStorage） */
-        var INDEX_ID = sessionStorage.getItem('current_id') || '';
+        (function () {
+            'use strict';
 
-        /** 产品类型可选项 */
-        var ITEM_TYPE_OPTIONS = [
-            { value: 'frame',     label: '镜架' },
-            { value: 'lens',      label: '镜片' },
-            { value: 'accessory', label: '配件' },
-            { value: 'service',   label: '服务' },
-        ];
+            // ====================================================================
+            // 1. 常量
+            // ====================================================================
 
-        var SIDE_OPTIONS = [
-            { value: '',   label: '不分' },
-            { value: 'OD', label: '右眼' },
-            { value: 'OS', label: '左眼' },
-            { value: 'OU', label: '双眼' },
-        ];
+            var INDEX_ID = sessionStorage.getItem('current_id') || '';
 
-        // ========================================================================
-        // 1. 工具函数
-        // ========================================================================
+            // ====================================================================
+            // 2. 工具函数
+            // ====================================================================
 
-        /**
-         * 读取输入框值并 trim
-         * @param {string|jQuery} target  id 或 jQuery 对象
-         * @returns {string}
-         */
-        function val(target) {
-            var $el = (typeof target === 'string') ? $('#' + target) : target;
-            return ($el.val() || '').trim();
-        }
-
-        /**
-         * 读取数值，非法值返回 0
-         * @param {jQuery} $el
-         * @returns {number}
-         */
-        function numVal($el) {
-            var v = parseFloat($el.val());
-            return isNaN(v) ? 0 : v;
-        }
-
-        /**
-         * 读取正整数，非法或 <1 返回 1
-         * @param {jQuery} $el
-         * @returns {number}
-         */
-        function intVal($el) {
-            var v = parseInt($el.val(), 10);
-            return (isNaN(v) || v < 1) ? 1 : v;
-        }
-
-        /**
-         * 读取 localStorage 中的 access_token
-         * @returns {string}
-         */
-        function getToken() {
-            return localStorage.getItem('access_token') || '';
-        }
-
-        /**
-         * 通用 JSON POST 请求（自动带 Authorization: Bearer <token>）
-         * @param {string} url
-         * @param {Object} [payload]
-         * @returns {jqXHR}
-         */
-        function requestJSON(url, payload) {
-            return $.ajax({
-                url: url,
-                method: 'POST',
-                contentType: 'application/json',
-                headers: {
-                    'Authorization': 'Bearer ' + getToken(),
-                },
-                data: JSON.stringify(payload || {}),
-                dataType: 'json',
-            });
-        }
-
-        /**
-         * HTML 转义（防 XSS）
-         * @param {*} str
-         * @returns {string}
-         */
-        function escapeHtml(str) {
-            if (str === null || str === undefined) return '';
-            return String(str).replace(/[&<>"']/g, function (m) {
-                if (m === '&')  return '&amp;';
-                if (m === '<')  return '&lt;';
-                if (m === '>')  return '&gt;';
-                if (m === '"')  return '&quot;';
-                if (m === "'")  return '&#39;';
-                return m;
-            });
-        }
-
-        /**
-         * 后端 time 字段（ISO / 普通格式）→ "YYYY-MM-DD HH:MM"
-         * @param {string} timeStr
-         * @returns {string}
-         */
-        function formatTimeDisplay(timeStr) {
-            if (!timeStr) return '';
-            return String(timeStr).replace('T', ' ').substring(0, 16);
-        }
-
-        /**
-         * 统一错误提示
-         * @param {string} msg
-         */
-        function showError(msg) {
-            alert(msg || '操作失败，请稍后重试');
-        }
-
-        /**
-         * 更新加载状态徽章
-         * @param {jQuery} $el
-         * @param {'loading'|'success'|'error'} status
-         * @param {string} [message]
-         */
-        function setLoadStatus($el, status, message) {
-            $el.removeClass('status-empty status-loaded status-warning');
-            if (status === 'loading') {
-                $el.addClass('status-empty').text(message || '加载中...');
-            } else if (status === 'success') {
-                $el.addClass('status-loaded').text(message || '已加载');
-            } else {
-                $el.addClass('status-warning').text(message || '加载失败');
-            }
-        }
-
-        /**
-         * 提交按钮加载态切换
-         * @param {jQuery} $btn
-         * @param {boolean} state
-         */
-        function setSubmitting($btn, state) {
-            if (!$btn || !$btn.length) return;
-            if (state) {
-                $btn.prop('disabled', true).data('original-text', $btn.html());
-                $btn.html('<span class="spinner-border spinner-border-sm me-1"></span>处理中...');
-            } else {
-                $btn.prop('disabled', false);
-                if ($btn.data('original-text')) $btn.html($btn.data('original-text'));
-            }
-        }
-
-        /**
-         * 构建 <option> 列表
-         * @param {Array} options   [{value, label}]
-         * @param {string} selected
-         * @returns {string}
-         */
-        function buildOptions(options, selected) {
-            return options.map(function (o) {
-                var sel = (o.value === selected) ? ' selected' : '';
-                return '<option value="' + escapeHtml(o.value) + '"' + sel + '>' +
-                       escapeHtml(o.label) + '</option>';
-            }).join('');
-        }
-
-        // ========================================================================
-        // 2. 产品行渲染
-        // ========================================================================
-
-        /**
-         * 单条产品 → 行 HTML
-         * @param {Object} [p]
-         * @returns {string}
-         */
-        function createProductRow(p) {
-            p = p || {};
-            var itemType = p.item_type || 'frame';
-            var side     = p.side || '';
-
-            return '' +
-                '<div class="product-row">' +
-                '  <select class="form-select product-item-type">' + buildOptions(ITEM_TYPE_OPTIONS, itemType) + '</select>' +
-                '  <select class="form-select product-side">' + buildOptions(SIDE_OPTIONS, side) + '</select>' +
-                '  <input type="text" class="form-control product-brand"    placeholder="品牌" maxlength="50"  value="' + escapeHtml(p.brand) + '">' +
-                '  <input type="text" class="form-control product-model"    placeholder="型号" maxlength="100" value="' + escapeHtml(p.model) + '">' +
-                '  <input type="text" class="form-control product-color"    placeholder="颜色" maxlength="30"  value="' + escapeHtml(p.color) + '">' +
-                '  <input type="text" class="form-control product-material" placeholder="材质" maxlength="30"  value="' + escapeHtml(p.material) + '">' +
-                '  <input type="text" class="form-control product-spec"     placeholder="规格" maxlength="100" value="' + escapeHtml(p.spec) + '">' +
-                '  <input type="number" class="form-control product-qty"    placeholder="数量" min="1" value="' + (p.quantity || 1) + '">' +
-                '  <input type="number" class="form-control product-price"  placeholder="单价" step="0.01" min="0" value="' + (p.unit_price || 0) + '">' +
-                '  <input type="text" class="form-control product-remark"   placeholder="备注" maxlength="200" value="' + escapeHtml(p.remark) + '">' +
-                '  <button type="button" class="btn-remove-row" title="删除">×</button>' +
-                '</div>';
-        }
-
-        /**
-         * 渲染产品列表
-         * @param {Array} products
-         */
-        function renderProducts(products) {
-            var $c = $('#productsContainer').empty();
-
-            if (!Array.isArray(products) || products.length === 0) {
-                $c.append('<div class="empty-products">暂无产品，点击「添加产品」开始添加</div>');
-                return;
+            function val(target) {
+                var $el = (typeof target === 'string') ? $('#' + target) : target;
+                return ($el.val() || '').trim();
             }
 
-            products.forEach(function (p) {
-                $c.append(createProductRow(p));
-            });
-        }
-
-        /**
-         * 收集产品明细
-         * @returns {Array}
-         */
-        function collectProducts() {
-            var products = [];
-            $('#productsContainer .product-row').each(function () {
-                var $r = $(this);
-                products.push({
-                    item_type:  val($r.find('.product-item-type')) || 'frame',
-                    side:       val($r.find('.product-side')),
-                    brand:      val($r.find('.product-brand')),
-                    model:      val($r.find('.product-model')),
-                    color:      val($r.find('.product-color')),
-                    material:   val($r.find('.product-material')),
-                    spec:       val($r.find('.product-spec')),
-                    quantity:   intVal($r.find('.product-qty')),
-                    unit_price: numVal($r.find('.product-price')),
-                    remark:     val($r.find('.product-remark')),
-                });
-            });
-            return products;
-        }
-
-        // ========================================================================
-        // 3. 加载详情
-        // ========================================================================
-        var currentRequest = null;
-
-        function loadDetail() {
-            if (currentRequest && currentRequest.readyState !== 4) {
-                currentRequest.abort();
+            function formatTimeDisplay(timeStr) {
+                if (!timeStr) return '';
+                return String(timeStr).replace('T', ' ').substring(0, 16);
             }
 
-            setLoadStatus($('#loadStatus'), 'loading');
-            setLoadStatus($('#productsLoadStatus'), 'loading');
-
-            currentRequest = requestJSON(window.ORDER_DETAIL_URLS.api_detail, {
-                index_id: INDEX_ID,
-            })
-                .done(function (res) {
-                    if (!res || res.status !== true) {
-                        setLoadStatus($('#loadStatus'), 'error', '加载失败');
-                        setLoadStatus($('#productsLoadStatus'), 'error', '加载失败');
-                        return;
-                    }
-
-                    var wrapper = res.content && res.content.order;
-                    if (!wrapper || !wrapper.ok) {
-                        setLoadStatus($('#loadStatus'), 'error', '订单不存在');
-                        setLoadStatus($('#productsLoadStatus'), 'error', '订单不存在');
-                        return;
-                    }
-
-                    var data = wrapper.data;
-
-                    $('#time').val(formatTimeDisplay(data.time));
-                    $('#name').val(data.name || '');
-                    $('#phone').val(data.phone || '');
-                    $('#remark').val(data.remark || '');
-
-                    renderProducts(data.products || []);
-
-                    setLoadStatus($('#loadStatus'), 'success', '已加载');
-                    setLoadStatus($('#productsLoadStatus'), 'success', '已加载');
-                })
-                .fail(function (xhr, status) {
-                    if (status === 'abort') return;
-                    if (xhr.status === 401) {
-                        setLoadStatus($('#loadStatus'), 'error', '登录已过期');
-                        setLoadStatus($('#productsLoadStatus'), 'error', '登录已过期');
-                    } else if (xhr.status === 404) {
-                        setLoadStatus($('#loadStatus'), 'error', '订单不存在');
-                        setLoadStatus($('#productsLoadStatus'), 'error', '订单不存在');
-                    } else {
-                        setLoadStatus($('#loadStatus'), 'error', '加载失败');
-                        setLoadStatus($('#productsLoadStatus'), 'error', '加载失败');
-                    }
-                });
-        }
-
-        // ========================================================================
-        // 4. 保存备注
-        // ========================================================================
-
-        function saveBaseInfo() {
-            if (!confirm('确定保存备注？')) return;
-
-            var $btn = $('#saveBaseInfo');
-            setSubmitting($btn, true);
-
-            requestJSON(window.ORDER_DETAIL_URLS.api_update, {
-                index_id: INDEX_ID,
-                remark:   val('remark'),
-            })
-                .done(function (res) {
-                    if (res && res.status === true) {
-                        alert('备注已保存');
-                    } else {
-                        showError((res && res.message) || '保存失败');
-                    }
-                })
-                .fail(function (xhr) {
-                    if (xhr.status === 401) {
-                        showError('登录已过期，请重新登录');
-                    } else {
-                        showError('网络错误，请稍后重试');
-                    }
-                })
-                .always(function () {
-                    setSubmitting($btn, false);
-                });
-        }
-
-        // ========================================================================
-        // 5. 保存产品
-        // ========================================================================
-
-        function saveProducts() {
-            var products = collectProducts();
-            if (products.length === 0) {
-                showError('请至少添加一条产品');
-                return;
+            function showError(msg) {
+                alert(msg || '操作失败，请稍后重试');
             }
 
-            if (!confirm('确定保存产品信息？')) return;
+            /**
+             * 幂等的提交状态切换（防止 original-text 被覆盖为"处理中..."）
+             */
+            function setSubmitting($btn, state) {
+                if (!$btn || !$btn.length) return;
 
-            var $btn = $('#saveProducts');
-            setSubmitting($btn, true);
+                if (state) {
+                    if ($btn.data('maneuSubmitting')) return;
+                    $btn.data('maneuSubmitting', true)
+                        .data('maneuOriginalText', $btn.html())
+                        .prop('disabled', true)
+                        .html('<span class="spinner-border spinner-border-sm me-1"></span>处理中...');
+                } else {
+                    $btn.data('maneuSubmitting', false)
+                        .prop('disabled', false);
 
-            requestJSON(window.ORDER_DETAIL_URLS.api_update, {
-                index_id: INDEX_ID,
-                products: products,
-            })
-                .done(function (res) {
-                    if (res && res.status === true) {
-                        alert('产品已保存');
-                        loadDetail();
-                    } else if (res && res.errors && res.errors.products) {
-                        var msgs = res.errors.products.map(function (e) { return e.message; });
-                        showError(msgs.join('\n'));
-                    } else {
-                        showError((res && res.message) || '保存失败');
+                    var original = $btn.data('maneuOriginalText');
+                    if (typeof original === 'string' && original) {
+                        $btn.html(original);
                     }
-                })
-                .fail(function (xhr) {
-                    if (xhr.status === 401) {
-                        showError('登录已过期，请重新登录');
-                    } else {
-                        showError('网络错误，请稍后重试');
-                    }
-                })
-                .always(function () {
-                    setSubmitting($btn, false);
-                });
-        }
-
-        // ========================================================================
-        // 6. 删除订单
-        // ========================================================================
-
-        function deleteOrder() {
-            if (!confirm('确定要删除这条订单吗？此操作不可恢复。')) return;
-
-            var $btn = $('#deleteOrder');
-            setSubmitting($btn, true);
-
-            requestJSON(window.ORDER_DETAIL_URLS.api_delete, { index_id: INDEX_ID })
-                .done(function (res) {
-                    if (res && res.status === true) {
-                        alert('删除成功');
-                        location.replace(window.ORDER_DETAIL_URLS.web_index);
-                    } else {
-                        showError((res && res.message) || '删除失败');
-                    }
-                })
-                .fail(function (xhr) {
-                    if (xhr.status === 401) {
-                        showError('登录已过期，请重新登录');
-                    } else {
-                        showError('网络错误，请稍后重试');
-                    }
-                })
-                .always(function () {
-                    setSubmitting($btn, false);
-                });
-        }
-
-        // ========================================================================
-        // 7. 二维码下载
-        // ========================================================================
-
-        function downloadQRCode() {
-            var $btn = $('#generateQrCode');
-            setSubmitting($btn, true);
-
-            $.ajax({
-                url: window.ORDER_DETAIL_URLS.api_qrcode,
-                method: 'POST',
-                contentType: 'application/json',
-                headers: { 'Authorization': 'Bearer ' + getToken() },
-                data: JSON.stringify({ index_id: INDEX_ID }),
-                xhrFields: { responseType: 'blob' },
-            })
-                .done(function (blob) {
-                    var url = URL.createObjectURL(blob);
-                    var a = document.createElement('a');
-                    a.href = url;
-                    a.download = INDEX_ID + '.png';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                })
-                .fail(function (xhr) {
-                    if (xhr.status === 401) {
-                        showError('登录已过期，请重新登录');
-                    } else {
-                        showError('二维码生成失败，请稍后重试');
-                    }
-                })
-                .always(function () {
-                    setSubmitting($btn, false);
-                });
-        }
-
-        // ========================================================================
-        // 8. 初始化
-        // ========================================================================
-
-        $(function () {
-            // 添加产品（移除空提示用专用类，不误伤其他文本）
-            $('#addProduct').on('click', function () {
-                $('#productsContainer .empty-products').remove();
-                $('#productsContainer').append(createProductRow({}));
-            });
-
-            // 删除产品行（允许删到 0 条，保存时校验）
-            $('#productsContainer').on('click', '.btn-remove-row', function () {
-                $(this).closest('.product-row').remove();
-                if ($('#productsContainer .product-row').length === 0) {
-                    $('#productsContainer').append('<div class="empty-products">暂无产品，点击「添加产品」开始添加</div>');
+                    $btn.removeData('maneuOriginalText');
                 }
+            }
+
+            function setLoadStatus($el, status, message) {
+                $el.removeClass('status-empty status-loaded status-warning');
+                if (status === 'loading') {
+                    $el.addClass('status-empty').text(message || '加载中...');
+                } else if (status === 'success') {
+                    $el.addClass('status-loaded').text(message || '已加载');
+                } else {
+                    $el.addClass('status-warning').text(message || '加载失败');
+                }
+            }
+
+            /**
+             * 从 xhr 提取后端结构化错误（400 时走 .fail 用）
+             */
+            function extractErrors(xhr) {
+                var res = xhr && xhr.responseJSON;
+                if (!res || !res.errors) return '';
+                var msgs = [];
+                Object.keys(res.errors).forEach(function (k) {
+                    (res.errors[k] || []).forEach(function (e) {
+                        if (e && e.message) msgs.push('• ' + e.message);
+                    });
+                });
+                return msgs.join('\n');
+            }
+
+            // ====================================================================
+            // 3. 产品行模板（与 insert 完全一致）
+            // ====================================================================
+
+            var ROW_TEMPLATES = {
+                frame:
+                    '<div class="product-row" data-item-type="frame">' +
+                    '  <span class="product-badge badge-frame">镜架</span>' +
+                    '  <input type="text" class="form-control product-brand"    placeholder="品牌（如 雷朋）" maxlength="50">' +
+                    '  <input type="text" class="form-control product-model"    placeholder="型号（如 RB2140F）" maxlength="100">' +
+                    '  <input type="text" class="form-control product-color"    placeholder="颜色" maxlength="30">' +
+                    '  <select class="form-select product-material">' +
+                    '    <option value="">材质</option>' +
+                    '    <option value="板材">板材</option>' +
+                    '    <option value="纯钛">纯钛</option>' +
+                    '    <option value="β钛">β钛</option>' +
+                    '    <option value="TR90">TR90</option>' +
+                    '    <option value="合金">合金</option>' +
+                    '    <option value="醋酸纤维">醋酸纤维</option>' +
+                    '  </select>' +
+                    '  <select class="form-select product-frame-type">' +
+                    '    <option value="">框型</option>' +
+                    '    <option value="全框">全框</option>' +
+                    '    <option value="半框">半框</option>' +
+                    '    <option value="无框">无框</option>' +
+                    '  </select>' +
+                    '  <input type="text" class="form-control product-spec"     placeholder="尺寸 52-18-145" maxlength="20">' +
+                    '  <input type="number" class="form-control product-qty"    placeholder="数量" value="1" min="1">' +
+                    '  <input type="number" class="form-control product-price"  placeholder="单价" step="0.01" min="0">' +
+                    '  <input type="text" class="form-control product-remark"   placeholder="备注" maxlength="200">' +
+                    '  <button type="button" class="btn-remove-row" title="删除">×</button>' +
+                    '</div>',
+                lens:
+                    '<div class="product-row" data-item-type="lens">' +
+                    '  <span class="product-badge badge-lens">镜片</span>' +
+                    '  <select class="form-select product-side">' +
+                    '    <option value="OU">双眼</option>' +
+                    '    <option value="OD">右眼</option>' +
+                    '    <option value="OS">左眼</option>' +
+                    '  </select>' +
+                    '  <input type="text" class="form-control product-brand"    placeholder="品牌（如 蔡司）" maxlength="50">' +
+                    '  <input type="text" class="form-control product-model"    placeholder="型号/系列" maxlength="100">' +
+                    '  <input type="text" class="form-control product-spec"     placeholder="如 1.67 防蓝光" maxlength="100">' +
+                    '  <input type="number" class="form-control product-qty"    placeholder="数量" value="1" min="1">' +
+                    '  <input type="number" class="form-control product-price"  placeholder="单价" step="0.01" min="0">' +
+                    '  <input type="text" class="form-control product-remark"   placeholder="备注" maxlength="200">' +
+                    '  <button type="button" class="btn-remove-row" title="删除">×</button>' +
+                    '</div>',
+                accessory:
+                    '<div class="product-row" data-item-type="accessory">' +
+                    '  <span class="product-badge badge-accessory">配件</span>' +
+                    '  <input type="text" class="form-control product-model"    placeholder="名称（如 硬壳镜盒）" maxlength="100">' +
+                    '  <input type="number" class="form-control product-qty"    placeholder="数量" value="1" min="1">' +
+                    '  <input type="number" class="form-control product-price"  placeholder="单价" step="0.01" min="0">' +
+                    '  <input type="text" class="form-control product-remark"   placeholder="备注" maxlength="200">' +
+                    '  <button type="button" class="btn-remove-row" title="删除">×</button>' +
+                    '</div>',
+                service:
+                    '<div class="product-row" data-item-type="service">' +
+                    '  <span class="product-badge badge-service">服务</span>' +
+                    '  <input type="text" class="form-control product-model"    placeholder="名称（如 验光费）" maxlength="100">' +
+                    '  <input type="number" class="form-control product-qty"    placeholder="数量" value="1" min="1">' +
+                    '  <input type="number" class="form-control product-price"  placeholder="单价" step="0.01" min="0">' +
+                    '  <input type="text" class="form-control product-remark"   placeholder="备注" maxlength="200">' +
+                    '  <button type="button" class="btn-remove-row" title="删除">×</button>' +
+                    '</div>',
+            };
+
+            // ====================================================================
+            // 4. 镜架 spec 拆解（与 insert 的 "[frameType, size].join(' ')" 对称）
+            // ====================================================================
+
+            /**
+             * "全框 52-18-145" → { frameType: "全框", size: "52-18-145" }
+             * "52-18-145"      → { frameType: "",    size: "52-18-145" }
+             */
+            function parseFrameSpec(spec) {
+                if (!spec) return { frameType: '', size: '' };
+                var parts = String(spec).split(' ');
+                if (parts.length >= 2 && ['全框', '半框', '无框'].indexOf(parts[0]) !== -1) {
+                    return { frameType: parts[0], size: parts.slice(1).join(' ') };
+                }
+                return { frameType: '', size: spec };
+            }
+
+            // ====================================================================
+            // 5. 产品行操作
+            // ====================================================================
+
+            /**
+             * 添加一行产品
+             * @param {string} itemType  frame / lens / accessory / service
+             * @param {Object} [data]    已有数据（加载详情时传入）
+             */
+            function addProductRow(itemType, data) {
+                var tpl = ROW_TEMPLATES[itemType];
+                if (!tpl) return;
+
+                var $row = $(tpl);
+
+                if (data) {
+                    $row.find('.product-brand').val(data.brand || '');
+                    $row.find('.product-model').val(data.model || '');
+                    $row.find('.product-color').val(data.color || '');
+                    $row.find('.product-material').val(data.material || '');
+
+                    if (itemType === 'frame') {
+                        var parsed = parseFrameSpec(data.spec || '');
+                        $row.find('.product-frame-type').val(parsed.frameType);
+                        $row.find('.product-spec').val(parsed.size);
+                    } else {
+                        $row.find('.product-spec').val(data.spec || '');
+                    }
+
+                    if (itemType === 'lens') {
+                        $row.find('.product-side').val(data.side || 'OU');
+                    }
+
+                    $row.find('.product-qty').val(data.quantity || 1);
+                    $row.find('.product-price').val(data.unit_price || 0);
+                    $row.find('.product-remark').val(data.remark || '');
+                }
+
+                $('#productRowsContainer').append($row);
+                toggleEmptyTip();
+                recalcTotal();
+            }
+
+            function removeProductRow($row) {
+                $row.remove();
+                toggleEmptyTip();
+                recalcTotal();
+            }
+
+            function toggleEmptyTip() {
+                var hasRow = $('#productRowsContainer .product-row').length > 0;
+                $('#emptyProducts').toggle(!hasRow);
+            }
+
+            function recalcTotal() {
+                var total = 0;
+                $('#productRowsContainer .product-row').each(function () {
+                    var qty   = parseFloat($(this).find('.product-qty').val())   || 0;
+                    var price = parseFloat($(this).find('.product-price').val()) || 0;
+                    total += qty * price;
+                });
+                $('#totalAmount').text(total.toFixed(2));
+            }
+
+            // ====================================================================
+            // 6. 渲染
+            // ====================================================================
+
+            function renderProducts(products) {
+                $('#productRowsContainer').empty();
+
+                if (!Array.isArray(products) || products.length === 0) {
+                    toggleEmptyTip();
+                    recalcTotal();
+                    return;
+                }
+
+                products.forEach(function (p) {
+                    addProductRow(p.item_type || 'frame', p);
+                });
+
+                toggleEmptyTip();
+                recalcTotal();
+            }
+
+            // ====================================================================
+            // 7. 数据收集
+            // ====================================================================
+
+            function collectProducts() {
+                var products = [];
+                $('#productRowsContainer .product-row').each(function () {
+                    var $row = $(this);
+                    var itemType = $row.data('item-type');
+
+                    var spec = '';
+                    if (itemType === 'frame') {
+                        var frameType = $row.find('.product-frame-type').val() || '';
+                        var size      = ($row.find('.product-spec').val() || '').trim();
+                        spec = [frameType, size].filter(Boolean).join(' ');
+                    } else {
+                        spec = ($row.find('.product-spec').val() || '').trim();
+                    }
+
+                    products.push({
+                        item_type:  itemType,
+                        side:       $row.find('.product-side').val() || '',
+                        brand:      ($row.find('.product-brand').val() || '').trim(),
+                        model:      ($row.find('.product-model').val() || '').trim(),
+                        color:      ($row.find('.product-color').val() || '').trim(),
+                        material:   $row.find('.product-material').val() || '',
+                        spec:       spec,
+                        quantity:   parseInt($row.find('.product-qty').val(), 10) || 1,
+                        unit_price: parseFloat($row.find('.product-price').val()) || 0,
+                        remark:     ($row.find('.product-remark').val() || '').trim(),
+                    });
+                });
+                return products;
+            }
+
+            // ====================================================================
+            // 8. 加载详情
+            // ====================================================================
+
+            var currentRequest = null;
+
+            function loadDetail() {
+                if (currentRequest && currentRequest.readyState !== 4) {
+                    currentRequest.abort();
+                }
+
+                setLoadStatus($('#loadStatus'), 'loading');
+                setLoadStatus($('#productsLoadStatus'), 'loading');
+
+                currentRequest = window.requestJSON(window.PAGE_URLS.api_detail, {
+                    index_id: INDEX_ID,
+                })
+                    .done(function (res) {
+                        if (!res || res.status !== true) {
+                            setLoadStatus($('#loadStatus'), 'error', '加载失败');
+                            setLoadStatus($('#productsLoadStatus'), 'error', '加载失败');
+                            return;
+                        }
+
+                        var wrapper = res.content && res.content.order;
+                        if (!wrapper || !wrapper.ok) {
+                            setLoadStatus($('#loadStatus'), 'error', '订单不存在');
+                            setLoadStatus($('#productsLoadStatus'), 'error', '订单不存在');
+                            return;
+                        }
+
+                        var data = wrapper.data || {};
+
+                        $('#time').val(formatTimeDisplay(data.time) || '—');
+                        $('#name').val(data.name || '');
+                        $('#phone').val(data.phone || '');
+                        $('#remark').val(data.remark || '');
+
+                        renderProducts(data.products || []);
+
+                        setLoadStatus($('#loadStatus'), 'success', '已加载');
+                        setLoadStatus($('#productsLoadStatus'), 'success', '已加载');
+                    })
+                    .fail(function (xhr, status) {
+                        if (status === 'abort') return;
+                        if (xhr.status === 401) return;
+                        if (xhr.status === 404) {
+                            setLoadStatus($('#loadStatus'), 'error', '订单不存在');
+                            setLoadStatus($('#productsLoadStatus'), 'error', '订单不存在');
+                        } else {
+                            setLoadStatus($('#loadStatus'), 'error', '加载失败');
+                            setLoadStatus($('#productsLoadStatus'), 'error', '加载失败');
+                        }
+                    });
+            }
+
+            // ====================================================================
+            // 9. 保存全部（合并备注 + 产品）
+            // ====================================================================
+
+            /**
+             * 本地校验（与后端 _validate_products 规则对齐）
+             * @returns {boolean}  true=通过
+             */
+            function validateProductsLocally() {
+                var hasError = false;
+
+                $('#productRowsContainer .product-row').each(function (idx) {
+                    var $row = $(this);
+                    var itemType = $row.data('item-type');
+                    var qty   = parseInt($row.find('.product-qty').val(), 10) || 0;
+                    var price = parseFloat($row.find('.product-price').val()) || 0;
+
+                    if (itemType === 'frame') {
+                        if (!($row.find('.product-brand').val() || '').trim()) {
+                            showError('第 ' + (idx + 1) + ' 行：镜架必须填品牌');
+                            hasError = true;
+                            return false;
+                        }
+                        if (!($row.find('.product-model').val() || '').trim()) {
+                            showError('第 ' + (idx + 1) + ' 行：镜架必须填型号');
+                            hasError = true;
+                            return false;
+                        }
+                        if (!($row.find('.product-color').val() || '').trim()) {
+                            showError('第 ' + (idx + 1) + ' 行：镜架必须填颜色');
+                            hasError = true;
+                            return false;
+                        }
+                    } else if (itemType === 'lens') {
+                        if (!($row.find('.product-brand').val() || '').trim()) {
+                            showError('第 ' + (idx + 1) + ' 行：镜片必须填品牌');
+                            hasError = true;
+                            return false;
+                        }
+                    } else {
+                        if (!($row.find('.product-model').val() || '').trim()) {
+                            showError('第 ' + (idx + 1) + ' 行：名称必填');
+                            hasError = true;
+                            return false;
+                        }
+                    }
+
+                    if (qty < 1) {
+                        showError('第 ' + (idx + 1) + ' 行：数量必须 ≥ 1');
+                        hasError = true;
+                        return false;
+                    }
+                    if (price < 0) {
+                        showError('第 ' + (idx + 1) + ' 行：单价不能为负');
+                        hasError = true;
+                        return false;
+                    }
+                });
+
+                return !hasError;
+            }
+
+            function saveAll() {
+                var $btn = $('#saveAll');
+                if ($btn.prop('disabled')) return;
+
+                var products = collectProducts();
+                if (products.length === 0) {
+                    showError('请至少添加一条产品');
+                    return;
+                }
+
+                if (!validateProductsLocally()) return;
+
+                if (!confirm('确定保存所有修改？')) return;
+
+                setSubmitting($btn, true);
+
+                window.requestJSON(window.PAGE_URLS.api_update, {
+                    index_id: INDEX_ID,
+                    remark:   val('remark'),
+                    products: products,
+                })
+                    .done(function (res) {
+                        setSubmitting($btn, false);
+
+                        if (res && res.status === true) {
+                            alert('保存成功');
+                            loadDetail();
+                        } else {
+                            showError((res && res.message) || '保存失败');
+                        }
+                    })
+                    .fail(function (xhr) {
+                        setSubmitting($btn, false);
+
+                        if (xhr.status === 401) return;
+
+                        var errorsMsg = extractErrors(xhr);
+                        if (errorsMsg) {
+                            showError(errorsMsg);
+                            return;
+                        }
+                        showError((xhr.responseJSON && xhr.responseJSON.message) || '网络错误，请稍后重试');
+                    });
+            }
+
+            // ====================================================================
+            // 10. 删除订单
+            // ====================================================================
+
+            function deleteOrder() {
+                var $btn = $('#deleteOrder');
+                if ($btn.prop('disabled')) return;
+
+                if (!confirm('确定要删除这条订单吗？此操作不可恢复。')) return;
+
+                setSubmitting($btn, true);
+
+                window.requestJSON(window.PAGE_URLS.api_delete, { index_id: INDEX_ID })
+                    .done(function (res) {
+                        setSubmitting($btn, false);
+
+                        if (res && res.status === true) {
+                            alert('删除成功');
+                            location.replace(window.PAGE_URLS.web_index);
+                        } else {
+                            showError((res && res.message) || '删除失败');
+                        }
+                    })
+                    .fail(function (xhr) {
+                        setSubmitting($btn, false);
+
+                        if (xhr.status === 401) return;
+                        if (xhr.status === 404) {
+                            showError('订单已被删除');
+                            return;
+                        }
+                        showError('网络错误，请稍后重试');
+                    });
+            }
+
+            // ====================================================================
+            // 11. 二维码下载
+            // ====================================================================
+
+            function downloadQRCode() {
+                var $btn = $('#generateQrCode');
+                if ($btn.prop('disabled')) return;
+
+                setSubmitting($btn, true);
+
+                window.apiRequest({
+                    url: window.PAGE_URLS.api_qrcode,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ index_id: INDEX_ID }),
+                    xhrFields: { responseType: 'blob' },
+                })
+                    .done(function (blob) {
+                        setSubmitting($btn, false);
+
+                        var url = URL.createObjectURL(blob);
+                        var a = document.createElement('a');
+                        a.href = url;
+                        a.download = INDEX_ID + '.png';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    })
+                    .fail(function (xhr) {
+                        setSubmitting($btn, false);
+
+                        if (xhr.status === 401) return;
+
+                        if (xhr.response instanceof Blob) {
+                            var reader = new FileReader();
+                            reader.onload = function () {
+                                try {
+                                    var data = JSON.parse(reader.result || '{}');
+                                    showError(data.message || '二维码生成失败，请稍后重试');
+                                } catch (e) {
+                                    showError('二维码生成失败，请稍后重试');
+                                }
+                            };
+                            reader.readAsText(xhr.response);
+                        } else {
+                            showError('二维码生成失败，请稍后重试');
+                        }
+                    });
+            }
+
+            // ====================================================================
+            // 12. 初始化
+            // ====================================================================
+
+            $(function () {
+                if (!INDEX_ID) {
+                    alert('缺少记录 ID，请从列表页进入');
+                    location.replace(window.PAGE_URLS.web_index || '/');
+                    return;
+                }
+
+                // 4 个添加按钮（与 insert 一致）
+                $('.add-btn-group button[data-add-type]').on('click', function () {
+                    addProductRow($(this).data('add-type'));
+                });
+
+                // 删除产品行（事件委托）
+                $('#productRowsContainer').on('click', '.btn-remove-row', function () {
+                    removeProductRow($(this).closest('.product-row'));
+                });
+
+                // 数量 / 单价变化自动重算合计
+                $('#productRowsContainer').on('input', '.product-qty, .product-price', recalcTotal);
+
+                // 主操作
+                $('#saveAll').on('click', saveAll);
+                $('#deleteOrder').on('click', deleteOrder);
+                $('#generateQrCode').on('click', downloadQRCode);
+
+                // 备注输入框回车 = 保存
+                $('#remark').on('keypress', function (e) {
+                    if (e.which === 13) {
+                        e.preventDefault();
+                        saveAll();
+                    }
+                });
+
+                loadDetail();
             });
 
-            $('#saveBaseInfo').on('click', saveBaseInfo);
-            $('#saveProducts').on('click', saveProducts);
-            $('#deleteOrder').on('click', deleteOrder);
-            $('#generateQrCode').on('click', downloadQRCode);
-
-            loadDetail();
-        });
-
-    })();
+        })();
     </script>
 {% endblock %}

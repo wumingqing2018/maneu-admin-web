@@ -31,6 +31,26 @@ def store_insert(admin_id='', index_id='', status=1, content=None):
     )
 
 
+def store_update(admin_id='', index_id='', status=1, content=None):
+    """
+    更新零售记录
+
+    :param content: dict，包含 time / name / phone / remark / content(JSON 字符串)
+    :return: ManeuStore 实例
+    """
+    if not content:
+        content = {}
+
+    return ManeuStore.objects.filter(id=index_id,admin_id=admin_id).create(
+        time=content.get('time'),
+        name=content.get('name', ''),
+        phone=content.get('phone', ''),
+        status=status,
+        remark=content.get('remark', ''),
+        content=content.get('content', ''),
+    )
+
+
 def store_delete(admin_id='', index_id=''):
     """
     删除零售记录

@@ -16,7 +16,6 @@
             </a>
         </div>
 
-        <!-- ==================== 1. 客户信息 ==================== -->
         <div class="section-card" id="guestSection">
             <div class="section-title">
                 <span><i class="bi bi-person-vcard"></i> 客户信息</span>
@@ -53,7 +52,6 @@
             </div>
         </div>
 
-        <!-- ==================== 2. 产品信息 ==================== -->
         <div class="section-card" id="storeSection">
             <div class="section-title d-flex justify-content-between align-items-center flex-wrap gap-2">
                 <span><i class="bi bi-box-seam"></i> 定制产品信息</span>
@@ -83,7 +81,6 @@
             </div>
         </div>
 
-        <!-- ==================== 3. 底部操作栏 ==================== -->
         <div class="action-bar justify-content-end">
             <button class="btn btn-outline-primary btn-back-page" id="submitOrderBtn" type="button">
                 <i class="bi bi-check-lg"></i> 提交订单
@@ -92,55 +89,57 @@
     </div>
 {% endblock %}
 
-
 {% block javascript %}
     <script>
-        window.STORE_INSERT_API = "{% url 'maneu_store:api_insert' %}";
-        window.STORE_LIST_URL   = "{% url 'maneu_store:index' %}";
+        window.PAGE_URLS = {
+            api_insert: "{% url 'maneu_store:api_insert' %}",
+            web_index:  "{% url 'maneu_store:index' %}",
+        };
     </script>
     <script>
         (function () {
-            // ============================================================
-            // 工具
-            // ============================================================
+            'use strict';
 
-            function val(id) {
-                return ($('#' + id).val() || '').trim();
+            // ====================================================================
+            // 1. 工具函数
+            // ====================================================================
+
+            function val(target) {
+                var $el = (typeof target === 'string') ? $('#' + target) : target;
+                return ($el.val() || '').trim();
             }
 
-            function getToken() {
-                return localStorage.getItem('access_token') || '';
+            function toLocalDatetime(date) {
+                var tzOffset = date.getTimezoneOffset() * 60000;
+                return new Date(date.getTime() - tzOffset).toISOString().slice(0, 16);
             }
 
             function showError(msg) {
                 alert(msg || '操作失败，请稍后重试');
             }
 
-            /**
-             * 获取当前时间，格式：YYYY-MM-DDTHH:mm（datetime-local 专用）
-             * 例：2026-10-26T15:30
-             */
-            function getNowForDatetimeLocal() {
-                var d = new Date();
-                var pad = function (n) { return String(n).padStart(2, '0'); };
-                return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) +
-                    'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+            function setSubmitting($btn, state) {
+                if (!$btn || !$btn.length) return;
+                if (state) {
+                    $btn.prop('disabled', true).data('original-text', $btn.html());
+                    $btn.html('<span class="spinner-border spinner-border-sm me-1"></span>提交中...');
+                } else {
+                    $btn.prop('disabled', false);
+                    if ($btn.data('original-text')) $btn.html($btn.data('original-text'));
+                }
             }
 
-            function setupToggle(btnId, panelId) {
-                var $btn = $('#' + btnId);
-                var $panel = $('#' + panelId);
+            function setupToggle($btn, $panel) {
                 if (!$btn.length || !$panel.length) return;
-
                 $btn.on('click', function () {
                     $panel.slideToggle(200);
                     $btn.find('i').toggleClass('bi-chevron-down bi-chevron-up');
                 });
             }
 
-            // ============================================================
-            // 收集产品参数
-            // ============================================================
+            // ====================================================================
+            // 2. 数据收集
+            // ====================================================================
 
             function collectStoreContent() {
                 var keys = [];
@@ -169,9 +168,9 @@
                 return JSON.stringify([obj]);
             }
 
-            // ============================================================
-            // 提交
-            // ============================================================
+            // ====================================================================
+            // 3. 提交
+            // ====================================================================
 
             var isSubmitting = false;
 
@@ -181,39 +180,29 @@
                 var storeContent = collectStoreContent();
                 if (storeContent === null) return;
 
+                if (!window.getAccessToken()) {
+                    showError('请先登录');
+                    return;
+                }
+
                 var payload = {
-                    time:         val('time'),          // ← "2026-10-26T15:30"
+                    time:         val('time'),
                     name:         val('name'),
                     phone:        val('phone'),
                     remark:       val('remark'),
                     storeContent: storeContent,
                 };
 
-                console.log('[store/insert] payload =', payload);
-
-                var token = getToken();
-                if (!token) {
-                    alert('请先登录');
-                    return;
-                }
-
                 var $btn = $('#submitOrderBtn');
-                var originalText = $btn.html();
 
                 isSubmitting = true;
-                $btn.prop('disabled', true)
-                    .html('<span class="spinner-border spinner-border-sm me-1"></span>提交中...');
+                setSubmitting($btn, true);
 
-                $.ajax({
-                    url: window.STORE_INSERT_API,
-                    method: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(payload),
-                    dataType: 'json',
-                    success: function (res) {
+                window.requestJSON(window.PAGE_URLS.api_insert, payload)
+                    .done(function (res) {
                         if (res && res.status === true) {
                             alert('提交成功');
-                            location.href = window.STORE_LIST_URL || '/';
+                            location.href = window.PAGE_URLS.web_index || '/';
                         } else if (res && res.errors) {
                             var msgs = [];
                             Object.keys(res.errors).forEach(function (k) {
@@ -225,34 +214,30 @@
                         } else {
                             showError((res && res.message) || '提交失败');
                         }
-                    },
-                    error: function (xhr) {
-                        if (xhr.status === 401) {
-                            showError('登录已过期，请重新登录');
-                            return;
-                        }
+                    })
+                    .fail(function (xhr) {
+                        if (xhr.status === 401) return;
                         var msg = '网络错误，请稍后重试';
                         try {
                             var data = JSON.parse(xhr.responseText);
                             msg = data.message || msg;
                         } catch (e) {}
                         showError(msg);
-                    },
-                    complete: function () {
+                    })
+                    .always(function () {
                         isSubmitting = false;
-                        $btn.prop('disabled', false).html(originalText);
-                    },
-                });
+                        setSubmitting($btn, false);
+                    });
             }
 
-            // ============================================================
-            // 初始化
-            // ============================================================
+            // ====================================================================
+            // 4. 初始化
+            // ====================================================================
 
             $(function () {
-                $('#time').val(getNowForDatetimeLocal());
+                $('#time').val(toLocalDatetime(new Date()));
 
-                setupToggle('toggleProduct', 'productExtra');
+                setupToggle($('#toggleProduct'), $('#productExtra'));
 
                 $('#submitOrderBtn').on('click', submitOrder);
 

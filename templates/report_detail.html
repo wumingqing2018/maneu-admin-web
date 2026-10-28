@@ -1,36 +1,18 @@
 {% extends 'maneu/base.html' %}
 {% load static %}
 
-{% comment %}
-================================================================================
-验光报告 - 详情页
-================================================================================
-功能：
-  - 加载并展示客户信息 / 报告基础信息 / 处方明细
-  - 保存更新、删除记录、生成并下载二维码
-
-依赖：
-  - jQuery 3.x
-  - Bootstrap 5（含 Icons）
-  - sessionStorage.current_id：由列表页跳转前写入
-================================================================================
-{% endcomment %}
-
-
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/maneu_report/detail20261024.css' %}">
 {% endblock %}
 
-
 {% block content %}
     <div class="main-content-wrapper">
-        <!-- 页面标题 -->
         <div class="page-header">
             <h1 class="page-title">
                 <i class="bi bi-file-medical"></i> 验光报告
             </h1>
             <div class="d-flex gap-2 flex-wrap">
-                <button class="btn-qrcode" id="reportQrcode" type="button">
+                <button class="btn-qrcode" id="generateQrCode" type="button">
                     <i class="bi bi-qr-code"></i> 二维码
                 </button>
                 <a href="{% url 'maneu_report:index' %}" class="btn-back">
@@ -39,7 +21,6 @@
             </div>
         </div>
 
-        <!-- 客户信息 -->
         <div class="section-card" id="guestSection">
             <div class="section-title">
                 <span>
@@ -80,7 +61,6 @@
             </div>
         </div>
 
-        <!-- 验光报告 -->
         <div class="section-card" id="reportSection">
             <div class="section-title">
                 <span><i class="bi bi-eyeglasses"></i> 验光报告</span>
@@ -89,7 +69,6 @@
                 </button>
             </div>
 
-            <!-- 基本信息 -->
             <div class="row g-3 mb-2">
                 <div class="col-md-4">
                     <label class="form-label small fw-bold text-muted">性别</label>
@@ -117,9 +96,7 @@
                 </div>
             </div>
 
-            <!-- 可折叠处方明细 -->
             <div id="reportExtra" style="display: none;">
-                <!-- 屈光处方 -->
                 <div class="rx-group-title">屈光处方</div>
                 <table class="rx-table">
                     <thead>
@@ -163,7 +140,6 @@
                     </tbody>
                 </table>
 
-                <!-- 视力检查 -->
                 <div class="rx-group-title">视力检查</div>
                 <table class="rx-table">
                     <thead>
@@ -187,7 +163,6 @@
                     </tbody>
                 </table>
 
-                <!-- 眼生物测量 -->
                 <div class="rx-group-title">眼生物测量</div>
                 <table class="rx-table">
                     <thead>
@@ -233,7 +208,6 @@
             </div>
         </div>
 
-        <!-- 底部操作 -->
         <div class="action-bar justify-content-end">
             <button class="btn-delete-record" id="reportDelete" type="button">
                 <i class="bi bi-trash3"></i> 删除此报告
@@ -245,13 +219,9 @@
     </div>
 {% endblock %}
 
-
 {% block javascript %}
     <script>
-        // ========================================================================
-        // 后端 URL
-        // ========================================================================
-        window.REPORT_DETAIL_URLS = {
+        window.PAGE_URLS = {
             api_detail: "{% url 'maneu_report:api_detail' %}",
             api_update: "{% url 'maneu_report:api_update' %}",
             api_delete: "{% url 'maneu_report:api_delete' %}",
@@ -261,330 +231,333 @@
     </script>
 
     <script>
-    (function () {
-        /** 当前记录 id（由列表页跳转前写入 sessionStorage） */
-        var INDEX_ID = sessionStorage.getItem('current_id') || '';
+        (function () {
+            'use strict';
 
-        /** OD / OS 成对字段（顺序不敏感，集合需与 insert 页一致） */
-        var OD_OS_FIELDS = ['VA', 'SPH', 'CYL', 'AX', 'PR', 'FR', 'ADD', 'AL', 'AK', 'AD', 'CCT', 'LT', 'VT', 'BC'];
+            // ====================================================================
+            // 1. 常量
+            // ====================================================================
 
-        // ========================================================================
-        // 1. 工具函数
-        // ========================================================================
+            var INDEX_ID = sessionStorage.getItem('current_id') || '';
+            var OD_OS_FIELDS = ['VA', 'SPH', 'CYL', 'AX', 'PR', 'FR', 'ADD', 'AL', 'AK', 'AD', 'CCT', 'LT', 'VT', 'BC'];
 
-        /**
-         * 读取输入框值并 trim
-         * @param {string} id
-         * @returns {string}
-         */
-        function val(id) {
-            return ($('#' + id).val() || '').trim();
-        }
+            // ====================================================================
+            // 2. 工具函数
+            // ====================================================================
 
-        /**
-         * 读取 localStorage 中的 access_token
-         * @returns {string}
-         */
-        function getToken() {
-            return localStorage.getItem('access_token') || '';
-        }
-
-        /**
-         * 通用 JSON POST 请求（自动带 Authorization: Bearer <token>）
-         * @param {string} url
-         * @param {Object} [payload]
-         * @returns {jqXHR}
-         */
-        function requestJSON(url, payload) {
-            return $.ajax({
-                url: url,
-                method: 'POST',
-                contentType: 'application/json',
-                headers: {
-                    'Authorization': 'Bearer ' + getToken(),
-                },
-                data: JSON.stringify(payload || {}),
-                dataType: 'json',
-            });
-        }
-
-        /**
-         * 统一错误提示
-         * @param {string} msg
-         */
-        function showError(msg) {
-            alert(msg || '操作失败，请稍后重试');
-        }
-
-        /**
-         * 提交按钮加载态切换
-         * @param {jQuery} $btn
-         * @param {boolean} state  true=提交中
-         */
-        function setSubmitting($btn, state) {
-            if (!$btn || !$btn.length) return;
-            if (state) {
-                $btn.prop('disabled', true).data('original-text', $btn.html());
-                $btn.html('<span class="spinner-border spinner-border-sm me-1"></span>处理中...');
-            } else {
-                $btn.prop('disabled', false);
-                if ($btn.data('original-text')) $btn.html($btn.data('original-text'));
-            }
-        }
-
-        /**
-         * 后端 time 字段（ISO / 普通格式）→ "YYYY-MM-DD HH:MM"
-         * @param {string} timeStr
-         * @returns {string}
-         */
-        function formatTimeDisplay(timeStr) {
-            if (!timeStr) return '';
-            return String(timeStr).replace('T', ' ').substring(0, 16);
-        }
-
-        /**
-         * 更新加载状态徽章
-         * @param {jQuery} $el
-         * @param {'loading'|'success'|'error'} status
-         * @param {string} [message]
-         */
-        function setLoadStatus($el, status, message) {
-            $el.removeClass('status-empty status-loaded status-warning');
-            if (status === 'loading') {
-                $el.addClass('status-empty').text(message || '加载中...');
-            } else if (status === 'success') {
-                $el.addClass('status-loaded').text(message || '已加载');
-            } else {
-                $el.addClass('status-warning').text(message || '加载失败');
-            }
-        }
-
-        // ========================================================================
-        // 2. 渲染
-        // ========================================================================
-
-        /**
-         * 把详情数据渲染到表单
-         * @param {Object} data
-         */
-        function renderReport(data) {
-            // 客户信息
-            $('#time').val(formatTimeDisplay(data.time));
-            $('#name').val(data.name || '');
-            $('#phone').val(data.phone || '');
-            $('#remark').val(data.remark || '');
-
-            // 报告基础信息
-            $('#sex').val(data.sex || '');
-            $('#age').val(data.age || '');
-            $('#PD').val(data.pd || '');
-            $('#ot').val(data.ot || '');
-            $('#em').val(data.em || '');
-            $('#dfh').val(data.dfh || '');
-
-            // 处方明细
-            OD_OS_FIELDS.forEach(function (f) {
-                var key = f.toLowerCase();
-                $('#OD_' + f).val(data['od_' + key] || '');
-                $('#OS_' + f).val(data['os_' + key] || '');
-            });
-        }
-
-        // ========================================================================
-        // 3. 加载详情
-        // ========================================================================
-        var currentRequest = null;
-
-        function loadDetail() {
-            if (currentRequest && currentRequest.readyState !== 4) {
-                currentRequest.abort();
+            function val(target) {
+                var $el = (typeof target === 'string') ? $('#' + target) : target;
+                return ($el.val() || '').trim();
             }
 
-            setLoadStatus($('#loadStatus'), 'loading');
+            function formatTimeDisplay(timeStr) {
+                if (!timeStr) return '';
+                return String(timeStr).replace('T', ' ').substring(0, 16);
+            }
 
-            currentRequest = requestJSON(window.REPORT_DETAIL_URLS.api_detail, {
-                index_id: INDEX_ID,
-            })
-                .done(function (res) {
-                    if (!res || res.status !== true) {
-                        setLoadStatus($('#loadStatus'), 'error', (res && res.message) || '加载失败');
-                        return;
-                    }
+            function showError(msg) {
+                alert(msg || '操作失败，请稍后重试');
+            }
 
-                    var reportWrapper = res.content && res.content.report;
-                    if (!reportWrapper || !reportWrapper.ok) {
-                        setLoadStatus($('#loadStatus'), 'error', '报告不存在');
-                        return;
-                    }
+            /**
+             * ⭐ 修复：幂等的提交状态切换
+             * - 用独立标记防止 state=true 被重复调用覆盖 original-text
+             * - state=false 时才恢复 HTML
+             */
+            function setSubmitting($btn, state) {
+                if (!$btn || !$btn.length) return;
 
-                    renderReport(reportWrapper.data || {});
-                    setLoadStatus($('#loadStatus'), 'success', '已加载');
-                })
-                .fail(function (xhr, status) {
-                    if (status === 'abort') return;
-                    if (xhr.status === 401) {
-                        setLoadStatus($('#loadStatus'), 'error', '登录已过期');
-                    } else if (xhr.status === 404) {
-                        setLoadStatus($('#loadStatus'), 'error', '报告不存在');
-                    } else {
-                        setLoadStatus($('#loadStatus'), 'error', '加载失败');
+                if (state) {
+                    if ($btn.data('maneuSubmitting')) return;   // 已在处理中，直接返回
+                    $btn.data('maneuSubmitting', true)
+                        .data('maneuOriginalText', $btn.html())
+                        .prop('disabled', true)
+                        .html('<span class="spinner-border spinner-border-sm me-1"></span>处理中...');
+                } else {
+                    $btn.data('maneuSubmitting', false)
+                        .prop('disabled', false);
+
+                    var original = $btn.data('maneuOriginalText');
+                    if (typeof original === 'string' && original) {
+                        $btn.html(original);
                     }
+                    $btn.removeData('maneuOriginalText');
+                }
+            }
+
+            function setLoadStatus($el, status, message) {
+                $el.removeClass('status-empty status-loaded status-warning');
+                if (status === 'loading') {
+                    $el.addClass('status-empty').text(message || '加载中...');
+                } else if (status === 'success') {
+                    $el.addClass('status-loaded').text(message || '已加载');
+                } else {
+                    $el.addClass('status-warning').text(message || '加载失败');
+                }
+            }
+
+            /**
+             * ⭐ 从 xhr 提取后端 errors（400 时走 .fail 用）
+             */
+            function extractErrors(xhr) {
+                var res = xhr && xhr.responseJSON;
+                if (!res || !res.errors) return '';
+                var msgs = [];
+                Object.keys(res.errors).forEach(function (k) {
+                    (res.errors[k] || []).forEach(function (e) {
+                        if (e && e.message) msgs.push('• ' + e.message);
+                    });
                 });
-        }
+                return msgs.join('\n');
+            }
 
-        // ========================================================================
-        // 4. 数据收集
-        // ========================================================================
+            // ====================================================================
+            // 3. 渲染
+            // ====================================================================
 
-        /**
-         * 收集可更新字段（time 为 readonly，不提交）
-         * @returns {Object}
-         */
-        function collectUpdateData() {
-            var data = {
-                name:   val('name'),
-                phone:  val('phone'),
-                remark: val('remark'),
-                sex:    val('sex'),
-                age:    val('age'),
-                pd:     val('PD'),
-                ot:     val('ot'),
-                em:     val('em'),
-                dfh:    val('dfh'),
-            };
+            function renderReport(data) {
+                $('#time').val(formatTimeDisplay(data.time) || '—');
+                $('#name').val(data.name || '');
+                $('#phone').val(data.phone || '');
+                $('#remark').val(data.remark || '');
 
-            OD_OS_FIELDS.forEach(function (f) {
-                var key = f.toLowerCase();
-                data['od_' + key] = val('OD_' + f);
-                data['os_' + key] = val('OS_' + f);
-            });
+                $('#sex').val(data.sex || '');
+                $('#age').val(data.age || '');
+                $('#PD').val(data.pd || '');
+                $('#ot').val(data.ot || '');
+                $('#em').val(data.em || '');
+                $('#dfh').val(data.dfh || '');
 
-            return data;
-        }
+                OD_OS_FIELDS.forEach(function (f) {
+                    var key = f.toLowerCase();
+                    $('#OD_' + f).val(data['od_' + key] || '');
+                    $('#OS_' + f).val(data['os_' + key] || '');
+                });
+            }
 
-        // ========================================================================
-        // 5. 更新
-        // ========================================================================
-        function updateReport() {
-            if (!confirm('确定要保存更新吗？')) return;
+            // ====================================================================
+            // 4. 加载详情
+            // ====================================================================
 
-            var $btn = $('#reportUpdate');
-            setSubmitting($btn, true);
+            var currentRequest = null;
 
-            var payload = $.extend({ index_id: INDEX_ID }, collectUpdateData());
+            function loadDetail() {
+                if (currentRequest && currentRequest.readyState !== 4) {
+                    currentRequest.abort();
+                }
 
-            requestJSON(window.REPORT_DETAIL_URLS.api_update, payload)
-                .done(function (res) {
-                    if (res && res.status === true) {
-                        alert('更新成功');
-                        loadDetail();
-                    } else if (res && res.errors) {
-                        var msgs = [];
-                        Object.keys(res.errors).forEach(function (k) {
-                            (res.errors[k] || []).forEach(function (e) {
-                                msgs.push(e.message);
-                            });
-                        });
-                        showError(msgs.length ? msgs.join('\n') : (res.message || '更新失败'));
-                    } else {
-                        showError((res && res.message) || '更新失败');
-                    }
+                setLoadStatus($('#loadStatus'), 'loading');
+
+                currentRequest = window.requestJSON(window.PAGE_URLS.api_detail, {
+                    index_id: INDEX_ID,
                 })
-                .fail(function (xhr) {
-                    if (xhr.status === 401) {
-                        showError('登录已过期，请重新登录');
-                    } else {
+                    .done(function (res) {
+                        if (!res || res.status !== true) {
+                            setLoadStatus($('#loadStatus'), 'error', (res && res.message) || '加载失败');
+                            return;
+                        }
+
+                        var reportWrapper = res.content && res.content.report;
+                        if (!reportWrapper || !reportWrapper.ok) {
+                            setLoadStatus($('#loadStatus'), 'error', '报告不存在');
+                            return;
+                        }
+
+                        renderReport(reportWrapper.data || {});
+                        setLoadStatus($('#loadStatus'), 'success', '已加载');
+                    })
+                    .fail(function (xhr, status) {
+                        if (status === 'abort') return;
+                        if (xhr.status === 401) return;
+                        if (xhr.status === 404) {
+                            setLoadStatus($('#loadStatus'), 'error', '报告不存在');
+                        } else {
+                            setLoadStatus($('#loadStatus'), 'error', '加载失败');
+                        }
+                    });
+            }
+
+            // ====================================================================
+            // 5. 数据收集
+            // ====================================================================
+
+            function collectUpdateData() {
+                var data = {
+                    name:   val('name'),
+                    phone:  val('phone'),
+                    remark: val('remark'),
+                    sex:    val('sex'),
+                    age:    val('age'),
+                    pd:     val('PD'),
+                    ot:     val('ot'),
+                    em:     val('em'),
+                    dfh:    val('dfh'),
+                };
+
+                OD_OS_FIELDS.forEach(function (f) {
+                    var key = f.toLowerCase();
+                    data['od_' + key] = val('OD_' + f);
+                    data['os_' + key] = val('OS_' + f);
+                });
+
+                return data;
+            }
+
+            // ====================================================================
+            // 6. 更新
+            // ====================================================================
+
+            function updateReport() {
+                var $btn = $('#reportUpdate');
+                if ($btn.prop('disabled')) return;
+
+                if (!confirm('确定要保存更新吗？')) return;
+
+                setSubmitting($btn, true);
+
+                var payload = $.extend({ index_id: INDEX_ID }, collectUpdateData());
+
+                window.requestJSON(window.PAGE_URLS.api_update, payload)
+                    .done(function (res) {
+                        // ⭐ 先恢复按钮，再弹 alert —— 避免 alert 期间按钮仍显示"处理中"
+                        setSubmitting($btn, false);
+
+                        if (res && res.status === true) {
+                            alert('更新成功');
+                            loadDetail();
+                        } else {
+                            showError((res && res.message) || '更新失败');
+                        }
+                    })
+                    .fail(function (xhr) {
+                        // ⭐ .always 兜底，但这里也恢复一次，保证任何路径都清掉
+                        setSubmitting($btn, false);
+
+                        if (xhr.status === 401) return;
+
+                        var errorsMsg = extractErrors(xhr);
+                        if (errorsMsg) {
+                            showError(errorsMsg);
+                            return;
+                        }
+                        showError((xhr.responseJSON && xhr.responseJSON.message) || '网络错误，请稍后重试');
+                    })
+                    .always(function () {
+                        // 兜底：即使 .done/.fail 都未执行（极少见），也保证按钮恢复
+                        setSubmitting($btn, false);
+                    });
+            }
+
+            // ====================================================================
+            // 7. 删除
+            // ====================================================================
+
+            function deleteRecord() {
+                var $btn = $('#reportDelete');
+                if ($btn.prop('disabled')) return;
+
+                if (!confirm('确定要删除这条记录吗？此操作不可恢复。')) return;
+
+                setSubmitting($btn, true);
+
+                window.requestJSON(window.PAGE_URLS.api_delete, { index_id: INDEX_ID })
+                    .done(function (res) {
+                        setSubmitting($btn, false);
+
+                        if (res && res.status === true) {
+                            alert('删除成功');
+                            location.replace(window.PAGE_URLS.web_index);
+                        } else {
+                            showError((res && res.message) || '删除失败');
+                        }
+                    })
+                    .fail(function (xhr) {
+                        setSubmitting($btn, false);
+
+                        if (xhr.status === 401) return;
+                        if (xhr.status === 404) {
+                            showError('记录已被删除');
+                            return;
+                        }
                         showError('网络错误，请稍后重试');
-                    }
+                    });
+            }
+
+            // ====================================================================
+            // 8. 二维码下载
+            // ====================================================================
+
+            function downloadQRCode() {
+                var $btn = $('#generateQrCode');
+                if ($btn.prop('disabled')) return;
+
+                setSubmitting($btn, true);
+
+                window.apiRequest({
+                    url: window.PAGE_URLS.api_qrcode,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ index_id: INDEX_ID }),
+                    xhrFields: { responseType: 'blob' },
                 })
-                .always(function () {
-                    setSubmitting($btn, false);
+                    .done(function (blob) {
+                        setSubmitting($btn, false);
+
+                        var url = URL.createObjectURL(blob);
+                        var a = document.createElement('a');
+                        a.href = url;
+                        a.download = INDEX_ID + '.png';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    })
+                    .fail(function (xhr) {
+                        setSubmitting($btn, false);
+
+                        if (xhr.status === 401) return;
+
+                        // ⭐ 错误响应是 blob，读里面的 JSON 拿 message
+                        if (xhr.response instanceof Blob) {
+                            var reader = new FileReader();
+                            reader.onload = function () {
+                                try {
+                                    var data = JSON.parse(reader.result || '{}');
+                                    showError(data.message || '二维码生成失败，请稍后重试');
+                                } catch (e) {
+                                    showError('二维码生成失败，请稍后重试');
+                                }
+                            };
+                            reader.readAsText(xhr.response);
+                        } else {
+                            showError((xhr.responseJSON && xhr.responseJSON.message) || '二维码生成失败，请稍后重试');
+                        }
+                    });
+            }
+
+            // ====================================================================
+            // 9. 初始化
+            // ====================================================================
+
+            $(function () {
+                if (!INDEX_ID) {
+                    alert('缺少记录 ID，请从列表页进入');
+                    location.replace(window.PAGE_URLS.web_index || '/');
+                    return;
+                }
+
+                $('#toggleReport').on('click', function () {
+                    $('#reportExtra').slideToggle(200);
+                    $(this).find('i').toggleClass('bi-chevron-down bi-chevron-up');
                 });
-        }
 
-        // ========================================================================
-        // 6. 删除
-        // ========================================================================
-        function deleteRecord() {
-            if (!confirm('确定要删除这条记录吗？此操作不可恢复。')) return;
+                $('#reportUpdate').on('click', updateReport);
+                $('#reportDelete').on('click', deleteRecord);
+                $('#generateQrCode').on('click', downloadQRCode);
 
-            var $btn = $('#reportDelete');
-            setSubmitting($btn, true);
-
-            requestJSON(window.REPORT_DETAIL_URLS.api_delete, { index_id: INDEX_ID })
-                .done(function (res) {
-                    if (res && res.status === true) {
-                        alert('删除成功');
-                        location.replace(window.REPORT_DETAIL_URLS.web_index);
-                    } else {
-                        showError((res && res.message) || '删除失败');
-                    }
-                })
-                .fail(function (xhr) {
-                    if (xhr.status === 401) {
-                        showError('登录已过期，请重新登录');
-                    } else {
-                        showError('网络错误，请稍后重试');
-                    }
-                })
-                .always(function () {
-                    setSubmitting($btn, false);
-                });
-        }
-
-        // ========================================================================
-        // 7. 二维码下载
-        // ========================================================================
-        function downloadQRCode() {
-            var $btn = $('#reportQrcode');
-            setSubmitting($btn, true);
-
-            $.ajax({
-                url: window.REPORT_DETAIL_URLS.api_qrcode,
-                method: 'POST',
-                contentType: 'application/json',
-                headers: { 'Authorization': 'Bearer ' + getToken() },
-                data: JSON.stringify({ index_id: INDEX_ID }),
-                xhrFields: { responseType: 'blob' },
-            })
-                .done(function (blob) {
-                    var url = URL.createObjectURL(blob);
-                    var a = document.createElement('a');
-                    a.href = url;
-                    a.download = INDEX_ID + '.png';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                })
-                .fail(function (xhr) {
-                    if (xhr.status === 401) {
-                        showError('登录已过期，请重新登录');
-                    } else {
-                        showError('二维码生成失败，请稍后重试');
-                    }
-                })
-                .always(function () {
-                    setSubmitting($btn, false);
-                });
-        }
-
-        // ========================================================================
-        // 8. 初始化
-        // ========================================================================
-        $(function () {
-            $('#toggleReport').on('click', function () {
-                $('#reportExtra').slideToggle(200);
-                $(this).find('i').toggleClass('bi-chevron-down bi-chevron-up');
+                loadDetail();
             });
 
-            $('#reportUpdate').on('click', updateReport);
-            $('#reportDelete').on('click', deleteRecord);
-            $('#reportQrcode').on('click', downloadQRCode);
-
-            loadDetail();
-        });
-
-    })();
+        })();
     </script>
 {% endblock %}

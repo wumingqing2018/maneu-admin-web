@@ -1,30 +1,12 @@
 {% extends 'maneu/base.html' %}
 {% load static %}
 
-{% comment %}
-================================================================================
-产品订单 - 新增页
-================================================================================
-功能：
-  - 填写客户信息
-  - 分类添加产品（镜架 / 镜片 / 配件 / 服务），实时计算合计
-  - 提交创建订单；成功后重置表单（便于连续录入）
-
-依赖：
-  - jQuery 3.x
-  - Bootstrap 5（含 Icons）
-================================================================================
-{% endcomment %}
-
-
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/maneu_order/insert20260606.css' %}">
 {% endblock %}
 
-
 {% block content %}
     <div class="main-content-wrapper">
-        <!-- 页面标题 -->
         <div class="page-header">
             <h1 class="page-title">
                 <i class="bi bi-receipt"></i> 新增产品订单
@@ -34,7 +16,6 @@
             </a>
         </div>
 
-        <!-- 客户信息 -->
         <div class="section-card" id="guestSection">
             <div class="section-title">
                 <span><i class="bi bi-person-vcard"></i> 客户信息</span>
@@ -72,7 +53,6 @@
             </div>
         </div>
 
-        <!-- 产品明细 -->
         <div class="section-card" id="productSection">
             <div class="section-title">
                 <span><i class="bi bi-box-seam"></i> 产品明细</span>
@@ -95,7 +75,6 @@
             </div>
         </div>
 
-        <!-- 提交栏 -->
         <div class="action-bar justify-content-end">
             <button class="btn-save" id="insertBtn" type="button">
                 <i class="bi bi-check-lg"></i> 提交订单
@@ -104,449 +83,377 @@
     </div>
 {% endblock %}
 
-
 {% block javascript %}
     <script>
-        // ========================================================================
-        // 后端 URL
-        // ========================================================================
-        window.ORDER_INSERT_URLS = {
+        window.PAGE_URLS = {
             api_insert: "{% url 'maneu_order:api_insert' %}",
-            login:      "{% url 'login' %}",
+            web_index:  "{% url 'maneu_order:index' %}",
         };
     </script>
 
     <script>
-    (function () {
-        // ========================================================================
-        // 1. 工具函数
-        // ========================================================================
+        (function () {
+            'use strict';
 
-        /**
-         * 读取输入框值并 trim
-         * @param {string} id
-         * @returns {string}
-         */
-        function val(id) {
-            return ($('#' + id).val() || '').trim();
-        }
+            // ====================================================================
+            // 1. 工具函数
+            // ====================================================================
 
-        /**
-         * 读取 localStorage 中的 access_token
-         * @returns {string}
-         */
-        function getToken() {
-            return localStorage.getItem('access_token') || '';
-        }
-
-        /**
-         * 通用 JSON POST 请求（自动带 Authorization: Bearer <token>）
-         * @param {string} url
-         * @param {Object} [payload]
-         * @returns {jqXHR}
-         */
-        function requestJSON(url, payload) {
-            return $.ajax({
-                url: url,
-                method: 'POST',
-                contentType: 'application/json',
-                headers: {
-                    'Authorization': 'Bearer ' + getToken(),
-                },
-                data: JSON.stringify(payload || {}),
-                dataType: 'json',
-            });
-        }
-
-        /**
-         * HTML 转义（防 XSS）
-         * @param {*} str
-         * @returns {string}
-         */
-        function escapeHtml(str) {
-            if (str === null || str === undefined) return '';
-            return String(str).replace(/[&<>"']/g, function (m) {
-                if (m === '&')  return '&amp;';
-                if (m === '<')  return '&lt;';
-                if (m === '>')  return '&gt;';
-                if (m === '"')  return '&quot;';
-                if (m === "'")  return '&#39;';
-                return m;
-            });
-        }
-
-        /**
-         * 统一错误提示
-         * @param {string} msg
-         */
-        function showError(msg) {
-            alert(msg || '操作失败，请稍后重试');
-        }
-
-        /**
-         * 提交按钮加载态切换
-         * @param {jQuery} $btn
-         * @param {boolean} state
-         */
-        function setSubmitting($btn, state) {
-            if (!$btn || !$btn.length) return;
-            if (state) {
-                $btn.prop('disabled', true).data('original-text', $btn.html());
-                $btn.html('<span class="spinner-border spinner-border-sm me-1"></span>提交中...');
-            } else {
-                $btn.prop('disabled', false);
-                if ($btn.data('original-text')) $btn.html($btn.data('original-text'));
+            function val(target) {
+                var $el = (typeof target === 'string') ? $('#' + target) : target;
+                return ($el.val() || '').trim();
             }
-        }
 
-        /**
-         * Date → <input type="datetime-local"> 的本地时间格式
-         * @param {Date} date
-         * @returns {string} 如 "2026-10-26T15:30"
-         */
-        function toLocalDatetime(date) {
-            var tzOffset = date.getTimezoneOffset() * 60000;
-            return new Date(date.getTime() - tzOffset).toISOString().slice(0, 16);
-        }
+            function toLocalDatetime(date) {
+                var tzOffset = date.getTimezoneOffset() * 60000;
+                return new Date(date.getTime() - tzOffset).toISOString().slice(0, 16);
+            }
 
-        // ========================================================================
-        // 2. 产品行模板
-        // ========================================================================
+            function escapeHtml(str) {
+                if (str === null || str === undefined) return '';
+                return String(str).replace(/[&<>"']/g, function (m) {
+                    if (m === '&')  return '&amp;';
+                    if (m === '<')  return '&lt;';
+                    if (m === '>')  return '&gt;';
+                    if (m === '"')  return '&quot;';
+                    if (m === "'")  return '&#39;';
+                    return m;
+                });
+            }
 
-        var ROW_TEMPLATES = {
-            frame:
-                '<div class="product-row" data-item-type="frame">' +
-                '  <span class="product-badge badge-frame">镜架</span>' +
-                '  <input type="text" class="form-control product-brand"    placeholder="品牌（如 雷朋）" maxlength="50">' +
-                '  <input type="text" class="form-control product-model"    placeholder="型号（如 RB2140F）" maxlength="100">' +
-                '  <input type="text" class="form-control product-color"    placeholder="颜色" maxlength="30">' +
-                '  <select class="form-select product-material">' +
-                '    <option value="">材质</option>' +
-                '    <option value="板材">板材</option>' +
-                '    <option value="纯钛">纯钛</option>' +
-                '    <option value="β钛">β钛</option>' +
-                '    <option value="TR90">TR90</option>' +
-                '    <option value="合金">合金</option>' +
-                '    <option value="醋酸纤维">醋酸纤维</option>' +
-                '  </select>' +
-                '  <select class="form-select product-frame-type">' +
-                '    <option value="">框型</option>' +
-                '    <option value="全框">全框</option>' +
-                '    <option value="半框">半框</option>' +
-                '    <option value="无框">无框</option>' +
-                '  </select>' +
-                '  <input type="text" class="form-control product-spec"     placeholder="尺寸 52-18-145" maxlength="20">' +
-                '  <input type="number" class="form-control product-qty"    placeholder="数量" value="1" min="1">' +
-                '  <input type="number" class="form-control product-price"  placeholder="单价" step="0.01" min="0">' +
-                '  <input type="text" class="form-control product-remark"   placeholder="备注" maxlength="200">' +
-                '  <button type="button" class="btn-remove-row" title="删除">×</button>' +
-                '</div>',
-            lens:
-                '<div class="product-row" data-item-type="lens">' +
-                '  <span class="product-badge badge-lens">镜片</span>' +
-                '  <select class="form-select product-side">' +
-                '    <option value="OU">双眼</option>' +
-                '    <option value="OD">右眼</option>' +
-                '    <option value="OS">左眼</option>' +
-                '  </select>' +
-                '  <input type="text" class="form-control product-brand"    placeholder="品牌（如 蔡司）" maxlength="50">' +
-                '  <input type="text" class="form-control product-model"    placeholder="型号/系列" maxlength="100">' +
-                '  <input type="text" class="form-control product-spec"     placeholder="如 1.67 防蓝光" maxlength="100">' +
-                '  <input type="number" class="form-control product-qty"    placeholder="数量" value="1" min="1">' +
-                '  <input type="number" class="form-control product-price"  placeholder="单价" step="0.01" min="0">' +
-                '  <input type="text" class="form-control product-remark"   placeholder="备注" maxlength="200">' +
-                '  <button type="button" class="btn-remove-row" title="删除">×</button>' +
-                '</div>',
-            accessory:
-                '<div class="product-row" data-item-type="accessory">' +
-                '  <span class="product-badge badge-accessory">配件</span>' +
-                '  <input type="text" class="form-control product-model"    placeholder="名称（如 硬壳镜盒）" maxlength="100">' +
-                '  <input type="number" class="form-control product-qty"    placeholder="数量" value="1" min="1">' +
-                '  <input type="number" class="form-control product-price"  placeholder="单价" step="0.01" min="0">' +
-                '  <input type="text" class="form-control product-remark"   placeholder="备注" maxlength="200">' +
-                '  <button type="button" class="btn-remove-row" title="删除">×</button>' +
-                '</div>',
-            service:
-                '<div class="product-row" data-item-type="service">' +
-                '  <span class="product-badge badge-service">服务</span>' +
-                '  <input type="text" class="form-control product-model"    placeholder="名称（如 验光费）" maxlength="100">' +
-                '  <input type="number" class="form-control product-qty"    placeholder="数量" value="1" min="1">' +
-                '  <input type="number" class="form-control product-price"  placeholder="单价" step="0.01" min="0">' +
-                '  <input type="text" class="form-control product-remark"   placeholder="备注" maxlength="200">' +
-                '  <button type="button" class="btn-remove-row" title="删除">×</button>' +
-                '</div>',
-        };
+            function showError(msg) {
+                alert(msg || '操作失败，请稍后重试');
+            }
 
-        // ========================================================================
-        // 3. 产品行操作
-        // ========================================================================
-
-        function addProductRow(itemType) {
-            var tpl = ROW_TEMPLATES[itemType];
-            if (!tpl) return;
-            $('#productRowsContainer').append(tpl);
-            toggleEmptyTip();
-            recalcTotal();
-        }
-
-        function removeProductRow($row) {
-            $row.remove();
-            toggleEmptyTip();
-            recalcTotal();
-        }
-
-        function toggleEmptyTip() {
-            var hasRow = $('#productRowsContainer .product-row').length > 0;
-            $('#emptyProducts').toggle(!hasRow);
-        }
-
-        function recalcTotal() {
-            var total = 0;
-            $('#productRowsContainer .product-row').each(function () {
-                var qty   = parseFloat($(this).find('.product-qty').val())   || 0;
-                var price = parseFloat($(this).find('.product-price').val()) || 0;
-                total += qty * price;
-            });
-            $('#totalAmount').text(total.toFixed(2));
-        }
-
-        // ========================================================================
-        // 4. 数据收集与校验
-        // ========================================================================
-
-        /**
-         * 收集产品明细
-         * @returns {Array|null}  null 表示校验失败
-         */
-        function collectProducts() {
-            var products = [];
-            var hasError = false;
-
-            $('#productRowsContainer .product-row').each(function (idx) {
-                var $row = $(this);
-                var itemType = $row.data('item-type');
-                var brand = ($row.find('.product-brand').val() || '').trim();
-                var model = ($row.find('.product-model').val() || '').trim();
-                var qty   = parseInt($row.find('.product-qty').val(), 10) || 0;
-                var price = parseFloat($row.find('.product-price').val()) || 0;
-
-                // 全空行跳过
-                if (!brand && !model && !price) return;
-
-                // 类型专属校验
-                if (itemType === 'frame') {
-                    if (!brand) {
-                        showError('第 ' + (idx + 1) + ' 行：镜架必须填品牌');
-                        hasError = true;
-                        return false;
-                    }
-                    if (!model) {
-                        showError('第 ' + (idx + 1) + ' 行：镜架必须填型号');
-                        hasError = true;
-                        return false;
-                    }
-                    if (!($row.find('.product-color').val() || '').trim()) {
-                        showError('第 ' + (idx + 1) + ' 行：镜架必须填颜色');
-                        hasError = true;
-                        return false;
-                    }
-                }
-                if (qty < 1) {
-                    showError('第 ' + (idx + 1) + ' 行：数量必须 ≥ 1');
-                    hasError = true;
-                    return false;
-                }
-                if (price < 0) {
-                    showError('第 ' + (idx + 1) + ' 行：单价不能为负');
-                    hasError = true;
-                    return false;
-                }
-
-                // 拼接 spec
-                var spec = '';
-                if (itemType === 'frame') {
-                    var frameType = $row.find('.product-frame-type').val() || '';
-                    var size      = ($row.find('.product-spec').val() || '').trim();
-                    spec = [frameType, size].filter(Boolean).join(' ');
+            function setSubmitting($btn, state) {
+                if (!$btn || !$btn.length) return;
+                if (state) {
+                    $btn.prop('disabled', true).data('original-text', $btn.html());
+                    $btn.html('<span class="spinner-border spinner-border-sm me-1"></span>提交中...');
                 } else {
-                    spec = ($row.find('.product-spec').val() || '').trim();
+                    $btn.prop('disabled', false);
+                    if ($btn.data('original-text')) $btn.html($btn.data('original-text'));
                 }
-
-                products.push({
-                    item_type:  itemType,
-                    side:       $row.find('.product-side').val() || '',
-                    brand:      brand,
-                    model:      model,
-                    color:      ($row.find('.product-color').val() || '').trim(),
-                    material:   $row.find('.product-material').val() || '',
-                    spec:       spec,
-                    quantity:   qty,
-                    unit_price: price,
-                    remark:     ($row.find('.product-remark').val() || '').trim(),
-                });
-            });
-
-            return hasError ? null : products;
-        }
-
-        // ========================================================================
-        // 5. 字段级错误展示
-        // ========================================================================
-
-        function showFieldErrors(errors) {
-            $('.field-error').remove();
-            $('#productRowsContainer .product-row').removeClass('has-error');
-
-            var fieldMap = {
-                name:  '#name',
-                phone: '#phone',
-                time:  '#time',
-            };
-            var allMsgs = [];
-
-            Object.keys(errors || {}).forEach(function (field) {
-                if (field === 'products') return;
-
-                var arr = errors[field];
-                if (!Array.isArray(arr) || arr.length === 0) return;
-
-                arr.forEach(function (e) {
-                    allMsgs.push(e.message || '格式错误');
-                });
-
-                var msg = (arr[0] && arr[0].message) || '格式错误';
-                var $el = $(fieldMap[field]);
-                if ($el.length) {
-                    $el.after('<div class="field-error">' + escapeHtml(msg) + '</div>');
-                }
-            });
-
-            if (Array.isArray(errors.products)) {
-                errors.products.forEach(function (item) {
-                    var $row = $('#productRowsContainer .product-row').eq(item.index);
-                    $row.addClass('has-error');
-                    allMsgs.push(item.message || ('第 ' + ((item.index || 0) + 1) + ' 行：格式错误'));
-                });
             }
 
-            if (allMsgs.length) showError(allMsgs[0]);
-        }
+            // ====================================================================
+            // 2. 产品行模板
+            // ====================================================================
 
-        // ========================================================================
-        // 6. 提交
-        // ========================================================================
-
-        function submitOrder() {
-            var $btn = $('#insertBtn');
-            if ($btn.prop('disabled')) return;   // 防重复提交
-
-            var products = collectProducts();
-            if (products === null) return;
-
-            if (products.length === 0) {
-                showError('请至少添加 1 条有效产品');
-                return;
-            }
-
-            var payload = {
-                time:     $('#time').val(),
-                name:     val('name'),
-                phone:    val('phone'),
-                remark:   val('remark'),
-                products: products,
+            var ROW_TEMPLATES = {
+                frame:
+                    '<div class="product-row" data-item-type="frame">' +
+                    '  <span class="product-badge badge-frame">镜架</span>' +
+                    '  <input type="text" class="form-control product-brand"    placeholder="品牌（如 雷朋）" maxlength="50">' +
+                    '  <input type="text" class="form-control product-model"    placeholder="型号（如 RB2140F）" maxlength="100">' +
+                    '  <input type="text" class="form-control product-color"    placeholder="颜色" maxlength="30">' +
+                    '  <select class="form-select product-material">' +
+                    '    <option value="">材质</option>' +
+                    '    <option value="板材">板材</option>' +
+                    '    <option value="纯钛">纯钛</option>' +
+                    '    <option value="β钛">β钛</option>' +
+                    '    <option value="TR90">TR90</option>' +
+                    '    <option value="合金">合金</option>' +
+                    '    <option value="醋酸纤维">醋酸纤维</option>' +
+                    '  </select>' +
+                    '  <select class="form-select product-frame-type">' +
+                    '    <option value="">框型</option>' +
+                    '    <option value="全框">全框</option>' +
+                    '    <option value="半框">半框</option>' +
+                    '    <option value="无框">无框</option>' +
+                    '  </select>' +
+                    '  <input type="text" class="form-control product-spec"     placeholder="尺寸 52-18-145" maxlength="20">' +
+                    '  <input type="number" class="form-control product-qty"    placeholder="数量" value="1" min="1">' +
+                    '  <input type="number" class="form-control product-price"  placeholder="单价" step="0.01" min="0">' +
+                    '  <input type="text" class="form-control product-remark"   placeholder="备注" maxlength="200">' +
+                    '  <button type="button" class="btn-remove-row" title="删除">×</button>' +
+                    '</div>',
+                lens:
+                    '<div class="product-row" data-item-type="lens">' +
+                    '  <span class="product-badge badge-lens">镜片</span>' +
+                    '  <select class="form-select product-side">' +
+                    '    <option value="OU">双眼</option>' +
+                    '    <option value="OD">右眼</option>' +
+                    '    <option value="OS">左眼</option>' +
+                    '  </select>' +
+                    '  <input type="text" class="form-control product-brand"    placeholder="品牌（如 蔡司）" maxlength="50">' +
+                    '  <input type="text" class="form-control product-model"    placeholder="型号/系列" maxlength="100">' +
+                    '  <input type="text" class="form-control product-spec"     placeholder="如 1.67 防蓝光" maxlength="100">' +
+                    '  <input type="number" class="form-control product-qty"    placeholder="数量" value="1" min="1">' +
+                    '  <input type="number" class="form-control product-price"  placeholder="单价" step="0.01" min="0">' +
+                    '  <input type="text" class="form-control product-remark"   placeholder="备注" maxlength="200">' +
+                    '  <button type="button" class="btn-remove-row" title="删除">×</button>' +
+                    '</div>',
+                accessory:
+                    '<div class="product-row" data-item-type="accessory">' +
+                    '  <span class="product-badge badge-accessory">配件</span>' +
+                    '  <input type="text" class="form-control product-model"    placeholder="名称（如 硬壳镜盒）" maxlength="100">' +
+                    '  <input type="number" class="form-control product-qty"    placeholder="数量" value="1" min="1">' +
+                    '  <input type="number" class="form-control product-price"  placeholder="单价" step="0.01" min="0">' +
+                    '  <input type="text" class="form-control product-remark"   placeholder="备注" maxlength="200">' +
+                    '  <button type="button" class="btn-remove-row" title="删除">×</button>' +
+                    '</div>',
+                service:
+                    '<div class="product-row" data-item-type="service">' +
+                    '  <span class="product-badge badge-service">服务</span>' +
+                    '  <input type="text" class="form-control product-model"    placeholder="名称（如 验光费）" maxlength="100">' +
+                    '  <input type="number" class="form-control product-qty"    placeholder="数量" value="1" min="1">' +
+                    '  <input type="number" class="form-control product-price"  placeholder="单价" step="0.01" min="0">' +
+                    '  <input type="text" class="form-control product-remark"   placeholder="备注" maxlength="200">' +
+                    '  <button type="button" class="btn-remove-row" title="删除">×</button>' +
+                    '</div>',
             };
 
-            setSubmitting($btn, true);
+            // ====================================================================
+            // 3. 产品行操作
+            // ====================================================================
 
-            requestJSON(window.ORDER_INSERT_URLS.api_insert, payload)
-                .done(function (res) {
-                    if (res && res.status === true) {
-                        var total = $('#totalAmount').text() || '0.00';
-                        alert('提交成功！总金额：¥' + total);
-                        resetForm();
-                    } else if (res && res.errors) {
-                        showFieldErrors(res.errors);
-                    } else {
-                        showError((res && res.message) || '提交失败');
-                    }
-                })
-                .fail(function (xhr) {
-                    if (xhr.status === 401) {
-                        alert('登录已过期，请重新登录');
-                        setTimeout(function () {
-                            location.href = window.ORDER_INSERT_URLS.login;
-                        }, 500);
-                        return;
-                    }
-                    try {
-                        var err = JSON.parse(xhr.responseText);
-                        if (err.errors) {
-                            showFieldErrors(err.errors);
-                            return;
+            function addProductRow(itemType) {
+                var tpl = ROW_TEMPLATES[itemType];
+                if (!tpl) return;
+                $('#productRowsContainer').append(tpl);
+                toggleEmptyTip();
+                recalcTotal();
+            }
+
+            function removeProductRow($row) {
+                $row.remove();
+                toggleEmptyTip();
+                recalcTotal();
+            }
+
+            function toggleEmptyTip() {
+                var hasRow = $('#productRowsContainer .product-row').length > 0;
+                $('#emptyProducts').toggle(!hasRow);
+            }
+
+            function recalcTotal() {
+                var total = 0;
+                $('#productRowsContainer .product-row').each(function () {
+                    var qty   = parseFloat($(this).find('.product-qty').val())   || 0;
+                    var price = parseFloat($(this).find('.product-price').val()) || 0;
+                    total += qty * price;
+                });
+                $('#totalAmount').text(total.toFixed(2));
+            }
+
+            // ====================================================================
+            // 4. 数据收集与校验
+            // ====================================================================
+
+            function collectProducts() {
+                var products = [];
+                var hasError = false;
+
+                $('#productRowsContainer .product-row').each(function (idx) {
+                    var $row = $(this);
+                    var itemType = $row.data('item-type');
+                    var brand = ($row.find('.product-brand').val() || '').trim();
+                    var model = ($row.find('.product-model').val() || '').trim();
+                    var qty   = parseInt($row.find('.product-qty').val(), 10) || 0;
+                    var price = parseFloat($row.find('.product-price').val()) || 0;
+
+                    if (!brand && !model && !price) return;
+
+                    if (itemType === 'frame') {
+                        if (!brand) {
+                            showError('第 ' + (idx + 1) + ' 行：镜架必须填品牌');
+                            hasError = true;
+                            return false;
                         }
-                        showError(err.message || '网络错误');
-                    } catch (e) {
-                        showError('网络错误，请稍后重试');
+                        if (!model) {
+                            showError('第 ' + (idx + 1) + ' 行：镜架必须填型号');
+                            hasError = true;
+                            return false;
+                        }
+                        if (!($row.find('.product-color').val() || '').trim()) {
+                            showError('第 ' + (idx + 1) + ' 行：镜架必须填颜色');
+                            hasError = true;
+                            return false;
+                        }
                     }
-                })
-                .always(function () {
-                    setSubmitting($btn, false);
+                    if (qty < 1) {
+                        showError('第 ' + (idx + 1) + ' 行：数量必须 ≥ 1');
+                        hasError = true;
+                        return false;
+                    }
+                    if (price < 0) {
+                        showError('第 ' + (idx + 1) + ' 行：单价不能为负');
+                        hasError = true;
+                        return false;
+                    }
+
+                    var spec = '';
+                    if (itemType === 'frame') {
+                        var frameType = $row.find('.product-frame-type').val() || '';
+                        var size      = ($row.find('.product-spec').val() || '').trim();
+                        spec = [frameType, size].filter(Boolean).join(' ');
+                    } else {
+                        spec = ($row.find('.product-spec').val() || '').trim();
+                    }
+
+                    products.push({
+                        item_type:  itemType,
+                        side:       $row.find('.product-side').val() || '',
+                        brand:      brand,
+                        model:      model,
+                        color:      ($row.find('.product-color').val() || '').trim(),
+                        material:   $row.find('.product-material').val() || '',
+                        spec:       spec,
+                        quantity:   qty,
+                        unit_price: price,
+                        remark:     ($row.find('.product-remark').val() || '').trim(),
+                    });
                 });
-        }
 
-        // ========================================================================
-        // 7. 重置表单
-        // ========================================================================
+                return hasError ? null : products;
+            }
 
-        function resetForm() {
-            $('#name, #phone, #remark').val('');
-            $('#time').val(toLocalDatetime(new Date()));
-            $('#productRowsContainer').empty();
-            toggleEmptyTip();
-            recalcTotal();
-            $('#name').focus();
-        }
+            // ====================================================================
+            // 5. 字段级错误展示
+            // ====================================================================
 
-        // ========================================================================
-        // 8. 初始化
-        // ========================================================================
+            function showFieldErrors(errors) {
+                $('.field-error').remove();
+                $('#productRowsContainer .product-row').removeClass('has-error');
 
-        $(function () {
-            // 录入时间：默认当前，且不允许选未来
-            var $time = $('#time');
-            var nowStr = toLocalDatetime(new Date());
-            $time.attr('max', nowStr);
-            $time.val(nowStr);
+                var fieldMap = {
+                    name:  '#name',
+                    phone: '#phone',
+                    time:  '#time',
+                };
+                var allMsgs = [];
 
-            // 添加产品按钮
-            $('.add-btn-group button[data-add-type]').on('click', function () {
-                addProductRow($(this).data('add-type'));
-            });
+                Object.keys(errors || {}).forEach(function (field) {
+                    if (field === 'products') return;
 
-            // 删除产品行（事件委托）
-            $('#productRowsContainer').on('click', '.btn-remove-row', function () {
-                removeProductRow($(this).closest('.product-row'));
-            });
+                    var arr = errors[field];
+                    if (!Array.isArray(arr) || arr.length === 0) return;
 
-            // 数量 / 单价变化自动重算合计
-            $('#productRowsContainer').on('input', '.product-qty, .product-price', recalcTotal);
+                    arr.forEach(function (e) {
+                        allMsgs.push(e.message || '格式错误');
+                    });
 
-            // 提交
-            $('#insertBtn').on('click', submitOrder);
+                    var msg = (arr[0] && arr[0].message) || '格式错误';
+                    var $el = $(fieldMap[field]);
+                    if ($el.length) {
+                        $el.after('<div class="field-error">' + escapeHtml(msg) + '</div>');
+                    }
+                });
 
-            // 客户信息区回车提交（产品区回车不提交，避免误操作）
-            $('#guestSection input').on('keypress', function (e) {
-                if (e.which === 13) {
-                    e.preventDefault();
-                    submitOrder();
+                if (Array.isArray(errors.products)) {
+                    errors.products.forEach(function (item) {
+                        var $row = $('#productRowsContainer .product-row').eq(item.index);
+                        $row.addClass('has-error');
+                        allMsgs.push(item.message || ('第 ' + ((item.index || 0) + 1) + ' 行：格式错误'));
+                    });
                 }
+
+                if (allMsgs.length) showError(allMsgs[0]);
+            }
+
+            // ====================================================================
+            // 6. 提交
+            // ====================================================================
+
+            function submitOrder() {
+                var $btn = $('#insertBtn');
+                if ($btn.prop('disabled')) return;
+
+                var products = collectProducts();
+                if (products === null) return;
+
+                if (products.length === 0) {
+                    showError('请至少添加 1 条有效产品');
+                    return;
+                }
+
+                var payload = {
+                    time:     $('#time').val(),
+                    name:     val('name'),
+                    phone:    val('phone'),
+                    remark:   val('remark'),
+                    products: products,
+                };
+
+                setSubmitting($btn, true);
+
+                window.requestJSON(window.PAGE_URLS.api_insert, payload)
+                    .done(function (res) {
+                        if (res && res.status === true) {
+                            var total = $('#totalAmount').text() || '0.00';
+                            alert('提交成功！总金额：¥' + total);
+                            resetForm();
+                        } else if (res && res.errors) {
+                            showFieldErrors(res.errors);
+                        } else {
+                            showError((res && res.message) || '提交失败');
+                        }
+                    })
+                    .fail(function (xhr) {
+                        if (xhr.status === 401) return;
+                        try {
+                            var err = JSON.parse(xhr.responseText);
+                            if (err.errors) {
+                                showFieldErrors(err.errors);
+                                return;
+                            }
+                            showError(err.message || '网络错误');
+                        } catch (e) {
+                            showError('网络错误，请稍后重试');
+                        }
+                    })
+                    .always(function () {
+                        setSubmitting($btn, false);
+                    });
+            }
+
+            // ====================================================================
+            // 7. 重置表单
+            // ====================================================================
+
+            function resetForm() {
+                $('#name, #phone, #remark').val('');
+                $('#time').val(toLocalDatetime(new Date()));
+                $('#productRowsContainer').empty();
+                toggleEmptyTip();
+                recalcTotal();
+                $('#name').focus();
+            }
+
+            // ====================================================================
+            // 8. 初始化
+            // ====================================================================
+
+            $(function () {
+                var $time = $('#time');
+                var nowStr = toLocalDatetime(new Date());
+                $time.attr('max', nowStr);
+                $time.val(nowStr);
+
+                $('.add-btn-group button[data-add-type]').on('click', function () {
+                    addProductRow($(this).data('add-type'));
+                });
+
+                $('#productRowsContainer').on('click', '.btn-remove-row', function () {
+                    removeProductRow($(this).closest('.product-row'));
+                });
+
+                $('#productRowsContainer').on('input', '.product-qty, .product-price', recalcTotal);
+
+                $('#insertBtn').on('click', submitOrder);
+
+                $('#guestSection input').on('keypress', function (e) {
+                    if (e.which === 13) {
+                        e.preventDefault();
+                        submitOrder();
+                    }
+                });
+
+                toggleEmptyTip();
+                recalcTotal();
             });
 
-            // 初始状态
-            toggleEmptyTip();
-            recalcTotal();
-        });
-
-    })();
+        })();
     </script>
 {% endblock %}
