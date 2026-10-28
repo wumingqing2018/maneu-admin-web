@@ -1,7 +1,5 @@
 from django.shortcuts import render
 
-from common.util_time import time_now, time_start, time_end
-
 
 def index(request):
     return render(request, 'report_index.html')

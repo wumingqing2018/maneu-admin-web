@@ -91,55 +91,40 @@
 
 {% block javascript %}
     <script>
-        window.PAGE_URLS = {
-            api_insert: "{% url 'maneu_store:api_insert' %}",
-            web_index:  "{% url 'maneu_store:index' %}",
-        };
+        window.STORE_INSERT_API = "{% url 'maneu_store:api_insert' %}";
+        window.STORE_LIST_URL   = "{% url 'maneu_store:index' %}";
     </script>
     <script>
         (function () {
-            'use strict';
-
-            // ====================================================================
-            // 1. 工具函数
-            // ====================================================================
-
-            function val(target) {
-                var $el = (typeof target === 'string') ? $('#' + target) : target;
-                return ($el.val() || '').trim();
+            function val(id) {
+                return ($('#' + id).val() || '').trim();
             }
 
-            function toLocalDatetime(date) {
-                var tzOffset = date.getTimezoneOffset() * 60000;
-                return new Date(date.getTime() - tzOffset).toISOString().slice(0, 16);
+            function getToken() {
+                return localStorage.getItem('access_token') || '';
             }
 
             function showError(msg) {
                 alert(msg || '操作失败，请稍后重试');
             }
 
-            function setSubmitting($btn, state) {
-                if (!$btn || !$btn.length) return;
-                if (state) {
-                    $btn.prop('disabled', true).data('original-text', $btn.html());
-                    $btn.html('<span class="spinner-border spinner-border-sm me-1"></span>提交中...');
-                } else {
-                    $btn.prop('disabled', false);
-                    if ($btn.data('original-text')) $btn.html($btn.data('original-text'));
-                }
+            function getNowForDatetimeLocal() {
+                var d = new Date();
+                var pad = function (n) { return String(n).padStart(2, '0'); };
+                return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) +
+                    'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
             }
 
-            function setupToggle($btn, $panel) {
+            function setupToggle(btnId, panelId) {
+                var $btn = $('#' + btnId);
+                var $panel = $('#' + panelId);
                 if (!$btn.length || !$panel.length) return;
+
                 $btn.on('click', function () {
                     $panel.slideToggle(200);
                     $btn.find('i').toggleClass('bi-chevron-down bi-chevron-up');
                 });
             }
-
-            // ====================================================================
-            // 2. 数据收集
-            // ====================================================================
 
             function collectStoreContent() {
                 var keys = [];
@@ -168,10 +153,6 @@
                 return JSON.stringify([obj]);
             }
 
-            // ====================================================================
-            // 3. 提交
-            // ====================================================================
-
             var isSubmitting = false;
 
             function submitOrder() {
@@ -179,11 +160,6 @@
 
                 var storeContent = collectStoreContent();
                 if (storeContent === null) return;
-
-                if (!window.getAccessToken()) {
-                    showError('请先登录');
-                    return;
-                }
 
                 var payload = {
                     time:         val('time'),
@@ -193,52 +169,61 @@
                     storeContent: storeContent,
                 };
 
+                var token = getToken();
+                if (!token) {
+                    alert('请先登录');
+                    return;
+                }
+
                 var $btn = $('#submitOrderBtn');
+                var originalText = $btn.html();
 
                 isSubmitting = true;
-                setSubmitting($btn, true);
+                $btn.prop('disabled', true)
+                    .html('<span class="spinner-border spinner-border-sm me-1"></span>提交中...');
 
-                window.requestJSON(window.PAGE_URLS.api_insert, payload)
-                    .done(function (res) {
-                        if (res && res.status === true) {
-                            alert('提交成功');
-                            location.href = window.PAGE_URLS.web_index || '/';
-                        } else if (res && res.errors) {
-                            var msgs = [];
-                            Object.keys(res.errors).forEach(function (k) {
-                                (res.errors[k] || []).forEach(function (e) {
-                                    msgs.push(e.message);
-                                });
+                // 统一使用全局包装：401 自动刷新 token 并重放
+                window.apiRequest({
+                    url: window.STORE_INSERT_API,
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(payload),
+                    dataType: 'json'
+                })
+                .done(function (res) {
+                    if (res && res.status === true) {
+                        alert('提交成功');
+                        location.href = window.STORE_LIST_URL || '/';
+                    } else if (res && res.errors) {
+                        var msgs = [];
+                        Object.keys(res.errors).forEach(function (k) {
+                            (res.errors[k] || []).forEach(function (e) {
+                                msgs.push(e.message);
                             });
-                            showError(msgs.length ? msgs.join('\n') : (res.message || '提交失败'));
-                        } else {
-                            showError((res && res.message) || '提交失败');
-                        }
-                    })
-                    .fail(function (xhr) {
-                        if (xhr.status === 401) return;
-                        var msg = '网络错误，请稍后重试';
-                        try {
-                            var data = JSON.parse(xhr.responseText);
-                            msg = data.message || msg;
-                        } catch (e) {}
-                        showError(msg);
-                    })
-                    .always(function () {
-                        isSubmitting = false;
-                        setSubmitting($btn, false);
-                    });
+                        });
+                        showError(msgs.length ? msgs.join('\n') : (res.message || '提交失败'));
+                    } else {
+                        showError((res && res.message) || '提交失败');
+                    }
+                })
+                .fail(function (xhr) {
+                    if (xhr.status === 401) return;   // 全局已处理跳转登录
+                    var msg = '网络错误，请稍后重试';
+                    try {
+                        var data = JSON.parse(xhr.responseText);
+                        msg = data.message || msg;
+                    } catch (e) {}
+                    showError(msg);
+                })
+                .always(function () {
+                    isSubmitting = false;
+                    $btn.prop('disabled', false).html(originalText);
+                });
             }
 
-            // ====================================================================
-            // 4. 初始化
-            // ====================================================================
-
             $(function () {
-                $('#time').val(toLocalDatetime(new Date()));
-
-                setupToggle($('#toggleProduct'), $('#productExtra'));
-
+                $('#time').val(getNowForDatetimeLocal());
+                setupToggle('toggleProduct', 'productExtra');
                 $('#submitOrderBtn').on('click', submitOrder);
 
                 $('#guestSection input, #storeSection input').on('keypress', function (e) {
@@ -248,7 +233,6 @@
                     }
                 });
             });
-
         })();
     </script>
 {% endblock %}
