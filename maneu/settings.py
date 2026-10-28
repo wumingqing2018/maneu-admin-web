@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     # ---- 业务应用 ----
     'maneu',          # 主业务（认证、订单、报表核心）
     'maneu_admin',    # 管理员后台
-    'maneu_index',    # 首页
     'maneu_order',    # 订单管理
     'maneu_report',   # 验光报告
     'maneu_store',    # 定制产品
@@ -172,7 +171,7 @@ USE_TZ = False               # False = 使用 TIME_ZONE 本地时间；True = �
 #    生产环境建议改为：STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 STATIC_ROOT = "/static/"
-STATIC_FILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 
 # ============================================================================
@@ -192,7 +191,7 @@ JWT_CONFIG = {
     'ISSUER': 'maneu',
 
     # Token 有效期（秒）
-    'ACCESS_TOKEN_LIFETIME':  30,             # 1 小时
+    'ACCESS_TOKEN_LIFETIME':  60 * 60,             # 1 小时
     'REFRESH_TOKEN_LIFETIME': 60 * 60 * 24 * 7,    # 7 天
 
     # 请求头格式：Authorization: Bearer <token>

@@ -68,22 +68,73 @@
         window.location.href = LOGIN_URL;
     }
 
-    // ---- 4. 401 刷新后重放 ----
-    function sendWithRetry(opts, retried) {
-        return $.ajax(opts).then(function (res) {
-            return res;
-        }, function (xhr, status, error) {
-            if (!xhr || xhr.status !== 401 || retried) {
-                return $.Deferred().reject(xhr, status, error).promise();
-            }
+    // ---- 4. 统一请求入口（Promise + abort/readyState 兼容） ----
 
-            return refreshAccessToken().then(function () {
-                return sendWithRetry(opts, true);
-            }, function () {
-                redirectToLogin();
-                return $.Deferred().reject(xhr, status, error).promise();
+    /**
+     * 发送一次请求，401 时刷新 token 并重放
+     * 返回一个"增强 Promise"：
+     *   - 保留 jQuery Promise 的 done / fail / always / then
+     *   - 额外提供 abort()：取消当前请求（含重放阶段）
+     *   - 额外提供 readyState：pending 时 0，settled 时 4
+     */
+    function sendWithRetry(opts) {
+        var dfd       = $.Deferred();
+        var currentXHR = null;
+        var aborted   = false;
+
+        function fire(retried) {
+            if (aborted) return;
+
+            currentXHR = $.ajax(opts);
+
+            currentXHR.done(function (res) {
+                dfd.resolve(res);
+            }).fail(function (xhr, status, error) {
+                if (aborted || status === 'abort') {
+                    dfd.reject(xhr, 'abort', 'abort');
+                    return;
+                }
+                if (!xhr || xhr.status !== 401 || retried) {
+                    dfd.reject(xhr, status, error);
+                    return;
+                }
+                refreshAccessToken().then(function () {
+                    fire(true);
+                }, function () {
+                    redirectToLogin();
+                    dfd.reject(xhr, status, error);
+                });
             });
-        });
+        }
+
+        fire(false);
+
+        var promise = dfd.promise();
+
+        // ⭐ 关键修复：补上 abort()
+        promise.abort = function () {
+            aborted = true;
+            if (currentXHR && typeof currentXHR.abort === 'function') {
+                currentXHR.abort();   // 会触发 .fail(status='abort')，进而 reject dfd
+            } else {
+                dfd.reject(null, 'abort', 'abort');
+            }
+        };
+
+        // ⭐ 关键修复：补上 readyState（供 if (readyState !== 4) 判断）
+        try {
+            Object.defineProperty(promise, 'readyState', {
+                configurable: true,
+                get: function () {
+                    return dfd.state() === 'pending' ? 0 : 4;
+                }
+            });
+        } catch (e) {
+            // 某些老浏览器 defineProperty 不支持 getter，忽略
+            promise.readyState = 4;
+        }
+
+        return promise;
     }
 
     /**
@@ -91,11 +142,18 @@
      */
     window.apiRequest = function (options) {
         if (!options || !options.url) {
-            return $.Deferred().reject(null, 'error', new Error('apiRequest: url is required')).promise();
+            var bad = $.Deferred();
+            bad.reject(null, 'error', new Error('apiRequest: url is required'));
+            var badPromise = bad.promise();
+            badPromise.abort = function () {};
+            badPromise.readyState = 4;
+            return badPromise;
         }
+
         var opts = $.extend({}, options);
         if (options.headers) opts.headers = $.extend({}, options.headers);
-        return sendWithRetry(opts, false);
+
+        return sendWithRetry(opts);
     };
 
     /**
