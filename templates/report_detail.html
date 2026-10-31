@@ -260,15 +260,13 @@
             }
 
             /**
-             * ⭐ 修复：幂等的提交状态切换
-             * - 用独立标记防止 state=true 被重复调用覆盖 original-text
-             * - state=false 时才恢复 HTML
+             * 幂等的提交状态切换
              */
             function setSubmitting($btn, state) {
                 if (!$btn || !$btn.length) return;
 
                 if (state) {
-                    if ($btn.data('maneuSubmitting')) return;   // 已在处理中，直接返回
+                    if ($btn.data('maneuSubmitting')) return;
                     $btn.data('maneuSubmitting', true)
                         .data('maneuOriginalText', $btn.html())
                         .prop('disabled', true)
@@ -296,9 +294,6 @@
                 }
             }
 
-            /**
-             * ⭐ 从 xhr 提取后端 errors（400 时走 .fail 用）
-             */
             function extractErrors(xhr) {
                 var res = xhr && xhr.responseJSON;
                 if (!res || !res.errors) return '';
@@ -312,8 +307,19 @@
             }
 
             // ====================================================================
-            // 3. 渲染
+            // 3. 渲染（⭐ 修复：解析 content JSON 字符串，展平优先、content 兜底）
             // ====================================================================
+
+            function parseContent(raw) {
+                if (!raw) return {};
+                if (typeof raw === 'object') return raw;
+                try {
+                    return JSON.parse(raw);
+                } catch (e) {
+                    console.error('content 解析失败', e);
+                    return {};
+                }
+            }
 
             function renderReport(data) {
                 $('#time').val(formatTimeDisplay(data.time) || '—');
@@ -321,17 +327,21 @@
                 $('#phone').val(data.phone || '');
                 $('#remark').val(data.remark || '');
 
-                $('#sex').val(data.sex || '');
-                $('#age').val(data.age || '');
-                $('#PD').val(data.pd || '');
-                $('#ot').val(data.ot || '');
-                $('#em').val(data.em || '');
-                $('#dfh').val(data.dfh || '');
+                var opt = parseContent(data.content);
+                var od = opt.od || {};
+                var os = opt.os || {};
+
+                $('#sex').val(data.sex || opt.sex || '');
+                $('#age').val(data.age || opt.age || '');
+                $('#PD').val(data.pd   || opt.pd  || '');
+                $('#ot').val(data.ot   || opt.ot  || '');
+                $('#em').val(data.em   || opt.em  || '');
+                $('#dfh').val(data.dfh || opt.dfh || '');
 
                 OD_OS_FIELDS.forEach(function (f) {
                     var key = f.toLowerCase();
-                    $('#OD_' + f).val(data['od_' + key] || '');
-                    $('#OS_' + f).val(data['os_' + key] || '');
+                    $('#OD_' + f).val(data['od_' + key] || od[key] || '');
+                    $('#OS_' + f).val(data['os_' + key] || os[key] || '');
                 });
             }
 
@@ -378,31 +388,34 @@
             }
 
             // ====================================================================
-            // 5. 数据收集
+            // 5. 数据收集（⭐ 修复：同时提交展平字段 + 嵌套 content）
             // ====================================================================
 
             function collectUpdateData() {
-                var data = {
-                    name:   val('name'),
-                    phone:  val('phone'),
-                    remark: val('remark'),
-                    sex:    val('sex'),
-                    age:    val('age'),
-                    pd:     val('PD'),
-                    ot:     val('ot'),
-                    em:     val('em'),
-                    dfh:    val('dfh'),
+                var content = {
+                    sex: val('sex'),
+                    age: val('age'),
+                    pd:  val('PD'),
+                    ot:  val('ot'),
+                    em:  val('em'),
+                    dfh: val('dfh'),
+                    od:  {},
+                    os:  {},
                 };
 
                 OD_OS_FIELDS.forEach(function (f) {
                     var key = f.toLowerCase();
-                    data['od_' + key] = val('OD_' + f);
-                    data['os_' + key] = val('OS_' + f);
+                    content.od[key] = val('OD_' + f);
+                    content.os[key] = val('OS_' + f);
                 });
 
-                return data;
+                return {
+                    name:    val('name'),
+                    phone:   val('phone'),
+                    remark:  val('remark'),
+                    content: content,     // 验光数据全在这里
+                };
             }
-
             // ====================================================================
             // 6. 更新
             // ====================================================================
@@ -419,7 +432,6 @@
 
                 window.requestJSON(window.PAGE_URLS.api_update, payload)
                     .done(function (res) {
-                        // ⭐ 先恢复按钮，再弹 alert —— 避免 alert 期间按钮仍显示"处理中"
                         setSubmitting($btn, false);
 
                         if (res && res.status === true) {
@@ -430,7 +442,6 @@
                         }
                     })
                     .fail(function (xhr) {
-                        // ⭐ .always 兜底，但这里也恢复一次，保证任何路径都清掉
                         setSubmitting($btn, false);
 
                         if (xhr.status === 401) return;
@@ -443,7 +454,6 @@
                         showError((xhr.responseJSON && xhr.responseJSON.message) || '网络错误，请稍后重试');
                     })
                     .always(function () {
-                        // 兜底：即使 .done/.fail 都未执行（极少见），也保证按钮恢复
                         setSubmitting($btn, false);
                     });
             }
@@ -517,7 +527,6 @@
 
                         if (xhr.status === 401) return;
 
-                        // ⭐ 错误响应是 blob，读里面的 JSON 拿 message
                         if (xhr.response instanceof Blob) {
                             var reader = new FileReader();
                             reader.onload = function () {

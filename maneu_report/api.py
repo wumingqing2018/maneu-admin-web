@@ -102,70 +102,34 @@ _NUMBER_FIELDS = (
 # ============================================================
 @require_admin_id
 def insert(request, admin_id):
-    """
-    创建验光报告
-
-    请求：application/json
-    说明：
-        - name / phone / remark 均非必填
-        - phone 如果填了，必须是合法手机号
-        - time 由后端自动生成
-    """
     data, err = _parse_json(request)
     if err:
         return err
 
-    index_id = str(uuid.uuid4())
-
-    errors = {}
-
-    name   = _get_str(data, 'name')
     time = _get_str(data, 'time')
+    name = _get_str(data, 'name')
     phone = _get_str(data, 'phone')
     remark = _get_str(data, 'remark')
 
-    # 组装字段
-    content = {
-        'time': time,
-        'name': name,
-        'phone': phone,
-        'remark': remark,
-        'sex': _get_str(data, 'sex'),  # ← 补
-        'age': _get_str(data, 'age'),  # ← 补
-        'ot': _get_str(data, 'ot'),  # ← 补
-        'em': _get_str(data, 'em'),  # ← 补
-        'dfh': _get_str(data, 'dfh'),  # ← 补
-        'pd': _get_str(data, 'pd'),
-    }
+    if not time:
+        return _json_error('请选择录入时间', status=400)
 
-    # 数值字段
-    for field in _NUMBER_FIELDS:
-        if field == 'pd':
-            continue
-        content[field] = _validate_number(_get_str(data, field), field, errors)
+    optometry = data.get('content') or {}
+    if not isinstance(optometry, dict):
+        return _json_error('content 格式错误，应为对象', status=400)
 
-    if errors:
-        return _json_error('参数校验失败', status=400, errors=errors)
-
-    logger.info(
-        'report.insert admin_id=%s index_id=%s name=%r phone=%r',
-        admin_id, index_id, content['name'], content['phone'],
+    index_id = str(uuid.uuid4())
+    report = report_insert(
+        admin_id=admin_id,
+        index_id=index_id,
+        time=time,
+        name=name,
+        phone=phone,
+        remark=remark,
+        content=json.dumps(optometry, ensure_ascii=False),
     )
-
-    try:
-        with transaction.atomic():
-            report = report_insert(
-                admin_id=admin_id,
-                index_id=index_id,
-                status=2,               # ⚠️ 见下文「status 统一」章节
-                content=content,
-            )
-    except Exception:
-        logger.exception('创建报告失败 admin_id=%s index_id=%s', admin_id, index_id)
-        return _json_error('创建失败，请稍后重试', status=500)
-
     return _json_ok({
-        'index_id':  index_id,
+        'index_id': index_id,
         'report_id': report.id,
     }, '创建成功')
 
@@ -173,6 +137,7 @@ def insert(request, admin_id):
 # ============================================================
 # 详情
 # ============================================================
+
 @require_admin_id
 @require_index_id
 def detail(request, admin_id, index_id):
@@ -185,13 +150,8 @@ def detail(request, admin_id, index_id):
 
     if not report:
         return _json_error('报告记录不存在', status=404)
-
-    return _json_ok({
-        'report': {
-            'ok':   True,
-            'data': model_to_dict(report),
-        },
-    })
+    data = model_to_dict(report)
+    return _json_ok({'report': {'ok': True, 'data': data}})
 
 
 # ============================================================
@@ -214,50 +174,69 @@ def delete(request, admin_id, index_id):
 # ============================================================
 # 更新
 # ============================================================
+
 @require_admin_id
 @require_index_id
 def update(request, admin_id, index_id):
-    """
-    更新验光报告（JSON）
-
-    字段：name / phone / remark / pd / od_* / os_*
-    """
     data, err = _parse_json(request)
     if err:
         return err
 
+    name = _get_str(data, 'name')
+    phone = _get_str(data, 'phone')
+    remark = _get_str(data, 'remark')
+
+    # content 是 dict，绝不能走 _get_str
+    nested = data.get('content') or {}
+    if not isinstance(nested, dict):
+        return _json_error('content 格式错误，应为对象', status=400)
+
+    # 先确认记录存在
+    if not report_detail(admin_id=admin_id, index_id=index_id):
+        return _json_error('报告记录不存在', status=404)
+
+    # 数值校验（_NUMBER_FIELDS 是 od_sph/os_sph 这种展平名，eye_data 里是短名）
     errors = {}
+    for field in ('age', 'pd'):
+        v = nested.get(field, '')
+        if v not in (None, ''):
+            nested[field] = _validate_number(v, field, errors)
 
-    # 只取实际提供的字段（没传的不更新）
-    update_content = {}
-
-    # 文本字段
-    for key in ('name', 'time', 'phone', 'remark', 'sex', 'age', 'ot', 'em', 'dfh'):
-        if key in data:
-            update_content[key] = _get_str(data, key)
-
-    # 数值字段
-    for field in _NUMBER_FIELDS:
-        if field in data:
-            update_content[field] = _validate_number(_get_str(data, field), field, errors)
+    for eye in ('od', 'os'):
+        eye_data = nested.get(eye) or {}
+        if not isinstance(eye_data, dict):
+            errors[eye] = [{'message': f'{eye} 格式错误，应为对象'}]
+            continue
+        for field in _NUMBER_FIELDS:
+            if not field.startswith(eye + '_'):
+                continue
+            short = field[len(eye) + 1:]  # 'od_sph' → 'sph'
+            v = eye_data.get(short, '')
+            if v not in (None, ''):
+                eye_data[short] = _validate_number(v, f'{eye}.{short}', errors)
+        nested[eye] = eye_data
 
     if errors:
         return _json_error('参数校验失败', status=400, errors=errors)
 
-    if not update_content:
-        return _json_error('没有可更新的字段')
+    # 序列化为合法 JSON（双引号，ensure_ascii=False 保留中文）
+    content_str = json.dumps(nested, ensure_ascii=False)
 
     try:
-        affected = report_update(
-            admin_id=admin_id,
-            index_id=index_id,
-            content=update_content,
-        )
+        with transaction.atomic():
+            report_update(
+                admin_id=admin_id,
+                index_id=index_id,
+                name=name,
+                phone=phone,
+                remark=remark,
+                content=content_str,
+            )
     except Exception:
         logger.exception('更新报告失败 index_id=%s', index_id)
         return _json_error('更新失败，请稍后重试', status=500)
 
-    return _json_ok({'affected_rows': affected}, '更新成功')
+    return _json_ok({}, '更新成功')
 
 
 # ============================================================
@@ -271,7 +250,7 @@ def search_time(request, admin_id):
         return err
 
     time_start = _get_str(data, 'timeS')
-    time_end   = _get_str(data, 'timeE')
+    time_end = _get_str(data, 'timeE')
 
     if not time_start or not time_end:
         return _json_error('请提供 timeS 和 timeE 参数')

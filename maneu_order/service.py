@@ -21,7 +21,7 @@ def _dump_products(products):
     return json.dumps(products, ensure_ascii=False)
 
 
-def order_insert(admin_id='', index_id='', status=3, content=None):
+def order_insert(admin_id='', index_id='', content=None):
     """
     创建订单
 
@@ -33,7 +33,6 @@ def order_insert(admin_id='', index_id='', status=3, content=None):
     return ManeuOrder.objects.create(
         id=index_id,
         admin_id=admin_id,
-        status=status,
         name=content.get('name', ''),
         time=content.get('time'),
         phone=content.get('phone', ''),

@@ -221,7 +221,6 @@ def insert(request, admin_id):
             order = order_insert(
                 admin_id=admin_id,
                 index_id=index_id,
-                status=3,
                 content={
                     'name':     name,
                     'time':     time,
